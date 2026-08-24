@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ClickVectora Solution | Graphic Design & Vector Studio</title>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
       /* Light Theme Color Palette */
@@ -21,6 +23,8 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+    html { scroll-behavior: smooth; }
 
     body {
       background-color: var(--bg-main);
@@ -50,7 +54,7 @@
       text-decoration: none;
     }
 
-    /* Logo size increased from 80px to 130px */
+    /* Logo size */
     .brand-logo img {
       height: 130px;
       width: auto;
@@ -81,6 +85,7 @@
       border-radius: 6px;
       font-weight: 600 !important;
       box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);
+      cursor: pointer;
     }
 
     .container { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; }
@@ -218,6 +223,126 @@
     .service-info h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main); }
     .service-info p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem; }
 
+    /* Contact Details Section */
+    .contact-main-section {
+      background: var(--bg-surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px var(--shadow);
+      padding: 3rem 2rem;
+      margin-top: 4rem;
+      scroll-margin-top: 100px;
+    }
+
+    .contact-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-header h2 {
+      font-size: 2rem;
+      color: var(--text-main);
+    }
+
+    .contact-header p {
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    .contact-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+
+    .contact-info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.2rem;
+      padding: 1rem;
+      background: var(--bg-main);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .info-item i {
+      font-size: 1.5rem;
+      color: var(--orange);
+      margin-top: 3px;
+    }
+
+    .info-item h4 {
+      font-size: 1rem;
+      color: var(--text-main);
+      margin-bottom: 0.2rem;
+    }
+
+    .info-item p, .info-item a {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .info-item a:hover {
+      color: var(--cyan);
+    }
+
+    .social-handles {
+      margin-top: 0.5rem;
+    }
+
+    .social-handles p {
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.8rem;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .social-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+      font-size: 1.1rem;
+      text-decoration: none !important;
+      transition: all 0.3s ease;
+    }
+
+    .social-icon:hover {
+      background: var(--orange);
+      color: #fff;
+      border-color: var(--orange);
+      transform: translateY(-3px);
+    }
+
+    .contact-form-box {
+      background: var(--bg-main);
+      padding: 1.8rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .contact-form-box h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: var(--text-main);
+    }
+
     /* Buttons */
     .btn {
       width: 100%;
@@ -240,7 +365,7 @@
 
     .btn-orange:hover { background: #e05d00; }
 
-    /* Modal Styling */
+    /* Modal & Form Styling */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -294,6 +419,10 @@
       background: #ffffff;
     }
 
+    input:invalid:focus {
+      border-color: #ef4444;
+    }
+
     .btn-whatsapp {
       background: var(--whatsapp);
       color: white;
@@ -305,11 +434,20 @@
     }
     .btn-whatsapp:hover { background: #1da851; }
 
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+      margin-top: 3rem;
+    }
+
     @media (max-width: 768px) {
       nav { padding: 0.4rem 4%; }
-      /* Mobile logo size increased from 60px to 90px */
       .brand-logo img { height: 90px; }
       .hero h1 { font-size: 2.1rem; }
+      .contact-wrapper { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -321,7 +459,7 @@
       <img src="logo.png" alt="ClickVectora Solution Logo">
     </a>
     <ul class="nav-links">
-      <li><a href="javascript:void(0)" onclick="openOrderModal('General Inquiry')" class="btn-nav">Contact Us</a></li>
+      <li><a href="#contact-section" class="btn-nav">Contact Us</a></li>
     </ul>
   </nav>
 
@@ -440,7 +578,84 @@
       </div>
 
     </div>
+
+    <!-- Contact Us Section -->
+    <section class="contact-main-section" id="contact-section">
+      <div class="contact-header">
+        <h2>Contact Us</h2>
+        <p>Get in touch with our team for custom vector design inquiries or project proposals.</p>
+      </div>
+
+      <div class="contact-wrapper">
+        <!-- Direct Contact Details -->
+        <div class="contact-info-list">
+          <div class="info-item">
+            <i class="fa-solid fa-envelope"></i>
+            <div>
+              <h4>Email Support</h4>
+              <a href="mailto:contact@clickvectora.com">contact@clickvectora.com</a>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <i class="fa-brands fa-whatsapp"></i>
+            <div>
+              <h4>WhatsApp Chat</h4>
+              <a href="https://wa.me/919427740360" target="_blank">+91 94277 40360</a>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <i class="fa-solid fa-clock"></i>
+            <div>
+              <h4>Working Hours</h4>
+              <p>Mon - Sat: 9:00 AM - 7:00 PM IST</p>
+            </div>
+          </div>
+
+          <div class="social-handles">
+            <p>Connect With Us</p>
+            <div class="social-links">
+              <a href="https://instagram.com" target="_blank" class="social-icon" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+              <a href="https://facebook.com" target="_blank" class="social-icon" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+              <a href="https://behance.net" target="_blank" class="social-icon" title="Behance"><i class="fa-brands fa-behance"></i></a>
+              <a href="https://linkedin.com" target="_blank" class="social-icon" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inline Contact Form -->
+        <div class="contact-form-box">
+          <h3>Send Us a Message</h3>
+          <form onsubmit="sendDirectMessage(event)">
+            <div class="input-group">
+              <label for="directName">Full Name</label>
+              <input type="text" id="directName" placeholder="Full Name" required minlength="2">
+            </div>
+            <div class="input-group">
+              <label for="directEmail">Email Address</label>
+              <input type="email" id="directEmail" placeholder="name@example.com" required>
+            </div>
+            <div class="input-group">
+              <label for="directPhone">Mobile Number</label>
+              <input type="tel" id="directPhone" placeholder="10-digit Mobile Number" required pattern="[0-9]{10}" maxlength="10" title="Please enter a valid 10-digit mobile number" onkeypress="return /[0-9]/i.test(event.key)">
+            </div>
+            <div class="input-group">
+              <label for="directMsg">Message</label>
+              <textarea id="directMsg" rows="3" placeholder="How can we help you?" required minlength="5"></textarea>
+            </div>
+            <button type="submit" class="btn btn-orange">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
   </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; ClickVectora Solution. All rights reserved.</p>
+  </footer>
 
   <!-- Order Pop-Up Modal -->
   <div class="modal-overlay" id="orderModal">
@@ -451,27 +666,27 @@
 
       <form onsubmit="sendToWhatsApp(event)">
         <div class="input-group">
-          <label>Selected Service</label>
+          <label for="selectedProduct">Selected Service</label>
           <input type="text" id="selectedProduct" readonly style="color: var(--cyan); font-weight: bold; background: #e0f2fe; border-color: #bae6fd;">
         </div>
 
         <div class="input-group">
-          <label>Your Name</label>
-          <input type="text" id="custName" placeholder="Full Name" required>
+          <label for="custName">Your Name</label>
+          <input type="text" id="custName" placeholder="Full Name" required minlength="2">
         </div>
 
         <div class="input-group">
-          <label>Email Address</label>
+          <label for="custEmail">Email Address</label>
           <input type="email" id="custEmail" placeholder="name@example.com" required>
         </div>
 
         <div class="input-group">
-          <label>WhatsApp Number</label>
-          <input type="tel" id="custPhone" placeholder="10-digit Phone Number" required>
+          <label for="custPhone">WhatsApp Number</label>
+          <input type="tel" id="custPhone" placeholder="10-digit Mobile Number" required pattern="[0-9]{10}" maxlength="10" title="Please enter a valid 10-digit phone number" onkeypress="return /[0-9]/i.test(event.key)">
         </div>
 
         <div class="input-group">
-          <label>Project Details</label>
+          <label for="custDetails">Project Details</label>
           <textarea id="custDetails" rows="3" placeholder="Brief details or requirements..."></textarea>
         </div>
 
@@ -516,6 +731,25 @@
 
       window.open(`https://wa.me/${companyPhone}?text=${encodeURI(message)}`, '_blank');
       closeOrderModal();
+    }
+
+    function sendDirectMessage(event) {
+      event.preventDefault();
+
+      const companyPhone = "919427740360";
+      const name = document.getElementById('directName').value;
+      const email = document.getElementById('directEmail').value;
+      const phone = document.getElementById('directPhone').value;
+      const msg = document.getElementById('directMsg').value;
+
+      const message = 
+        `*GENERAL INQUIRY - WEBSITE CONTACT FORM*%0A%0A` +
+        `*Name:* ${name}%0A` +
+        `*Email:* ${email}%0A` +
+        `*Mobile:* ${phone}%0A` +
+        `*Message:* ${msg}`;
+
+      window.open(`https://wa.me/${companyPhone}?text=${encodeURI(message)}`, '_blank');
     }
   </script>
 </body>
