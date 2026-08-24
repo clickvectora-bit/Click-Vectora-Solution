@@ -54,7 +54,6 @@
       text-decoration: none;
     }
 
-    /* Logo size */
     .brand-logo img {
       height: 130px;
       width: auto;
@@ -166,20 +165,9 @@
       object-fit: cover;
     }
 
-    .portfolio-info {
-      padding: 1.2rem;
-    }
-
-    .portfolio-info h3 {
-      font-size: 1.1rem;
-      margin-bottom: 0.3rem;
-      color: var(--text-main);
-    }
-
-    .portfolio-info p {
-      color: var(--text-muted);
-      font-size: 0.88rem;
-    }
+    .portfolio-info { padding: 1.2rem; }
+    .portfolio-info h3 { font-size: 1.1rem; margin-bottom: 0.3rem; color: var(--text-main); }
+    .portfolio-info p { color: var(--text-muted); font-size: 0.88rem; }
 
     /* Services Section */
     .services-grid {
@@ -234,20 +222,9 @@
       scroll-margin-top: 100px;
     }
 
-    .contact-header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-
-    .contact-header h2 {
-      font-size: 2rem;
-      color: var(--text-main);
-    }
-
-    .contact-header p {
-      color: var(--text-muted);
-      margin-top: 0.5rem;
-    }
+    .contact-header { text-align: center; margin-bottom: 2.5rem; }
+    .contact-header h2 { font-size: 2rem; color: var(--text-main); }
+    .contact-header p { color: var(--text-muted); margin-top: 0.5rem; }
 
     .contact-wrapper {
       display: grid;
@@ -255,11 +232,7 @@
       gap: 2.5rem;
     }
 
-    .contact-info-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
+    .contact-info-list { display: flex; flex-direction: column; gap: 1.5rem; }
 
     .info-item {
       display: flex;
@@ -271,42 +244,14 @@
       border: 1px solid var(--border);
     }
 
-    .info-item i {
-      font-size: 1.5rem;
-      color: var(--orange);
-      margin-top: 3px;
-    }
+    .info-item i { font-size: 1.5rem; color: var(--orange); margin-top: 3px; }
+    .info-item h4 { font-size: 1rem; color: var(--text-main); margin-bottom: 0.2rem; }
+    .info-item p, .info-item a { font-size: 0.9rem; color: var(--text-muted); text-decoration: none; }
+    .info-item a:hover { color: var(--cyan); }
 
-    .info-item h4 {
-      font-size: 1rem;
-      color: var(--text-main);
-      margin-bottom: 0.2rem;
-    }
-
-    .info-item p, .info-item a {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      text-decoration: none;
-    }
-
-    .info-item a:hover {
-      color: var(--cyan);
-    }
-
-    .social-handles {
-      margin-top: 0.5rem;
-    }
-
-    .social-handles p {
-      font-weight: 600;
-      color: var(--text-main);
-      margin-bottom: 0.8rem;
-    }
-
-    .social-links {
-      display: flex;
-      gap: 0.8rem;
-    }
+    .social-handles { margin-top: 0.5rem; }
+    .social-handles p { font-weight: 600; color: var(--text-main); margin-bottom: 0.8rem; }
+    .social-links { display: flex; gap: 0.8rem; }
 
     .social-icon {
       width: 40px;
@@ -337,11 +282,7 @@
       border: 1px solid var(--border);
     }
 
-    .contact-form-box h3 {
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-      color: var(--text-main);
-    }
+    .contact-form-box h3 { font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-main); }
 
     /* Buttons */
     .btn {
@@ -353,7 +294,7 @@
       color: white;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      transition: all 0.2s ease;
     }
 
     .btn:hover { background: #0093b3; }
@@ -365,74 +306,173 @@
 
     .btn-orange:hover { background: #e05d00; }
 
-    /* Modal & Form Styling */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(6px);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    .modal-content {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2.2rem;
-      width: 90%;
-      max-width: 480px;
-      position: relative;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 18px; right: 22px;
-      font-size: 1.6rem;
-      color: var(--text-muted);
-      cursor: pointer;
-      background: none;
-      border: none;
-    }
-    .close-btn:hover { color: var(--text-main); }
-
-    form { display: grid; gap: 1.1rem; margin-top: 1.2rem; }
+    /* Global Input Styling */
+    form { display: grid; gap: 1.1rem; margin-top: 1rem; }
     .input-group { display: flex; flex-direction: column; gap: 0.4rem; }
     label { font-size: 0.85rem; color: var(--text-main); font-weight: 600; }
 
     input, textarea {
       width: 100%;
-      padding: 0.8rem;
+      padding: 0.8rem 1rem;
       background: var(--bg-input);
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--border);
       color: var(--text-main);
       border-radius: 8px;
       font-size: 0.95rem;
+      transition: all 0.2s ease;
     }
 
     input:focus, textarea:focus {
       outline: none;
       border-color: var(--cyan);
       background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(0, 168, 204, 0.15);
     }
 
     input:invalid:focus {
       border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
     }
 
-    .btn-whatsapp {
-      background: var(--whatsapp);
+    /* RESPONSIVE ORDER MODAL STYLING */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(8px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      padding: 1rem;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 480px;
+      max-height: calc(100vh - 2rem);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      transform: scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-header-hero {
+      background: linear-gradient(135deg, var(--orange) 0%, #ff8c38 100%);
+      padding: 1.25rem 1.5rem;
       color: white;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .modal-header-hero h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-right: 25px;
+    }
+
+    .modal-header-hero p {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 2px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 14px; 
+      right: 14px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
     }
-    .btn-whatsapp:hover { background: #1da851; }
+    
+    .close-btn:hover { 
+      background: rgba(255, 255, 255, 0.35); 
+    }
+
+    .modal-body {
+      padding: 1.25rem 1.5rem;
+      overflow-y: auto;
+      max-height: 70vh;
+    }
+
+    .selected-service-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      color: #1e40af;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .selected-service-badge i {
+      color: var(--cyan);
+    }
+
+    .selected-service-badge input {
+      border: none;
+      background: transparent;
+      padding: 0;
+      color: inherit;
+      font-weight: inherit;
+      font-size: inherit;
+      pointer-events: none;
+    }
+
+    .btn-whatsapp {
+      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+      color: white;
+      padding: 0.85rem;
+      font-size: 0.95rem;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+      margin-top: 0.5rem;
+    }
+    
+    .btn-whatsapp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+    }
 
     footer {
       text-align: center;
@@ -657,52 +697,69 @@
     <p>&copy; ClickVectora Solution. All rights reserved.</p>
   </footer>
 
-  <!-- Order Pop-Up Modal -->
+  <!-- RESPONSIVE ORDER MODAL -->
   <div class="modal-overlay" id="orderModal">
-    <div class="modal-content">
-      <button class="close-btn" onclick="closeOrderModal()">&times;</button>
-      <h2 style="font-size: 1.4rem;">Confirm Request</h2>
-      <p style="color: var(--text-muted); font-size: 0.88rem;">Submit details to reach out on WhatsApp.</p>
+    <div class="modal-card">
+      <div class="modal-header-hero">
+        <button class="close-btn" onclick="closeOrderModal()">&times;</button>
+        <h2><i class="fa-solid fa-bag-shopping"></i> Quick Order Request</h2>
+        <p>Send your requirements directly to our design team via WhatsApp.</p>
+      </div>
 
-      <form onsubmit="sendToWhatsApp(event)">
-        <div class="input-group">
-          <label for="selectedProduct">Selected Service</label>
-          <input type="text" id="selectedProduct" readonly style="color: var(--cyan); font-weight: bold; background: #e0f2fe; border-color: #bae6fd;">
-        </div>
+      <div class="modal-body">
+        <form onsubmit="sendToWhatsApp(event)">
+          <div class="input-group">
+            <label>Requested Service</label>
+            <div class="selected-service-badge">
+              <i class="fa-solid fa-layer-group"></i>
+              <input type="text" id="selectedProduct" readonly>
+            </div>
+          </div>
 
-        <div class="input-group">
-          <label for="custName">Your Name</label>
-          <input type="text" id="custName" placeholder="Full Name" required minlength="2">
-        </div>
+          <div class="input-group">
+            <label for="custName">Your Name</label>
+            <input type="text" id="custName" placeholder="e.g. Alex Smith" required minlength="2">
+          </div>
 
-        <div class="input-group">
-          <label for="custEmail">Email Address</label>
-          <input type="email" id="custEmail" placeholder="name@example.com" required>
-        </div>
+          <div class="input-group">
+            <label for="custEmail">Email Address</label>
+            <input type="email" id="custEmail" placeholder="alex@example.com" required>
+          </div>
 
-        <div class="input-group">
-          <label for="custPhone">WhatsApp Number</label>
-          <input type="tel" id="custPhone" placeholder="10-digit Mobile Number" required pattern="[0-9]{10}" maxlength="10" title="Please enter a valid 10-digit phone number" onkeypress="return /[0-9]/i.test(event.key)">
-        </div>
+          <div class="input-group">
+            <label for="custPhone">WhatsApp / Mobile Number</label>
+            <input type="tel" id="custPhone" placeholder="10-digit Phone Number" required pattern="[0-9]{10}" maxlength="10" title="Please enter a valid 10-digit phone number" onkeypress="return /[0-9]/i.test(event.key)">
+          </div>
 
-        <div class="input-group">
-          <label for="custDetails">Project Details</label>
-          <textarea id="custDetails" rows="3" placeholder="Brief details or requirements..."></textarea>
-        </div>
+          <div class="input-group">
+            <label for="custDetails">Project Details & Requirements</label>
+            <textarea id="custDetails" rows="3" placeholder="Describe your design specifications, dimensions, color preferences..."></textarea>
+          </div>
 
-        <button type="submit" class="btn btn-whatsapp">Send Message on WhatsApp</button>
-      </form>
+          <button type="submit" class="btn btn-whatsapp">
+            <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Start Chat on WhatsApp
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 
   <script>
     function openOrderModal(serviceName) {
       document.getElementById('selectedProduct').value = serviceName;
-      document.getElementById('orderModal').style.display = 'flex';
+      const modal = document.getElementById('orderModal');
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        modal.classList.add('active');
+      }, 10);
     }
 
     function closeOrderModal() {
-      document.getElementById('orderModal').style.display = 'none';
+      const modal = document.getElementById('orderModal');
+      modal.classList.remove('active');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
     }
 
     window.onclick = function(event) {
@@ -722,7 +779,7 @@
       const details = document.getElementById('custDetails').value || "N/A";
 
       const message = 
-        `*NEW INQUIRY - CLICKVECTOR A SOLUTION*%0A%0A` +
+        `*NEW ORDER INQUIRY - CLICKVECTOR A SOLUTION*%0A%0A` +
         `*Service:* ${product}%0A` +
         `*Name:* ${name}%0A` +
         `*Email:* ${email}%0A` +
