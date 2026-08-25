@@ -638,7 +638,7 @@
         </div>
       </div>
       <div class="portfolio-card">
-        <img src="img/social media icon.png" onerror="this.src='https://via.placeholder.com/600x220?text=Social+Media'">
+        <img src="social media icon.png" onerror="this.src='https://via.placeholder.com/600x220?text=Social+Media'">
         <div class="portfolio-info">
           <h3>Social Media Graphics</h3>
           <p>Custom Instagram, Facebook & ad templates.</p>
@@ -654,7 +654,7 @@
     </div>
 
     <!-- Services Section -->
-    <h2 class="section-title" id="services">Our Design Services</h2>
+    <h2 class="section-title" id="services">Our Services</h2>
     <div class="services-grid">
 
       <div class="service-card">
@@ -933,47 +933,48 @@
     }
 
     function sendToWhatsApp(event) {
-      event.preventDefault();
+  event.preventDefault();
 
-      const companyPhone = "919427740360";
+  const companyPhone = "919427740360";
 
-      const product = document.getElementById('selectedProduct').value;
-      const name = document.getElementById('custName').value;
-      const email = document.getElementById('custEmail').value;
-      const phone = document.getElementById('custPhone').value;
-      const details = document.getElementById('custDetails').value || "N/A";
+  const product = document.getElementById('selectedProduct').value;
+  const name = document.getElementById('custName').value;
+  const email = document.getElementById('custEmail').value;
+  const phone = document.getElementById('custPhone').value;
+  const details = document.getElementById('custDetails').value || "N/A";
 
-      const message = 
-        `*NEW ORDER INQUIRY - CLICKVECTORA SOLUTION*%0A%0A` +
-        `*Service:* ${product}%0A` +
-        `*Name:* ${name}%0A` +
-        `*Email:* ${email}%0A` +
-        `*Phone:* ${phone}%0A` +
-        `*Details:* ${details}`;
+  const message = 
+    `*NEW ORDER INQUIRY - CLICK VECTOR A SOLUTION*\n\n` +
+    `*Service:* ${product}\n` +
+    `*Name:* ${name}\n` +
+    `*Email:* ${email}\n` +
+    `*Phone:* ${phone}\n` +
+    `*Details:* ${details}`;
 
-      window.open(`https://wa.me/${companyPhone}?text=${encodeURI(message)}`, '_blank');
-      closeOrderModal();
-    }
+  const whatsappUrl = `https://wa.me/${companyPhone}?text=${encodeURIComponent(message)}`;
+  window.open(whatsappUrl, '_blank');
+  closeOrderModal();
+}
 
-    function sendDirectMessage(event) {
-      event.preventDefault();
+function sendDirectMessage(event) {
+  event.preventDefault();
 
-      const companyPhone = "919427740360";
-      const name = document.getElementById('directName').value;
-      const email = document.getElementById('directEmail').value;
-      const phone = document.getElementById('directPhone').value;
-      const msg = document.getElementById('directMsg').value;
+  const companyPhone = "919427740360";
+  const name = document.getElementById('directName').value;
+  const email = document.getElementById('directEmail').value;
+  const phone = document.getElementById('directPhone').value;
+  const msg = document.getElementById('directMsg').value;
 
-      const message = 
-        `*GENERAL INQUIRY - WEBSITE CONTACT FORM*%0A%0A` +
-        `*Name:* ${name}%0A` +
-        `*Email:* ${email}%0A` +
-        `*Mobile:* ${phone}%0A` +
-        `*Message:* ${msg}`;
+  const message = 
+    `*GENERAL INQUIRY - WEBSITE CONTACT FORM*\n\n` +
+    `*Name:* ${name}\n` +
+    `*Email:* ${email}\n` +
+    `*Mobile:* ${phone}\n` +
+    `*Message:* ${msg}`;
 
-      window.open(`https://wa.me/${companyPhone}?text=${encodeURI(message)}`, '_blank');
-    }
-
+  const whatsappUrl = `https://wa.me/${companyPhone}?text=${encodeURIComponent(message)}`;
+  window.open(whatsappUrl, '_blank');
+}
     // =========================================
     // AMAZON PRODUCTS RENDER LOGIC
     // =========================================
