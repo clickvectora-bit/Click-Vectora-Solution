@@ -55,7 +55,7 @@
     }
 
     .brand-logo img {
-      height: 130px;
+      height: 80px;
       width: auto;
       display: block;
     }
@@ -85,6 +85,17 @@
       font-weight: 600 !important;
       box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);
       cursor: pointer;
+    }
+
+    /* Mobile Hamburger Menu Toggle Button */
+    .menu-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 1.6rem;
+      color: var(--text-main);
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
     }
 
     .container { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; }
@@ -140,7 +151,7 @@
     /* Portfolio Section */
     .portfolio-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.8rem;
     }
 
@@ -172,7 +183,7 @@
     /* Services Section */
     .services-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 1.8rem;
     }
 
@@ -194,7 +205,6 @@
       border-color: var(--orange);
     }
 
-    /* Product & Service Image Container Adjustments */
     .service-card img {
       width: 100%;
       height: 220px;
@@ -215,7 +225,6 @@
     .service-info h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main); }
     .service-info p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem; }
 
-    /* Amazon Product Card Customization */
     .affiliate-badge {
       display: inline-block;
       background: #ff9900;
@@ -371,7 +380,7 @@
       box-shadow: 0 0 0 3px rgba(0, 168, 204, 0.15);
     }
 
-    /* RESPONSIVE ORDER MODAL STYLING */
+    /* Modal Styling */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -520,11 +529,70 @@
       margin-top: 3rem;
     }
 
+    /* RESPONSIVE MEDIA QUERIES (MOBILE FIXES) */
     @media (max-width: 768px) {
-      nav { padding: 0.4rem 4%; }
-      .brand-logo img { height: 90px; }
-      .hero h1 { font-size: 2.1rem; }
-      .contact-wrapper { grid-template-columns: 1fr; }
+      nav { 
+        padding: 0.6rem 5%; 
+      }
+
+      .brand-logo img { 
+        height: 50px; 
+      }
+
+      .menu-toggle {
+        display: block; /* Hamburger Button Show */
+      }
+
+      /* Mobile Slide Navigation Bar */
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.98);
+        padding: 1.2rem 2rem;
+        box-shadow: 0 10px 15px var(--shadow-hover);
+        border-bottom: 1px solid var(--border);
+        gap: 1.2rem;
+        align-items: stretch;
+        text-align: center;
+      }
+
+      .nav-links.active {
+        display: flex; /* Script toggles this class */
+      }
+
+      .nav-links a {
+        font-size: 1.05rem;
+        padding: 0.5rem 0;
+        display: block;
+      }
+
+      .btn-nav {
+        margin-top: 0.5rem;
+      }
+
+      .container {
+        padding: 1.5rem 1rem;
+      }
+
+      .hero {
+        padding: 2.2rem 1rem;
+      }
+
+      .hero h1 { 
+        font-size: 2rem; 
+      }
+
+      .contact-wrapper { 
+        grid-template-columns: 1fr; 
+      }
+
+      .contact-main-section {
+        padding: 2rem 1.2rem;
+      }
     }
   </style>
 </head>
@@ -533,9 +601,15 @@
   <!-- Header Navigation -->
   <nav>
     <a href="#" class="brand-logo">
-      <img src="logo.png" alt="Click Vectora Solution Logo">
+      <img src="logo.png" alt="Click Vectora Solution Logo" onerror="this.src='https://via.placeholder.com/150x50?text=Click+Vectora'">
     </a>
-    <ul class="nav-links">
+
+    <!-- Hamburger Toggle Button for Mobile -->
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <ul class="nav-links" id="navLinks">
       <li><a href="#portfolio">Work</a></li>
       <li><a href="#services">Services</a></li>
       <li><a href="#amazon-products">Online Store</a></li>
@@ -561,14 +635,14 @@
         </div>
       </div>
       <div class="portfolio-card">
-        <img src="img/social media icon.png">
+        <img src="social media icon.png" onerror="this.src='https://via.placeholder.com/600x220?text=Social+Media'">
         <div class="portfolio-info">
           <h3>Social Media Graphics</h3>
           <p>Custom Instagram, Facebook & ad templates.</p>
         </div>
       </div>
       <div class="portfolio-card">
-        <img src="AIVideoAds.jfif" alt="AI Video Ads">
+        <img src="AIVideoAds.jfif" alt="AI Video Ads" onerror="this.src='https://via.placeholder.com/600x220?text=AI+Video+Ads'">
         <div class="portfolio-info">
           <h3>AI Video Ads</h3>
           <p>Enhanced Prompt Generation and Video Ads Conversions.</p>
@@ -802,6 +876,37 @@
   </div>
 
   <script>
+    // =========================================
+    // MOBILE NAVIGATION TOGGLE SCRIPT
+    // =========================================
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      const icon = menuToggle.querySelector('i');
+      if (navLinks.classList.contains('active')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-xmark');
+      } else {
+        icon.classList.remove('fa-xmark');
+        icon.classList.add('fa-bars');
+      }
+    });
+
+    // Mobile nav link click par menu band karna
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        const icon = menuToggle.querySelector('i');
+        icon.classList.remove('fa-xmark');
+        icon.classList.add('fa-bars');
+      });
+    });
+
+    // =========================================
+    // ORDER MODAL LOGIC
+    // =========================================
     function openOrderModal(serviceName) {
       document.getElementById('selectedProduct').value = serviceName;
       const modal = document.getElementById('orderModal');
@@ -867,9 +972,8 @@
     }
 
     // =========================================
-    // AMAZON LIVE AFFILIATE PRODUCTS FETCH LOGIC
+    // AMAZON PRODUCTS RENDER LOGIC
     // =========================================
-    
     const AMAZON_TAG = "clickvectora-21";
 
     const affiliateProducts = [
