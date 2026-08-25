@@ -194,10 +194,14 @@
       border-color: var(--orange);
     }
 
+    /* Product & Service Image Container Adjustments */
     .service-card img {
       width: 100%;
-      height: 190px;
-      object-fit: cover;
+      height: 220px;
+      object-fit: contain;
+      background-color: #ffffff;
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
     }
 
     .service-info {
@@ -210,6 +214,31 @@
 
     .service-info h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main); }
     .service-info p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem; }
+
+    /* Amazon Product Card Customization */
+    .affiliate-badge {
+      display: inline-block;
+      background: #ff9900;
+      color: #000;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+    .product-price {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--orange);
+      margin: 0.4rem 0;
+    }
+    .product-price span {
+      text-decoration: line-through;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: normal;
+      margin-left: 6px;
+    }
 
     /* Contact Details Section */
     .contact-main-section {
@@ -295,6 +324,9 @@
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
     }
 
     .btn:hover { background: #0093b3; }
@@ -305,6 +337,16 @@
     }
 
     .btn-orange:hover { background: #e05d00; }
+
+    .btn-amazon {
+      background: #ff9900;
+      color: #111;
+      box-shadow: 0 4px 12px rgba(255, 153, 0, 0.25);
+    }
+
+    .btn-amazon:hover {
+      background: #e68a00;
+    }
 
     /* Global Input Styling */
     form { display: grid; gap: 1.1rem; margin-top: 1rem; }
@@ -327,11 +369,6 @@
       border-color: var(--cyan);
       background: #ffffff;
       box-shadow: 0 0 0 3px rgba(0, 168, 204, 0.15);
-    }
-
-    input:invalid:focus {
-      border-color: #ef4444;
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
     }
 
     /* RESPONSIVE ORDER MODAL STYLING */
@@ -499,6 +536,9 @@
       <img src="logo.png" alt="Click Vectora Solution Logo">
     </a>
     <ul class="nav-links">
+      <li><a href="#portfolio">Work</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#amazon-products">Online Store</a></li>
       <li><a href="#contact-section" class="btn-nav">Contact Us</a></li>
     </ul>
   </nav>
@@ -517,11 +557,11 @@
         <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=600&q=80" alt="Logo Creation Process">
         <div class="portfolio-info">
           <h3>Logo & Branding Design</h3>
-          <p>Vector concept sketches and final rendering.</p>
+          <p>Vector Concept Sketches and Final Rendering.</p>
         </div>
       </div>
       <div class="portfolio-card">
-        <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&q=80" alt="Social Media Templates">
+        <img src="social media icon.png">
         <div class="portfolio-info">
           <h3>Social Media Graphics</h3>
           <p>Custom Instagram, Facebook & ad templates.</p>
@@ -531,7 +571,7 @@
         <img src="AIVideoAds.jfif" alt="AI Video Ads">
         <div class="portfolio-info">
           <h3>AI Video Ads</h3>
-          <p>Enhanced prompt generation and Video Ads conversions.</p>
+          <p>Enhanced Prompt Generation and Video Ads Conversions.</p>
         </div>
       </div>
     </div>
@@ -541,18 +581,18 @@
     <div class="services-grid">
 
       <div class="service-card">
-        <img src="LogoDesign.jpg" alt="Logo Design">
+        <img src="LogoDesign.jpg" alt="Logo Design" onerror="this.src='https://via.placeholder.com/300x220?text=Logo+Design'">
         <div class="service-info">
           <div>
             <h3>Logo Design</h3>
-            <p>Custom vector logo concepts with source files.</p>
+            <p>Custom Vector Logo Concepts with Source Files.</p>
           </div>
           <button class="btn btn-orange" onclick="openOrderModal('Logo Design')">Order Now</button>
         </div>
       </div>
 
       <div class="service-card">
-        <img src="PosterBanner.png" alt="Posters & Banners">
+        <img src="PosterBanner.png" alt="Posters & Banners" onerror="this.src='https://via.placeholder.com/300x220?text=Posters+%26+Banners'">
         <div class="service-info">
           <div>
             <h3>Posters & Banners</h3>
@@ -563,7 +603,7 @@
       </div>
 
       <div class="service-card">
-        <img src="FlyersBrochures.png" alt="Flyers & Brochures">
+        <img src="FlyersBrochures.png" alt="Flyers & Brochures" onerror="this.src='https://via.placeholder.com/300x220?text=Flyers+%26+Brochures'">
         <div class="service-info">
           <div>
             <h3>Flyers & Brochures</h3>
@@ -574,7 +614,7 @@
       </div>
 
       <div class="service-card">
-        <img src="BusinessCard.jfif" alt="Business Cards">
+        <img src="BusinessCard.jfif" alt="Business Cards" onerror="this.src='https://via.placeholder.com/300x220?text=Business+Cards'">
         <div class="service-info">
           <div>
             <h3>Business Cards</h3>
@@ -585,7 +625,7 @@
       </div>
 
       <div class="service-card">
-        <img src="SocialMediaPost.jpg" alt="Social Media Graphics">
+        <img src="SocialMediaPost.jpg" alt="Social Media Graphics" onerror="this.src='https://via.placeholder.com/300x220?text=Social+Media'">
         <div class="service-info">
           <div>
             <h3>Social Media Graphics</h3>
@@ -596,18 +636,18 @@
       </div>
 
       <div class="service-card">
-        <img src="AIVideoAds.jfif" alt="AI Video Ads">
+        <img src="AIVideoAds.jfif" alt="AI Video Ads" onerror="this.src='https://via.placeholder.com/300x220?text=AI+Video+Ads'">
         <div class="service-info">
           <div>
             <h3>AI Video Ads</h3>
-            <p>AI-generated Video Ads with Product</p>
+            <p>AI-Generated Video Ads with Product</p>
           </div>
           <button class="btn btn-orange" onclick="openOrderModal('Digital AI Design')">Order Now</button>
         </div>
       </div>
 
       <div class="service-card">
-        <img src="Menu.jpeg" alt="Menus">
+        <img src="Menu.jpeg" alt="Menus" onerror="this.src='https://via.placeholder.com/300x220?text=Menu+Design'">
         <div class="service-info">
           <div>
             <h3>Menus Ads</h3>
@@ -616,19 +656,26 @@
           <button class="btn btn-orange" onclick="openOrderModal('Menus Ads')">Order Now</button>
         </div>
       </div>
-       <div class="service-card">
-        <img src="Static Website.png" alt="Static Website">
+
+      <div class="service-card">
+        <img src="Static Website.png" alt="Static Website" onerror="this.src='https://via.placeholder.com/300x220?text=Static+Website'">
         <div class="service-info">
           <div>
             <h3>Static Website</h3>
-            <p>Instant loading for a seamless user experience.</p>
+            <p>Instant Loading for A Seamless User Experience.</p>
           </div>
           <button class="btn btn-orange" onclick="openOrderModal('Static Website')">Order Now</button>
         </div>
       </div>
 
     </div>
-     
+
+    <!-- Amazon Recommended Products Section -->
+    <h2 class="section-title" id="amazon-products">Recommended Amazon Products</h2>
+    <div class="services-grid" id="affiliate-grid">
+      <p style="color: var(--text-muted); grid-column: 1/-1;">Fetching live Amazon deals & design tools...</p>
+    </div>
+      
     <!-- Contact Us Section -->
     <section class="contact-main-section" id="contact-section">
       <div class="contact-header">
@@ -704,6 +751,7 @@
   <!-- Footer -->
   <footer>
     <p>&copy; Click Vectora Solution. All Rights Reserved.</p>
+    <p style="font-size: 0.78rem; margin-top: 0.4rem;">As an Amazon Associate, We Earn From Qualifying Purchases Through Affiliate Links.</p>
   </footer>
 
   <!-- RESPONSIVE ORDER MODAL -->
@@ -817,6 +865,76 @@
 
       window.open(`https://wa.me/${companyPhone}?text=${encodeURI(message)}`, '_blank');
     }
+
+    // =========================================
+    // AMAZON LIVE AFFILIATE PRODUCTS FETCH LOGIC
+    // =========================================
+    
+    const AMAZON_TAG = "clickvectora-21";
+
+    const affiliateProducts = [
+      {
+        title: "Native M2 Pro Water Purifier by Urban Company",
+        price: "",
+        originalPrice: "",
+        imageUrl: "https://m.media-amazon.com/images/I/61bRe+7bhlL._AC_SL1500_.jpg",
+        description: "Preset Touch Dispensing + Battery | Smart Real-time Tracking | 10-Stage RO+UV+Copper+Alkaline+Mineraliser | No Service for 2 Years",
+        url: "https://link.amazon/B0eWCGjvf?tag=" + AMAZON_TAG,
+        asin: "B0G4CHKBGP"
+      },
+      {
+        title: "Ezee Black Medium Garbage Bags 180 Pcs",
+        price: "",
+        originalPrice: "",
+        imageUrl: "https://m.media-amazon.com/images/I/71D6PuAPSSL._SL1500_.jpg",
+        description: "19 X 21 Inch | 30 Pcs x Pack of 6 | Dustbin Trash Bag",
+        url: "https://www.amazon.in/dp/B074CW3JV4?tag=" + AMAZON_TAG, 
+        asin: "B074CW3JV4"
+      },
+      {
+        title: "Aluminium Badminton Racket Combo",
+        price: "",
+        originalPrice: "",
+        imageUrl: "https://m.media-amazon.com/images/I/61BAz4RFXAL._AC_SL1500_.jpg",
+        description: "Hundred Powertek 200 Aluminium Badminton Racket Combo, 2 Strung Rackets with 1 Full Cover & 3 Aura Nylon Shuttlecocks",
+        url: "https://www.amazon.in/dp/B0CZXCFR3P?tag=" + AMAZON_TAG, 
+        asin: "B0CZXCFR3P"
+      }
+    ];
+
+    async function loadAmazonProducts() {
+      renderProducts(affiliateProducts);
+    }
+
+    function renderProducts(items) {
+      const container = document.getElementById('affiliate-grid');
+      container.innerHTML = items.map(item => {
+        const affiliateUrl = item.url && item.url.trim() !== "" 
+          ? item.url 
+          : `https://www.amazon.in/dp/${item.asin}?tag=${AMAZON_TAG}`;
+
+        const fallbackImg = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80";
+
+        return `
+          <div class="service-card">
+            <img src="${item.imageUrl}" alt="${item.title}" onerror="this.onerror=null; this.src='${fallbackImg}';">
+            <div class="service-info">
+              <div>
+                <span class="affiliate-badge"><i class="fa-brands fa-amazon"></i> Amazon Choice</span>
+                <h3>${item.title}</h3>
+                ${item.price ? `<div class="product-price">${item.price} ${item.originalPrice ? `<span>${item.originalPrice}</span>` : ''}</div>` : ''}
+                <p>${item.description}</p>
+              </div>
+              <a href="${affiliateUrl}" target="_blank" rel="noopener sponsored" class="btn btn-amazon">
+                View on Amazon <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; margin-left:4px;"></i>
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', loadAmazonProducts);
   </script>
 </body>
 </html>
