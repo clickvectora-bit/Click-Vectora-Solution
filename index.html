@@ -37,7 +37,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.5rem 5%;
+      padding: 0.8rem 5%;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
@@ -54,10 +54,12 @@
       text-decoration: none;
     }
 
+    /* INCREASED LOGO SIZE (Desktop) */
     .brand-logo img {
-      height: 80px;
+      height: 120px;
       width: auto;
       display: block;
+      object-fit: contain;
     }
 
     .nav-links {
@@ -535,12 +537,13 @@
         padding: 0.6rem 5%; 
       }
 
+      /* INCREASED LOGO SIZE (Mobile) */
       .brand-logo img { 
-        height: 50px; 
+        height: 85px; 
       }
 
       .menu-toggle {
-        display: block; /* Hamburger Button Show */
+        display: block;
       }
 
       /* Mobile Slide Navigation Bar */
@@ -561,7 +564,7 @@
       }
 
       .nav-links.active {
-        display: flex; /* Script toggles this class */
+        display: flex;
       }
 
       .nav-links a {
@@ -601,7 +604,7 @@
   <!-- Header Navigation -->
   <nav>
     <a href="#" class="brand-logo">
-      <img src="logo.png" alt="Click Vectora Solution Logo" onerror="this.src='https://via.placeholder.com/150x50?text=Click+Vectora'">
+      <img src="logo.png" alt="Click Vectora Solution Logo" onerror="this.src='https://via.placeholder.com/200x80?text=Click+Vectora'">
     </a>
 
     <!-- Hamburger Toggle Button for Mobile -->
@@ -894,7 +897,7 @@
       }
     });
 
-    // Mobile nav link click par menu band karna
+    // Mobile nav link click closes menu
     document.querySelectorAll('.nav-links a').forEach(link => {
       link.addEventListener('click', () => {
         navLinks.classList.remove('active');
