@@ -102,7 +102,8 @@
     
     <!-- Header Module -->
     <header class="flex flex-col items-center mb-8 border-b pb-6 relative" style="border-color: var(--border)">
-      <button id="homeBtn" class="absolute left-0 top-0 btn-secondary px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm hover:scale-105">
+      <!-- Direct Home Action Button -->
+      <button id="homeBtn" class="absolute left-0 top-0 btn-secondary px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm hover:scale-105 cursor-pointer">
         🏠 Home
       </button>
 
@@ -308,9 +309,9 @@
       verifyAndDownloadBtn: document.getElementById('verifyAndDownloadBtn')
     };
 
-    // Home Reset
+    // Direct Home Navigation (Instantly reloads/navigates to fresh home page)
     DOM.homeBtn.addEventListener('click', () => {
-      if (confirm('Return home? Unsaved canvas changes will be lost.')) location.reload();
+      window.location.href = window.location.pathname;
     });
 
     // Page Size Selector Listener
