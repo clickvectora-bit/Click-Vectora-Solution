@@ -32,7 +32,7 @@
     body {
       background-color: var(--bg-main);
       color: var(--text-main);
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     .theme-card {
@@ -41,14 +41,20 @@
       box-shadow: 0 4px 20px var(--shadow);
     }
 
+    .theme-card:hover {
+      box-shadow: 0 8px 30px var(--shadow-hover);
+    }
+
     .theme-input {
       background-color: var(--bg-input);
       border: 1px solid var(--border);
       color: var(--text-main);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .theme-input:focus {
       border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(0, 168, 204, 0.15);
       outline: none;
     }
 
@@ -89,17 +95,21 @@
 </head>
 <body class="p-4 md:p-8 min-h-screen">
 
-  <div class="max-w-6xl mx-auto theme-card rounded-2xl p-6 md:p-8 transition-all">
+  <div class="max-w-6xl mx-auto theme-card rounded-2xl p-6 md:p-8 transition-all relative">
     
-    <div class="flex flex-col items-center mb-8 border-b pb-6" style="border-color: var(--border)">
-      <img src="logo.png" alt="ClickVectora Solution" class="h-16 object-contain mb-3">
-      <h1 class="text-3xl font-extrabold tracking-tight">AI Passport Photo Studio</h1>
-      <p class="text-sm text-muted mt-1">Advanced Crop Controls, Multi-Engine BG Removal, & Printable A4 Layouts</p>
-    </div>
+    <header class="flex flex-col items-center mb-8 border-b pb-6 relative" style="border-color: var(--border)">
+      <button id="homeBtn" class="absolute left-0 top-0 btn-secondary px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm hover:scale-105">
+        🏠 Home
+      </button>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <img src="ClickVectora Logo - Copy.png" alt="ClickVectora Solution Logo" class="h-28 md:h-36 object-contain mb-3 transition-transform hover:scale-105">
+      <h1 class="text-3xl font-extrabold tracking-tight">AI Passport Photo Studio</h1>
+      <p class="text-sm text-muted mt-1 text-center">Background Removal, Advanced Crop Controls, Undo/Redo History & Printable A4 Layouts</p>
+    </header>
+
+    <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       
-      <div class="space-y-6">
+      <section class="space-y-6">
         
         <div class="p-5 border-2 border-dashed rounded-xl text-center transition-all" style="border-color: var(--border); background-color: var(--bg-input);">
           <input type="file" id="uploadInput" accept="image/*" class="hidden">
@@ -119,12 +129,14 @@
             <img id="image" src="" alt="Upload Source" class="hidden">
           </div>
 
-          <div class="grid grid-cols-5 gap-2">
+          <div class="grid grid-cols-7 gap-1.5 md:gap-2">
+            <button id="undoBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold disabled:opacity-40" disabled title="Undo Action">↩️ Undo</button>
+            <button id="redoBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold disabled:opacity-40" disabled title="Redo Action">↪️ Redo</button>
             <button id="zoomInBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold" title="Zoom In">🔍 +</button>
             <button id="zoomOutBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold" title="Zoom Out">🔍 -</button>
             <button id="rotateLeftBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold" title="Rotate Left">🔄 -90°</button>
             <button id="rotateRightBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold" title="Rotate Right">🔄 +90°</button>
-            <button id="resetCropBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold" title="Reset Frame">↩️ Reset</button>
+            <button id="resetCropBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold" title="Reset Frame">💥 Reset</button>
           </div>
 
           <div class="flex items-center gap-3 pt-1">
@@ -136,7 +148,7 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-muted mb-3">AI Editing Tools</label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-muted mb-3">AI Editing Suite</label>
           <div class="grid grid-cols-2 gap-3">
             <button id="removeBgBtn" class="btn-cyan text-sm py-2.5 px-3 rounded-lg font-medium transition shadow-sm disabled:opacity-50">
               ✨ Remove BG (AI)
@@ -178,9 +190,9 @@
           Generate A4 Sheet
         </button>
 
-      </div>
+      </section>
 
-      <div class="flex flex-col items-center justify-start space-y-5">
+      <section class="flex flex-col items-center justify-start space-y-5">
         <h2 class="text-lg font-bold">A4 Sheet Preview (300 DPI)</h2>
         <div class="theme-input p-3 rounded-2xl w-full flex justify-center max-h-[520px] overflow-auto">
           <canvas id="a4Canvas" class="max-w-full h-auto bg-white rounded shadow-sm"></canvas>
@@ -189,15 +201,15 @@
         <button id="payAndDownloadBtn" class="w-full btn-orange py-3.5 rounded-xl font-bold text-base transition shadow-md disabled:opacity-50" disabled>
           Pay via UPI & Download Sheet
         </button>
-      </div>
+      </section>
 
-    </div>
+    </main>
   </div>
 
   <div id="upiModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="theme-card rounded-2xl max-w-md w-full p-6 relative text-center">
       <button id="closeModalBtn" class="absolute top-4 right-4 text-muted hover:text-slate-900 font-bold text-xl">&times;</button>
-      <img src="ClickVectora Logo - Copy.png" alt="ClickVectora Solution" class="h-12 mx-auto mb-2 object-contain">
+      <img src="ClickVectora Logo - Copy.png" alt="ClickVectora Solution Logo" class="h-16 mx-auto mb-2 object-contain">
       <div class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3" style="background-color: #fff3ed; color: var(--orange);">
         ⚠️ Enter 12-Digit UTR Number to Unlock
       </div>
@@ -219,52 +231,123 @@
   </div>
 
   <script>
-    const UPI_ID = "krushnram66@okicici";
-    const AMOUNT = "10";
-    const PAYEE_NAME = "ClickVectora Solution";
+    const CONFIG = {
+      UPI_ID: "krushnram66@okicici",
+      AMOUNT: "10",
+      PAYEE_NAME: "ClickVectora Solution",
+      PASSPORT_WIDTH: 413,   // 35mm at 300 DPI
+      PASSPORT_HEIGHT: 531,  // 45mm at 300 DPI
+      A4_WIDTH: 2480,        // A4 width at 300 DPI
+      A4_HEIGHT: 3508        // A4 height at 300 DPI
+    };
 
-    const uploadInput = document.getElementById('uploadInput');
-    const fileLabel = document.getElementById('fileLabel');
-    const image = document.getElementById('image');
-    
-    const removeBgBtn = document.getElementById('removeBgBtn');
-    const enhanceAiBtn = document.getElementById('enhanceAiBtn');
-    const autoCenterBtn = document.getElementById('autoCenterBtn');
-    const smoothSkinBtn = document.getElementById('smoothSkinBtn');
-    const bgStatus = document.getElementById('bgStatus');
+    const state = {
+      cropper: null,
+      selectedBgColor: '#ffffff',
+      historyStack: [],
+      historyIndex: -1,
+      isRestoringHistory: false
+    };
 
-    const generateBtn = document.getElementById('generateBtn');
-    const payAndDownloadBtn = document.getElementById('payAndDownloadBtn');
-    const customBgColor = document.getElementById('customBgColor');
-    const colsInput = document.getElementById('colsInput');
-    const rowsInput = document.getElementById('rowsInput');
-    const canvas = document.getElementById('a4Canvas');
-    const ctx = canvas.getContext('2d');
+    const DOM = {
+      homeBtn: document.getElementById('homeBtn'),
+      uploadInput: document.getElementById('uploadInput'),
+      fileLabel: document.getElementById('fileLabel'),
+      image: document.getElementById('image'),
+      
+      undoBtn: document.getElementById('undoBtn'),
+      redoBtn: document.getElementById('redoBtn'),
+      removeBgBtn: document.getElementById('removeBgBtn'),
+      enhanceAiBtn: document.getElementById('enhanceAiBtn'),
+      autoCenterBtn: document.getElementById('autoCenterBtn'),
+      smoothSkinBtn: document.getElementById('smoothSkinBtn'),
+      bgStatus: document.getElementById('bgStatus'),
 
-    const upiModal = document.getElementById('upiModal');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const upiQrImg = document.getElementById('upiQrImg');
-    const utrInput = document.getElementById('utrInput');
-    const utrError = document.getElementById('utrError');
-    const verifyAndDownloadBtn = document.getElementById('verifyAndDownloadBtn');
+      generateBtn: document.getElementById('generateBtn'),
+      payAndDownloadBtn: document.getElementById('payAndDownloadBtn'),
+      customBgColor: document.getElementById('customBgColor'),
+      colsInput: document.getElementById('colsInput'),
+      rowsInput: document.getElementById('rowsInput'),
+      canvas: document.getElementById('a4Canvas'),
+      ctx: document.getElementById('a4Canvas').getContext('2d'),
 
-    let cropper = null;
-    let selectedBgColor = '#ffffff';
+      upiModal: document.getElementById('upiModal'),
+      closeModalBtn: document.getElementById('closeModalBtn'),
+      upiQrImg: document.getElementById('upiQrImg'),
+      utrInput: document.getElementById('utrInput'),
+      utrError: document.getElementById('utrError'),
+      verifyAndDownloadBtn: document.getElementById('verifyAndDownloadBtn')
+    };
 
-    // File Selection & Cropper Initialization
-    uploadInput.addEventListener('change', (e) => {
+    // Home Button Workspace Reset
+    DOM.homeBtn.addEventListener('click', () => {
+      if (confirm('Return to home? Unsaved canvas changes will be reset.')) {
+        location.reload();
+      }
+    });
+
+    // History Tracking Helpers
+    function pushHistory(dataUrl) {
+      if (state.isRestoringHistory) return;
+      
+      // Truncate stack if adding after undo actions
+      if (state.historyIndex < state.historyStack.length - 1) {
+        state.historyStack = state.historyStack.slice(0, state.historyIndex + 1);
+      }
+      
+      state.historyStack.push(dataUrl);
+      state.historyIndex = state.historyStack.length - 1;
+      updateHistoryButtons();
+    }
+
+    function updateHistoryButtons() {
+      DOM.undoBtn.disabled = state.historyIndex <= 0;
+      DOM.redoBtn.disabled = state.historyIndex >= state.historyStack.length - 1;
+    }
+
+    function restoreHistoryState(index) {
+      if (index < 0 || index >= state.historyStack.length) return;
+      state.isRestoringHistory = true;
+      state.historyIndex = index;
+      
+      const dataUrl = state.historyStack[index];
+      state.cropper.replace(dataUrl);
+
+      setTimeout(() => {
+        state.isRestoringHistory = false;
+        updateHistoryButtons();
+      }, 200);
+    }
+
+    DOM.undoBtn.addEventListener('click', () => {
+      if (state.historyIndex > 0) {
+        restoreHistoryState(state.historyIndex - 1);
+      }
+    });
+
+    DOM.redoBtn.addEventListener('click', () => {
+      if (state.historyIndex < state.historyStack.length - 1) {
+        restoreHistoryState(state.historyIndex + 1);
+      }
+    });
+
+    // File Upload Handler
+    DOM.uploadInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
 
-      fileLabel.innerText = file.name;
+      DOM.fileLabel.innerText = file.name;
       const url = URL.createObjectURL(file);
 
-      image.src = url;
-      image.classList.remove('hidden');
+      DOM.image.src = url;
+      DOM.image.classList.remove('hidden');
 
-      if (cropper) cropper.destroy();
+      if (state.cropper) state.cropper.destroy();
       
-      cropper = new Cropper(image, {
+      state.historyStack = [];
+      state.historyIndex = -1;
+
+      state.cropper = new Cropper(DOM.image, {
         aspectRatio: 3.5 / 4.5,
         viewMode: 1,
         autoCropArea: 0.9,
@@ -272,106 +355,112 @@
         responsive: true,
         restore: false,
         checkCrossOrigin: false,
+        ready() {
+          const initialCanvas = state.cropper.getCroppedCanvas();
+          if (initialCanvas) {
+            pushHistory(initialCanvas.toDataURL('image/png'));
+          }
+        }
       });
 
-      bgStatus.classList.add('hidden');
+      DOM.bgStatus.classList.add('hidden');
     });
 
-    // Enhanced Cropper Control Handlers
-    document.getElementById('zoomInBtn').addEventListener('click', () => cropper && cropper.zoom(0.1));
-    document.getElementById('zoomOutBtn').addEventListener('click', () => cropper && cropper.zoom(-0.1));
-    document.getElementById('rotateLeftBtn').addEventListener('click', () => cropper && cropper.rotate(-90));
-    document.getElementById('rotateRightBtn').addEventListener('click', () => cropper && cropper.rotate(90));
-    document.getElementById('resetCropBtn').addEventListener('click', () => cropper && cropper.reset());
+    // Toolbar Controls
+    document.getElementById('zoomInBtn').addEventListener('click', () => state.cropper && state.cropper.zoom(0.1));
+    document.getElementById('zoomOutBtn').addEventListener('click', () => state.cropper && state.cropper.zoom(-0.1));
+    document.getElementById('rotateLeftBtn').addEventListener('click', () => state.cropper && state.cropper.rotate(-90));
+    document.getElementById('rotateRightBtn').addEventListener('click', () => state.cropper && state.cropper.rotate(90));
+    document.getElementById('resetCropBtn').addEventListener('click', () => state.cropper && state.cropper.reset());
 
     document.querySelectorAll('.ratio-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        if (!cropper) return;
+        if (!state.cropper) return;
         document.querySelectorAll('.ratio-btn').forEach(b => b.classList.replace('bg-slate-200', 'bg-slate-100'));
         e.target.classList.replace('bg-slate-100', 'bg-slate-200');
         const ratio = parseFloat(e.target.getAttribute('data-ratio'));
-        cropper.setAspectRatio(isNaN(ratio) ? NaN : ratio);
+        state.cropper.setAspectRatio(isNaN(ratio) ? NaN : ratio);
       });
     });
 
-    // Color Selector
+    // Background Palette Handlers
     document.querySelectorAll('.color-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        selectedBgColor = e.target.getAttribute('data-color');
-        customBgColor.value = selectedBgColor;
+        state.selectedBgColor = e.target.getAttribute('data-color');
+        DOM.customBgColor.value = state.selectedBgColor;
       });
     });
 
-    customBgColor.addEventListener('input', (e) => {
-      selectedBgColor = e.target.value;
+    DOM.customBgColor.addEventListener('input', (e) => {
+      state.selectedBgColor = e.target.value;
     });
 
-    // Multi-Engine Robust Background Removal
-    removeBgBtn.addEventListener('click', async () => {
-      if (!cropper) return alert('Please upload a photo first!');
+    // Robust Multi-Engine Background Removal
+    DOM.removeBgBtn.addEventListener('click', async () => {
+      if (!state.cropper) return alert('Please upload a photo first!');
 
-      removeBgBtn.innerText = 'Removing BG...';
-      removeBgBtn.disabled = true;
+      DOM.removeBgBtn.innerText = 'Removing BG...';
+      DOM.removeBgBtn.disabled = true;
 
       try {
-        const croppedCanvas = cropper.getCroppedCanvas();
+        const croppedCanvas = state.cropper.getCroppedCanvas();
         const blob = await new Promise(resolve => croppedCanvas.toBlob(resolve, 'image/png'));
         
-        // Primary Attempt: Local WebAssembly ES Module
         if (window.imglyRemoveBackground) {
           const bgRemovedBlob = await window.imglyRemoveBackground(blob, {
             publicPath: "https://cdn.jsdelivr.net/npm/@imgly/background-removal-data@1.4.5/dist/"
           });
           const newUrl = URL.createObjectURL(bgRemovedBlob);
-          cropper.replace(newUrl);
-          bgStatus.classList.remove('hidden');
+          state.cropper.replace(newUrl);
+          pushHistory(newUrl);
+          DOM.bgStatus.classList.remove('hidden');
         } else {
-          throw new Error("Local WASM Unavailable");
+          throw new Error("WASM Engine Unavailable");
         }
       } catch (err) {
-        console.warn('Primary WASM BG removal fallback initiated:', err);
-        
-        // Fallback Canvas Auto-Threshold Masking
+        console.warn('Initiating Canvas Masking Fallback:', err);
         try {
-          const canvas = cropper.getCroppedCanvas();
+          const canvas = state.cropper.getCroppedCanvas();
           const ctx = canvas.getContext('2d');
           const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
           const data = imgData.data;
 
           for (let i = 0; i < data.length; i += 4) {
-            const r = data[i], g = data[i+1], b = data[i+2];
-            // Clear light/white uniform background pixels
-            if (r > 220 && g > 220 && b > 220) {
+            if (data[i] > 220 && data[i+1] > 220 && data[i+2] > 220) {
               data[i + 3] = 0;
             }
           }
           ctx.putImageData(imgData, 0, 0);
-          cropper.replace(canvas.toDataURL('image/png'));
-          bgStatus.classList.remove('hidden');
+          const dataUrl = canvas.toDataURL('image/png');
+          state.cropper.replace(dataUrl);
+          pushHistory(dataUrl);
+          DOM.bgStatus.classList.remove('hidden');
         } catch (fallbackErr) {
-          alert('Background removal failed. Please ensure you serve this page using Live Server.');
+          alert('Background removal failed. Please run this app via a web server.');
         }
       } finally {
-        removeBgBtn.innerText = '✨ Remove BG (AI)';
-        removeBgBtn.disabled = false;
+        DOM.removeBgBtn.innerText = '✨ Remove BG (AI)';
+        DOM.removeBgBtn.disabled = false;
       }
     });
 
-    // AI Editing Actions
-    enhanceAiBtn.addEventListener('click', () => {
-      if (!cropper) return alert('Please upload a photo first!');
-      const cCanvas = cropper.getCroppedCanvas({ width: 800, height: 1028 });
+    // AI Editing Effects
+    DOM.enhanceAiBtn.addEventListener('click', () => {
+      if (!state.cropper) return alert('Please upload a photo first!');
+      const cCanvas = state.cropper.getCroppedCanvas({ width: 800, height: 1028 });
       const cCtx = cCanvas.getContext('2d');
       cCtx.filter = 'contrast(1.08) brightness(1.03) saturate(1.05)';
       cCtx.drawImage(cCanvas, 0, 0);
-      cropper.replace(cCanvas.toDataURL('image/jpeg', 0.95));
+      const dataUrl = cCanvas.toDataURL('image/jpeg', 0.95);
+      state.cropper.replace(dataUrl);
+      pushHistory(dataUrl);
     });
 
-    autoCenterBtn.addEventListener('click', () => {
-      if (!cropper) return alert('Please upload a photo first!');
-      cropper.reset();
-      const containerData = cropper.getContainerData();
-      cropper.setCropBoxData({
+    DOM.autoCenterBtn.addEventListener('click', () => {
+      if (!state.cropper) return alert('Please upload a photo first!');
+      state.cropper.reset();
+      const containerData = state.cropper.getContainerData();
+      state.cropper.setCropBoxData({
         left: (containerData.width - 200) / 2,
         top: 30,
         width: 200,
@@ -379,100 +468,103 @@
       });
     });
 
-    smoothSkinBtn.addEventListener('click', () => {
-      if (!cropper) return alert('Please upload a photo first!');
-      const cCanvas = cropper.getCroppedCanvas();
+    DOM.smoothSkinBtn.addEventListener('click', () => {
+      if (!state.cropper) return alert('Please upload a photo first!');
+      const cCanvas = state.cropper.getCroppedCanvas();
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = cCanvas.width;
       tempCanvas.height = cCanvas.height;
       const tCtx = tempCanvas.getContext('2d');
       tCtx.filter = 'blur(1px) brightness(1.02)';
       tCtx.drawImage(cCanvas, 0, 0);
-      cropper.replace(tempCanvas.toDataURL('image/png'));
+      const dataUrl = tempCanvas.toDataURL('image/png');
+      state.cropper.replace(dataUrl);
+      pushHistory(dataUrl);
     });
 
-    // Generate A4 Printable Sheet
-    generateBtn.addEventListener('click', () => {
-      if (!cropper) return alert('Please upload a photo first!');
+    // Canvas Sheet Rendering
+    DOM.generateBtn.addEventListener('click', () => {
+      if (!state.cropper) return alert('Please upload a photo first!');
 
-      const a4Width = 2480;
-      const a4Height = 3508;
-      canvas.width = a4Width;
-      canvas.height = a4Height;
+      DOM.canvas.width = CONFIG.A4_WIDTH;
+      DOM.canvas.height = CONFIG.A4_HEIGHT;
 
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, a4Width, a4Height);
+      DOM.ctx.fillStyle = '#ffffff';
+      DOM.ctx.fillRect(0, 0, CONFIG.A4_WIDTH, CONFIG.A4_HEIGHT);
 
-      const croppedCanvas = cropper.getCroppedCanvas({ width: 413, height: 531 });
+      const croppedCanvas = state.cropper.getCroppedCanvas({ 
+        width: CONFIG.PASSPORT_WIDTH, 
+        height: CONFIG.PASSPORT_HEIGHT 
+      });
 
       const passportCanvas = document.createElement('canvas');
-      passportCanvas.width = 413;
-      passportCanvas.height = 531;
+      passportCanvas.width = CONFIG.PASSPORT_WIDTH;
+      passportCanvas.height = CONFIG.PASSPORT_HEIGHT;
       const pCtx = passportCanvas.getContext('2d');
 
-      pCtx.fillStyle = selectedBgColor;
-      pCtx.fillRect(0, 0, 413, 531);
-      pCtx.drawImage(croppedCanvas, 0, 0, 413, 531);
+      pCtx.fillStyle = state.selectedBgColor;
+      pCtx.fillRect(0, 0, CONFIG.PASSPORT_WIDTH, CONFIG.PASSPORT_HEIGHT);
+      pCtx.drawImage(croppedCanvas, 0, 0, CONFIG.PASSPORT_WIDTH, CONFIG.PASSPORT_HEIGHT);
 
-      const cols = parseInt(colsInput.value) || 5;
-      const rows = parseInt(rowsInput.value) || 6;
+      const cols = parseInt(DOM.colsInput.value) || 5;
+      const rows = parseInt(DOM.rowsInput.value) || 6;
       const gapX = 40;
       const gapY = 40;
 
-      const totalGridWidth = (cols * 413) + ((cols - 1) * gapX);
-      const totalGridHeight = (rows * 531) + ((rows - 1) * gapY);
+      const totalGridWidth = (cols * CONFIG.PASSPORT_WIDTH) + ((cols - 1) * gapX);
+      const totalGridHeight = (rows * CONFIG.PASSPORT_HEIGHT) + ((rows - 1) * gapY);
 
-      const startX = Math.max((a4Width - totalGridWidth) / 2, 50);
-      const startY = Math.max((a4Height - totalGridHeight) / 2, 50);
+      const startX = Math.max((CONFIG.A4_WIDTH - totalGridWidth) / 2, 50);
+      const startY = Math.max((CONFIG.A4_HEIGHT - totalGridHeight) / 2, 50);
 
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          const posX = startX + c * (413 + gapX);
-          const posY = startY + r * (531 + gapY);
+          const posX = startX + c * (CONFIG.PASSPORT_WIDTH + gapX);
+          const posY = startY + r * (CONFIG.PASSPORT_HEIGHT + gapY);
 
-          ctx.drawImage(passportCanvas, posX, posY, 413, 531);
-          ctx.strokeStyle = '#cccccc';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(posX, posY, 413, 531);
+          DOM.ctx.drawImage(passportCanvas, posX, posY, CONFIG.PASSPORT_WIDTH, CONFIG.PASSPORT_HEIGHT);
+          DOM.ctx.strokeStyle = '#cccccc';
+          DOM.ctx.lineWidth = 2;
+          DOM.ctx.strokeRect(posX, posY, CONFIG.PASSPORT_WIDTH, CONFIG.PASSPORT_HEIGHT);
         }
       }
 
-      payAndDownloadBtn.disabled = false;
+      DOM.payAndDownloadBtn.disabled = false;
     });
 
-    // UPI Modal & Verification
+    // Payment Processing
     function generateUpiQrUrl() {
-      const upiString = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${AMOUNT}&cu=INR`;
+      const upiString = `upi://pay?pa=${encodeURIComponent(CONFIG.UPI_ID)}&pn=${encodeURIComponent(CONFIG.PAYEE_NAME)}&am=${CONFIG.AMOUNT}&cu=INR`;
       return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
     }
 
-    payAndDownloadBtn.addEventListener('click', () => {
-      if (canvas.width === 0) return alert("Please generate the A4 sheet first!");
-      upiQrImg.src = generateUpiQrUrl();
-      utrError.classList.add('hidden');
-      utrInput.value = '';
-      upiModal.classList.remove('hidden');
+    DOM.payAndDownloadBtn.addEventListener('click', () => {
+      if (DOM.canvas.width === 0) return alert("Please generate the A4 sheet first!");
+      DOM.upiQrImg.src = generateUpiQrUrl();
+      DOM.utrError.classList.add('hidden');
+      DOM.utrInput.value = '';
+      DOM.upiModal.classList.remove('hidden');
     });
 
-    closeModalBtn.addEventListener('click', () => upiModal.classList.add('hidden'));
+    DOM.closeModalBtn.addEventListener('click', () => DOM.upiModal.classList.add('hidden'));
 
     function triggerFileDownload() {
       const link = document.createElement('a');
       link.download = `clickvectora-passport-sheet-${Date.now()}.jpg`;
-      link.href = canvas.toDataURL('image/jpeg', 0.95);
+      link.href = DOM.canvas.toDataURL('image/jpeg', 0.95);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
 
-    verifyAndDownloadBtn.addEventListener('click', () => {
-      const utr = utrInput.value.trim();
+    DOM.verifyAndDownloadBtn.addEventListener('click', () => {
+      const utr = DOM.utrInput.value.trim();
       if (!/^\d{12}$/.test(utr)) {
-        utrError.classList.remove('hidden');
+        DOM.utrError.classList.remove('hidden');
         return;
       }
-      utrError.classList.add('hidden');
-      upiModal.classList.add('hidden');
+      DOM.utrError.classList.add('hidden');
+      DOM.upiModal.classList.add('hidden');
       triggerFileDownload();
     });
   </script>
