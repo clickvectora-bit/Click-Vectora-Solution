@@ -100,10 +100,9 @@
   <div class="max-w-6xl mx-auto theme-card rounded-2xl p-6 md:p-8 transition-all relative">
     
     <header class="flex flex-col items-center mb-6 border-b pb-6 relative" style="border-color: var(--border)">
-      <a href="index.html">
       <button id="homeBtn" class="absolute left-0 top-0 btn-secondary px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm hover:scale-105 cursor-pointer">
         🏠 Home
-      </button></a>
+      </button>
 
       <img src="ClickVectora Logo - Copy.png" alt="ClickVectora Solution Logo" onerror="this.src='logo.png'; this.onerror=function(){this.src='https://via.placeholder.com/300x120?text=Click+Vectora';}" class="h-36 md:h-48 w-auto object-contain mb-3 transition-transform hover:scale-105">
       <h1 class="text-3xl font-extrabold tracking-tight">AI Passport Photo Studio</h1>
@@ -249,9 +248,7 @@
 
   <script>
     const CONFIG = {
-      // Replace with your actual Razorpay Key ID (Live / Test)
-      RAZORPAY_KEY_ID: rzp_test_TVvTBajDVPpHml
-      RAZORPAY_KEY_SECRET: glpIlLBnzjlnpr6ZlEdIQ2YL
+      RAZORPAY_KEY_ID: "rzp_live_TVvsN7S7XsvpRb", // Configured with your Test Key
       AMOUNT_IN_INR: 10,
       PAYEE_NAME: "ClickVectora Solution",
       PASSPORT_WIDTH: 413,   // 35mm at 300 DPI
@@ -566,17 +563,26 @@
     DOM.payAndDownloadBtn.addEventListener('click', () => {
       if (DOM.canvas.width === 0) return alert("Please generate the sheet first!");
 
+      if (typeof Razorpay === 'undefined') {
+        alert("Razorpay SDK load nahi hua! Internet connection ya AdBlocker check karein.");
+        return;
+      }
+
       const options = {
-        key: rzp_live_TVv6Eyu3jNZHiB,
-        amount: CONFIG.AMOUNT_IN_INR * 100, // Amount in paise
+        key: CONFIG.RAZORPAY_KEY_ID,
+        amount: CONFIG.AMOUNT_IN_INR * 100, // Amount in paise (₹10 = 1000 paise)
         currency: "INR",
         name: CONFIG.PAYEE_NAME,
         description: "High-Resolution Printable Passport Sheet",
         image: "ClickVectora Logo - Copy.png",
         handler: function (response) {
-          // Trigger file download on successful payment signature
           if (response.razorpay_payment_id) {
             triggerFileDownload();
+          }
+        },
+        modal: {
+          ondismiss: function() {
+            console.log("Payment popup closed.");
           }
         },
         theme: {
@@ -584,8 +590,12 @@
         }
       };
 
-      const rzp1 = new Razorpay(options);
-      rzp1.open();
+      try {
+        const rzp1 = new Razorpay(options);
+        rzp1.open();
+      } catch (err) {
+        alert("Payment popup open karne me error aaya: " + err.message);
+      }
     });
   </script>
 </body>
