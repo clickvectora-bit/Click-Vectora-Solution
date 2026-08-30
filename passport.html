@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <script type="module">
@@ -106,7 +108,7 @@
       </button></a>
       <img src="ClickVectora Logo - Copy.png" alt="ClickVectora Solution Logo" onerror="this.src='logo.png'; this.onerror=function(){this.src='https://via.placeholder.com/300x120?text=Click+Vectora';}" class="h-36 md:h-48 w-auto object-contain mb-3 transition-transform hover:scale-105">
       <h1 class="text-3xl font-extrabold tracking-tight">AI Passport Photo Studio</h1>
-      <p class="text-sm text-muted mt-1 text-center">Custom Paper Sizes, AI Background Removal, Crop Controls & Printable Layouts</p>
+      <p class="text-sm text-muted mt-1 text-center">Custom Paper Sizes, AI Background Removal, Crop Controls & Printable PDF Layouts</p>
     </header>
 
     <main class="space-y-8">
@@ -223,7 +225,7 @@
           </div>
           
           <button id="payAndDownloadBtn" class="w-full btn-orange py-3.5 rounded-xl font-bold text-base transition shadow-md disabled:opacity-50" disabled>
-            Pay ₹10 via Razorpay & Download Sheet
+            Pay ₹10 via Razorpay & Download PDF
           </button>
         </div>
 
@@ -248,7 +250,7 @@
 
   <script>
     const CONFIG = {
-      RAZORPAY_KEY_ID: "rzp_live_TVvsN7S7XsvpRb", // Configured with your Test Key
+      RAZORPAY_KEY_ID: "rzp_live_TVvsN7S7XsvpRb", 
       AMOUNT_IN_INR: 10,
       PAYEE_NAME: "ClickVectora Solution",
       PASSPORT_WIDTH: 413,   // 35mm at 300 DPI
@@ -296,12 +298,10 @@
       modalPreviewHeading: document.getElementById('modalPreviewHeading')
     };
 
-    // Direct Home Navigation
     DOM.homeBtn.addEventListener('click', () => {
       window.location.href = window.location.pathname;
     });
 
-    // Page Size Selector Listener
     DOM.pageSizeSelect.addEventListener('change', (e) => {
       const option = e.target.options[e.target.selectedIndex];
       state.pageWidth = parseInt(option.getAttribute('data-w'));
@@ -314,7 +314,6 @@
       DOM.modalPreviewHeading.innerText = `${label} Sheet Preview (Full Screen)`;
     });
 
-    // History Helpers
     function pushHistory(dataUrl) {
       if (state.isRestoringHistory) return;
       if (state.historyIndex < state.historyStack.length - 1) {
@@ -345,7 +344,6 @@
     DOM.undoBtn.addEventListener('click', () => state.historyIndex > 0 && restoreHistoryState(state.historyIndex - 1));
     DOM.redoBtn.addEventListener('click', () => state.historyIndex < state.historyStack.length - 1 && restoreHistoryState(state.historyIndex + 1));
 
-    // File Upload Handler
     DOM.uploadInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -376,7 +374,6 @@
       DOM.bgStatus.classList.add('hidden');
     });
 
-    // Toolbar Controls
     document.getElementById('zoomInBtn').addEventListener('click', () => state.cropper && state.cropper.zoom(0.1));
     document.getElementById('zoomOutBtn').addEventListener('click', () => state.cropper && state.cropper.zoom(-0.1));
     document.getElementById('rotateLeftBtn').addEventListener('click', () => state.cropper && state.cropper.rotate(-90));
@@ -393,7 +390,6 @@
       });
     });
 
-    // Background Palette Handlers
     document.querySelectorAll('.color-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         state.selectedBgColor = e.target.getAttribute('data-color');
@@ -403,7 +399,6 @@
 
     DOM.customBgColor.addEventListener('input', (e) => state.selectedBgColor = e.target.value);
 
-    // Multi-Engine BG Removal
     DOM.removeBgBtn.addEventListener('click', async () => {
       if (!state.cropper) return alert('Please upload a photo first!');
 
@@ -450,7 +445,6 @@
       }
     });
 
-    // AI Editing Effects
     DOM.enhanceAiBtn.addEventListener('click', () => {
       if (!state.cropper) return alert('Please upload a photo first!');
       const cCanvas = state.cropper.getCroppedCanvas({ width: 800, height: 1028 });
@@ -488,7 +482,6 @@
       pushHistory(dataUrl);
     });
 
-    // Dynamic Sheet Canvas Rendering
     DOM.generateBtn.addEventListener('click', () => {
       if (!state.cropper) return alert('Please upload a photo first!');
 
@@ -539,7 +532,6 @@
       DOM.viewModalBtn.disabled = false;
     });
 
-    // Preview Full Sheet Popup Modal Logic
     DOM.viewModalBtn.addEventListener('click', () => {
       DOM.previewModalImg.src = DOM.canvas.toDataURL('image/jpeg', 0.95);
       DOM.previewModal.classList.remove('hidden');
@@ -549,17 +541,25 @@
       DOM.previewModal.classList.add('hidden');
     });
 
-    // Download Trigger
-    function triggerFileDownload() {
-      const link = document.createElement('a');
-      link.download = `clickvectora-passport-sheet-${Date.now()}.jpg`;
-      link.href = DOM.canvas.toDataURL('image/jpeg', 0.95);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    // High-Resolution PDF Download Trigger using jsPDF
+    function triggerPDFDownload() {
+      const { jsPDF } = window.jspdf;
+      
+      // Determine orientation based on dimensions
+      const orientation = state.pageWidth > state.pageHeight ? 'l' : 'p';
+      
+      // Create jsPDF instance using points or pixels format
+      const pdf = new jsPDF({
+        orientation: orientation,
+        unit: 'px',
+        format: [state.pageWidth, state.pageHeight]
+      });
+
+      const imgData = DOM.canvas.toDataURL('image/jpeg', 0.98);
+      pdf.addImage(imgData, 'JPEG', 0, 0, state.pageWidth, state.pageHeight);
+      pdf.save(`clickvectora-passport-sheet-${Date.now()}.pdf`);
     }
 
-    // Razorpay Integration Handler
     DOM.payAndDownloadBtn.addEventListener('click', () => {
       if (DOM.canvas.width === 0) return alert("Please generate the sheet first!");
 
@@ -570,14 +570,14 @@
 
       const options = {
         key: CONFIG.RAZORPAY_KEY_ID,
-        amount: CONFIG.AMOUNT_IN_INR * 100, // Amount in paise (₹10 = 1000 paise)
+        amount: CONFIG.AMOUNT_IN_INR * 100, 
         currency: "INR",
         name: CONFIG.PAYEE_NAME,
-        description: "High-Resolution Printable Passport Sheet",
+        description: "High-Resolution Printable Passport PDF Sheet",
         image: "ClickVectora Logo - Copy.png",
         handler: function (response) {
           if (response.razorpay_payment_id) {
-            triggerFileDownload();
+            triggerPDFDownload();
           }
         },
         modal: {
