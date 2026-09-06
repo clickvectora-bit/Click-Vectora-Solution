@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Business Card Studio - Pro</title>
+  <title>Business Card Studio Pro</title>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -16,7 +16,7 @@
     :root {
       --primary: #FF6B00;
       --primary-hover: #E05D00;
-      --bg-workspace: #E2E8F0;
+      --bg-workspace: #CBD5E1;
       --border-color: #CBD5E1;
       --text-main: #0F172A;
       --text-muted: #64748B;
@@ -25,55 +25,56 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; touch-action: manipulation; }
     body { display: flex; flex-direction: column; height: 100vh; background: var(--bg-workspace); color: var(--text-main); overflow: hidden; }
 
-    /* Top Control Bar Styling */
+    /* Top Control Bar */
     .top-bar {
       width: 100%;
       background: #FFFFFF;
-      border-bottom: 1px solid var(--border-color);
-      padding: 10px 16px;
+      border-bottom: 1px solid #94A3B8;
+      padding: 8px 12px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       z-index: 10;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      max-height: 40vh;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      max-height: 45vh;
       overflow-y: auto;
     }
 
-    .brand {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--primary);
+    .brand-row {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      border-bottom: 1px solid #E2E8F0;
+      padding-bottom: 6px;
     }
+
+    .brand { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
 
     .toolbar-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 8px;
       align-items: center;
     }
 
     .tool-group {
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: #F8FAFC;
-      padding: 6px 10px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
+      gap: 4px;
+      background: #F1F5F9;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #CBD5E1;
       flex-wrap: wrap;
     }
 
     .section-title { 
       font-weight: 600; 
-      font-size: 0.7rem; 
+      font-size: 0.68rem; 
       color: var(--text-muted); 
       text-transform: uppercase; 
-      letter-spacing: 0.5px; 
-      margin-right: 4px;
+      letter-spacing: 0.4px; 
+      margin-right: 2px;
     }
 
     .btn-group { display: flex; gap: 4px; flex-wrap: wrap; }
@@ -82,74 +83,74 @@
       background: var(--primary);
       color: white;
       border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
+      padding: 5px 8px;
+      border-radius: 5px;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s ease;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 3px;
       white-space: nowrap;
     }
     button:hover { background: var(--primary-hover); }
-    button.secondary { background: #FFF; color: var(--text-main); border: 1px solid var(--border-color); }
-    button.secondary:hover { background: #F8FAFC; border-color: #94A3B8; }
+    button.secondary { background: #FFF; color: var(--text-main); border: 1px solid #CBD5E1; }
+    button.secondary:hover { background: #F8FAFC; border-color: #64748B; }
+    button.active-side { background: #0F172A; color: white; }
     button.danger { background: #EF4444; }
     button.danger:hover { background: #DC2626; }
 
     input, select {
-      padding: 5px 8px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
+      padding: 4px 6px;
+      border: 1px solid #CBD5E1;
+      border-radius: 5px;
       outline: none;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       background: #FAFAFA;
     }
-    input:focus, select:focus { border-color: var(--primary); background: #FFF; }
-    input[type="text"] { width: 140px; }
-    input[type="file"] { width: 160px; font-size: 0.7rem; }
+    input[type="text"] { width: 120px; }
+    input[type="file"] { width: 150px; font-size: 0.68rem; }
 
-    /* Workspace & Canvas Styling */
+    /* Workspace & Zero Padding Full Canvas */
     .workspace {
       flex: 1;
+      width: 100%;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       position: relative;
       overflow: hidden;
-      padding: 15px;
+      padding: 0;
+      margin: 0;
       background: radial-gradient(#94A3B8 1px, transparent 1px);
-      background-size: 16px 16px;
+      background-size: 14px 14px;
     }
 
     .canvas-container-wrapper {
       background: #FFFFFF;
-      border-radius: 4px;
-      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(0,0,0,0.08);
-      transition: border-radius 0.3s ease;
+      box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.3);
       position: relative;
     }
 
     .canvas-container-wrapper.rounded {
-      border-radius: 24px;
+      border-radius: 20px;
       overflow: hidden;
     }
 
-    /* Modal Styling */
+    /* Modal Overlay Styling */
     .modal-overlay {
       position: fixed;
       top:0; left:0; right:0; bottom:0;
-      background: rgba(15, 23, 42, 0.6);
+      background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(4px);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 1000;
     }
+    
     .modal {
       background: white;
       padding: 20px;
@@ -157,32 +158,55 @@
       width: 320px;
       max-width: 90%;
       text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
     }
-    .modal h3 { margin-bottom: 8px; color: var(--text-main); font-size: 1.1rem; }
-    .modal p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; }
-    .price-tag { font-size: 1.8rem; font-weight: 700; color: var(--primary); margin: 6px 0; }
+
+    /* 3D Card Preview Styles */
+    .card-3d-container {
+      width: 300px;
+      height: 171px;
+      perspective: 1000px;
+      margin: 20px auto;
+    }
+
+    .card-3d-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      border-radius: 8px;
+    }
+
+    .card-3d-inner.flipped { transform: rotateY(180deg); }
+
+    .card-3d-front, .card-3d-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 8px;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .card-3d-back { transform: rotateY(180deg); }
 
     #qrcode-hidden { display: none; }
-
-    /* Mobile Responsive Optimizations */
-    @media (max-width: 768px) {
-      .top-bar { padding: 8px; gap: 8px; }
-      .toolbar-grid { gap: 8px; }
-      .tool-group { width: 100%; justify-content: space-between; }
-      input[type="text"] { width: 100%; }
-      input[type="file"] { width: 100%; }
-    }
   </style>
 </head>
 <body>
 
   <div class="top-bar">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
-      <div class="brand">🎴 Business Card Studio</div>
+    <div class="brand-row">
+      <div class="brand">🎴 Card Studio Pro</div>
       
       <div class="btn-group">
-        <button class="danger" onclick="deleteSelected()">Delete Selected</button>
+        <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
+        <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
+        <button style="background: #8B5CF6;" onclick="open3DPreview()">3D Preview</button>
+        <button class="danger" onclick="deleteSelected()">Delete Layer</button>
         <button style="background: #10B981;" onclick="initiatePayment('png')">PNG</button>
         <button style="background: #2563EB;" onclick="initiatePayment('pdf')">PDF</button>
       </div>
@@ -191,25 +215,26 @@
     <div class="toolbar-grid">
       
       <div class="tool-group">
-        <span class="section-title">Canvas</span>
+        <span class="section-title">Layout & Guides</span>
         <div class="btn-group">
-          <button onclick="setOrientation('horizontal')">Horizontal</button>
-          <button onclick="setOrientation('vertical')">Vertical</button>
+          <button class="secondary" onclick="setOrientation('horizontal')">Horiz</button>
+          <button class="secondary" onclick="setOrientation('vertical')">Vert</button>
           <button class="secondary" onclick="toggleRounded()">Radius</button>
-          <button class="secondary" id="safetyBtn" onclick="toggleSafetyLine()">Safety Line: ON</button>
+          <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed Line: ON</button>
+          <button class="secondary" id="trimBtn" onclick="toggleGuide('trim')">Trim Line: ON</button>
+          <button class="secondary" id="safetyBtn" onclick="toggleGuide('safety')">Safety Line: ON</button>
         </div>
       </div>
 
       <div class="tool-group">
         <span class="section-title">Text</span>
         <button onclick="addText()">+ Text</button>
-        <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" style="height: 28px; width: 34px; cursor: pointer; padding: 1px;">
+        <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" style="height: 26px; width: 30px; cursor: pointer; padding: 1px;">
         <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)">
           <option value="Poppins">Poppins</option>
           <option value="Montserrat">Montserrat</option>
           <option value="Roboto">Roboto</option>
           <option value="Playfair Display">Playfair</option>
-          <option value="Open Sans">Open Sans</option>
         </select>
         <div class="btn-group">
           <button class="secondary" onclick="toggleStyle('bold')"><b>B</b></button>
@@ -219,13 +244,13 @@
       </div>
 
       <div class="tool-group">
-        <span class="section-title">Logo</span>
+        <span class="section-title">Image</span>
         <input type="file" id="imageLoader" accept="image/*">
       </div>
 
       <div class="tool-group">
         <span class="section-title">QR</span>
-        <input type="text" id="qrInput" placeholder="URL / UPI / Contact">
+        <input type="text" id="qrInput" placeholder="URL/UPI">
         <button onclick="addQRCode()">Generate</button>
       </div>
 
@@ -248,12 +273,28 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="preview3DModal">
+    <div class="modal" style="width: 380px;">
+      <h3>3D Print Preview</h3>
+      <div class="card-3d-container">
+        <div class="card-3d-inner" id="card3dInner">
+          <div class="card-3d-front" id="card3dFront"></div>
+          <div class="card-3d-back" id="card3dBack"></div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button style="flex:1;" class="secondary" onclick="flip3DCard()">Flip Side</button>
+        <button style="flex:1;" onclick="close3DModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
       <h3>Unlock HD Download</h3>
-      <p>Download print-ready vector file for your card.</p>
-      <div class="price-tag">₹49</div>
-      <div style="display: flex; gap: 8px; margin-top: 12px;">
+      <p>Print-Ready Vectors without Guides</p>
+      <div style="font-size: 1.8rem; font-weight:700; color:var(--primary); margin:8px 0;">₹49</div>
+      <div style="display: flex; gap: 8px; margin-top: 10px;">
         <button class="secondary" style="flex:1;" onclick="closeModal()">Cancel</button>
         <button style="flex:1;" onclick="processRazorpay()">Pay with Razorpay</button>
       </div>
@@ -263,66 +304,97 @@
   <div id="qrcode-hidden"></div>
 
   <script>
-    // High Quality Aspect Ratio (3.5" x 2")
     const BASE_WIDTH = 1000;
     const BASE_HEIGHT = 571;
-    const SAFETY_MARGIN = 35; // Red safety line padding inside card
+
+    // Margins for Print Lines
+    const BLEED_MARGIN = 10;
+    const TRIM_MARGIN = 22;
+    const SAFETY_MARGIN = 42;
+
+    let currentSide = 'front';
+    let canvasStates = { front: null, back: null };
+    
+    let showBleed = true;
+    let showTrim = true;
+    let showSafety = true;
+
+    let guideObjects = { bleed: null, trim: null, safety: null };
 
     let isRounded = false;
-    let showSafetyLine = true;
     let selectedExportType = 'png';
     let currentOrientation = 'horizontal';
-    let safetyLineObj = null;
 
-    // Initialize Fabric Canvas
     let canvas = new fabric.Canvas('cardCanvas', {
       backgroundColor: '#ffffff',
       preserveObjectStacking: true,
       allowTouchScrolling: false
     });
 
-    // Create / Update Red Safety Line
-    function drawSafetyLine() {
-      if (safetyLineObj) canvas.remove(safetyLineObj);
-
-      if (!showSafetyLine) {
-        canvas.renderAll();
-        return;
-      }
+    // Draw Print Lines Engine
+    function renderPrintGuides() {
+      ['bleed', 'trim', 'safety'].forEach(type => {
+        if (guideObjects[type]) canvas.remove(guideObjects[type]);
+      });
 
       let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
       let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
 
-      safetyLineObj = new fabric.Rect({
-        left: SAFETY_MARGIN,
-        top: SAFETY_MARGIN,
-        width: targetW - (SAFETY_MARGIN * 2),
-        height: targetH - (SAFETY_MARGIN * 2),
-        fill: 'transparent',
-        stroke: '#EF4444',
-        strokeWidth: 2,
-        strokeDashArray: [8, 6],
-        selectable: false,
-        evented: false,
-        excludeFromExport: true
-      });
+      // Bleed Line (Outer Red Line)
+      if (showBleed) {
+        guideObjects.bleed = new fabric.Rect({
+          left: BLEED_MARGIN, top: BLEED_MARGIN,
+          width: targetW - (BLEED_MARGIN * 2), height: targetH - (BLEED_MARGIN * 2),
+          fill: 'transparent', stroke: '#EF4444', strokeWidth: 2, strokeDashArray: [6, 6],
+          selectable: false, evented: false, excludeFromExport: true
+        });
+        canvas.add(guideObjects.bleed);
+      }
 
-      canvas.add(safetyLineObj);
-      canvas.bringToFront(safetyLineObj);
+      // Trim Line (Middle Black Line)
+      if (showTrim) {
+        guideObjects.trim = new fabric.Rect({
+          left: TRIM_MARGIN, top: TRIM_MARGIN,
+          width: targetW - (TRIM_MARGIN * 2), height: targetH - (TRIM_MARGIN * 2),
+          fill: 'transparent', stroke: '#0F172A', strokeWidth: 1.5,
+          selectable: false, evented: false, excludeFromExport: true
+        });
+        canvas.add(guideObjects.trim);
+      }
+
+      // Safety Line (Inner Green Line)
+      if (showSafety) {
+        guideObjects.safety = new fabric.Rect({
+          left: SAFETY_MARGIN, top: SAFETY_MARGIN,
+          width: targetW - (SAFETY_MARGIN * 2), height: targetH - (SAFETY_MARGIN * 2),
+          fill: 'transparent', stroke: '#10B981', strokeWidth: 2, strokeDashArray: [4, 4],
+          selectable: false, evented: false, excludeFromExport: true
+        });
+        canvas.add(guideObjects.safety);
+      }
+
       canvas.renderAll();
     }
 
-    function toggleSafetyLine() {
-      showSafetyLine = !showSafetyLine;
-      document.getElementById('safetyBtn').innerText = `Safety Line: ${showSafetyLine ? 'ON' : 'OFF'}`;
-      drawSafetyLine();
+    function toggleGuide(type) {
+      if (type === 'bleed') {
+        showBleed = !showBleed;
+        document.getElementById('bleedBtn').innerText = `Bleed Line: ${showBleed ? 'ON' : 'OFF'}`;
+      } else if (type === 'trim') {
+        showTrim = !showTrim;
+        document.getElementById('trimBtn').innerText = `Trim Line: ${showTrim ? 'ON' : 'OFF'}`;
+      } else if (type === 'safety') {
+        showSafety = !showSafety;
+        document.getElementById('safetyBtn').innerText = `Safety Line: ${showSafety ? 'ON' : 'OFF'}`;
+      }
+      renderPrintGuides();
     }
 
-    // Canvas Auto-Rescaling Engine to maximize preview area
+    // Canvas Auto Rescale Engine
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspace');
-      const maxWidth = workspace.clientWidth - 30;
-      const maxHeight = workspace.clientHeight - 30;
+      const maxWidth = workspace.clientWidth;
+      const maxHeight = workspace.clientHeight;
 
       let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
       let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
@@ -335,7 +407,58 @@
       });
 
       canvas.setZoom(scale);
-      drawSafetyLine();
+      renderPrintGuides();
+    }
+
+    window.addEventListener('resize', resizeCanvasToFitContainer);
+
+    // Front/Back Switching Engine
+    function switchSide(side) {
+      if (currentSide === side) return;
+
+      // Save current side state
+      canvasStates[currentSide] = canvas.toJSON();
+
+      currentSide = side;
+      document.getElementById('btnSideA').className = side === 'front' ? 'active-side' : 'secondary';
+      document.getElementById('btnSideB').className = side === 'back' ? 'active-side' : 'secondary';
+
+      canvas.clear();
+      canvas.backgroundColor = '#ffffff';
+
+      if (canvasStates[side]) {
+        canvas.loadFromJSON(canvasStates[side], () => {
+          resizeCanvasToFitContainer();
+        });
+      } else {
+        resizeCanvasToFitContainer();
+      }
+    }
+
+    // 3D Preview
+    function open3DPreview() {
+      hideGuidesForExport();
+      
+      const frontData = canvas.toDataURL({ format: 'png', quality: 1 });
+      document.getElementById('card3dFront').style.backgroundImage = `url(${frontData})`;
+
+      if (canvasStates[currentSide === 'front' ? 'back' : 'front']) {
+        document.getElementById('card3dBack').style.backgroundImage = `url(${frontData})`;
+      } else {
+        document.getElementById('card3dBack').style.backgroundImage = `url(${frontData})`;
+      }
+
+      restoreGuidesAfterExport();
+      document.getElementById('preview3DModal').style.display = 'flex';
+    }
+
+    function flip3DCard() {
+      document.getElementById('card3dInner').classList.toggle('flipped');
+    }
+
+    function close3DModal() {
+      document.getElementById('preview3DModal').style.display = 'none';
+      document.getElementById('card3dInner').classList.remove('flipped');
     }
 
     function setOrientation(type) {
@@ -343,16 +466,12 @@
       resizeCanvasToFitContainer();
     }
 
-    window.addEventListener('resize', resizeCanvasToFitContainer);
-    setTimeout(resizeCanvasToFitContainer, 100);
-
     function toggleRounded() {
       const wrapper = document.getElementById('canvasWrapper');
       isRounded = !isRounded;
       wrapper.classList.toggle('rounded', isRounded);
     }
 
-    // Handles Styling
     fabric.Object.prototype.set({
       transparentCorners: false,
       cornerColor: '#FF6B00',
@@ -363,18 +482,11 @@
       borderDashArray: [4, 4]
     });
 
-    // Text Handlers
+    // Tools
     function addText() {
-      const text = new fabric.IText('Your Name / Title', {
-        left: 80,
-        top: 80,
-        fontFamily: 'Poppins',
-        fill: '#0F172A',
-        fontSize: 32
-      });
+      const text = new fabric.IText('Your Name / Title', { left: 100, top: 100, fontFamily: 'Poppins', fill: '#0F172A', fontSize: 32 });
       canvas.add(text);
       canvas.setActiveObject(text);
-      if (safetyLineObj) canvas.bringToFront(safetyLineObj);
     }
 
     function updateTextProperty(prop, value) {
@@ -395,7 +507,6 @@
       }
     }
 
-    // Image Upload
     document.getElementById('imageLoader').addEventListener('change', function (e) {
       const reader = new FileReader();
       reader.onload = function (event) {
@@ -403,20 +514,16 @@
           img.scaleToWidth(180);
           canvas.add(img);
           canvas.setActiveObject(img);
-          if (safetyLineObj) canvas.bringToFront(safetyLineObj);
         });
       };
       if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
     });
 
-    // QR Code Generator
     function addQRCode() {
       const text = document.getElementById('qrInput').value.trim();
-      if (!text) return alert('Please enter text/URL');
-
+      if (!text) return alert('Enter URL / UPI');
       const qrContainer = document.getElementById('qrcode-hidden');
       qrContainer.innerHTML = '';
-
       new QRCode(qrContainer, { text: text, width: 200, height: 200 });
 
       setTimeout(() => {
@@ -427,13 +534,11 @@
             img.set({ left: 100, top: 100 });
             canvas.add(img);
             canvas.setActiveObject(img);
-            if (safetyLineObj) canvas.bringToFront(safetyLineObj);
           });
         }
       }, 100);
     }
 
-    // Shape Drawing
     function addShape(type) {
       let shape;
       if (type === 'rect') shape = new fabric.Rect({ width: 160, height: 100, fill: '#FF6B00', left: 100, top: 100 });
@@ -443,20 +548,33 @@
 
       canvas.add(shape);
       canvas.setActiveObject(shape);
-      if (safetyLineObj) canvas.bringToFront(safetyLineObj);
     }
 
     function deleteSelected() {
       const activeObjects = canvas.getActiveObjects();
       if (activeObjects.length) {
         activeObjects.forEach(obj => {
-          if (obj !== safetyLineObj) canvas.remove(obj);
+          if (!Object.values(guideObjects).includes(obj)) canvas.remove(obj);
         });
         canvas.discardActiveObject();
       }
     }
 
-    // Razorpay Gateway
+    function hideGuidesForExport() {
+      Object.values(guideObjects).forEach(obj => {
+        if (obj) obj.visible = false;
+      });
+      canvas.renderAll();
+    }
+
+    function restoreGuidesAfterExport() {
+      if (guideObjects.bleed && showBleed) guideObjects.bleed.visible = true;
+      if (guideObjects.trim && showTrim) guideObjects.trim.visible = true;
+      if (guideObjects.safety && showSafety) guideObjects.safety.visible = true;
+      canvas.renderAll();
+    }
+
+    // Payment & Download Handlers
     function initiatePayment(type) {
       selectedExportType = type;
       document.getElementById('paymentModal').style.display = 'flex';
@@ -475,7 +593,6 @@
         "name": "Business Card Studio",
         "description": "HD Export Payment",
         "handler": function (response) {
-          alert("Payment Successful! Downloading card...");
           downloadCard(selectedExportType);
         },
         "theme": { "color": "#FF6B00" }
@@ -484,10 +601,8 @@
       rzp1.open();
     }
 
-    // Clean Export (Excludes Red Safety Line)
     function downloadCard(format) {
-      if (safetyLineObj) safetyLineObj.visible = false;
-      canvas.renderAll();
+      hideGuidesForExport();
 
       const dataURL = canvas.toDataURL({
         format: 'png',
@@ -495,14 +610,11 @@
         multiplier: 2 / canvas.getZoom()
       });
 
-      if (safetyLineObj && showSafetyLine) {
-        safetyLineObj.visible = true;
-        canvas.renderAll();
-      }
+      restoreGuidesAfterExport();
 
       if (format === 'png') {
         const link = document.createElement('a');
-        link.download = 'business-card-hd.png';
+        link.download = `business-card-${currentSide}-hd.png`;
         link.href = dataURL;
         link.click();
       } else if (format === 'pdf') {
@@ -517,9 +629,11 @@
         });
 
         pdf.addImage(dataURL, 'PNG', 0, 0, w, h);
-        pdf.save('business-card-hd.pdf');
+        pdf.save(`business-card-${currentSide}-hd.pdf`);
       }
     }
+
+    setTimeout(resizeCanvasToFitContainer, 100);
   </script>
 </body>
 </html>
