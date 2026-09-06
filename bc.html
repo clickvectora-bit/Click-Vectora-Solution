@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Business Card Studio - Orange & White Edition</title>
+  <title>Click Vectora Studio - Business Card Generator</title>
 
   <!-- CDN Libraries: QR Code, Canvas, jsPDF & Razorpay -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -13,105 +13,118 @@
 
   <style>
     :root {
-      --primary: #ea580c;
-      --primary-light: #fff7ed;
-      --primary-border: #fdba74;
-      --primary-hover: #c2410c;
-      --bg-body: #fafaf9;
+      --brand-cyan: #00a8b5;
+      --brand-blue: #0077c8;
+      --brand-orange: #f37021;
+      --brand-dark: #2b2e34;
+      --bg-light: #f4f8fa;
       --card-bg: #ffffff;
-      --text-main: #1c1917;
-      --text-muted: #78716c;
-      --border-color: #e7e5e4;
+      --border-color: #d1e5e8;
     }
 
     * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-    body { background: var(--bg-body); margin: 0; padding: 20px; color: var(--text-main); }
-    h2 { text-align: center; margin-bottom: 20px; color: var(--primary); font-weight: 800; }
+    body { background: var(--bg-light); margin: 0; padding: 20px; color: var(--brand-dark); }
+    
+    .brand-header {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 25px;
+    }
+    .brand-header img { max-height: 65px; margin-bottom: 8px; }
+    .brand-header h2 { margin: 0; color: var(--brand-dark); font-size: 22px; font-weight: 800; }
+    .brand-header span { color: var(--brand-cyan); font-weight: 600; font-size: 13px; letter-spacing: 1px; }
 
     .wrapper { display: flex; gap: 24px; justify-content: center; max-width: 1200px; margin: 0 auto; flex-wrap: wrap; }
     
     .controls {
       background: var(--card-bg); padding: 20px; border-radius: 12px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 4px 15px rgba(234, 88, 12, 0.06); width: 380px; max-height: 88vh; overflow-y: auto;
+      box-shadow: 0 4px 15px rgba(0, 168, 181, 0.08); width: 380px; max-height: 88vh; overflow-y: auto;
     }
 
     .section-title {
-      font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase;
-      margin: 16px 0 8px 0; border-bottom: 2px solid var(--primary-light); padding-bottom: 4px;
+      font-size: 12px; font-weight: 700; color: var(--brand-cyan); text-transform: uppercase;
+      margin: 16px 0 8px 0; border-bottom: 2px solid #e6f6f7; padding-bottom: 4px;
     }
 
     .form-group { margin-bottom: 10px; }
-    .form-group label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+    .form-group label { display: block; font-size: 11px; font-weight: 600; color: #5a6578; margin-bottom: 4px; }
     .form-group input, .form-group select { 
       width: 100%; padding: 8px 10px; border: 1px solid var(--border-color); 
-      background: #fff; color: var(--text-main); border-radius: 6px; font-size: 13px; outline: none;
+      background: #fff; color: var(--brand-dark); border-radius: 6px; font-size: 13px; outline: none;
       transition: border-color 0.2s;
     }
-    .form-group input:focus, .form-group select:focus {
-      border-color: var(--primary);
-    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--brand-cyan); }
 
     .btn-row { display: flex; gap: 8px; margin-bottom: 12px; }
     .btn-tool { 
-      background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-border); 
+      background: #e6f6f7; color: var(--brand-cyan); border: 1px solid var(--border-color); 
       padding: 8px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: 600; font-size: 12px; 
     }
-    .btn-tool:hover { background: #ffedd5; }
+    .btn-tool:hover { background: #d0f0f2; }
 
     .preview-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
     
-    .toggle-buttons { display: flex; background: var(--primary-light); padding: 4px; border-radius: 8px; border: 1px solid var(--primary-border); }
-    .toggle-buttons button { border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; background: transparent; color: var(--text-muted); }
-    .toggle-buttons button.active { background: var(--primary); color: #ffffff; box-shadow: 0 2px 4px rgba(234, 88, 12, 0.2); }
+    .toggle-buttons { display: flex; background: #e6f6f7; padding: 4px; border-radius: 8px; border: 1px solid var(--border-color); }
+    .toggle-buttons button { border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; background: transparent; color: #5a6578; }
+    .toggle-buttons button.active { background: var(--brand-cyan); color: #ffffff; box-shadow: 0 2px 4px rgba(0, 168, 181, 0.25); }
 
-    /* Standard Card Box - White & Orange Theme */
+    /* Click Vectora Branded Card Canvas */
     .card-box {
       width: 350px; height: 200px; border-radius: 10px; padding: 20px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.08); position: relative;
       display: flex; flex-direction: column; justify-content: space-between;
-      overflow: hidden; box-sizing: border-box; background-color: #ffffff; color: var(--text-main);
-      border-left: 6px solid var(--primary); transition: all 0.2s ease;
+      overflow: hidden; box-sizing: border-box; background-color: #ffffff; color: var(--brand-dark);
+      border-left: 6px solid var(--brand-cyan); transition: all 0.2s ease;
     }
 
-    .logo-container { overflow: hidden; display: inline-block; max-height: 45px; max-width: 90px; }
-    .logo-img { height: 100%; width: 100%; object-fit: cover; transform: scale(1); }
+    .logo-container { overflow: hidden; display: inline-block; max-height: 40px; max-width: 100px; margin-bottom: 4px; }
+    .logo-img { height: 100%; width: 100%; object-fit: contain; transform: scale(1); }
 
     .card-front { display: flex; justify-content: space-between; height: 100%; position: relative; z-index: 2; }
     .card-info { display: flex; flex-direction: column; justify-content: space-between; width: 65%; }
     
-    .card-name { font-size: 18px; font-weight: bold; margin: 0; color: var(--primary); }
-    .card-title { font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500; }
-    .card-contacts { font-size: 11px; line-height: 1.6; color: var(--text-main); }
+    .card-name { font-size: 18px; font-weight: bold; margin: 0; color: var(--brand-dark); }
+    .card-title { font-size: 11px; color: var(--brand-cyan); margin-top: 2px; font-weight: 600; }
+    .card-contacts { font-size: 11px; line-height: 1.6; color: var(--brand-dark); }
     
     #qrcode { background: white; padding: 4px; border-radius: 6px; border: 1px solid var(--border-color); align-self: flex-end; display: flex; align-items: center; justify-content: center; }
     .card-back { display: none; height: 100%; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; z-index: 2; }
 
     .action-buttons { display: flex; gap: 10px; width: 100%; }
-    .btn-pay { 
-      background: var(--primary); color: white; border: none; padding: 12px; 
+    .btn-pay-orange { 
+      background: var(--brand-orange); color: white; border: none; padding: 12px; 
       border-radius: 8px; font-weight: 700; cursor: pointer; flex: 1; text-align: center; font-size: 13px; 
-      box-shadow: 0 4px 10px rgba(234, 88, 12, 0.25);
+      box-shadow: 0 4px 10px rgba(243, 112, 33, 0.25);
     }
-    .btn-pay:hover { background: var(--primary-hover); }
+    .btn-pay-orange:hover { background: #d95e14; }
+
+    .btn-pay-blue { 
+      background: var(--brand-blue); color: white; border: none; padding: 12px; 
+      border-radius: 8px; font-weight: 700; cursor: pointer; flex: 1; text-align: center; font-size: 13px; 
+      box-shadow: 0 4px 10px rgba(0, 119, 200, 0.25);
+    }
+    .btn-pay-blue:hover { background: #005f9e; }
   </style>
 </head>
 <body>
 
-  <h2>Business Card Studio</h2>
+  <!-- Brand Header with Logo -->
+  <div class="brand-header">
+    <img id="headerLogo" src="" alt="Click Vectora Solution">
+    <h2>BUSINESS CARD STUDIO</h2>
+    <span>CLICK VECTORA SOLUTION</span>
+  </div>
 
   <div class="wrapper">
     <!-- Controls Panel -->
     <div class="controls">
-      <!-- Undo / Redo Toolbar -->
       <div class="btn-row">
         <button class="btn-tool" onclick="undo()">↩ Undo</button>
         <button class="btn-tool" onclick="redo()">↪ Redo</button>
       </div>
 
-      <div class="section-title">1. Logo Crop & Scale Tool</div>
+      <div class="section-title">1. Custom Logo Crop & Scale</div>
       <div class="form-group">
-        <label>Upload Logo Image</label>
+        <label>Upload Custom Logo (Optional)</label>
         <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
       </div>
       <div class="form-group">
@@ -140,11 +153,11 @@
       </div>
       <div class="form-group">
         <label>Designation</label>
-        <input type="text" id="inputTitle" placeholder="Lead Designer" oninput="onInputChange()">
+        <input type="text" id="inputTitle" placeholder="Lead Graphic Designer" oninput="onInputChange()">
       </div>
       <div class="form-group">
         <label>Company Name</label>
-        <input type="text" id="inputCompany" placeholder="TechCorp Solutions" oninput="onInputChange()">
+        <input type="text" id="inputCompany" value="Click Vectora Solution" oninput="onInputChange()">
       </div>
       <div class="form-group">
         <label>Phone</label>
@@ -152,15 +165,15 @@
       </div>
       <div class="form-group">
         <label>Email</label>
-        <input type="text" id="inputEmail" placeholder="rahul@techcorp.com" oninput="onInputChange()">
+        <input type="text" id="inputEmail" placeholder="rahul@clickvectora.com" oninput="onInputChange()">
       </div>
       <div class="form-group">
         <label>Website URL (QR Code)</label>
-        <input type="text" id="inputWebsite" placeholder="https://techcorp.com" oninput="onInputChange()">
+        <input type="text" id="inputWebsite" placeholder="https://clickvectora.com" oninput="onInputChange()">
       </div>
     </div>
 
-    <!-- Preview & Payment Section -->
+    <!-- Preview Section -->
     <div class="preview-container">
       <div class="toggle-buttons">
         <button id="btnFront" class="active" onclick="toggleSide('front')">Front View</button>
@@ -173,14 +186,14 @@
           <div class="card-info" id="cardInfoBlock">
             <div>
               <div class="logo-container">
-                <img id="frontLogo" class="logo-img" style="display:none;" alt="Logo">
+                <img id="frontLogo" class="logo-img" alt="Logo">
               </div>
               <p class="card-name" id="cardName">Rahul Sharma</p>
-              <p class="card-title" id="cardTitle">Lead Designer</p>
+              <p class="card-title" id="cardTitle">Lead Graphic Designer</p>
             </div>
             <div class="card-contacts">
               <p id="cardPhone">📞 +91 98765 43210</p>
-              <p id="cardEmail">✉️ rahul@techcorp.com</p>
+              <p id="cardEmail">✉️ rahul@clickvectora.com</p>
             </div>
           </div>
           <div id="qrcode"></div>
@@ -188,32 +201,38 @@
 
         <!-- Back View -->
         <div id="backView" class="card-back">
-          <div class="logo-container">
-            <img id="backLogo" class="logo-img" style="display:none;" alt="Logo">
+          <div class="logo-container" style="max-height: 55px; max-width: 140px; margin-bottom: 8px;">
+            <img id="backLogo" class="logo-img" alt="Logo">
           </div>
-          <h3 id="cardCompany" style="margin: 0; color: var(--primary);">TechCorp Solutions</h3>
-          <p id="cardTagline" style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Innovation Meets Excellence</p>
+          <h3 id="cardCompany" style="margin: 0; color: var(--brand-cyan); font-size: 16px;">Click Vectora Solution</h3>
+          <p id="cardTagline" style="font-size: 11px; color: #5a6578; margin-top: 4px;">Vector & Graphic Design Excellence</p>
         </div>
       </div>
 
-      <!-- Razorpay Payment & Download Buttons -->
+      <!-- Payment & Download Buttons -->
       <div class="action-buttons">
-        <button class="btn-pay" onclick="payAndDownload('png')">Pay ₹99 & Download PNG</button>
-        <button class="btn-pay" style="background: #1c1917;" onclick="payAndDownload('pdf')">Pay ₹99 & Download PDF</button>
+        <button class="btn-pay-orange" onclick="payAndDownload('png')">Pay ₹99 & Download PNG</button>
+        <button class="btn-pay-blue" onclick="payAndDownload('pdf')">Pay ₹99 & Download PDF</button>
       </div>
     </div>
   </div>
 
   <script>
+    // Click Vectora Logo Base64 Data Placeholder / Runtime Image Binding
+    const vectoraLogoSrc = "1000231418.png"; 
+
     let currentSide = 'front';
     let qrCodeInstance = null;
-    
     let historyStack = [];
     let historyStep = -1;
 
     window.onload = function() {
+      document.getElementById('headerLogo').src = vectoraLogoSrc;
+      document.getElementById('frontLogo').src = vectoraLogoSrc;
+      document.getElementById('backLogo').src = vectoraLogoSrc;
+
       qrCodeInstance = new QRCode(document.getElementById("qrcode"), {
-        width: 50, height: 50, colorDark : "#ea580c", colorLight : "#ffffff"
+        width: 50, height: 50, colorDark : "#00a8b5", colorLight : "#ffffff"
       });
       saveState();
       updateCard();
@@ -278,8 +297,6 @@
           const logoData = e.target.result;
           document.getElementById('frontLogo').src = logoData;
           document.getElementById('backLogo').src = logoData;
-          document.getElementById('frontLogo').style.display = 'block';
-          document.getElementById('backLogo').style.display = 'block';
           saveState();
         };
         reader.readAsDataURL(file);
@@ -302,11 +319,11 @@
 
     function updateCard() {
       const name = document.getElementById('inputName').value || "Rahul Sharma";
-      const title = document.getElementById('inputTitle').value || "Lead Designer";
-      const company = document.getElementById('inputCompany').value || "TechCorp Solutions";
+      const title = document.getElementById('inputTitle').value || "Lead Graphic Designer";
+      const company = document.getElementById('inputCompany').value || "Click Vectora Solution";
       const phone = document.getElementById('inputPhone').value || "+91 98765 43210";
-      const email = document.getElementById('inputEmail').value || "rahul@techcorp.com";
-      const website = document.getElementById('inputWebsite').value || "https://techcorp.com";
+      const email = document.getElementById('inputEmail').value || "rahul@clickvectora.com";
+      const website = document.getElementById('inputWebsite').value || "https://clickvectora.com";
 
       document.getElementById('cardName').innerText = name;
       document.getElementById('cardTitle').innerText = title;
@@ -333,21 +350,19 @@
         "key": "YOUR_RAZORPAY_KEY_ID",
         "amount": 9900,
         "currency": "INR",
-        "name": "Business Card Studio",
-        "description": "HD Business Card Download Fee",
+        "name": "Click Vectora Studio",
+        "description": "HD Card Download",
         "handler": function (response) {
-          alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
           executeDownload(format);
         },
         "prefill": {
           "name": document.getElementById('cardName').innerText,
-          "email": document.getElementById('inputEmail').value || "user@example.com"
+          "email": document.getElementById('inputEmail').value
         },
-        "theme": { "color": "#ea580c" }
+        "theme": { "color": "#00a8b5" }
       };
 
       if (options.key === "YOUR_RAZORPAY_KEY_ID") {
-        alert("Razorpay Key ID missing. Downloading in Demo Mode.");
         executeDownload(format);
       } else {
         const rzp = new Razorpay(options);
@@ -362,14 +377,14 @@
 
         if (format === 'png') {
           const link = document.createElement('a');
-          link.download = `card-${currentSide}.png`;
+          link.download = `click-vectora-card-${currentSide}.png`;
           link.href = imgData;
           link.click();
         } else if (format === 'pdf') {
           const { jsPDF } = window.jspdf;
           const pdf = new jsPDF({ orientation: 'landscape', unit: 'in', format: [3.5, 2] });
           pdf.addImage(imgData, 'PNG', 0, 0, 3.5, 2);
-          pdf.save(`card-${currentSide}.pdf`);
+          pdf.save(`click-vectora-card-${currentSide}.pdf`);
         }
       });
     }
