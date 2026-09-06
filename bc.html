@@ -285,7 +285,6 @@
 </head>
 <body>
 
-  <!-- Header -->
   <header class="minimal-header">
     <div class="brand-group">
       <a href="index.html" style="text-decoration:none;">
@@ -294,19 +293,18 @@
       <img src="ClickVectora Logo - Copy.png" alt="Logo" onerror="this.src='logo.png'; this.onerror=function(){this.style.display='none';}" class="header-logo">
       <h1 class="header-title-text">Business Card Studio</h1>
     </div>
-    
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="secondary" onclick="setOrientation('horizontal')" title="Horizontal Card"> Horiz</button>
-      <button class="secondary" onclick="setOrientation('vertical')" title="Vertical Card"> Vert</button>
-      <button class="secondary" onclick="toggleRounded()"> Radius</button>
-    </div>
   </header>
 
-  <!-- Workspace Area -->
   <div class="workspace" id="workspace">
     <div class="canvas-viewport-container">
 
-      <!-- Top Tools Panel -->
+      <div class="floating-panel" style="margin-bottom: 8px; width: 100%; max-width: 720px; justify-content: center; gap: 8px;">
+        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Card Layout:</span>
+        <button class="secondary" onclick="setOrientation('horizontal')" title="Horizontal Card">📐 Horiz</button>
+        <button class="secondary" onclick="setOrientation('vertical')" title="Vertical Card">📏 Vert</button>
+        <button class="secondary" onclick="toggleRounded()">⭕ Radius</button>
+      </div>
+
       <div class="floating-panel top-tools-panel">
         <div>
           <div class="panel-section-title">Add Text</div>
@@ -340,14 +338,12 @@
         </div>
       </div>
       
-      <!-- Top Canvas Controls -->
       <div class="floating-panel canvas-top-controls">
         <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
         <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
         <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D Preview</button>
       </div>
 
-      <!-- Object Inspector Overlay -->
       <div class="floating-panel object-inspector-panel" id="objectInspector">
         <div id="textInspectorControls" style="display:none; gap:5px; align-items:center; flex-wrap:wrap;">
           <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" title="Text Color">
@@ -380,12 +376,10 @@
         </div>
       </div>
 
-      <!-- Canvas Box -->
       <div class="canvas-container-wrapper" id="canvasWrapper">
         <canvas id="cardCanvas"></canvas>
       </div>
 
-      <!-- Bottom Controls -->
       <div class="canvas-bottom-controls-group">
         <div class="floating-panel" style="position:relative; flex-wrap:wrap; justify-content:center;">
           <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed: ON</button>
@@ -405,7 +399,6 @@
     </div>
   </div>
 
-  <!-- 3D Preview Modal -->
   <div class="modal-overlay" id="preview3DModal">
     <div class="modal modal-3d">
       <h3>3D Print Preview</h3>
@@ -423,7 +416,6 @@
     </div>
   </div>
 
-  <!-- Payment Modal -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
       <h3>Unlock HD Download</h3>
@@ -654,7 +646,6 @@
           apply3DImages(frontImg, backImg);
         });
       } else {
-        // If other side is empty, use white background or mirror image placeholder
         if (currentSide === 'front') backImg = currentData;
         else frontImg = currentData;
         apply3DImages(frontImg, backImg);
