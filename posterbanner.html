@@ -229,72 +229,56 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
     }
 
-    /* 3D Big Screen Modal Specific Styling */
-    .modal-3d-container {
-      background: #0f172a;
-      width: 90vw;
-      height: 90vh;
-      max-width: 1200px;
-      max-height: 800px;
-      border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      border: 1px solid #334155;
+    /* Enhanced 3D Preview Modal Styling Matching Card Studio */
+    .modal-3d {
+      width: 720px !important;
+      max-width: 95% !important;
+      padding: 24px !important;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     }
 
-    .modal-3d-header {
-      padding: 16px 24px;
-      background: #1e293b;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #334155;
-    }
-
-    .modal-3d-body {
-      flex: 1;
+    .poster-3d-viewport {
+      width: 100%;
+      height: 380px;
+      perspective: 1400px;
+      margin: 15px auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      perspective: 1200px;
-      overflow: hidden;
-      background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
       cursor: grab;
+      user-select: none;
       position: relative;
     }
+    .poster-3d-viewport:active { cursor: grabbing; }
 
-    .modal-3d-body:active {
-      cursor: grabbing;
-    }
-
-    .preview-3d-card {
-      width: 420px;
-      max-width: 85%;
-      background: white;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255, 107, 0, 0.15);
-      border-radius: 8px;
-      transition: transform 0.05s ease-out;
+    .poster-3d-scene {
+      width: 320px;
+      height: 452px;
+      position: relative;
       transform-style: preserve-3d;
-      user-select: none;
+      transition: transform 0.1s ease-out;
     }
 
-    .preview-3d-card img {
+    .poster-3d-face {
+      position: absolute;
       width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 8px;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 12px;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255,255,255,0.2);
     }
 
-    .modal-3d-footer {
-      padding: 12px 24px;
-      background: #1e293b;
-      color: #94a3b8;
-      font-size: 0.85rem;
-      text-align: center;
-      border-top: 1px solid #334155;
+    /* Lighting overlay gloss effect */
+    .poster-3d-face::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
+      border-radius: 12px;
+      pointer-events: none;
     }
 
     #qrcode-hidden { display: none; }
@@ -345,7 +329,7 @@
 
         <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
           <button id="btnToggleGuides" class="secondary" onclick="togglePrintGuides()" title="Toggle Bleed, Trim & Safety Lines">📏 Guides: OFF</button>
-          <button style="background: #8B5CF6; color: white;" onclick="open3DPreviewModal()" title="Open Big Screen 3D Interactive Preview">📦 3D Big View</button>
+          <button style="background: #8B5CF6; color: white;" onclick="open3DPreview()" title="Open 3D Interactive Presentation">✨ 3D Preview</button>
         </div>
 
         <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
@@ -453,20 +437,23 @@
     </div>
   </div>
 
-  <!-- Big Screen 3D Interactive Preview Modal -->
-  <div class="modal-overlay" id="modal3DPreview">
-    <div class="modal-3d-container">
-      <div class="modal-3d-header">
-        <h3 style="font-size: 1.1rem; font-weight: 700;">📦 3D Interactive Presentation</h3>
-        <button class="danger" style="padding: 4px 10px;" onclick="close3DPreviewModal()">✕ Close</button>
+  <!-- Interactive 3D Preview Modal -->
+  <div class="modal-overlay" id="preview3DModal">
+    <div class="modal modal-3d">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">✨ Interactive 3D Design Simulation</h3>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">Click & Drag to Rotate</span>
       </div>
-      <div class="modal-3d-body" id="modal3DBody">
-        <div class="preview-3d-card" id="preview3DCard">
-          <img id="preview3DImage" src="" alt="3D Preview">
+
+      <div class="poster-3d-viewport" id="poster3dViewport">
+        <div class="poster-3d-scene" id="poster3dScene">
+          <div class="poster-3d-face front" id="poster3dFace"></div>
         </div>
       </div>
-      <div class="modal-3d-footer">
-        💡 Click and drag anywhere inside the box to rotate your design in 3D perspective space.
+      
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+        <button class="secondary" style="padding: 6px 16px;" onclick="reset3DRotation()">🎯 Reset View</button>
+        <button style="padding: 6px 16px; background: #0F172A;" onclick="close3DModal()">Close Preview</button>
       </div>
     </div>
   </div>
@@ -537,50 +524,47 @@
       canvas.requestRenderAll();
     }
 
-    // 3D Big Screen Modal Logic & Mouse Drag Rotation
-    function open3DPreviewModal() {
+    /* Upgraded Interactive 3D Preview Engine */
+    let rotX = 0, rotY = 0;
+    let isDragging3D = false;
+    let startX = 0, startY = 0;
+
+    function open3DPreview() {
       const wasGuideOn = showPrintGuides;
       if (wasGuideOn) {
         showPrintGuides = false;
         canvas.requestRenderAll();
       }
 
-      // Generate snapshot for 3D preview
-      const dataURL = canvas.toDataURL({
-        format: 'png',
-        quality: 1.0,
-        multiplier: 2 / canvas.getZoom()
-      });
+      const currentData = canvas.toDataURL({ format: 'png', quality: 1 });
 
       if (wasGuideOn) {
         showPrintGuides = true;
         canvas.requestRenderAll();
       }
 
-      document.getElementById('preview3DImage').src = dataURL;
-      document.getElementById('modal3DPreview').style.display = 'flex';
+      document.getElementById('poster3dFace').style.backgroundImage = `url(${currentData})`;
+
+      const fmt = formats[currentFormatKey];
+      const scene = document.getElementById('poster3dScene');
+      
+      // Proportionally size 3D box to fit active format
+      if (fmt.width >= fmt.height) {
+        scene.style.width = '420px';
+        scene.style.height = `${Math.round(420 * (fmt.height / fmt.width))}px`;
+      } else {
+        scene.style.height = '320px';
+        scene.style.width = `${Math.round(320 * (fmt.width / fmt.height))}px`;
+      }
+
+      document.getElementById('preview3DModal').style.display = 'flex';
       reset3DRotation();
     }
 
-    function close3DPreviewModal() {
-      document.getElementById('modal3DPreview').style.display = 'none';
-    }
+    const viewport3D = document.getElementById('poster3dViewport');
+    const scene3D = document.getElementById('poster3dScene');
 
-    // Interactive 3D Card Rotation with Mouse/Touch Drag
-    const modalBody = document.getElementById('modal3DBody');
-    const card3D = document.getElementById('preview3DCard');
-    let isDragging3D = false;
-    let startX = 0, startY = 0;
-    let currentRotateX = -10;
-    let currentRotateY = 20;
-
-    function reset3DRotation() {
-      currentRotateX = -10;
-      currentRotateY = 20;
-      card3D.style.transform = `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
-    }
-
-    modalBody.addEventListener('mousedown', (e) => {
+    viewport3D.addEventListener('mousedown', (e) => {
       isDragging3D = true;
       startX = e.clientX;
       startY = e.clientY;
@@ -590,24 +574,21 @@
       if (!isDragging3D) return;
       const deltaX = e.clientX - startX;
       const deltaY = e.clientY - startY;
+      
+      rotY += deltaX * 0.6;
+      rotX -= deltaY * 0.6;
+      
+      rotX = Math.max(-60, Math.min(60, rotX));
+      
+      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      
       startX = e.clientX;
       startY = e.clientY;
-
-      currentRotateY += deltaX * 0.5;
-      currentRotateX -= deltaY * 0.5;
-
-      // Limit vertical tilt
-      currentRotateX = Math.max(-60, Math.min(60, currentRotateX));
-
-      card3D.style.transform = `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
     });
 
-    window.addEventListener('mouseup', () => {
-      isDragging3D = false;
-    });
+    window.addEventListener('mouseup', () => { isDragging3D = false; });
 
-    // Touch Support for Mobile
-    modalBody.addEventListener('touchstart', (e) => {
+    viewport3D.addEventListener('touchstart', (e) => {
       isDragging3D = true;
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
@@ -617,19 +598,28 @@
       if (!isDragging3D) return;
       const deltaX = e.touches[0].clientX - startX;
       const deltaY = e.touches[0].clientY - startY;
+      
+      rotY += deltaX * 0.6;
+      rotX -= deltaY * 0.6;
+      
+      rotX = Math.max(-60, Math.min(60, rotX));
+      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
-
-      currentRotateY += deltaX * 0.5;
-      currentRotateX -= deltaY * 0.5;
-      currentRotateX = Math.max(-60, Math.min(60, currentRotateX));
-
-      card3D.style.transform = `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
     });
 
-    window.addEventListener('touchend', () => {
-      isDragging3D = false;
-    });
+    window.addEventListener('touchend', () => { isDragging3D = false; });
+
+    function reset3DRotation() {
+      rotX = 0;
+      rotY = 0;
+      scene3D.style.transform = `rotateX(0deg) rotateY(0deg)`;
+    }
+
+    function close3DModal() {
+      document.getElementById('preview3DModal').style.display = 'none';
+    }
 
     function drawPrintGuides() {
       if (!showPrintGuides) return;
@@ -645,19 +635,16 @@
       const trim = 30;
       const safety = 50;
 
-      // 1. Bleed Line (Red)
       ctx.strokeStyle = '#EF4444';
       ctx.lineWidth = 1.5;
       ctx.setLineDash([4, 4]);
       ctx.strokeRect(bleed, bleed, w / zoom - (bleed * 2), h / zoom - (bleed * 2));
 
-      // 2. Trim Line (Black)
       ctx.strokeStyle = '#0F172A';
       ctx.lineWidth = 1;
       ctx.setLineDash([]);
       ctx.strokeRect(trim, trim, w / zoom - (trim * 2), h / zoom - (trim * 2));
 
-      // 3. Safety Line (Blue)
       ctx.strokeStyle = '#3B82F6';
       ctx.lineWidth = 1;
       ctx.setLineDash([6, 3]);
