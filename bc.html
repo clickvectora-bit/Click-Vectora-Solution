@@ -32,7 +32,7 @@
       background: #FFFFFF;
       border-bottom: 2px solid #94A3B8;
       padding: 24px 32px;
-      min-height: 150px; /* Increased to ~3x */
+      min-height: 150px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -49,19 +49,18 @@
     }
 
     .header-logo {
-      height: 120px; /* ~3x bigger */
+      height: 120px;
       width: auto;
       object-fit: contain;
     }
 
     .header-title-text {
-      font-size: 2.5rem; /* ~3x bigger */
+      font-size: 2.5rem;
       font-weight: 800;
       color: var(--text-main);
       letter-spacing: -0.5px;
     }
 
-    /* Common Button Styling */
     button, .btn-home {
       background: var(--primary);
       color: white;
@@ -97,7 +96,6 @@
     input[type="text"] { width: 110px; }
     input[type="color"] { height: 32px; width: 32px; cursor: pointer; padding: 2px; border-radius: 6px; }
 
-    /* Main Workspace */
     .workspace {
       flex: 1;
       width: 100%;
@@ -250,9 +248,7 @@
     }
 
     @media (max-width: 600px) {
-      .card-3d-container {
-        height: 183px;
-      }
+      .card-3d-container { height: 183px; }
     }
 
     .card-3d-inner {
@@ -286,7 +282,6 @@
 </head>
 <body>
 
-  <!-- 3X Bigger Responsive Header -->
   <header class="minimal-header">
     <div class="brand-group">
       <a href="index.html" style="text-decoration:none;">
@@ -303,12 +298,9 @@
     </div>
   </header>
 
-  <!-- Workspace Area -->
   <div class="workspace" id="workspace">
-    
     <div class="canvas-viewport-container">
 
-      <!-- Top Tools Panel -->
       <div class="floating-panel top-tools-panel">
         <div>
           <div class="panel-section-title">Add Text</div>
@@ -342,14 +334,12 @@
         </div>
       </div>
       
-      <!-- Top Canvas Controls -->
       <div class="floating-panel canvas-top-controls">
         <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
         <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
         <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D Preview</button>
       </div>
 
-      <!-- Object Inspector Overlay -->
       <div class="floating-panel object-inspector-panel" id="objectInspector">
         <div id="textInspectorControls" style="display:none; gap:5px; align-items:center; flex-wrap:wrap;">
           <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" title="Text Color">
@@ -382,12 +372,10 @@
         </div>
       </div>
 
-      <!-- Canvas Box -->
       <div class="canvas-container-wrapper" id="canvasWrapper">
         <canvas id="cardCanvas"></canvas>
       </div>
 
-      <!-- Bottom Controls -->
       <div class="canvas-bottom-controls-group">
         <div class="floating-panel" style="position:relative; flex-wrap:wrap; justify-content:center;">
           <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed: ON</button>
@@ -407,7 +395,6 @@
     </div>
   </div>
 
-  <!-- 3D Preview Modal -->
   <div class="modal-overlay" id="preview3DModal">
     <div class="modal modal-3d">
       <h3>3D Print Preview</h3>
@@ -425,7 +412,6 @@
     </div>
   </div>
 
-  <!-- Payment Modal -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
       <h3>Unlock HD Download</h3>
@@ -694,8 +680,8 @@
 
     function addText() {
       const text = new fabric.IText('Your Name / Title', { 
-        left: 100, 
-        top: 100, 
+        left: 200, 
+        top: 200, 
         fontFamily: 'Poppins', 
         fill: '#0F172A', 
         fontSize: 32,
@@ -735,7 +721,7 @@
       let borderSize = parseInt(document.getElementById('shapeBorderSize').value);
 
       const baseOpts = {
-        left: 100, top: 100,
+        left: 200, top: 200,
         fill: fillColor,
         stroke: borderColor,
         strokeWidth: borderSize,
@@ -761,6 +747,7 @@
       }
     }
 
+    // Robust Image Uploader with Absolute Center Positioning
     document.getElementById('imageLoader').addEventListener('change', function (e) {
       const files = e.target.files;
       if (!files || !files.length) return;
@@ -769,16 +756,22 @@
         const reader = new FileReader();
         reader.onload = function (event) {
           fabric.Image.fromURL(event.target.result, function (img) {
-            img.scaleToWidth(180);
+            img.scaleToWidth(200);
+            
+            // Calculate center of the canvas based on current orientation
+            let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
+            let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
+            
             img.set({
-              left: 100 + (index * 20),
-              top: 100 + (index * 20)
+              left: (targetW / 2) - 100 + (index * 25),
+              top: (targetH / 2) - 75 + (index * 25)
             });
+
             canvas.add(img);
             canvas.setActiveObject(img);
             bringGuidesToFront();
-            canvas.renderAll();
-          });
+            canvas.requestRenderAll();
+          }, { crossOrigin: 'anonymous' });
         };
         reader.readAsDataURL(file);
       });
@@ -797,12 +790,20 @@
         if (imgTag) {
           fabric.Image.fromURL(imgTag.src, function (img) {
             img.scaleToWidth(140);
-            img.set({ left: 100, top: 100 });
+            
+            let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
+            let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
+
+            img.set({ 
+              left: (targetW / 2) - 70, 
+              top: (targetH / 2) - 70 
+            });
+
             canvas.add(img);
             canvas.setActiveObject(img);
             bringGuidesToFront();
-            canvas.renderAll();
-          });
+            canvas.requestRenderAll();
+          }, { crossOrigin: 'anonymous' });
         }
       }, 100);
     }
