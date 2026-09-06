@@ -234,52 +234,64 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
     }
 
+    /* Enhanced 3D Preview Modal Styling */
     .modal-3d {
-      width: 650px !important;
+      width: 720px !important;
       max-width: 95% !important;
-      padding: 20px !important;
+      padding: 24px !important;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     }
 
-    .card-3d-container {
+    .card-3d-viewport {
       width: 100%;
-      max-width: 520px;
-      height: 297px;
-      perspective: 1200px;
+      height: 360px;
+      perspective: 1400px;
       margin: 15px auto;
-      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      user-select: none;
+      position: relative;
+    }
+    .card-3d-viewport:active { cursor: grabbing; }
+
+    .card-3d-scene {
+      width: 440px;
+      height: 251px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.1s ease-out;
     }
 
     @media (max-width: 600px) {
-      .card-3d-container { height: 183px; }
+      .card-3d-scene { width: 300px; height: 171px; }
     }
 
-    .card-3d-inner {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.35);
-      border-radius: 12px;
-    }
-
-    .card-3d-inner.flipped { transform: rotateY(180deg); }
-
-    .card-3d-front, .card-3d-back {
+    .card-3d-face {
       position: absolute;
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       border-radius: 12px;
-      overflow: hidden;
       background-size: cover;
       background-position: center;
-      border: 1px solid rgba(0,0,0,0.1);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255,255,255,0.2);
     }
 
-    .card-3d-front { z-index: 2; }
-    .card-3d-back { transform: rotateY(180deg); }
+    .card-3d-face.front { z-index: 2; }
+    .card-3d-face.back { transform: rotateY(180deg); }
+
+    /* Lighting overlay gloss effect */
+    .card-3d-face::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
+      border-radius: 12px;
+      pointer-events: none;
+    }
 
     #qrcode-hidden { display: none; }
   </style>
@@ -448,20 +460,25 @@
     </div>
   </div>
 
-  <!-- 3D Preview Modal -->
+  <!-- Upgraded 3D Preview Modal -->
   <div class="modal-overlay" id="preview3DModal">
     <div class="modal modal-3d">
-      <h3>3D Print Preview</h3>
-      <div class="card-3d-container" onclick="flip3DCard()">
-        <div class="card-3d-inner" id="card3dInner">
-          <div class="card-3d-front" id="card3dFront"></div>
-          <div class="card-3d-back" id="card3dBack"></div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">✨ Interactive 3D Card Simulation</h3>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">Click & Drag to Rotate</span>
+      </div>
+
+      <div class="card-3d-viewport" id="card3dViewport">
+        <div class="card-3d-scene" id="card3dScene">
+          <div class="card-3d-face front" id="card3dFront"></div>
+          <div class="card-3d-face back" id="card3dBack"></div>
         </div>
       </div>
       
-      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-        <button class="secondary" style="padding: 6px 16px;" onclick="flip3DCard()">🔄 Flip Card Side</button>
-        <button style="padding: 6px 16px;" onclick="close3DModal()">Close Preview</button>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+        <button class="secondary" style="padding: 6px 16px;" onclick="flip3DCardModel()">🔄 Flip Side</button>
+        <button class="secondary" style="padding: 6px 16px;" onclick="reset3DRotation()">🎯 Reset View</button>
+        <button style="padding: 6px 16px; background: #0F172A;" onclick="close3DModal()">Close Preview</button>
       </div>
     </div>
   </div>
@@ -799,6 +816,11 @@
       }
     }
 
+    /* Upgraded Interactive 3D Preview Engine */
+    let rotX = 0, rotY = 0;
+    let isDragging3D = false;
+    let startX = 0, startY = 0;
+
     function open3DPreview() {
       hideGuidesForExport();
 
@@ -826,30 +848,92 @@
           if (currentSide === 'front') backImg = otherData;
           else frontImg = otherData;
 
-          apply3DImages(frontImg, backImg);
+          render3DTextures(frontImg, backImg);
         });
       } else {
         if (currentSide === 'front') backImg = currentData;
         else frontImg = currentData;
-        apply3DImages(frontImg, backImg);
+        render3DTextures(frontImg, backImg);
       }
 
       restoreGuidesAfterExport();
       document.getElementById('preview3DModal').style.display = 'flex';
+      reset3DRotation();
     }
 
-    function apply3DImages(frontImg, backImg) {
+    function render3DTextures(frontImg, backImg) {
       document.getElementById('card3dFront').style.backgroundImage = `url(${frontImg})`;
       document.getElementById('card3dBack').style.backgroundImage = `url(${backImg})`;
+
+      const scene = document.getElementById('card3dScene');
+      scene.style.width = currentOrientation === 'horizontal' ? '440px' : '280px';
+      scene.style.height = currentOrientation === 'horizontal' ? '251px' : '440px';
     }
 
-    function flip3DCard() {
-      document.getElementById('card3dInner').classList.toggle('flipped');
+    const viewport3D = document.getElementById('card3dViewport');
+    const scene3D = document.getElementById('card3dScene');
+
+    viewport3D.addEventListener('mousedown', (e) => {
+      isDragging3D = true;
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging3D) return;
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+      
+      rotY += deltaX * 0.6;
+      rotX -= deltaY * 0.6;
+      
+      rotX = Math.max(-60, Math.min(60, rotX)); // Clamp vertical tilt
+      
+      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+
+    window.addEventListener('mouseup', () => { isDragging3D = false; });
+
+    // Touch Support for Mobile Devices
+    viewport3D.addEventListener('touchstart', (e) => {
+      isDragging3D = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging3D) return;
+      const deltaX = e.touches[0].clientX - startX;
+      const deltaY = e.touches[0].clientY - startY;
+      
+      rotY += deltaX * 0.6;
+      rotX -= deltaY * 0.6;
+      
+      rotX = Math.max(-60, Math.min(60, rotX));
+      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
+
+    window.addEventListener('touchend', () => { isDragging3D = false; });
+
+    function flip3DCardModel() {
+      rotY += 180;
+      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    }
+
+    function reset3DRotation() {
+      rotX = 0;
+      rotY = 0;
+      scene3D.style.transform = `rotateX(0deg) rotateY(0deg)`;
     }
 
     function close3DModal() {
       document.getElementById('preview3DModal').style.display = 'none';
-      document.getElementById('card3dInner').classList.remove('flipped');
     }
 
     function setOrientation(type) {
