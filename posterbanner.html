@@ -112,7 +112,6 @@
       background: radial-gradient(#94A3B8 1px, transparent 1px);
       background-size: 14px 14px;
       scroll-behavior: smooth;
-      perspective: 1200px; /* Perspective container for 3D effect */
     }
 
     .canvas-viewport-container {
@@ -122,14 +121,6 @@
       position: relative;
       width: 100%;
       max-width: 1000px;
-      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-      transform-style: preserve-3d;
-    }
-
-    /* 3D Tilt Class */
-    .canvas-viewport-container.mode-3d {
-      transform: rotateX(15deg) rotateY(-20deg) rotateZ(5deg) scale(0.9);
-      filter: drop-shadow(0 30px 40px rgba(0,0,0,0.35));
     }
 
     .floating-panel {
@@ -215,16 +206,17 @@
       .top-tools-panel > div { flex: 1; min-width: 110px; }
     }
 
+    /* Modals */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(4px);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(6px);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 1000;
-      padding: 10px;
+      padding: 15px;
     }
     
     .modal {
@@ -235,6 +227,74 @@
       max-width: 95%;
       text-align: center;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 3D Big Screen Modal Specific Styling */
+    .modal-3d-container {
+      background: #0f172a;
+      width: 90vw;
+      height: 90vh;
+      max-width: 1200px;
+      max-height: 800px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border: 1px solid #334155;
+    }
+
+    .modal-3d-header {
+      padding: 16px 24px;
+      background: #1e293b;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+
+    .modal-3d-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+      cursor: grab;
+      position: relative;
+    }
+
+    .modal-3d-body:active {
+      cursor: grabbing;
+    }
+
+    .preview-3d-card {
+      width: 420px;
+      max-width: 85%;
+      background: white;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255, 107, 0, 0.15);
+      border-radius: 8px;
+      transition: transform 0.05s ease-out;
+      transform-style: preserve-3d;
+      user-select: none;
+    }
+
+    .preview-3d-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+    }
+
+    .modal-3d-footer {
+      padding: 12px 24px;
+      background: #1e293b;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      text-align: center;
+      border-top: 1px solid #334155;
     }
 
     #qrcode-hidden { display: none; }
@@ -267,9 +327,9 @@
 
   <!-- Workspace Area -->
   <div class="workspace" id="workspace">
-    <div class="canvas-viewport-container" id="viewportContainer">
+    <div class="canvas-viewport-container">
 
-      <!-- Formats, Background, Print Guides & 3D Toggle Bar -->
+      <!-- Formats, Background, Print Guides & 3D Popup Trigger Bar -->
       <div class="floating-panel" style="margin-bottom: 10px; width: 100%; max-width: 920px; justify-content: center; gap: 6px; flex-wrap: wrap;">
         <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Sizes:</span>
         <button id="fmt-a4" class="secondary active-format" onclick="setFormat('a4')">📄 A4</button>
@@ -285,7 +345,7 @@
 
         <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
           <button id="btnToggleGuides" class="secondary" onclick="togglePrintGuides()" title="Toggle Bleed, Trim & Safety Lines">📏 Guides: OFF</button>
-          <button id="btnToggle3D" class="secondary" onclick="toggle3DPreview()" title="Toggle 3D Perspective Tilt View">📦 3D Preview</button>
+          <button style="background: #8B5CF6; color: white;" onclick="open3DPreviewModal()" title="Open Big Screen 3D Interactive Preview">📦 3D Big View</button>
         </div>
 
         <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
@@ -393,6 +453,24 @@
     </div>
   </div>
 
+  <!-- Big Screen 3D Interactive Preview Modal -->
+  <div class="modal-overlay" id="modal3DPreview">
+    <div class="modal-3d-container">
+      <div class="modal-3d-header">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">📦 3D Interactive Presentation</h3>
+        <button class="danger" style="padding: 4px 10px;" onclick="close3DPreviewModal()">✕ Close</button>
+      </div>
+      <div class="modal-3d-body" id="modal3DBody">
+        <div class="preview-3d-card" id="preview3DCard">
+          <img id="preview3DImage" src="" alt="3D Preview">
+        </div>
+      </div>
+      <div class="modal-3d-footer">
+        💡 Click and drag anywhere inside the box to rotate your design in 3D perspective space.
+      </div>
+    </div>
+  </div>
+
   <!-- Payment Modal -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
@@ -423,7 +501,6 @@
     let isApplyingHistory = false;
     let selectedExportType = 'png';
     let showPrintGuides = false;
-    let is3DMode = false;
 
     let canvas = new fabric.Canvas('posterCanvas', {
       backgroundColor: '#ffffff',
@@ -460,20 +537,99 @@
       canvas.requestRenderAll();
     }
 
-    function toggle3DPreview() {
-      is3DMode = !is3DMode;
-      const viewport = document.getElementById('viewportContainer');
-      const btn = document.getElementById('btnToggle3D');
-      if (is3DMode) {
-        viewport.classList.add('mode-3d');
-        btn.className = 'secondary active-toggle';
-        btn.innerText = '📦 3D: ON';
-      } else {
-        viewport.classList.remove('mode-3d');
-        btn.className = 'secondary';
-        btn.innerText = '📦 3D Preview';
+    // 3D Big Screen Modal Logic & Mouse Drag Rotation
+    function open3DPreviewModal() {
+      const wasGuideOn = showPrintGuides;
+      if (wasGuideOn) {
+        showPrintGuides = false;
+        canvas.requestRenderAll();
       }
+
+      // Generate snapshot for 3D preview
+      const dataURL = canvas.toDataURL({
+        format: 'png',
+        quality: 1.0,
+        multiplier: 2 / canvas.getZoom()
+      });
+
+      if (wasGuideOn) {
+        showPrintGuides = true;
+        canvas.requestRenderAll();
+      }
+
+      document.getElementById('preview3DImage').src = dataURL;
+      document.getElementById('modal3DPreview').style.display = 'flex';
+      reset3DRotation();
     }
+
+    function close3DPreviewModal() {
+      document.getElementById('modal3DPreview').style.display = 'none';
+    }
+
+    // Interactive 3D Card Rotation with Mouse/Touch Drag
+    const modalBody = document.getElementById('modal3DBody');
+    const card3D = document.getElementById('preview3DCard');
+    let isDragging3D = false;
+    let startX = 0, startY = 0;
+    let currentRotateX = -10;
+    let currentRotateY = 20;
+
+    function reset3DRotation() {
+      currentRotateX = -10;
+      currentRotateY = 20;
+      card3D.style.transform = `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
+    }
+
+    modalBody.addEventListener('mousedown', (e) => {
+      isDragging3D = true;
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging3D) return;
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+      startX = e.clientX;
+      startY = e.clientY;
+
+      currentRotateY += deltaX * 0.5;
+      currentRotateX -= deltaY * 0.5;
+
+      // Limit vertical tilt
+      currentRotateX = Math.max(-60, Math.min(60, currentRotateX));
+
+      card3D.style.transform = `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging3D = false;
+    });
+
+    // Touch Support for Mobile
+    modalBody.addEventListener('touchstart', (e) => {
+      isDragging3D = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging3D) return;
+      const deltaX = e.touches[0].clientX - startX;
+      const deltaY = e.touches[0].clientY - startY;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+
+      currentRotateY += deltaX * 0.5;
+      currentRotateX -= deltaY * 0.5;
+      currentRotateX = Math.max(-60, Math.min(60, currentRotateX));
+
+      card3D.style.transform = `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
+    });
+
+    window.addEventListener('touchend', () => {
+      isDragging3D = false;
+    });
 
     function drawPrintGuides() {
       if (!showPrintGuides) return;
@@ -485,24 +641,23 @@
       ctx.save();
       ctx.scale(zoom, zoom);
 
-      // Offset margins for guides (Bleed: 15px, Trim: 30px, Safety: 50px)
       const bleed = 15;
       const trim = 30;
       const safety = 50;
 
-      // 1. Bleed Line (Red - Outer edge)
+      // 1. Bleed Line (Red)
       ctx.strokeStyle = '#EF4444';
       ctx.lineWidth = 1.5;
       ctx.setLineDash([4, 4]);
       ctx.strokeRect(bleed, bleed, w / zoom - (bleed * 2), h / zoom - (bleed * 2));
 
-      // 2. Trim Line (Black - Final cut edge)
+      // 2. Trim Line (Black)
       ctx.strokeStyle = '#0F172A';
       ctx.lineWidth = 1;
       ctx.setLineDash([]);
       ctx.strokeRect(trim, trim, w / zoom - (trim * 2), h / zoom - (trim * 2));
 
-      // 3. Safety Line (Blue - Inner safe zone)
+      // 3. Safety Line (Blue)
       ctx.strokeStyle = '#3B82F6';
       ctx.lineWidth = 1;
       ctx.setLineDash([6, 3]);
@@ -888,7 +1043,6 @@
     }
 
     function downloadPoster(format) {
-      // Temporarily hide guides during export so they don't print on the image
       const wasGuideOn = showPrintGuides;
       if (wasGuideOn) {
         showPrintGuides = false;
