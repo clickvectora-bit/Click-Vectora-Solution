@@ -412,8 +412,9 @@
           <input type="range" id="shapeCornerRadius" min="0" max="50" value="0" oninput="updateShapeProperty('rx', parseInt(this.value)); updateShapeProperty('ry', parseInt(this.value));" style="width:45px; cursor:pointer;" title="Corner Radius">
         </div>
 
-        <!-- Common Layer & Delete Controls -->
+        <!-- Common Layer, Duplicate & Delete Controls -->
         <div style="display:flex; gap:3px; align-items:center; border-left:1px solid #CBD5E1; padding-left:5px; margin-left:3px;">
+          <button class="secondary" style="padding: 2px 5px;" onclick="duplicateSelected()" title="Duplicate Selected">📋</button>
           <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
           <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('forward')" title="Step Up">🔼</button>
           <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('backward')" title="Step Down">🔽</button>
@@ -628,7 +629,6 @@
         }
         document.getElementById('shapeBorderSize').value = activeObj.strokeWidth || 0;
 
-        // Show/Hide corner radius slider based on whether it's a rectangle
         const isRect = activeObj.isType('rect');
         document.getElementById('shapeCornerRadius').style.display = isRect ? 'inline-block' : 'none';
         document.getElementById('shapeRadiusLabel').style.display = isRect ? 'inline-block' : 'none';
@@ -722,6 +722,33 @@
       bringGuidesToFront();
       canvas.renderAll();
       saveHistory();
+    }
+
+    function duplicateSelected() {
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject || Object.values(guideObjects).includes(activeObject)) return;
+
+      activeObject.clone(function(cloned) {
+        canvas.discardActiveObject();
+        cloned.set({
+          left: activeObject.left + 20,
+          top: activeObject.top + 20,
+          evented: true
+        });
+        if (cloned.isType('active-selection')) {
+          cloned.canvas = canvas;
+          cloned.forEachObject(function(obj) {
+            canvas.add(obj);
+          });
+          cloned.setCoords();
+        } else {
+          canvas.add(cloned);
+        }
+        canvas.setActiveObject(cloned);
+        bringGuidesToFront();
+        canvas.requestRenderAll();
+        saveHistory();
+      });
     }
 
     function resizeCanvasToFitContainer() {
