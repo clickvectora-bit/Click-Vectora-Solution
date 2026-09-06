@@ -313,8 +313,8 @@
   <div class="workspace" id="workspace">
     <div class="canvas-viewport-container">
 
-      <!-- Orientation, Format & Background Color Bar -->
-      <div class="floating-panel" style="margin-bottom: 8px; width: 100%; max-width: 720px; justify-content: center; gap: 8px; flex-wrap: wrap;">
+      <!-- Orientation, Format, Background & Undo/Redo Bar -->
+      <div class="floating-panel" style="margin-bottom: 8px; width: 100%; max-width: 780px; justify-content: center; gap: 8px; flex-wrap: wrap;">
         <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Card Layout:</span>
         <button class="secondary" onclick="setOrientation('horizontal')" title="Horizontal Card">📐 Horiz</button>
         <button class="secondary" onclick="setOrientation('vertical')" title="Vertical Card">📏 Vert</button>
@@ -324,6 +324,11 @@
           <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted);">BG:</span>
           <input type="color" id="cardBgColorPicker" onchange="setCanvasBackground(this.value)" value="#ffffff" title="Card Background Color">
           <button class="secondary" style="padding: 2px 6px; font-size: 0.65rem;" onclick="setCanvasBackground('transparent')">None</button>
+        </div>
+
+        <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
+          <button class="secondary" style="padding: 4px 10px;" onclick="undo()" title="Undo (10 Steps)">↩️ Undo</button>
+          <button class="secondary" style="padding: 4px 10px;" onclick="redo()" title="Redo (10 Steps)">↪️ Redo</button>
         </div>
       </div>
 
@@ -400,7 +405,11 @@
           <button class="secondary" style="padding:2px 5px; font-size:0.65rem;" onclick="updateShapeProperty('stroke', '')">None</button>
           
           <span style="font-size:0.65rem; font-weight:600;">Width:</span>
-          <input type="range" id="shapeBorderSize" min="0" max="25" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:50px; cursor:pointer;">
+          <input type="range" id="shapeBorderSize" min="0" max="25" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:45px; cursor:pointer;">
+
+          <!-- Rectangle Corner Radius Control -->
+          <span id="shapeRadiusLabel" style="font-size:0.65rem; font-weight:600; border-left:1px solid #CBD5E1; padding-left:5px;">Radius:</span>
+          <input type="range" id="shapeCornerRadius" min="0" max="50" value="0" oninput="updateShapeProperty('rx', parseInt(this.value)); updateShapeProperty('ry', parseInt(this.value));" style="width:45px; cursor:pointer;" title="Corner Radius">
         </div>
 
         <!-- Common Layer & Delete Controls -->
@@ -482,6 +491,11 @@
     let currentSide = 'front';
     let canvasStates = { front: null, back: null };
     
+    // 10-Step Undo/Redo Stack
+    let historyStack = { front: [], back: [] };
+    let redoStack = { front: [], back: [] };
+    let isApplyingHistory = false;
+
     let showBleed = true;
     let showTrim = true;
     let showSafety = true;
@@ -503,14 +517,81 @@
     canvas.on('selection:updated', updateInspector);
     canvas.on('selection:cleared', hideInspector);
 
+    canvas.on('object:added', () => saveHistory());
+    canvas.on('object:modified', () => saveHistory());
+    canvas.on('object:removed', () => saveHistory());
+
     function closeNoticeModal() {
       document.getElementById('noticeModal').style.display = 'none';
       resizeCanvasToFitContainer();
+      saveHistory();
+    }
+
+    function saveHistory() {
+      if (isApplyingHistory) return;
+      
+      const objects = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
+      const state = JSON.stringify({
+        objects: objects,
+        background: canvas.backgroundColor
+      });
+
+      const currentStack = historyStack[currentSide];
+      
+      if (currentStack.length > 0 && currentStack[currentStack.length - 1] === state) return;
+
+      currentStack.push(state);
+      
+      if (currentStack.length > 10) {
+        currentStack.shift();
+      }
+      
+      redoStack[currentSide] = [];
+    }
+
+    function undo() {
+      const currentStack = historyStack[currentSide];
+      if (currentStack.length <= 1) return;
+
+      isApplyingHistory = true;
+      const currentState = currentStack.pop();
+      redoStack[currentSide].push(currentState);
+
+      const previousState = currentStack[currentStack.length - 1];
+      canvas.clear();
+      canvas.loadFromJSON(previousState, () => {
+        if (canvas.backgroundColor) {
+          document.getElementById('cardBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
+        }
+        renderPrintGuides();
+        isApplyingHistory = false;
+        hideInspector();
+      });
+    }
+
+    function redo() {
+      const currentRedoStack = redoStack[currentSide];
+      if (currentRedoStack.length === 0) return;
+
+      isApplyingHistory = true;
+      const nextState = currentRedoStack.pop();
+      historyStack[currentSide].push(nextState);
+
+      canvas.clear();
+      canvas.loadFromJSON(nextState, () => {
+        if (canvas.backgroundColor) {
+          document.getElementById('cardBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
+        }
+        renderPrintGuides();
+        isApplyingHistory = false;
+        hideInspector();
+      });
     }
 
     function setCanvasBackground(color) {
       canvas.setBackgroundColor(color, () => {
         canvas.renderAll();
+        saveHistory();
       });
       if (color !== 'transparent') {
         document.getElementById('cardBgColorPicker').value = color;
@@ -535,7 +616,7 @@
         shapeControls.style.display = 'none';
         document.getElementById('textColor').value = activeObj.fill || '#0F172A';
         document.getElementById('fontFamily').value = activeObj.fontFamily || 'Poppins';
-      } else if (!activeObj.isType('image')) {
+      } else if (!activeObj.isType('image') && !activeObj.isType('group')) {
         shapeControls.style.display = 'flex';
         textControls.style.display = 'none';
         
@@ -546,6 +627,14 @@
           document.getElementById('shapeBorderColor').value = activeObj.stroke;
         }
         document.getElementById('shapeBorderSize').value = activeObj.strokeWidth || 0;
+
+        // Show/Hide corner radius slider based on whether it's a rectangle
+        const isRect = activeObj.isType('rect');
+        document.getElementById('shapeCornerRadius').style.display = isRect ? 'inline-block' : 'none';
+        document.getElementById('shapeRadiusLabel').style.display = isRect ? 'inline-block' : 'none';
+        if (isRect) {
+          document.getElementById('shapeCornerRadius').value = activeObj.rx || 0;
+        }
       } else {
         textControls.style.display = 'none';
         shapeControls.style.display = 'none';
@@ -632,6 +721,7 @@
 
       bringGuidesToFront();
       canvas.renderAll();
+      saveHistory();
     }
 
     function resizeCanvasToFitContainer() {
@@ -658,8 +748,6 @@
     function switchSide(side) {
       if (currentSide === side) return;
 
-      canvasStates[currentSide] = canvas.toJSON();
-
       currentSide = side;
       document.getElementById('btnSideA').className = side === 'front' ? 'active-side' : 'secondary';
       document.getElementById('btnSideB').className = side === 'back' ? 'active-side' : 'secondary';
@@ -667,21 +755,24 @@
       canvas.clear();
       canvas.backgroundColor = '#ffffff';
 
-      if (canvasStates[side]) {
-        canvas.loadFromJSON(canvasStates[side], () => {
+      const currentStack = historyStack[side];
+      if (currentStack.length > 0) {
+        isApplyingHistory = true;
+        canvas.loadFromJSON(currentStack[currentStack.length - 1], () => {
           resizeCanvasToFitContainer();
           if (canvas.backgroundColor) {
             document.getElementById('cardBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
           }
+          isApplyingHistory = false;
         });
       } else {
         document.getElementById('cardBgColorPicker').value = '#ffffff';
         resizeCanvasToFitContainer();
+        saveHistory();
       }
     }
 
     function open3DPreview() {
-      canvasStates[currentSide] = canvas.toJSON();
       hideGuidesForExport();
 
       let frontImg = '';
@@ -698,8 +789,9 @@
       const otherSide = currentSide === 'front' ? 'back' : 'front';
       const tempCanvas = new fabric.Canvas(null, { width: BASE_WIDTH, height: BASE_HEIGHT, backgroundColor: '#ffffff' });
 
-      if (canvasStates[otherSide]) {
-        tempCanvas.loadFromJSON(canvasStates[otherSide], () => {
+      const otherStack = historyStack[otherSide];
+      if (otherStack && otherStack.length > 0) {
+        tempCanvas.loadFromJSON(otherStack[otherStack.length - 1], () => {
           tempCanvas.getObjects().forEach(o => { if(o.excludeFromExport) o.visible = false; });
           tempCanvas.renderAll();
           const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1 });
@@ -751,7 +843,9 @@
       borderColor: '#FF6B00',
       cornerSize: 12,
       cornerStyle: 'circle',
-      borderDashArray: [4, 4]
+      borderDashArray: [4, 4],
+      hasRotatingPoint: true,
+      rotatingPointOffset: 25
     });
 
     function addText() {
@@ -781,6 +875,7 @@
       if (activeObject && activeObject.isType('i-text')) {
         activeObject.set(prop, value);
         canvas.renderAll();
+        saveHistory();
       }
     }
 
@@ -789,6 +884,7 @@
       if (activeObject && activeObject.isType('i-text')) {
         activeObject.set('textAlign', alignment);
         canvas.renderAll();
+        saveHistory();
       }
     }
 
@@ -799,6 +895,7 @@
         if (style === 'italic') activeObject.set('fontStyle', activeObject.fontStyle === 'italic' ? 'normal' : 'italic');
         if (style === 'underline') activeObject.set('underline', !activeObject.underline);
         canvas.renderAll();
+        saveHistory();
       }
     }
 
@@ -820,7 +917,7 @@
         strokeUniform: true
       };
 
-      if (type === 'rect') shape = new fabric.Rect({ ...baseOpts, width: 160, height: 100 });
+      if (type === 'rect') shape = new fabric.Rect({ ...baseOpts, width: 160, height: 100, rx: 0, ry: 0 });
       else if (type === 'circle') shape = new fabric.Circle({ ...baseOpts, radius: 60 });
       else if (type === 'triangle') shape = new fabric.Triangle({ ...baseOpts, width: 120, height: 120 });
       else if (type === 'line') shape = new fabric.Line([80, 100, 300, 100], { stroke: fillColor, strokeWidth: borderSize || 4 });
@@ -837,6 +934,7 @@
         activeObject.set(prop, value);
         activeObject.set('strokeUniform', true);
         canvas.renderAll();
+        saveHistory();
       }
     }
 
@@ -909,6 +1007,7 @@
         });
         canvas.discardActiveObject();
         canvas.renderAll();
+        saveHistory();
       }
     }
 
@@ -984,7 +1083,10 @@
       }
     }
 
-    setTimeout(resizeCanvasToFitContainer, 100);
+    setTimeout(() => {
+      resizeCanvasToFitContainer();
+      saveHistory();
+    }, 100);
   </script>
 </body>
 </html>
