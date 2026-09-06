@@ -90,7 +90,7 @@
       border: 1px solid #CBD5E1;
       border-radius: 6px;
       outline: none;
-      font-size: 0.85rem;
+      font-size: 16px !important; /* Prevents mobile auto-zoom on input focus */
       background: #FAFAFA;
     }
     input[type="text"] { width: 110px; }
@@ -282,6 +282,7 @@
 </head>
 <body>
 
+  <!-- Header -->
   <header class="minimal-header">
     <div class="brand-group">
       <a href="index.html" style="text-decoration:none;">
@@ -298,9 +299,11 @@
     </div>
   </header>
 
+  <!-- Workspace Area -->
   <div class="workspace" id="workspace">
     <div class="canvas-viewport-container">
 
+      <!-- Top Tools Panel -->
       <div class="floating-panel top-tools-panel">
         <div>
           <div class="panel-section-title">Add Text</div>
@@ -334,12 +337,14 @@
         </div>
       </div>
       
+      <!-- Top Canvas Controls -->
       <div class="floating-panel canvas-top-controls">
         <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
         <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
         <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D Preview</button>
       </div>
 
+      <!-- Object Inspector Overlay -->
       <div class="floating-panel object-inspector-panel" id="objectInspector">
         <div id="textInspectorControls" style="display:none; gap:5px; align-items:center; flex-wrap:wrap;">
           <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" title="Text Color">
@@ -372,10 +377,12 @@
         </div>
       </div>
 
+      <!-- Canvas Box -->
       <div class="canvas-container-wrapper" id="canvasWrapper">
         <canvas id="cardCanvas"></canvas>
       </div>
 
+      <!-- Bottom Controls -->
       <div class="canvas-bottom-controls-group">
         <div class="floating-panel" style="position:relative; flex-wrap:wrap; justify-content:center;">
           <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed: ON</button>
@@ -395,6 +402,7 @@
     </div>
   </div>
 
+  <!-- 3D Preview Modal -->
   <div class="modal-overlay" id="preview3DModal">
     <div class="modal modal-3d">
       <h3>3D Print Preview</h3>
@@ -412,6 +420,7 @@
     </div>
   </div>
 
+  <!-- Payment Modal -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
       <h3>Unlock HD Download</h3>
@@ -450,7 +459,8 @@
     let canvas = new fabric.Canvas('cardCanvas', {
       backgroundColor: '#ffffff',
       preserveObjectStacking: true,
-      allowTouchScrolling: false
+      allowTouchScrolling: false,
+      enableRetinaScaling: true
     });
 
     canvas.on('selection:created', updateInspector);
@@ -679,9 +689,12 @@
     });
 
     function addText() {
+      let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
+      let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
+
       const text = new fabric.IText('Your Name / Title', { 
-        left: 200, 
-        top: 200, 
+        left: (targetW / 2) - 100, 
+        top: (targetH / 2) - 25, 
         fontFamily: 'Poppins', 
         fill: '#0F172A', 
         fontSize: 32,
@@ -690,10 +703,10 @@
       });
       canvas.add(text);
       canvas.setActiveObject(text);
+      bringGuidesToFront();
+      canvas.requestRenderAll();
       text.enterEditing();
       text.selectAll();
-      bringGuidesToFront();
-      canvas.renderAll();
     }
 
     function updateTextProperty(prop, value) {
@@ -720,8 +733,12 @@
       let borderColor = document.getElementById('shapeBorderColor').value;
       let borderSize = parseInt(document.getElementById('shapeBorderSize').value);
 
+      let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
+      let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
+
       const baseOpts = {
-        left: 200, top: 200,
+        left: (targetW / 2) - 80, 
+        top: (targetH / 2) - 50,
         fill: fillColor,
         stroke: borderColor,
         strokeWidth: borderSize,
@@ -736,6 +753,7 @@
       canvas.add(shape);
       canvas.setActiveObject(shape);
       bringGuidesToFront();
+      canvas.requestRenderAll();
     }
 
     function updateShapeProperty(prop, value) {
@@ -747,7 +765,7 @@
       }
     }
 
-    // Robust Image Uploader with Absolute Center Positioning
+    // Fixed Image Uploader
     document.getElementById('imageLoader').addEventListener('change', function (e) {
       const files = e.target.files;
       if (!files || !files.length) return;
@@ -758,13 +776,14 @@
           fabric.Image.fromURL(event.target.result, function (img) {
             img.scaleToWidth(200);
             
-            // Calculate center of the canvas based on current orientation
             let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
             let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
             
             img.set({
               left: (targetW / 2) - 100 + (index * 25),
-              top: (targetH / 2) - 75 + (index * 25)
+              top: (targetH / 2) - 75 + (index * 25),
+              cornerColor: '#FF6B00',
+              cornerSize: 12
             });
 
             canvas.add(img);
