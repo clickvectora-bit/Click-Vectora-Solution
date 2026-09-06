@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Business Card Studio - Pro Mobile & Desktop</title>
+  <title>Business Card Studio - Pro</title>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -23,49 +23,76 @@
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; touch-action: manipulation; }
-    body { display: flex; height: 100vh; background: var(--bg-workspace); color: var(--text-main); overflow: hidden; flex-direction: row; }
+    body { display: flex; flex-direction: column; height: 100vh; background: var(--bg-workspace); color: var(--text-main); overflow: hidden; }
 
-    /* Desktop Sidebar */
-    .sidebar {
-      width: 360px;
+    /* Top Control Bar Styling */
+    .top-bar {
+      width: 100%;
       background: #FFFFFF;
-      border-right: 1px solid var(--border-color);
-      padding: 16px;
-      overflow-y: auto;
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 16px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
       z-index: 10;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      max-height: 40vh;
+      overflow-y: auto;
     }
 
     .brand {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--primary);
       display: flex;
       align-items: center;
       gap: 8px;
-      border-bottom: 2px solid #FFF1E6;
-      padding-bottom: 10px;
     }
 
-    .section-title { font-weight: 600; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+    .toolbar-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .tool-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #F8FAFC;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      flex-wrap: wrap;
+    }
+
+    .section-title { 
+      font-weight: 600; 
+      font-size: 0.7rem; 
+      color: var(--text-muted); 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px; 
+      margin-right: 4px;
+    }
+
+    .btn-group { display: flex; gap: 4px; flex-wrap: wrap; }
     
     button {
       background: var(--primary);
       color: white;
       border: none;
-      padding: 8px 12px;
+      padding: 6px 10px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s ease;
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 4px;
+      white-space: nowrap;
     }
     button:hover { background: var(--primary-hover); }
     button.secondary { background: #FFF; color: var(--text-main); border: 1px solid var(--border-color); }
@@ -74,15 +101,16 @@
     button.danger:hover { background: #DC2626; }
 
     input, select {
-      width: 100%;
-      padding: 8px 10px;
+      padding: 5px 8px;
       border: 1px solid var(--border-color);
       border-radius: 6px;
       outline: none;
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       background: #FAFAFA;
     }
     input:focus, select:focus { border-color: var(--primary); background: #FFF; }
+    input[type="text"] { width: 140px; }
+    input[type="file"] { width: 160px; font-size: 0.7rem; }
 
     /* Workspace & Canvas Styling */
     .workspace {
@@ -124,101 +152,92 @@
     }
     .modal {
       background: white;
-      padding: 24px;
+      padding: 20px;
       border-radius: 12px;
-      width: 360px;
+      width: 320px;
       max-width: 90%;
       text-align: center;
       box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
     }
-    .modal h3 { margin-bottom: 8px; color: var(--text-main); }
-    .modal p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
-    .price-tag { font-size: 2rem; font-weight: 700; color: var(--primary); margin: 8px 0; }
+    .modal h3 { margin-bottom: 8px; color: var(--text-main); font-size: 1.1rem; }
+    .modal p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; }
+    .price-tag { font-size: 1.8rem; font-weight: 700; color: var(--primary); margin: 6px 0; }
 
     #qrcode-hidden { display: none; }
 
-    /* Mobile Responsive Custom Layout */
+    /* Mobile Responsive Optimizations */
     @media (max-width: 768px) {
-      body { flex-direction: column-reverse; }
-      .sidebar {
-        width: 100%;
-        height: 50vh;
-        border-right: none;
-        border-top: 1px solid var(--border-color);
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
-      }
-      .workspace {
-        height: 50vh;
-        padding: 5px;
-      }
+      .top-bar { padding: 8px; gap: 8px; }
+      .toolbar-grid { gap: 8px; }
+      .tool-group { width: 100%; justify-content: space-between; }
+      input[type="text"] { width: 100%; }
+      input[type="file"] { width: 100%; }
     }
   </style>
 </head>
 <body>
 
-  <div class="sidebar">
-    <div class="brand">🎴 Business Card Studio</div>
-
-    <div>
-      <div class="section-title">Canvas Setup</div>
-      <div class="btn-group" style="margin-top: 6px;">
-        <button onclick="setOrientation('horizontal')">Horizontal</button>
-        <button onclick="setOrientation('vertical')">Vertical</button>
-        <button class="secondary" onclick="toggleRounded()">Toggle Radius</button>
+  <div class="top-bar">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+      <div class="brand">🎴 Business Card Studio</div>
+      
+      <div class="btn-group">
+        <button class="danger" onclick="deleteSelected()">Delete Selected</button>
+        <button style="background: #10B981;" onclick="initiatePayment('png')">PNG</button>
+        <button style="background: #2563EB;" onclick="initiatePayment('pdf')">PDF</button>
       </div>
     </div>
 
-    <div>
-      <div class="section-title">Text Tools</div>
-      <button style="width: 100%; margin-top: 6px; margin-bottom: 8px;" onclick="addText()">+ Add Text Layer</button>
+    <div class="toolbar-grid">
       
-      <div style="display: flex; gap: 6px; margin-bottom: 6px;">
-        <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" style="height: 36px; width: 44px; cursor: pointer; padding: 2px;">
+      <div class="tool-group">
+        <span class="section-title">Canvas</span>
+        <div class="btn-group">
+          <button onclick="setOrientation('horizontal')">Horizontal</button>
+          <button onclick="setOrientation('vertical')">Vertical</button>
+          <button class="secondary" onclick="toggleRounded()">Radius</button>
+        </div>
+      </div>
+
+      <div class="tool-group">
+        <span class="section-title">Text</span>
+        <button onclick="addText()">+ Text</button>
+        <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" style="height: 28px; width: 34px; cursor: pointer; padding: 1px;">
         <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)">
           <option value="Poppins">Poppins</option>
           <option value="Montserrat">Montserrat</option>
           <option value="Roboto">Roboto</option>
-          <option value="Playfair Display">Playfair Display</option>
+          <option value="Playfair Display">Playfair</option>
           <option value="Open Sans">Open Sans</option>
         </select>
+        <div class="btn-group">
+          <button class="secondary" onclick="toggleStyle('bold')"><b>B</b></button>
+          <button class="secondary" onclick="toggleStyle('italic')"><i>I</i></button>
+          <button class="secondary" onclick="toggleStyle('underline')"><u>U</u></button>
+        </div>
       </div>
 
-      <div class="btn-group">
-        <button class="secondary" style="flex:1;" onclick="toggleStyle('bold')"><b>B</b></button>
-        <button class="secondary" style="flex:1;" onclick="toggleStyle('italic')"><i>I</i></button>
-        <button class="secondary" style="flex:1;" onclick="toggleStyle('underline')"><u>U</u></button>
+      <div class="tool-group">
+        <span class="section-title">Logo</span>
+        <input type="file" id="imageLoader" accept="image/*">
       </div>
-    </div>
 
-    <div>
-      <div class="section-title">Upload Logo / Image</div>
-      <input type="file" id="imageLoader" accept="image/*" style="margin-top: 6px;">
-    </div>
-
-    <div>
-      <div class="section-title">QR Code Generator</div>
-      <input type="text" id="qrInput" placeholder="URL / UPI / Contact" style="margin-top: 6px; margin-bottom: 6px;">
-      <button style="width: 100%;" onclick="addQRCode()">Generate QR Code</button>
-    </div>
-
-    <div>
-      <div class="section-title">Shapes & Accents</div>
-      <div class="btn-group" style="margin-top: 6px;">
-        <button class="secondary" onclick="addShape('rect')">Rectangle</button>
-        <button class="secondary" onclick="addShape('circle')">Circle</button>
-        <button class="secondary" onclick="addShape('triangle')">Triangle</button>
-        <button class="secondary" onclick="addShape('line')">Line</button>
+      <div class="tool-group">
+        <span class="section-title">QR</span>
+        <input type="text" id="qrInput" placeholder="URL / UPI / Contact">
+        <button onclick="addQRCode()">Generate</button>
       </div>
-    </div>
 
-    <div style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 10px;">
-      <button class="danger" style="width: 100%; margin-bottom: 8px;" onclick="deleteSelected()">Delete Selected Layer</button>
-      
-      <div class="section-title" style="margin-bottom: 6px;">Export Options</div>
-      <div style="display: flex; gap: 6px;">
-        <button style="flex: 1; background: #10B981;" onclick="initiatePayment('png')">Download PNG</button>
-        <button style="flex: 1; background: #2563EB;" onclick="initiatePayment('pdf')">Download PDF</button>
+      <div class="tool-group">
+        <span class="section-title">Shapes</span>
+        <div class="btn-group">
+          <button class="secondary" onclick="addShape('rect')">Rect</button>
+          <button class="secondary" onclick="addShape('circle')">Circle</button>
+          <button class="secondary" onclick="addShape('triangle')">Triangle</button>
+          <button class="secondary" onclick="addShape('line')">Line</button>
+        </div>
       </div>
+
     </div>
   </div>
 
@@ -257,7 +276,7 @@
     const BASE_WIDTH = 525;
     const BASE_HEIGHT = 300;
 
-    // Mobile & Desktop Dynamic Rescaling Engine
+    // Dynamic Rescaling Engine
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspace');
       const maxWidth = workspace.clientWidth - 20;
@@ -291,7 +310,7 @@
       wrapper.classList.toggle('rounded', isRounded);
     }
 
-    // Professional Layer Handles
+    // Professional Handles Styling
     fabric.Object.prototype.set({
       transparentCorners: false,
       cornerColor: '#FF6B00',
