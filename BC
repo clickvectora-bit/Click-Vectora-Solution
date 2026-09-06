@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ultimate Business Card Studio</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+    body { background: #0f172a; margin: 0; padding: 20px; color: #f8fafc; }
+    h2 { text-align: center; margin-bottom: 20px; color: #38bdf8; }
+
+    .wrapper { display: flex; gap: 24px; justify-content: center; max-width: 1200px; margin: 0 auto; flex-wrap: wrap; }
+    
+    .controls {
+      background: #1e293b; padding: 20px; border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3); width: 380px; max-height: 88vh; overflow-y: auto;
+    }
+
+    .section-title {
+      font-size: 12px; font-weight: 700; color: #38bdf8; text-transform: uppercase;
+      margin: 16px 0 8px 0; border-bottom: 1px solid #334155; padding-bottom: 4px;
+    }
+
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; font-size: 11px; font-weight: 600; color: #94a3b8; margin-bottom: 4px; }
+    .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; border-radius: 6px; font-size: 13px; }
+
+    .btn-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .btn-tool { background: #334155; color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: 600; font-size: 12px; }
+    .btn-tool:hover { background: #475569; }
+
+    .preview-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    
+    .toggle-buttons { display: flex; background: #334155; padding: 4px; border-radius: 8px; }
+    .toggle-buttons button { border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; background: transparent; color: #94a3b8; }
+    .toggle-buttons button.active { background: #38bdf8; color: #0f172a; }
+
+    /* Standard Card Box */
+    .card-box {
+      width: 350px; height: 200px; border-radius: 10px; padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative;
+      display: flex; flex-direction: column; justify-content: space-between;
+      overflow: hidden; box-sizing: border-box; background-color: #1e293b; color: #ffffff;
+      transition: all 0.2s ease;
+    }
+
+    .logo-container { overflow: hidden; display: inline-block; max-height: 45px; max-width: 90px; }
+    .logo-img { height: 100%; width: 100%; object-fit: cover; transform: scale(1); }
+
+    .card-front { display: flex; justify-content: space-between; height: 100%; position: relative; z-index: 2; }
+    .card-info { display: flex; flex-direction: column; justify-content: space-between; width: 65%; }
+    
+    .card-name { font-size: 18px; font-weight: bold; margin: 0; }
+    .card-title { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+    .card-contacts { font-size: 11px; line-height: 1.6; opacity: 0.9; }
+    
+    #qrcode { background: white; padding: 4px; border-radius: 6px; align-self: flex-end; display: flex; align-items: center; justify-content: center; }
+    .card-back { display: none; height: 100%; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; z-index: 2; }
+
+    .action-buttons { display: flex; gap: 10px; width: 100%; }
+    .btn-pay { background: #22c55e; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; flex: 1; text-align: center; font-size: 14px; }
+    .btn-pay:hover { background: #16a34a; }
+  </style>
+</head>
+<body>
+
+  <h2>Business Card Studio (Design Tools + Razorpay Integration)</h2>
+
+  <div class="wrapper">
+    <div class="controls">
+      <div class="btn-row">
+        <button class="btn-tool" onclick="undo()">↩ Undo</button>
+        <button class="btn-tool" onclick="redo()">↪ Redo</button>
+      </div>
+
+      <div class="section-title">1. Logo Crop & Scale Tool</div>
+      <div class="form-group">
+        <label>Upload Logo Image</label>
+        <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
+      </div>
+      <div class="form-group">
+        <label>Logo Zoom / Crop Scale</label>
+        <input type="range" id="logoZoom" min="0.5" max="2.5" step="0.1" value="1" oninput="applyLogoTransform()">
+      </div>
+
+      <div class="section-title">2. Text & Design Tools</div>
+      <div class="form-group">
+        <label>Text Alignment</label>
+        <select id="textAlign" onchange="applyDesignTools()">
+          <option value="left">Left Aligned</option>
+          <option value="center">Center Aligned</option>
+          <option value="right">Right Aligned</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Card Brightness</label>
+        <input type="range" id="cardBrightness" min="50" max="150" value="100" oninput="applyDesignTools()">
+      </div>
+
+      <div class="section-title">3. Card Details</div>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="inputName" placeholder="Rahul Sharma" oninput="onInputChange()">
+      </div>
+      <div class="form-group">
+        <label>Designation</label>
+        <input type="text" id="inputTitle" placeholder="Lead Designer" oninput="onInputChange()">
+      </div>
+      <div class="form-group">
+        <label>Company Name</label>
+        <input type="text" id="inputCompany" placeholder="TechCorp Solutions" oninput="onInputChange()">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="text" id="inputPhone" placeholder="+91 98765 43210" oninput="onInputChange()">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="text" id="inputEmail" placeholder="rahul@techcorp.com" oninput="onInputChange()">
+      </div>
+      <div class="form-group">
+        <label>Website URL (QR Code)</label>
+        <input type="text" id="inputWebsite" placeholder="https://techcorp.com" oninput="onInputChange()">
+      </div>
+    </div>
+
+    <div class="preview-container">
+      <div class="toggle-buttons">
+        <button id="btnFront" class="active" onclick="toggleSide('front')">Front View</button>
+        <button id="btnBack" onclick="toggleSide('back')">Back View</button>
+      </div>
+
+      <div id="cardCanvas" class="card-box">
+        <div id="frontView" class="card-front">
+          <div class="card-info" id="cardInfoBlock">
+            <div>
+              <div class="logo-container">
+                <img id="frontLogo" class="logo-img" style="display:none;" alt="Logo">
+              </div>
+              <p class="card-name" id="cardName">Rahul Sharma</p>
+              <p class="card-title" id="cardTitle">Lead Designer</p>
+            </div>
+            <div class="card-contacts">
+              <p id="cardPhone">📞 +91 98765 43210</p>
+              <p id="cardEmail">✉️ rahul@techcorp.com</p>
+            </div>
+          </div>
+          <div id="qrcode"></div>
+        </div>
+
+        <div id="backView" class="card-back">
+          <div class="logo-container">
+            <img id="backLogo" class="logo-img" style="display:none;" alt="Logo">
+          </div>
+          <h3 id="cardCompany" style="margin: 0;">TechCorp Solutions</h3>
+          <p id="cardTagline" style="font-size: 11px; opacity: 0.8; margin-top: 4px;">Innovation Meets Excellence</p>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-pay" onclick="payAndDownload('png')">Pay ₹99 & Download PNG</button>
+        <button class="btn-pay" style="background:#0284c7;" onclick="payAndDownload('pdf')">Pay ₹99 & Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentSide = 'front';
+    let qrCodeInstance = null;
+    
+    // Undo / Redo State Arrays
+    let historyStack = [];
+    let historyStep = -1;
+
+    window.onload = function() {
+      qrCodeInstance = new QRCode(document.getElementById("qrcode"), {
+        width: 50, height: 50, colorDark : "#000000", colorLight : "#ffffff"
+      });
+      saveState();
+      updateCard();
+    };
+
+    // Undo / Redo Manager
+    function saveState() {
+      const state = {
+        name: document.getElementById('inputName').value,
+        title: document.getElementById('inputTitle').value,
+        company: document.getElementById('inputCompany').value,
+        phone: document.getElementById('inputPhone').value,
+        email: document.getElementById('inputEmail').value,
+        align: document.getElementById('textAlign').value,
+        zoom: document.getElementById('logoZoom').value,
+        brightness: document.getElementById('cardBrightness').value
+      };
+
+      // Truncate future states if undo was performed
+      historyStack = historyStack.slice(0, historyStep + 1);
+      historyStack.push(state);
+      historyStep++;
+    }
+
+    function undo() {
+      if (historyStep > 0) {
+        historyStep--;
+        applyState(historyStack[historyStep]);
+      }
+    }
+
+    function redo() {
+      if (historyStep < historyStack.length - 1) {
+        historyStep++;
+        applyState(historyStack[historyStep]);
+      }
+    }
+
+    function applyState(state) {
+      document.getElementById('inputName').value = state.name;
+      document.getElementById('inputTitle').value = state.title;
+      document.getElementById('inputCompany').value = state.company;
+      document.getElementById('inputPhone').value = state.phone;
+      document.getElementById('inputEmail').value = state.email;
+      document.getElementById('textAlign').value = state.align;
+      document.getElementById('logoZoom').value = state.zoom;
+      document.getElementById('cardBrightness').value = state.brightness;
+
+      updateCard();
+      applyLogoTransform();
+      applyDesignTools();
+    }
+
+    function onInputChange() {
+      updateCard();
+      saveState();
+    }
+
+    // Logo Upload & Crop Scaling
+    function handleLogoUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const logoData = e.target.result;
+          document.getElementById('frontLogo').src = logoData;
+          document.getElementById('backLogo').src = logoData;
+          document.getElementById('frontLogo').style.display = 'block';
+          document.getElementById('backLogo').style.display = 'block';
+          saveState();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function applyLogoTransform() {
+      const scale = document.getElementById('logoZoom').value;
+      document.getElementById('frontLogo').style.transform = `scale(${scale})`;
+      document.getElementById('backLogo').style.transform = `scale(${scale})`;
+    }
+
+    // Design Tools (Alignment & Brightness Filters)
+    function applyDesignTools() {
+      const align = document.getElementById('textAlign').value;
+      const brightness = document.getElementById('cardBrightness').value;
+
+      document.getElementById('cardInfoBlock').style.textAlign = align;
+      document.getElementById('cardCanvas').style.filter = `brightness(${brightness}%)`;
+    }
+
+    function updateCard() {
+      const name = document.getElementById('inputName').value || "Rahul Sharma";
+      const title = document.getElementById('inputTitle').value || "Lead Designer";
+      const company = document.getElementById('inputCompany').value || "TechCorp Solutions";
+      const phone = document.getElementById('inputPhone').value || "+91 98765 43210";
+      const email = document.getElementById('inputEmail').value || "rahul@techcorp.com";
+      const website = document.getElementById('inputWebsite').value || "https://techcorp.com";
+
+      document.getElementById('cardName').innerText = name;
+      document.getElementById('cardTitle').innerText = title;
+      document.getElementById('cardCompany').innerText = company;
+      document.getElementById('cardPhone').innerText = "📞 " + phone;
+      document.getElementById('cardEmail').innerText = "✉️ " + email;
+
+      if (qrCodeInstance) {
+        qrCodeInstance.clear();
+        qrCodeInstance.makeCode(website);
+      }
+    }
+
+    function toggleSide(side) {
+      currentSide = side;
+      document.getElementById('btnFront').className = side === 'front' ? 'active' : '';
+      document.getElementById('btnBack').className = side === 'back' ? 'active' : '';
+      document.getElementById('frontView').style.display = side === 'front' ? 'flex' : 'none';
+      document.getElementById('backView').style.display = side === 'back' ? 'flex' : 'none';
+    }
+
+    // Razorpay Integration & Download Execution
+    function payAndDownload(format) {
+      const options = {
+        "key": "YOUR_RAZORPAY_KEY_ID", // Yaha apni Razorpay Test/Live Key ID daalein
+        "amount": 9900, // Amount in paise (₹99.00)
+        "currency": "INR",
+        "name": "Business Card Studio",
+        "description": "HD Business Card Download Fee",
+        "handler": function (response) {
+          alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+          executeDownload(format);
+        },
+        "prefill": {
+          "name": document.getElementById('cardName').innerText,
+          "email": document.getElementById('inputEmail').value || "user@example.com"
+        },
+        "theme": { "color": "#38bdf8" }
+      };
+
+      // Test Mode Check: Key id empty hone par direct download enable karein
+      if (options.key === "YOUR_RAZORPAY_KEY_ID") {
+        alert("Razorpay Key ID nahi judi hai. Direct Download execute kiya ja raha hai (Demo Mode).");
+        executeDownload(format);
+      } else {
+        const rzp = new Razorpay(options);
+        rzp.open();
+      }
+    }
+
+    function executeDownload(format) {
+      const card = document.getElementById('cardCanvas');
+      html2canvas(card, { scale: 3 }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+
+        if (format === 'png') {
+          const link = document.createElement('a');
+          link.download = `card-${currentSide}.png`;
+          link.href = imgData;
+          link.click();
+        } else if (format === 'pdf') {
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ orientation: 'landscape', unit: 'in', format: [3.5, 2] });
+          pdf.addImage(imgData, 'PNG', 0, 0, 3.5, 2);
+          pdf.save(`card-${currentSide}.pdf`);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
