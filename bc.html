@@ -113,7 +113,7 @@
     input[type="text"] { width: 120px; }
     input[type="file"] { width: 150px; font-size: 0.68rem; }
 
-    /* Workspace & Zero Padding Full Canvas */
+    /* Workspace & Canvas */
     .workspace {
       flex: 1;
       width: 100%;
@@ -139,7 +139,7 @@
       overflow: hidden;
     }
 
-    /* Modal Overlay Styling */
+    /* Modal Styling */
     .modal-overlay {
       position: fixed;
       top:0; left:0; right:0; bottom:0;
@@ -160,12 +160,25 @@
       text-align: center;
     }
 
-    /* 3D Card Preview Styles */
+    /* Bigger 3D Card Preview Styling */
+    .modal-3d {
+      width: 650px !important;
+      max-width: 95% !important;
+      padding: 24px !important;
+    }
+
     .card-3d-container {
-      width: 300px;
-      height: 171px;
-      perspective: 1000px;
+      width: 550px;
+      height: 314px;
+      perspective: 1200px;
       margin: 20px auto;
+    }
+
+    @media (max-width: 600px) {
+      .card-3d-container {
+        width: 320px;
+        height: 183px;
+      }
     }
 
     .card-3d-inner {
@@ -174,8 +187,8 @@
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-      border-radius: 8px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+      border-radius: 10px;
     }
 
     .card-3d-inner.flipped { transform: rotateY(180deg); }
@@ -185,7 +198,7 @@
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
       background-size: cover;
       background-position: center;
@@ -274,7 +287,7 @@
   </div>
 
   <div class="modal-overlay" id="preview3DModal">
-    <div class="modal" style="width: 380px;">
+    <div class="modal modal-3d">
       <h3>3D Print Preview</h3>
       <div class="card-3d-container">
         <div class="card-3d-inner" id="card3dInner">
@@ -282,9 +295,9 @@
           <div class="card-3d-back" id="card3dBack"></div>
         </div>
       </div>
-      <div style="display: flex; gap: 8px;">
-        <button style="flex:1;" class="secondary" onclick="flip3DCard()">Flip Side</button>
-        <button style="flex:1;" onclick="close3DModal()">Close</button>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+        <button style="padding: 8px 16px;" class="secondary" onclick="flip3DCard()">Flip Card Side</button>
+        <button style="padding: 8px 16px;" onclick="close3DModal()">Close Preview</button>
       </div>
     </div>
   </div>
@@ -292,7 +305,7 @@
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
       <h3>Unlock HD Download</h3>
-      <p>Print-Ready Vectors without Guides</p>
+      <p>Print-Ready Vectors without Print Guides</p>
       <div style="font-size: 1.8rem; font-weight:700; color:var(--primary); margin:8px 0;">₹49</div>
       <div style="display: flex; gap: 8px; margin-top: 10px;">
         <button class="secondary" style="flex:1;" onclick="closeModal()">Cancel</button>
@@ -307,7 +320,7 @@
     const BASE_WIDTH = 1000;
     const BASE_HEIGHT = 571;
 
-    // Margins for Print Lines
+    // Print Guides Padding
     const BLEED_MARGIN = 10;
     const TRIM_MARGIN = 22;
     const SAFETY_MARGIN = 42;
@@ -331,7 +344,7 @@
       allowTouchScrolling: false
     });
 
-    // Draw Print Lines Engine
+    // Render Print Guides Always On Top (Highest Layer)
     function renderPrintGuides() {
       ['bleed', 'trim', 'safety'].forEach(type => {
         if (guideObjects[type]) canvas.remove(guideObjects[type]);
@@ -356,7 +369,7 @@
         guideObjects.trim = new fabric.Rect({
           left: TRIM_MARGIN, top: TRIM_MARGIN,
           width: targetW - (TRIM_MARGIN * 2), height: targetH - (TRIM_MARGIN * 2),
-          fill: 'transparent', stroke: '#0F172A', strokeWidth: 1.5,
+          fill: 'transparent', stroke: '#0F172A', strokeWidth: 2,
           selectable: false, evented: false, excludeFromExport: true
         });
         canvas.add(guideObjects.trim);
@@ -373,7 +386,15 @@
         canvas.add(guideObjects.safety);
       }
 
+      // Force Guides to Top Z-Index
+      bringGuidesToFront();
       canvas.renderAll();
+    }
+
+    function bringGuidesToFront() {
+      Object.values(guideObjects).forEach(obj => {
+        if (obj) canvas.bringToFront(obj);
+      });
     }
 
     function toggleGuide(type) {
@@ -390,7 +411,7 @@
       renderPrintGuides();
     }
 
-    // Canvas Auto Rescale Engine
+    // Auto Rescale Canvas
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspace');
       const maxWidth = workspace.clientWidth;
@@ -412,11 +433,10 @@
 
     window.addEventListener('resize', resizeCanvasToFitContainer);
 
-    // Front/Back Switching Engine
+    // Front/Back Switching
     function switchSide(side) {
       if (currentSide === side) return;
 
-      // Save current side state
       canvasStates[currentSide] = canvas.toJSON();
 
       currentSide = side;
@@ -435,18 +455,13 @@
       }
     }
 
-    // 3D Preview
+    // Larger 3D Preview Engine
     function open3DPreview() {
       hideGuidesForExport();
       
       const frontData = canvas.toDataURL({ format: 'png', quality: 1 });
       document.getElementById('card3dFront').style.backgroundImage = `url(${frontData})`;
-
-      if (canvasStates[currentSide === 'front' ? 'back' : 'front']) {
-        document.getElementById('card3dBack').style.backgroundImage = `url(${frontData})`;
-      } else {
-        document.getElementById('card3dBack').style.backgroundImage = `url(${frontData})`;
-      }
+      document.getElementById('card3dBack').style.backgroundImage = `url(${frontData})`;
 
       restoreGuidesAfterExport();
       document.getElementById('preview3DModal').style.display = 'flex';
@@ -482,11 +497,12 @@
       borderDashArray: [4, 4]
     });
 
-    // Tools
+    // Object Addition Handlers (Includes Auto-Front for Guides)
     function addText() {
       const text = new fabric.IText('Your Name / Title', { left: 100, top: 100, fontFamily: 'Poppins', fill: '#0F172A', fontSize: 32 });
       canvas.add(text);
       canvas.setActiveObject(text);
+      bringGuidesToFront();
     }
 
     function updateTextProperty(prop, value) {
@@ -514,6 +530,7 @@
           img.scaleToWidth(180);
           canvas.add(img);
           canvas.setActiveObject(img);
+          bringGuidesToFront();
         });
       };
       if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
@@ -534,6 +551,7 @@
             img.set({ left: 100, top: 100 });
             canvas.add(img);
             canvas.setActiveObject(img);
+            bringGuidesToFront();
           });
         }
       }, 100);
@@ -548,6 +566,7 @@
 
       canvas.add(shape);
       canvas.setActiveObject(shape);
+      bringGuidesToFront();
     }
 
     function deleteSelected() {
@@ -574,7 +593,7 @@
       canvas.renderAll();
     }
 
-    // Payment & Download Handlers
+    // Payment Gateway & Export Engine
     function initiatePayment(type) {
       selectedExportType = type;
       document.getElementById('paymentModal').style.display = 'flex';
