@@ -491,7 +491,7 @@
       canvas.renderAll();
     }
 
-    // Canvas Auto Scaling with Reduced Container Size (85% Scale)
+    // Canvas Auto Scaling - Scaled to 0.5 from all sides
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspace');
       const topControlsH = document.querySelector('.canvas-top-controls').offsetHeight || 30;
@@ -505,8 +505,8 @@
 
       let scale = Math.min(maxWidth / targetW, maxHeight / targetH);
 
-      // Reduced size multiplier (0.85 = 15% smaller)
-      scale = scale * 0.85;
+      // Reduced size multiplier to 0.5 scale
+      scale = scale * 0.5;
 
       canvas.setDimensions({
         width: targetW * scale,
