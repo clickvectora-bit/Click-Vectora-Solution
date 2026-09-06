@@ -25,7 +25,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; touch-action: manipulation; }
     body { display: flex; flex-direction: column; height: 100vh; background: var(--bg-workspace); color: var(--text-main); overflow: hidden; }
 
-    /* Top Features Bar - Compact Layout */
+    /* Top Features Bar */
     .top-bar {
       width: 100%;
       background: #FFFFFF;
@@ -112,7 +112,7 @@
     input[type="file"] { width: 140px; font-size: 0.65rem; }
     input[type="color"] { height: 24px; width: 26px; cursor: pointer; padding: 1px; }
 
-    /* Tight-Fit Workspace Area */
+    /* Tight Workspace Area */
     .workspace {
       flex: 1;
       width: 100%;
@@ -128,7 +128,7 @@
       background-size: 12px 12px;
     }
 
-    /* Floating Canvas Top Controls */
+    /* Top Canvas Floating Controls */
     .canvas-top-controls {
       display: flex;
       gap: 6px;
@@ -147,7 +147,7 @@
       overflow: hidden;
     }
 
-    /* Floating Canvas Bottom Line Controls */
+    /* Bottom Canvas Floating Controls */
     .canvas-bottom-controls {
       display: flex;
       gap: 6px;
@@ -159,7 +159,7 @@
       z-index: 5;
     }
 
-    /* Fixed Bottom Action Bar */
+    /* Bottom Action Bar */
     .bottom-action-bar {
       width: 100%;
       background: #FFFFFF;
@@ -171,7 +171,7 @@
       z-index: 10;
     }
 
-    /* Modal Styling */
+    /* Modal Overlay */
     .modal-overlay {
       position: fixed;
       top:0; left:0; right:0; bottom:0;
@@ -192,36 +192,21 @@
       text-align: center;
     }
 
-    /* Dual 3D Card Preview Styling */
+    /* Single 3D Card Modal Styling */
     .modal-3d {
-      width: 1050px !important;
-      max-width: 96% !important;
+      width: 650px !important;
+      max-width: 95% !important;
       padding: 20px !important;
     }
 
-    .preview-3d-wrapper {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      margin: 15px 0;
-    }
-
-    .preview-card-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-
     .card-3d-container {
-      width: 450px;
-      height: 257px;
+      width: 520px;
+      height: 297px;
       perspective: 1200px;
+      margin: 15px auto;
     }
 
-    @media (max-width: 1024px) {
+    @media (max-width: 600px) {
       .card-3d-container {
         width: 320px;
         height: 183px;
@@ -234,8 +219,8 @@
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-      border-radius: 10px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+      border-radius: 12px;
     }
 
     .card-3d-inner.flipped { transform: rotateY(180deg); }
@@ -245,7 +230,7 @@
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
-      border-radius: 10px;
+      border-radius: 12px;
       overflow: hidden;
       background-size: cover;
       background-position: center;
@@ -345,7 +330,7 @@
     <div class="canvas-top-controls">
       <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
       <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
-      <button style="background: #8B5CF6;" onclick="open3DPreview()">3D Dual Preview</button>
+      <button style="background: #8B5CF6;" onclick="open3DPreview()">3D Preview</button>
     </div>
 
     <div class="canvas-container-wrapper" id="canvasWrapper">
@@ -370,35 +355,17 @@
 
   <div class="modal-overlay" id="preview3DModal">
     <div class="modal modal-3d">
-      <h3>3D Dual Card Preview</h3>
-      <div class="preview-3d-wrapper">
-        
-        <div class="preview-card-box">
-          <span style="font-weight:600; font-size:0.8rem; color:var(--text-muted);">FRONT SIDE</span>
-          <div class="card-3d-container">
-            <div class="card-3d-inner" id="card3dInnerFront">
-              <div class="card-3d-front" id="card3dFront_A"></div>
-              <div class="card-3d-back" id="card3dBack_A"></div>
-            </div>
-          </div>
-          <button class="secondary" style="padding: 4px 10px; font-size:0.7rem;" onclick="flipCard('card3dInnerFront')">Flip Front Card</button>
+      <h3>3D Print Preview</h3>
+      <div class="card-3d-container">
+        <div class="card-3d-inner" id="card3dInner">
+          <div class="card-3d-front" id="card3dFront"></div>
+          <div class="card-3d-back" id="card3dBack"></div>
         </div>
-
-        <div class="preview-card-box">
-          <span style="font-weight:600; font-size:0.8rem; color:var(--text-muted);">BACK SIDE</span>
-          <div class="card-3d-container">
-            <div class="card-3d-inner" id="card3dInnerBack">
-              <div class="card-3d-front" id="card3dFront_B"></div>
-              <div class="card-3d-back" id="card3dBack_B"></div>
-            </div>
-          </div>
-          <button class="secondary" style="padding: 4px 10px; font-size:0.7rem;" onclick="flipCard('card3dInnerBack')">Flip Back Card</button>
-        </div>
-
       </div>
       
-      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-        <button style="padding: 6px 20px;" onclick="close3DModal()">Close Preview</button>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+        <button class="secondary" style="padding: 6px 16px;" onclick="flip3DCard()">🔄 Flip Card Side</button>
+        <button style="padding: 6px 16px;" onclick="close3DModal()">Close Preview</button>
       </div>
     </div>
   </div>
@@ -445,10 +412,14 @@
       allowTouchScrolling: false
     });
 
-    // Render Print Lines Always on Top
+    // Render Print Guides Always On Top (With Fixed Line Toggles)
     function renderPrintGuides() {
+      // Clear existing guides first
       ['bleed', 'trim', 'safety'].forEach(type => {
-        if (guideObjects[type]) canvas.remove(guideObjects[type]);
+        if (guideObjects[type]) {
+          canvas.remove(guideObjects[type]);
+          guideObjects[type] = null;
+        }
       });
 
       let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
@@ -494,6 +465,7 @@
       });
     }
 
+    // Toggle Line On/Off Fix
     function toggleGuide(type) {
       if (type === 'bleed') {
         showBleed = !showBleed;
@@ -522,7 +494,7 @@
       canvas.renderAll();
     }
 
-    // Auto Rescale Canvas to Maximize Card Area
+    // Canvas Auto Scaling
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspace');
       const topControlsH = document.querySelector('.canvas-top-controls').offsetHeight || 30;
@@ -547,7 +519,7 @@
 
     window.addEventListener('resize', resizeCanvasToFitContainer);
 
-    // Front / Back Side Switcher
+    // Front/Back Switcher
     function switchSide(side) {
       if (currentSide === side) return;
 
@@ -569,7 +541,7 @@
       }
     }
 
-    // Dual 3D Card Preview
+    // Single Card 3D Preview Engine
     function open3DPreview() {
       canvasStates[currentSide] = canvas.toJSON();
 
@@ -605,21 +577,17 @@
     }
 
     function apply3DImages(frontImg, backImg) {
-      document.getElementById('card3dFront_A').style.backgroundImage = `url(${frontImg})`;
-      document.getElementById('card3dBack_A').style.backgroundImage = `url(${backImg})`;
-
-      document.getElementById('card3dFront_B').style.backgroundImage = `url(${backImg})`;
-      document.getElementById('card3dBack_B').style.backgroundImage = `url(${frontImg})`;
+      document.getElementById('card3dFront').style.backgroundImage = `url(${frontImg})`;
+      document.getElementById('card3dBack').style.backgroundImage = `url(${backImg})`;
     }
 
-    function flipCard(elementId) {
-      document.getElementById(elementId).classList.toggle('flipped');
+    function flip3DCard() {
+      document.getElementById('card3dInner').classList.toggle('flipped');
     }
 
     function close3DModal() {
       document.getElementById('preview3DModal').style.display = 'none';
-      document.getElementById('card3dInnerFront').classList.remove('flipped');
-      document.getElementById('card3dInnerBack').classList.remove('flipped');
+      document.getElementById('card3dInner').classList.remove('flipped');
     }
 
     function setOrientation(type) {
@@ -643,7 +611,7 @@
       borderDashArray: [4, 4]
     });
 
-    // Object Creators & Shape Properties Update (Includes Transparent Option Support)
+    // Object Creators & Properties Handlers
     function addText() {
       const text = new fabric.IText('Your Name / Title', { left: 100, top: 100, fontFamily: 'Poppins', fill: '#0F172A', fontSize: 32 });
       canvas.add(text);
@@ -760,7 +728,7 @@
       canvas.renderAll();
     }
 
-    // Export & Payment Gateway Handlers
+    // Payment & Download Handlers
     function initiatePayment(type) {
       selectedExportType = type;
       document.getElementById('paymentModal').style.display = 'flex';
