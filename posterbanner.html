@@ -30,35 +30,18 @@
       width: 100%;
       background: #FFFFFF;
       border-bottom: 2px solid #94A3B8;
-      padding: 16px 24px;
-      min-height: 100px;
+      padding: 12px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 10;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 12px;
     }
 
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .header-logo {
-      height: 60px;
-      width: auto;
-      object-fit: contain;
-    }
-
-    .header-title-text {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--text-main);
-      letter-spacing: -0.5px;
-    }
+    .brand-group { display: flex; align-items: center; gap: 12px; }
+    .header-title-text { font-size: 1.5rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
 
     button, .btn-home {
       background: var(--primary);
@@ -81,7 +64,7 @@
     button.secondary { background: #FFF; color: var(--text-main); border: 1px solid #CBD5E1; }
     button.secondary:hover { background: #F8FAFC; border-color: #64748B; }
     button.active-format { background: #0F172A; color: white; border-color: #0F172A; }
-    button.danger { background: #EF4444; }
+    button.danger { background: #EF4444; color: white; }
     button.danger:hover { background: #DC2626; }
 
     input, select {
@@ -89,11 +72,11 @@
       border: 1px solid #CBD5E1;
       border-radius: 6px;
       outline: none;
-      font-size: 16px !important;
+      font-size: 14px !important;
       background: #FAFAFA;
     }
     input[type="text"] { width: 110px; }
-    input[type="color"] { height: 32px; width: 32px; cursor: pointer; padding: 2px; border-radius: 6px; }
+    input[type="color"] { height: 32px; width: 32px; cursor: pointer; padding: 2px; border-radius: 6px; border: 1px solid #CBD5E1; background: #fff; }
 
     .workspace {
       flex: 1;
@@ -106,8 +89,8 @@
       overflow-y: auto;
       overflow-x: hidden;
       padding: 10px;
-      background: radial-gradient(#94A3B8 1px, transparent 1px);
-      background-size: 14px 14px;
+      background: radial-gradient(#94A3B8 1.5px, transparent 1.5px);
+      background-size: 16px 16px;
     }
 
     .canvas-viewport-container {
@@ -116,32 +99,30 @@
       align-items: center;
       position: relative;
       width: 100%;
-      max-width: 1000px;
+      max-width: 950px;
     }
 
     .floating-panel {
       background: var(--panel-bg);
       border: 1px solid var(--panel-border);
-      padding: 6px 10px;
-      border-radius: 8px;
+      padding: 8px 12px;
+      border-radius: 10px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
       backdrop-filter: blur(6px);
       z-index: 50;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .top-tools-panel {
-      position: relative;
       width: 100%;
       max-width: 720px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-around;
-      gap: 6px;
-      padding: 8px 12px;
+      gap: 8px;
     }
 
     .panel-section-title {
@@ -156,17 +137,8 @@
       text-align: center;
     }
 
-    .canvas-top-controls {
-      margin-bottom: 6px;
-      z-index: 20;
-      position: relative;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
     .object-inspector-panel {
-      position: relative;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       display: none;
       flex-wrap: wrap;
       justify-content: center;
@@ -175,26 +147,31 @@
 
     .canvas-container-wrapper {
       background: #FFFFFF;
-      box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.3);
+      box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.35);
       position: relative;
-      transition: all 0.3s ease;
-      max-width: 100%;
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      border-radius: 4px;
       overflow: hidden;
+    }
+
+    .canvas-container-wrapper.perspective-3d {
+      transform: perspective(1000px) rotateX(12deg) rotateY(-12deg) scale(0.92);
+      box-shadow: -20px 30px 50px rgba(0,0,0,0.4);
     }
 
     .canvas-bottom-controls-group {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
-      margin-top: 6px;
+      gap: 8px;
+      margin-top: 8px;
       z-index: 20;
       width: 100%;
     }
 
     .modal-overlay {
       position: fixed;
-      top:0; left:0; right:0; bottom:0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(4px);
       display: none;
@@ -206,8 +183,8 @@
     
     .modal {
       background: white;
-      padding: 20px;
-      border-radius: 12px;
+      padding: 24px;
+      border-radius: 14px;
       width: 340px;
       max-width: 95%;
       text-align: center;
@@ -223,33 +200,34 @@
   <header class="minimal-header">
     <div class="brand-group">
       <a href="index.html" style="text-decoration:none;">
-        <button class="secondary" style="padding: 8px 14px; font-size: 0.9rem;">🏠 Home</button>
+        <button class="secondary">🏠 Home</button>
       </a>
       <h1 class="header-title-text">Poster & Banner Studio</h1>
     </div>
+    <button class="secondary" onclick="toggle3DView()" id="btn3D">🔄 3D Tilt View</button>
   </header>
 
   <!-- Workspace Area -->
   <div class="workspace" id="workspace">
     <div class="canvas-viewport-container">
 
-      <!-- Format / Size Selection & Background Bar -->
-      <div class="floating-panel" style="margin-bottom: 6px; width: 100%; max-width: 820px; justify-content: center; gap: 6px; flex-wrap: wrap;">
-        <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Formats:</span>
-        <button id="fmt-a4" class="secondary active-format" onclick="setFormat('a4')">📄 A4 Poster (P)</button>
-        <button id="fmt-a3" class="secondary" onclick="setFormat('a3')">📰 A3 Poster (P)</button>
+      <!-- Size & Format Selector Bar -->
+      <div class="floating-panel" style="margin-bottom: 8px; width: 100%; max-width: 820px; justify-content: center; flex-wrap: wrap;">
+        <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Sizes:</span>
+        <button id="fmt-a4" class="secondary active-format" onclick="setFormat('a4')">📄 A4 Poster</button>
+        <button id="fmt-a3" class="secondary" onclick="setFormat('a3')">📰 A3 Poster</button>
         <button id="fmt-yt" class="secondary" onclick="setFormat('yt')">🖼️ YouTube Thumbnail</button>
         <button id="fmt-banner" class="secondary" onclick="setFormat('banner')">🏷️ Web Banner</button>
         
-        <div style="display: flex; align-items: center; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 6px; margin-left: 2px;">
+        <div style="display: flex; align-items: center; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
           <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted);">BG:</span>
           <input type="color" id="bgColorPicker" onchange="setCanvasBackground(this.value)" value="#ffffff" title="Canvas Background Color">
-          <button class="secondary" style="padding: 2px 6px; font-size: 0.65rem;" onclick="setCanvasBackground('transparent')">None</button>
+          <button class="secondary" style="padding: 3px 6px; font-size: 0.65rem;" onclick="setCanvasBackground('transparent')">None</button>
         </div>
 
-        <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 6px; margin-left: 2px;">
-          <button class="secondary" style="padding: 3px 8px;" onclick="undo()" title="Undo">↩️</button>
-          <button class="secondary" style="padding: 3px 8px;" onclick="redo()" title="Redo">↪️</button>
+        <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
+          <button class="secondary" style="padding: 4px 8px;" onclick="undo()" title="Undo">↩️</button>
+          <button class="secondary" style="padding: 4px 8px;" onclick="redo()" title="Redo">↪️</button>
         </div>
       </div>
 
@@ -290,7 +268,7 @@
       <!-- Object Inspector Overlay -->
       <div class="floating-panel object-inspector-panel" id="objectInspector">
         <!-- Text Inspector Controls -->
-        <div id="textInspectorControls" style="display:none; gap:5px; align-items:center; flex-wrap:wrap;">
+        <div id="textInspectorControls" style="display:none; gap:6px; align-items:center; flex-wrap:wrap;">
           <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" title="Text Color">
           <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)">
             <option value="Poppins">Poppins</option>
@@ -301,10 +279,10 @@
           <button class="secondary" onclick="toggleStyle('bold')"><b>B</b></button>
           <button class="secondary" onclick="toggleStyle('italic')"><i>I</i></button>
           <button class="secondary" onclick="toggleStyle('underline')"><u>U</u></button>
-          <div style="display:flex; gap:2px; border-left:1px solid #CBD5E1; padding-left:5px; margin-left:3px;">
-            <button class="secondary" style="padding: 2px 6px;" onclick="setTextAlignment('left')">⬅️</button>
-            <button class="secondary" style="padding: 2px 6px;" onclick="setTextAlignment('center')">⏺️</button>
-            <button class="secondary" style="padding: 2px 6px;" onclick="setTextAlignment('right')">➡️</button>
+          <div style="display:flex; gap:3px; border-left:1px solid #CBD5E1; padding-left:6px; margin-left:3px;">
+            <button class="secondary" style="padding: 3px 6px;" onclick="setTextAlignment('left')">⬅️</button>
+            <button class="secondary" style="padding: 3px 6px;" onclick="setTextAlignment('center')">⏺️</button>
+            <button class="secondary" style="padding: 3px 6px;" onclick="setTextAlignment('right')">➡️</button>
           </div>
         </div>
 
@@ -312,24 +290,24 @@
         <div id="shapeInspectorControls" style="display:none; gap:6px; align-items:center; flex-wrap:wrap;">
           <span style="font-size:0.65rem; font-weight:600;">Fill:</span>
           <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#8B5CF6" title="Fill Color">
-          <button class="secondary" style="padding:2px 5px; font-size:0.65rem;" onclick="updateShapeProperty('fill', 'transparent')">None</button>
+          <button class="secondary" style="padding:3px 6px; font-size:0.65rem;" onclick="updateShapeProperty('fill', 'transparent')">None</button>
           
-          <span style="font-size:0.65rem; font-weight:600; border-left:1px solid #CBD5E1; padding-left:5px;">Border:</span>
+          <span style="font-size:0.65rem; font-weight:600; border-left:1px solid #CBD5E1; padding-left:6px;">Border:</span>
           <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" value="#000000" title="Border Color">
-          <button class="secondary" style="padding:2px 5px; font-size:0.65rem;" onclick="updateShapeProperty('stroke', '')">None</button>
+          <button class="secondary" style="padding:3px 6px; font-size:0.65rem;" onclick="updateShapeProperty('stroke', '')">None</button>
           
           <span style="font-size:0.65rem; font-weight:600;">Width:</span>
-          <input type="range" id="shapeBorderSize" min="0" max="25" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:45px; cursor:pointer;">
+          <input type="range" id="shapeBorderSize" min="0" max="25" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:50px; cursor:pointer;">
         </div>
 
         <!-- Common Duplicate, Layer & Delete Controls -->
-        <div style="display:flex; gap:3px; align-items:center; border-left:1px solid #CBD5E1; padding-left:5px; margin-left:3px;">
-          <button class="secondary" style="padding: 2px 5px;" onclick="duplicateSelected()" title="Duplicate Selected">📋</button>
-          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
-          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('forward')" title="Step Up">🔼</button>
-          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('backward')" title="Step Down">🔽</button>
-          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('back')" title="Send to Back">🔚</button>
-          <button class="danger" style="padding: 2px 6px;" onclick="deleteSelected()">🗑️</button>
+        <div style="display:flex; gap:4px; align-items:center; border-left:1px solid #CBD5E1; padding-left:6px; margin-left:3px;">
+          <button class="secondary" style="padding: 3px 6px;" onclick="duplicateSelected()" title="Duplicate Selected">📋</button>
+          <button class="secondary" style="padding: 3px 6px;" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
+          <button class="secondary" style="padding: 3px 6px;" onclick="changeLayer('forward')" title="Step Up">🔼</button>
+          <button class="secondary" style="padding: 3px 6px;" onclick="changeLayer('backward')" title="Step Down">🔽</button>
+          <button class="secondary" style="padding: 3px 6px;" onclick="changeLayer('back')" title="Send to Back">🔚</button>
+          <button class="danger" style="padding: 3px 8px;" onclick="deleteSelected()">🗑️</button>
         </div>
       </div>
 
@@ -341,9 +319,9 @@
       <!-- Bottom Export Controls -->
       <div class="canvas-bottom-controls-group">
         <div class="floating-panel" style="position:relative; flex-wrap:wrap; justify-content:center;">
-          <span style="font-size:0.7rem; font-weight:600; color:var(--text-muted);">Export HD:</span>
-          <button style="background: #10B981; padding: 5px 12px;" onclick="initiatePayment('png')">Download PNG</button>
-          <button style="background: #2563EB; padding: 5px 12px;" onclick="initiatePayment('pdf')">Download PDF</button>
+          <span style="font-size:0.7rem; font-weight:600; color:var(--text-muted);">HD Export:</span>
+          <button style="background: #10B981; padding: 6px 14px;" onclick="initiatePayment('png')">Download PNG</button>
+          <button style="background: #2563EB; padding: 6px 14px;" onclick="initiatePayment('pdf')">Download PDF</button>
         </div>
       </div>
 
@@ -354,9 +332,9 @@
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
       <h3>Unlock HD Poster Export</h3>
-      <p>Watermark-free High-Resolution Download</p>
-      <div style="font-size: 1.8rem; font-weight:700; color:var(--primary); margin:8px 0;">₹49</div>
-      <div style="display: flex; gap: 8px; margin-top: 10px;">
+      <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Watermark-free High-Resolution Download</p>
+      <div style="font-size: 2rem; font-weight:800; color:var(--primary); margin:12px 0;">₹49</div>
+      <div style="display: flex; gap: 8px; margin-top: 14px;">
         <button class="secondary" style="flex:1;" onclick="closeModal()">Cancel</button>
         <button style="flex:1;" onclick="processRazorpay()">Pay with Razorpay</button>
       </div>
@@ -366,7 +344,7 @@
   <div id="qrcode-hidden"></div>
 
   <script>
-    // Define Formats (Width x Height)
+    // Format Dimensions (Width x Height)
     const formats = {
       a4: { width: 800, height: 1131, name: 'A4 Poster' },
       a3: { width: 800, height: 1131, name: 'A3 Poster' },
@@ -375,11 +353,12 @@
     };
 
     let currentFormatKey = 'a4';
-    let canvasFormatsData = {}; // Store states per format
+    let canvasFormatsData = {};
     let historyStack = {};
     let redoStack = {};
     let isApplyingHistory = false;
     let selectedExportType = 'png';
+    let is3DViewActive = false;
 
     let canvas = new fabric.Canvas('posterCanvas', {
       backgroundColor: '#ffffff',
@@ -399,16 +378,12 @@
     function setFormat(key) {
       if (currentFormatKey === key) return;
 
-      // Save current format state
       canvasFormatsData[currentFormatKey] = JSON.stringify(canvas.toJSON());
-
       currentFormatKey = key;
       
-      // Update active button styling
       document.querySelectorAll('.floating-panel button[id^="fmt-"]').forEach(btn => btn.className = 'secondary');
       document.getElementById(`fmt-${key}`).className = 'secondary active-format';
 
-      const fmt = formats[key];
       canvas.clear();
       canvas.backgroundColor = '#ffffff';
 
@@ -425,6 +400,19 @@
         document.getElementById('bgColorPicker').value = '#ffffff';
         resizeCanvasToFitContainer();
         saveHistory();
+      }
+    }
+
+    function toggle3DView() {
+      is3DViewActive = !is3DViewActive;
+      const wrapper = document.getElementById('canvasWrapper');
+      const btn = document.getElementById('btn3D');
+      if (is3DViewActive) {
+        wrapper.classList.add('perspective-3d');
+        btn.classList.add('active-format');
+      } else {
+        wrapper.classList.remove('perspective-3d');
+        btn.classList.remove('active-format');
       }
     }
 
@@ -496,7 +484,7 @@
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspace');
       const maxWidth = workspace.clientWidth - 20;
-      const maxHeight = workspace.clientHeight - 120;
+      const maxHeight = workspace.clientHeight - 130;
 
       const fmt = formats[currentFormatKey];
       let scale = Math.min(maxWidth / fmt.width, maxHeight / fmt.height);
@@ -776,7 +764,7 @@
 
       if (format === 'png') {
         const link = document.createElement('a');
-        link.download = `${currentFormatKey}-poster-hd.png`;
+        link.download = `${currentFormatKey}-design-hd.png`;
         link.href = dataURL;
         link.click();
       } else if (format === 'pdf') {
@@ -787,7 +775,7 @@
           format: [fmt.width, fmt.height]
         });
         pdf.addImage(dataURL, 'PNG', 0, 0, fmt.width, fmt.height);
-        pdf.save(`${currentFormatKey}-poster-hd.pdf`);
+        pdf.save(`${currentFormatKey}-design-hd.pdf`);
       }
     }
 
