@@ -57,11 +57,12 @@
       text-decoration: none;
     }
 
+    /* Larger Logo Styling */
     .header-logo {
-      height: 48px;
+      height: 80px;
       width: auto;
       object-fit: contain;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
       transition: transform 0.2s ease;
     }
     .header-logo:hover { transform: scale(1.05); }
@@ -144,7 +145,7 @@
     input[type="file"] { width: 150px; font-size: 0.65rem; }
     input[type="color"] { height: 24px; width: 26px; cursor: pointer; padding: 1px; }
 
-    /* Absolute Center Workspace (Zero Margin & Zero Gap) */
+    /* Absolute Center Workspace */
     .workspace {
       flex: 1;
       width: 100%;
@@ -160,12 +161,19 @@
       background-size: 12px 12px;
     }
 
-    /* Floating Overlay Controls Top */
+    /* Container wrapping canvas and direct controls close to card */
+    .canvas-viewport-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Top Canvas Floating Controls close to Card */
     .canvas-top-controls {
-      position: absolute;
-      top: 10px;
       display: flex;
       gap: 6px;
+      margin-bottom: 6px;
       z-index: 20;
     }
 
@@ -183,12 +191,11 @@
       overflow: hidden;
     }
 
-    /* Floating Overlay Controls Bottom */
+    /* Bottom Canvas Floating Controls close to Card */
     .canvas-bottom-controls {
-      position: absolute;
-      bottom: 10px;
       display: flex;
       gap: 6px;
+      margin-top: 6px;
       background: rgba(255, 255, 255, 0.9);
       padding: 4px 8px;
       border-radius: 6px;
@@ -250,7 +257,7 @@
       }
       .header-title { font-size: 0.95rem; }
       .header-subtitle { display: none; }
-      .header-logo { height: 32px; }
+      .header-logo { height: 48px; }
     }
 
     .card-3d-inner {
@@ -369,23 +376,23 @@
   </div>
 
   <div class="workspace" id="workspace">
-    
-    <div class="canvas-top-controls">
-      <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
-      <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
-      <button style="background: #8B5CF6;" onclick="open3DPreview()">3D Preview</button>
-    </div>
+    <div class="canvas-viewport-container">
+      <div class="canvas-top-controls">
+        <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
+        <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
+        <button style="background: #8B5CF6;" onclick="open3DPreview()">3D Preview</button>
+      </div>
 
-    <div class="canvas-container-wrapper" id="canvasWrapper">
-      <canvas id="cardCanvas"></canvas>
-    </div>
+      <div class="canvas-container-wrapper" id="canvasWrapper">
+        <canvas id="cardCanvas"></canvas>
+      </div>
 
-    <div class="canvas-bottom-controls">
-      <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed Line: ON</button>
-      <button class="secondary" id="trimBtn" onclick="toggleGuide('trim')">Trim Line: ON</button>
-      <button class="secondary" id="safetyBtn" onclick="toggleGuide('safety')">Safety Line: ON</button>
+      <div class="canvas-bottom-controls">
+        <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed Line: ON</button>
+        <button class="secondary" id="trimBtn" onclick="toggleGuide('trim')">Trim Line: ON</button>
+        <button class="secondary" id="safetyBtn" onclick="toggleGuide('safety')">Safety Line: ON</button>
+      </div>
     </div>
-
   </div>
 
   <div class="bottom-action-bar">
@@ -535,12 +542,17 @@
       canvas.renderAll();
     }
 
-    // Absolute Full Workspace Fit Engine (0 Top & Bottom Margin)
+    // Canvas Auto Scaling
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspace');
+      const topControls = document.querySelector('.canvas-top-controls');
+      const bottomControls = document.querySelector('.canvas-bottom-controls');
       
-      const maxWidth = workspace.clientWidth;
-      const maxHeight = workspace.clientHeight;
+      const topH = topControls ? topControls.offsetHeight + 10 : 40;
+      const bottomH = bottomControls ? bottomControls.offsetHeight + 10 : 40;
+
+      const maxWidth = workspace.clientWidth - 20;
+      const maxHeight = workspace.clientHeight - topH - bottomH - 20;
 
       let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
       let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
