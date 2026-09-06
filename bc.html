@@ -2,114 +2,97 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Business Card Studio - Pro Mobile & Desktop</title>
-  
-  <!-- Fabric.js, QR Code, jsPDF & Razorpay SDKs -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Business Card Studio - Pro</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   
   <style>
     :root {
       --primary: #FF6B00;
       --primary-hover: #E05D00;
-      --bg-workspace: #F1F5F9;
+      --bg-light: #F8F9FA;
       --border-color: #E2E8F0;
-      --text-main: #0F172A;
-      --text-muted: #64748B;
+      --dark-text: #1E293B;
     }
-    
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; touch-action: manipulation; }
-    body { display: flex; height: 100vh; background: var(--bg-workspace); color: var(--text-main); overflow: hidden; flex-direction: row; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { display: flex; height: 100vh; background: var(--bg-light); color: var(--dark-text); overflow: hidden; }
 
-    /* Desktop Sidebar */
+    /* Sidebar Controls */
     .sidebar {
-      width: 360px;
+      width: 380px;
       background: #FFFFFF;
       border-right: 1px solid var(--border-color);
-      padding: 16px;
+      padding: 20px;
       overflow-y: auto;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.03);
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      z-index: 10;
+      gap: 16px;
     }
-
-    .brand {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-bottom: 2px solid #FFF1E6;
-      padding-bottom: 10px;
-    }
-
-    .section-title { font-weight: 600; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+    .brand { font-size: 1.4rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #FFF1E6; padding-bottom: 12px; }
+    .section-title { font-weight: 600; font-size: 0.85rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
     
     button {
       background: var(--primary);
       color: white;
       border: none;
-      padding: 8px 12px;
+      padding: 9px 14px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: 500;
-      transition: all 0.2s ease;
-      font-size: 0.82rem;
+      transition: all 0.2s;
+      font-size: 0.85rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 6px;
     }
-    button:hover { background: var(--primary-hover); }
-    button.secondary { background: #FFF; color: var(--text-main); border: 1px solid var(--border-color); }
+    button:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    button.secondary { background: #FFF; color: #333; border: 1px solid var(--border-color); }
     button.secondary:hover { background: #F8FAFC; border-color: #CBD5E1; }
     button.danger { background: #EF4444; }
     button.danger:hover { background: #DC2626; }
 
     input, select {
       width: 100%;
-      padding: 8px 10px;
+      padding: 9px 12px;
       border: 1px solid var(--border-color);
       border-radius: 6px;
       outline: none;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       background: #FAFAFA;
+      transition: border 0.2s;
     }
     input:focus, select:focus { border-color: var(--primary); background: #FFF; }
 
-    /* Workspace & Responsive Canvas Styling */
+    /* Workspace / Canvas Area */
     .workspace {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      background: #F1F5F9;
       position: relative;
-      overflow: hidden;
-      padding: 10px;
-      background: radial-gradient(#CBD5E1 1px, transparent 1px);
-      background-size: 16px 16px;
+      overflow: auto;
+      padding: 20px;
     }
 
     .canvas-container-wrapper {
+      border: 2px dashed #CBD5E1;
+      padding: 8px;
       background: #FFFFFF;
-      border-radius: 4px;
-      box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(0,0,0,0.05);
-      transition: border-radius 0.3s ease, transform 0.2s ease;
-      position: relative;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
     }
-
     .canvas-container-wrapper.rounded {
-      border-radius: 16px;
+      border-radius: 20px;
       overflow: hidden;
     }
 
@@ -117,8 +100,7 @@
     .modal-overlay {
       position: fixed;
       top:0; left:0; right:0; bottom:0;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(4px);
+      background: rgba(0,0,0,0.5);
       display: none;
       align-items: center;
       justify-content: center;
@@ -128,43 +110,26 @@
       background: white;
       padding: 24px;
       border-radius: 12px;
-      width: 360px;
+      width: 400px;
       max-width: 90%;
       text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
     }
-    .modal h3 { margin-bottom: 8px; color: var(--text-main); }
-    .modal p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
-    .price-tag { font-size: 2rem; font-weight: 700; color: var(--primary); margin: 8px 0; }
+    .modal h3 { margin-bottom: 12px; color: var(--dark-text); }
+    .modal p { font-size: 0.9rem; color: #64748B; margin-bottom: 20px; }
+    .price-tag { font-size: 1.8rem; font-weight: 700; color: var(--primary); margin: 10px 0; }
 
+    /* Hidden Helper Container */
     #qrcode-hidden { display: none; }
-
-    /* Mobile Responsive Custom Styling */
-    @media (max-width: 768px) {
-      body { flex-direction: column-reverse; }
-      .sidebar {
-        width: 100%;
-        height: 50vh;
-        border-right: none;
-        border-top: 1px solid var(--border-color);
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
-      }
-      .workspace {
-        height: 50vh;
-        padding: 5px;
-      }
-    }
   </style>
 </head>
 <body>
 
-  <!-- Controls Sidebar -->
   <div class="sidebar">
-    <div class="brand">✨ Studio Pro</div>
+    <div class="brand">🎴 Business Card Studio</div>
 
-    <!-- Canvas Layout Controls -->
     <div>
-      <div class="section-title">Card Orientation & Shape</div>
+      <div class="section-title">Canvas Setup</div>
       <div class="btn-group" style="margin-top: 6px;">
         <button onclick="setOrientation('horizontal')">Horizontal</button>
         <button onclick="setOrientation('vertical')">Vertical</button>
@@ -172,18 +137,27 @@
       </div>
     </div>
 
-    <!-- Text Formatting -->
+    <div>
+      <div class="section-title">Zoom Controls</div>
+      <div class="btn-group" style="margin-top: 6px;">
+        <button class="secondary" onclick="zoomCanvas(0.1)">Zoom +</button>
+        <button class="secondary" onclick="zoomCanvas(-0.1)">Zoom -</button>
+        <button class="secondary" onclick="resetZoom()">Reset</button>
+      </div>
+    </div>
+
     <div>
       <div class="section-title">Text Tools</div>
       <button style="width: 100%; margin-top: 6px; margin-bottom: 8px;" onclick="addText()">+ Add Text Layer</button>
       
-      <div style="display: flex; gap: 6px; margin-bottom: 6px;">
-        <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" style="height: 36px; width: 44px; cursor: pointer; padding: 2px;">
+      <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+        <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#000000" style="height: 38px; width: 50px; cursor: pointer; padding: 2px;">
         <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)">
           <option value="Poppins">Poppins</option>
           <option value="Montserrat">Montserrat</option>
           <option value="Roboto">Roboto</option>
-          <option value="Arial">Arial</option>
+          <option value="Playfair Display">Playfair Display</option>
+          <option value="Open Sans">Open Sans</option>
         </select>
       </div>
 
@@ -194,20 +168,17 @@
       </div>
     </div>
 
-    <!-- Image Upload -->
     <div>
-      <div class="section-title">Upload Logo / Image</div>
+      <div class="section-title">Image / Logo Upload</div>
       <input type="file" id="imageLoader" accept="image/*" style="margin-top: 6px;">
     </div>
 
-    <!-- QR Code Generator -->
     <div>
       <div class="section-title">QR Code Generator</div>
-      <input type="text" id="qrInput" placeholder="URL / UPI / Contact" style="margin-top: 6px; margin-bottom: 6px;">
+      <input type="text" id="qrInput" placeholder="Enter Website / Phone / UPI" style="margin-top: 6px; margin-bottom: 8px;">
       <button style="width: 100%;" onclick="addQRCode()">Generate QR Code</button>
     </div>
 
-    <!-- Shapes & Accents -->
     <div>
       <div class="section-title">Shapes & Accents</div>
       <div class="btn-group" style="margin-top: 6px;">
@@ -218,32 +189,29 @@
       </div>
     </div>
 
-    <!-- Export & Controls -->
-    <div style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 10px;">
-      <button class="danger" style="width: 100%; margin-bottom: 8px;" onclick="deleteSelected()">Delete Selected</button>
+    <div style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 14px;">
+      <button class="danger" style="width: 100%; margin-bottom: 10px;" onclick="deleteSelected()">Delete Selected Layer</button>
       
-      <div class="section-title" style="margin-bottom: 6px;">Export Options</div>
-      <div style="display: flex; gap: 6px;">
+      <div class="section-title" style="margin-bottom: 8px;">Export Options (Pay & Download)</div>
+      <div style="display: flex; gap: 8px;">
         <button style="flex: 1; background: #10B981;" onclick="initiatePayment('png')">Download PNG</button>
         <button style="flex: 1; background: #2563EB;" onclick="initiatePayment('pdf')">Download PDF</button>
       </div>
     </div>
   </div>
 
-  <!-- Workspace & Canvas Container -->
   <div class="workspace" id="workspace">
     <div class="canvas-container-wrapper" id="canvasWrapper">
       <canvas id="cardCanvas"></canvas>
     </div>
   </div>
 
-  <!-- Payment Gateway Modal -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
-      <h3>Unlock HD Download</h3>
-      <p>Download print-ready vector file for your card.</p>
+      <h3>Unlock High-Res Download</h3>
+      <p>Pay once to export your customized business card design in print-ready HD format.</p>
       <div class="price-tag">₹49</div>
-      <div style="display: flex; gap: 8px; margin-top: 12px;">
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
         <button class="secondary" style="flex:1;" onclick="closeModal()">Cancel</button>
         <button style="flex:1;" onclick="processRazorpay()">Pay with Razorpay</button>
       </div>
@@ -256,45 +224,28 @@
     // Initialize Fabric Canvas
     let canvas = new fabric.Canvas('cardCanvas', {
       backgroundColor: '#ffffff',
-      preserveObjectStacking: true,
-      allowTouchScrolling: false // Fixes Mobile touch conflicts
+      preserveObjectStacking: true
     });
 
+    let currentZoom = 1;
     let isRounded = false;
     let selectedExportType = 'png';
-    let currentOrientation = 'horizontal';
 
-    // Base Design Dimensions (Standard Ratio 3.5:2 @ 150 DPI)
-    const BASE_WIDTH = 525;
-    const BASE_HEIGHT = 300;
-
-    // Mobile & Desktop Dynamic Rescaling Engine
-    function resizeCanvasToFitContainer() {
-      const workspace = document.getElementById('workspace');
-      const maxWidth = workspace.clientWidth - 20;
-      const maxHeight = workspace.clientHeight - 20;
-
-      let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
-      let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
-
-      let scale = Math.min(maxWidth / targetW, maxHeight / targetH, 1);
-
-      canvas.setDimensions({
-        width: targetW * scale,
-        height: targetH * scale
-      });
-
-      canvas.setZoom(scale);
-      canvas.renderAll();
-    }
+    // Standard 3.5" x 2" Ratio @ 150 DPI scale
+    const CARD_WIDTH = 525;
+    const CARD_HEIGHT = 300;
 
     function setOrientation(type) {
-      currentOrientation = type;
-      resizeCanvasToFitContainer();
+      if (type === 'horizontal') {
+        canvas.setWidth(CARD_WIDTH);
+        canvas.setHeight(CARD_HEIGHT);
+      } else {
+        canvas.setWidth(CARD_HEIGHT);
+        canvas.setHeight(CARD_WIDTH);
+      }
+      canvas.renderAll();
     }
-
-    window.addEventListener('resize', resizeCanvasToFitContainer);
-    setTimeout(resizeCanvasToFitContainer, 100);
+    setOrientation('horizontal');
 
     function toggleRounded() {
       const wrapper = document.getElementById('canvasWrapper');
@@ -302,24 +253,28 @@
       wrapper.classList.toggle('rounded', isRounded);
     }
 
-    // Modern Layer Corner Controls (Professional Canvas Look)
-    fabric.Object.prototype.set({
-      transparentCorners: false,
-      cornerColor: '#FF6B00',
-      cornerStrokeColor: '#FFFFFF',
-      borderColor: '#FF6B00',
-      cornerSize: 10,
-      cornerStyle: 'circle',
-      borderDashArray: [4, 4]
-    });
+    function zoomCanvas(factor) {
+      currentZoom += factor;
+      if (currentZoom < 0.5) currentZoom = 0.5;
+      if (currentZoom > 2) currentZoom = 2;
+      canvas.setZoom(currentZoom);
+      canvas.setWidth((canvas.getWidth() / (currentZoom - factor)) * currentZoom);
+      canvas.setHeight((canvas.getHeight() / (currentZoom - factor)) * currentZoom);
+    }
 
-    // Add Text Layer
+    function resetZoom() {
+      currentZoom = 1;
+      canvas.setZoom(1);
+      setOrientation(canvas.getWidth() > canvas.getHeight() ? 'horizontal' : 'vertical');
+    }
+
+    // Text Handlers
     function addText() {
-      const text = new fabric.IText('Your Name / Title', {
-        left: 40,
-        top: 40,
+      const text = new fabric.IText('Your Title / Text', {
+        left: 50,
+        top: 50,
         fontFamily: 'Poppins',
-        fill: '#0F172A',
+        fill: '#1E293B',
         fontSize: 18
       });
       canvas.add(text);
@@ -337,9 +292,13 @@
     function toggleStyle(style) {
       const activeObject = canvas.getActiveObject();
       if (activeObject && activeObject.isType('i-text')) {
-        if (style === 'bold') activeObject.set('fontWeight', activeObject.fontWeight === 'bold' ? 'normal' : 'bold');
-        if (style === 'italic') activeObject.set('fontStyle', activeObject.fontStyle === 'italic' ? 'normal' : 'italic');
-        if (style === 'underline') activeObject.set('underline', !activeObject.underline);
+        if (style === 'bold') {
+          activeObject.set('fontWeight', activeObject.fontWeight === 'bold' ? 'normal' : 'bold');
+        } else if (style === 'italic') {
+          activeObject.set('fontStyle', activeObject.fontStyle === 'italic' ? 'normal' : 'italic');
+        } else if (style === 'underline') {
+          activeObject.set('underline', !activeObject.underline);
+        }
         canvas.renderAll();
       }
     }
@@ -349,7 +308,7 @@
       const reader = new FileReader();
       reader.onload = function (event) {
         fabric.Image.fromURL(event.target.result, function (img) {
-          img.scaleToWidth(100);
+          img.scaleToWidth(120);
           canvas.add(img);
           canvas.setActiveObject(img);
         });
@@ -360,19 +319,23 @@
     // QR Code Generator
     function addQRCode() {
       const text = document.getElementById('qrInput').value.trim();
-      if (!text) return alert('Please enter text/URL');
+      if (!text) return alert('Please enter text/URL for the QR code.');
 
       const qrContainer = document.getElementById('qrcode-hidden');
       qrContainer.innerHTML = '';
 
-      new QRCode(qrContainer, { text: text, width: 120, height: 120 });
+      new QRCode(qrContainer, {
+        text: text,
+        width: 150,
+        height: 150
+      });
 
       setTimeout(() => {
         const imgTag = qrContainer.querySelector('img');
         if (imgTag) {
           fabric.Image.fromURL(imgTag.src, function (img) {
-            img.scaleToWidth(80);
-            img.set({ left: 50, top: 50 });
+            img.scaleToWidth(90);
+            img.set({ left: 100, top: 100 });
             canvas.add(img);
             canvas.setActiveObject(img);
           });
@@ -380,14 +343,18 @@
       }, 100);
     }
 
-    // Shape Drawing
+    // Shapes
     function addShape(type) {
       let shape;
-      if (type === 'rect') shape = new fabric.Rect({ width: 80, height: 50, fill: '#FF6B00', left: 50, top: 50 });
-      else if (type === 'circle') shape = new fabric.Circle({ radius: 30, fill: '#FF6B00', left: 50, top: 50 });
-      else if (type === 'triangle') shape = new fabric.Triangle({ width: 60, height: 60, fill: '#FF6B00', left: 50, top: 50 });
-      else if (type === 'line') shape = new fabric.Line([40, 50, 160, 50], { stroke: '#FF6B00', strokeWidth: 3 });
-
+      if (type === 'rect') {
+        shape = new fabric.Rect({ width: 100, height: 60, fill: '#FF6B00', left: 100, top: 100 });
+      } else if (type === 'circle') {
+        shape = new fabric.Circle({ radius: 40, fill: '#FF6B00', left: 100, top: 100 });
+      } else if (type === 'triangle') {
+        shape = new fabric.Triangle({ width: 80, height: 80, fill: '#FF6B00', left: 100, top: 100 });
+      } else if (type === 'line') {
+        shape = new fabric.Line([50, 100, 200, 100], { stroke: '#FF6B00', strokeWidth: 3 });
+      }
       canvas.add(shape);
       canvas.setActiveObject(shape);
     }
@@ -400,7 +367,7 @@
       }
     }
 
-    // Razorpay Flow
+    // Razorpay Integration Logic
     function initiatePayment(type) {
       selectedExportType = type;
       document.getElementById('paymentModal').style.display = 'flex';
@@ -412,29 +379,44 @@
 
     function processRazorpay() {
       closeModal();
+
       var options = {
-        "key": "YOUR_RAZORPAY_KEY_ID",
-        "amount": 4900,
+        "key": "YOUR_RAZORPAY_KEY_ID", // Replace with your actual Razorpay Key ID
+        "amount": 4900, // Amount in paise (49 INR = 4900 paise)
         "currency": "INR",
         "name": "Business Card Studio",
-        "description": "HD Export Payment",
+        "description": "HD Card Export Payment",
+        "image": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
         "handler": function (response) {
-          alert("Payment Successful! Generating export...");
+          alert("Payment Successful! Download starting... Payment ID: " + response.razorpay_payment_id);
           downloadCard(selectedExportType);
         },
-        "theme": { "color": "#FF6B00" }
+        "prefill": {
+          "name": "Customer Name",
+          "email": "customer@example.com",
+          "contact": "9999999999"
+        },
+        "theme": {
+          "color": "#FF6B00"
+        }
       };
+
       var rzp1 = new Razorpay(options);
+      rzp1.on('payment.failed', function (response){
+        alert("Payment failed or cancelled. Please try again.");
+      });
       rzp1.open();
     }
 
-    // Export Handler Engine
+    // File Generation & Download Logic
     function downloadCard(format) {
-      // Export at original resolution ignoring zoom scaling
+      resetZoom();
+      
+      // High quality multipliers (300 DPI equivalency)
       const dataURL = canvas.toDataURL({
         format: 'png',
         quality: 1.0,
-        multiplier: 3 / canvas.getZoom()
+        multiplier: 3
       });
 
       if (format === 'png') {
@@ -444,16 +426,18 @@
         link.click();
       } else if (format === 'pdf') {
         const { jsPDF } = window.jspdf;
-        const w = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
-        const h = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
+        const width = canvas.getWidth();
+        const height = canvas.getHeight();
         
+        // Setup PDF orientation based on canvas width/height ratio
+        const orientation = width > height ? 'landscape' : 'portrait';
         const pdf = new jsPDF({
-          orientation: currentOrientation === 'horizontal' ? 'landscape' : 'portrait',
+          orientation: orientation,
           unit: 'px',
-          format: [w, h]
+          format: [width, height]
         });
 
-        pdf.addImage(dataURL, 'PNG', 0, 0, w, h);
+        pdf.addImage(dataURL, 'PNG', 0, 0, width, height);
         pdf.save('business-card-hd.pdf');
       }
     }
