@@ -131,15 +131,16 @@
       gap: 6px;
     }
 
-    /* Left Floating Add Tools Panel */
-    .left-tools-panel {
-      left: -170px;
-      top: 50%;
-      transform: translateY(-50%);
-      flex-direction: column;
-      align-items: stretch;
-      width: 155px;
-      gap: 8px;
+    /* Top Floating Add Tools Panel */
+    .top-tools-panel {
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: max-content;
+      gap: 12px;
     }
 
     .panel-section-title {
@@ -157,6 +158,7 @@
     .canvas-top-controls {
       margin-bottom: 8px;
       z-index: 20;
+      position: relative;
     }
 
     /* Active Object Floating Inspector Overlay */
@@ -192,14 +194,15 @@
 
     .canvas-export-controls {
       border: 1px solid #CBD5E1;
+      position: relative;
     }
 
     /* Mobile Responsive Dock Adjustment */
     @media (max-width: 900px) {
-      .left-tools-panel {
+      .top-tools-panel {
         position: relative;
-        left: auto;
         top: auto;
+        left: auto;
         transform: none;
         width: 100%;
         flex-direction: row;
@@ -306,6 +309,40 @@
   <div class="workspace" id="workspace">
     
     <div class="canvas-viewport-container">
+
+      <!-- Top Floating Add Elements Panel (Shifted to Top Layout Flow) -->
+      <div class="floating-panel top-tools-panel">
+        <div>
+          <div class="panel-section-title">Add Elements</div>
+          <button style="width:100%; margin-bottom:4px;" onclick="addText()">+ Add Text</button>
+        </div>
+
+        <div>
+          <div class="panel-section-title">Shapes</div>
+          <div style="display:flex; gap:3px;">
+            <button class="secondary" onclick="addShape('rect')">Rect</button>
+            <button class="secondary" onclick="addShape('circle')">Circle</button>
+            <button class="secondary" onclick="addShape('triangle')">Tri</button>
+            <button class="secondary" onclick="addShape('line')">Line</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel-section-title">Upload Image</div>
+          <label class="btn-home secondary" style="width:100%; text-align:center; cursor:pointer;">
+            📁 Choose Files
+            <input type="file" id="imageLoader" accept="image/*" multiple style="display:none;">
+          </label>
+        </div>
+
+        <div>
+          <div class="panel-section-title">QR Code</div>
+          <div style="display:flex; gap:3px;">
+            <input type="text" id="qrInput" placeholder="URL/UPI" style="width:80px;">
+            <button onclick="addQRCode()">+ QR</button>
+          </div>
+        </div>
+      </div>
       
       <!-- Top Canvas Controls (Side Switch & 3D) -->
       <div class="floating-panel canvas-top-controls">
@@ -355,41 +392,9 @@
         <canvas id="cardCanvas"></canvas>
       </div>
 
-      <!-- Left Floating Add Elements Panel -->
-      <div class="floating-panel left-tools-panel">
-        <div>
-          <div class="panel-section-title">Add Elements</div>
-          <button style="width:100%; margin-bottom:4px;" onclick="addText()">+ Add Text</button>
-        </div>
-
-        <div>
-          <div class="panel-section-title">Shapes</div>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:3px;">
-            <button class="secondary" onclick="addShape('rect')">Rect</button>
-            <button class="secondary" onclick="addShape('circle')">Circle</button>
-            <button class="secondary" onclick="addShape('triangle')">Tri</button>
-            <button class="secondary" onclick="addShape('line')">Line</button>
-          </div>
-        </div>
-
-        <div>
-          <div class="panel-section-title">Upload Image</div>
-          <label class="btn-home secondary" style="width:100%; text-align:center; cursor:pointer;">
-            📁 Choose Files
-            <input type="file" id="imageLoader" accept="image/*" multiple style="display:none;">
-          </label>
-        </div>
-
-        <div>
-          <div class="panel-section-title">QR Code</div>
-          <input type="text" id="qrInput" placeholder="URL/UPI" style="width:100%; margin-bottom:4px;">
-          <button style="width:100%;" onclick="addQRCode()">+ Add QR</button>
-        </div>
-      </div>
-
       <!-- Bottom Canvas Controls (Guides & Exports) -->
       <div class="canvas-bottom-controls-group">
-        <div class="floating-panel">
+        <div class="floating-panel" style="position:relative;">
           <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed Line: ON</button>
           <button class="secondary" id="trimBtn" onclick="toggleGuide('trim')">Trim Line: ON</button>
           <button class="secondary" id="safetyBtn" onclick="toggleGuide('safety')">Safety Line: ON</button>
@@ -592,11 +597,12 @@
       const workspace = document.getElementById('workspace');
       const topControls = document.querySelector('.canvas-top-controls');
       const bottomGroup = document.querySelector('.canvas-bottom-controls-group');
+      const topTools = document.querySelector('.top-tools-panel');
       
-      const topH = topControls ? topControls.offsetHeight + 10 : 40;
+      const topH = (topControls ? topControls.offsetHeight : 40) + (topTools ? topTools.offsetHeight : 40) + 20;
       const bottomH = bottomGroup ? bottomGroup.offsetHeight + 10 : 80;
 
-      const maxWidth = workspace.clientWidth - (window.innerWidth > 900 ? 200 : 40);
+      const maxWidth = workspace.clientWidth - 40;
       const maxHeight = workspace.clientHeight - topH - bottomH - 30;
 
       let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
