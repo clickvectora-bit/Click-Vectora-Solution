@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Click Vectora Studio - Interactive Card Generator</title>
+  <title>Click Vectora Studio - Front, Back & QR Generator</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <style>
     :root {
@@ -16,222 +15,271 @@
       --brand-blue: #0077c8;
       --brand-orange: #f37021;
       --brand-dark: #2b2e34;
-      --bg-light: #f4f8fa;
-      --card-bg: #ffffff;
-      --border-color: #d1e5e8;
+      --panel-bg: #282c34;
+      --bg-dark: #1e2024;
+      --border-color: #3b404b;
     }
 
-    * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-    body { background: var(--bg-light); margin: 0; padding: 20px; color: var(--brand-dark); }
+    * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; user-select: none; }
+    body { background: var(--bg-dark); margin: 0; padding: 0; color: #fff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* Top Studio Bar */
+    .studio-header {
+      height: 55px; background: var(--panel-bg); border-bottom: 1px solid var(--border-color);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+    }
+    .brand-title { font-weight: 800; font-size: 16px; color: var(--brand-cyan); letter-spacing: 1px; }
     
-    .brand-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
-    .brand-header h2 { margin: 0; color: var(--brand-dark); font-size: 22px; font-weight: 800; }
-    .brand-header span { color: var(--brand-cyan); font-weight: 600; font-size: 13px; }
+    .view-toggle { display: flex; background: #1e2024; padding: 3px; border-radius: 6px; border: 1px solid var(--border-color); }
+    .view-toggle button {
+      background: transparent; border: none; color: #abb2bf; padding: 6px 16px;
+      font-weight: 600; font-size: 12px; cursor: pointer; border-radius: 4px;
+    }
+    .view-toggle button.active { background: var(--brand-cyan); color: #fff; }
 
-    .wrapper { display: flex; gap: 24px; justify-content: center; max-width: 1200px; margin: 0 auto; flex-wrap: wrap; }
+    /* Main Studio Container */
+    .studio-body { display: flex; flex: 1; height: calc(100vh - 55px); }
+
+    .sidebar {
+      width: 320px; background: var(--panel-bg); border-right: 1px solid var(--border-color);
+      padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+    }
+    .section-title { font-size: 11px; font-weight: 700; color: var(--brand-cyan); text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; }
     
-    .controls {
-      background: var(--card-bg); padding: 20px; border-radius: 12px;
-      border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0, 168, 181, 0.08); width: 380px; max-height: 88vh; overflow-y: auto;
+    .form-group { margin-bottom: 6px; }
+    .form-group label { display: block; font-size: 11px; color: #abb2bf; margin-bottom: 4px; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 8px; background: #1e2024; border: 1px solid var(--border-color);
+      color: #fff; border-radius: 4px; font-size: 12px; outline: none;
     }
 
-    .section-title {
-      font-size: 12px; font-weight: 700; color: var(--brand-cyan); text-transform: uppercase;
-      margin: 16px 0 8px 0; border-bottom: 2px solid #e6f6f7; padding-bottom: 4px;
+    .workspace { flex: 1; background: #18191c; display: flex; align-items: center; justify-content: center; position: relative; }
+
+    /* Card Canvas Frame */
+    .card-canvas {
+      width: 500px; height: 285px; background: #ffffff; border-radius: 8px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; overflow: hidden;
+      border-left: 10px solid var(--brand-cyan);
     }
 
-    .form-group { margin-bottom: 10px; }
-    .form-group label { display: block; font-size: 11px; font-weight: 600; color: #5a6578; margin-bottom: 4px; }
-    .form-group input, .form-group select { 
-      width: 100%; padding: 8px 10px; border: 1px solid var(--border-color); 
-      background: #fff; color: var(--brand-dark); border-radius: 6px; font-size: 13px; outline: none;
+    .card-side { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: none; }
+    .card-side.active { display: block; }
+
+    /* Drag & Scale Studio Layer */
+    .studio-layer { position: absolute; cursor: move; border: 1px dashed transparent; padding: 2px; }
+    .studio-layer.active-layer { border-color: var(--brand-cyan); }
+    .studio-layer img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+    .editable-text { outline: none; color: var(--brand-dark); font-size: 14px; }
+
+    .btn-export {
+      background: var(--brand-orange); color: white; border: none; padding: 8px 16px;
+      border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer;
     }
-
-    .color-pickers { display: flex; gap: 10px; }
-    .color-pickers div { flex: 1; }
-    .color-pickers input[type="color"] { height: 35px; cursor: pointer; padding: 2px; }
-
-    .preview-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-    
-    .toggle-buttons { display: flex; background: #e6f6f7; padding: 4px; border-radius: 8px; border: 1px solid var(--border-color); }
-    .toggle-buttons button { border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; background: transparent; color: #5a6578; }
-    .toggle-buttons button.active { background: var(--brand-cyan); color: #ffffff; }
-
-    /* Interactive Card Box */
-    .card-box {
-      width: 350px; height: 200px; border-radius: 10px; padding: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08); position: relative;
-      overflow: hidden; background-color: #ffffff; color: var(--brand-dark);
-      border-left: 6px solid var(--brand-cyan); user-select: none;
-    }
-
-    /* Editable Text Item */
-    .editable-text {
-      outline: none; cursor: move; position: absolute; padding: 2px 4px; border: 1px dashed transparent;
-    }
-    .editable-text:hover, .editable-text:focus { border-color: var(--brand-cyan); }
-
-    /* Movable Logo Container */
-    .movable-logo {
-      position: absolute; top: 15px; left: 15px; cursor: move; display: inline-block;
-    }
-    .movable-logo img { max-height: 40px; display: block; }
-
-    #qrcode { position: absolute; bottom: 15px; right: 15px; background: white; padding: 4px; border-radius: 6px; border: 1px solid var(--border-color); }
-
-    .action-buttons { display: flex; gap: 10px; width: 100%; }
-    .btn-pay { background: var(--brand-orange); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; flex: 1; }
+    .btn-export-blue { background: var(--brand-blue); }
   </style>
 </head>
 <body>
 
-  <div class="brand-header">
-    <h2>CLICK VECTORA STUDIO</h2>
-    <span>Interactive Business Card Creator</span>
-  </div>
-
-  <div class="wrapper">
-    <div class="controls">
-      <div class="section-title">1. Upload Logo & Scale</div>
-      <div class="form-group">
-        <label>Upload Logo</label>
-        <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
-      </div>
-      <div class="form-group">
-        <label>Logo Size (Manual Scale)</label>
-        <input type="range" id="logoScale" min="20" max="100" value="40" oninput="scaleLogo(this.value)">
-      </div>
-
-      <div class="section-title">2. Live Colors & Typography</div>
-      <div class="color-pickers form-group">
-        <div>
-          <label>Name Color</label>
-          <input type="color" id="nameColor" value="#2b2e34" onchange="changeColor('cardName', this.value)">
-        </div>
-        <div>
-          <label>Title Color</label>
-          <input type="color" id="titleColor" value="#00a8b5" onchange="changeColor('cardTitle', this.value)">
-        </div>
-        <div>
-          <label>Contact Color</label>
-          <input type="color" id="contactColor" value="#2b2e34" onchange="changeColor('cardContacts', this.value)">
-        </div>
-      </div>
-
-      <div class="section-title">3. Quick Fill Details</div>
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="inputName" value="Rahul Sharma" oninput="updateText('cardName', this.value)">
-      </div>
-      <div class="form-group">
-        <label>Designation</label>
-        <input type="text" id="inputTitle" value="Lead Graphic Designer" oninput="updateText('cardTitle', this.value)">
-      </div>
-      <div class="form-group">
-        <label>Phone & Email</label>
-        <input type="text" id="inputPhone" value="📞 +91 98765 43210" oninput="updateText('cardPhone', this.value)">
-        <input type="text" id="inputEmail" value="✉️ rahul@clickvectora.com" style="margin-top:5px;" oninput="updateText('cardEmail', this.value)">
-      </div>
+  <div class="studio-header">
+    <div class="brand-title">CLICK VECTORA STUDIO</div>
+    
+    <div class="view-toggle">
+      <button id="btnFront" class="active" onclick="switchSide('front')">Front Side</button>
+      <button id="btnBack" onclick="switchSide('back')">Back Side</button>
     </div>
 
-    <div class="preview-container">
-      <div id="cardCanvas" class="card-box">
-        <div id="logoWrapper" class="movable-logo" style="top: 15px; left: 15px;">
-          <img id="cardLogo" src="1000231418.png" alt="Logo">
-        </div>
+    <div>
+      <button class="btn-export" onclick="downloadCard('png')">Export PNG</button>
+      <button class="btn-export btn-export-blue" onclick="downloadCard('pdf')">Export PDF</button>
+    </div>
+  </div>
 
-        <div id="cardName" class="editable-text" contenteditable="true" style="top: 65px; left: 15px; font-size: 18px; font-weight: bold; color: var(--brand-dark);">Rahul Sharma</div>
-        <div id="cardTitle" class="editable-text" contenteditable="true" style="top: 92px; left: 15px; font-size: 11px; font-weight: 600; color: var(--brand-cyan);">Lead Graphic Designer</div>
-        
-        <div id="cardContacts" style="position: absolute; bottom: 15px; left: 15px; font-size: 11px; line-height: 1.6;">
-          <div id="cardPhone" class="editable-text" contenteditable="true" style="position:relative;">📞 +91 98765 43210</div>
-          <div id="cardEmail" class="editable-text" contenteditable="true" style="position:relative;">✉️ rahul@clickvectora.com</div>
-        </div>
-
-        <div id="qrcode"></div>
+  <div class="studio-body">
+    <div class="sidebar">
+      <div class="section-title">1. Dynamic QR Code Generator</div>
+      <div class="form-group">
+        <label>QR Code Content (URL or Text)</label>
+        <input type="text" id="qrInput" value="https://clickvectora.com" oninput="generateQRCode(this.value)">
       </div>
 
-      <div class="action-buttons">
-        <button class="btn-pay" onclick="payAndDownload('png')">Pay ₹99 & Download PNG</button>
-        <button class="btn-pay" style="background:var(--brand-blue);" onclick="payAndDownload('pdf')">Pay ₹99 & Download PDF</button>
+      <div class="section-title">2. Image / Logo Upload & Scale</div>
+      <div class="form-group">
+        <label>Upload Graphic Element</label>
+        <input type="file" accept="image/*" onchange="uploadImageLayer(event)">
+      </div>
+      <div class="form-group">
+        <label>Layer Size / Width (px)</label>
+        <input type="range" id="scaleSlider" min="30" max="400" value="120" oninput="scaleLayer(this.value)">
+      </div>
+
+      <div class="section-title">3. Styling & Layer Controls</div>
+      <div class="form-group">
+        <label>Text Color</label>
+        <input type="color" id="textColor" value="#2b2e34" oninput="applyColor(this.value)">
+      </div>
+      <button class="btn-export" style="background:#3a3f4d; width:100%;" onclick="addTextLayer()">+ Add Extra Text Layer</button>
+      <button class="btn-export" style="background:#d9534f; width:100%; margin-top:5px;" onclick="deleteLayer()">Delete Layer</button>
+    </div>
+
+    <div class="workspace">
+      <div id="cardCanvas" class="card-canvas">
+        
+        <!-- FRONT SIDE -->
+        <div id="frontSide" class="card-side active">
+          <div class="studio-layer active-layer" id="frontLogoLayer" style="top: 20px; left: 20px; width: 140px;" onclick="selectLayer(this)">
+            <img src="1000231418.png" alt="Logo">
+          </div>
+          <div class="studio-layer" style="top: 100px; left: 25px;" onclick="selectLayer(this)">
+            <div class="editable-text" contenteditable="true" style="font-weight: bold; font-size: 20px;">Rahul Sharma</div>
+          </div>
+          <div class="studio-layer" style="top: 130px; left: 25px;" onclick="selectLayer(this)">
+            <div class="editable-text" contenteditable="true" style="color: var(--brand-cyan); font-weight: 600;">Lead Graphic Designer</div>
+          </div>
+          <div class="studio-layer" style="top: 180px; left: 25px;" onclick="selectLayer(this)">
+            <div class="editable-text" contenteditable="true" style="font-size: 11px;">📞 +91 98765 43210<br>✉️ rahul@clickvectora.com</div>
+          </div>
+          <!-- QR Code Front -->
+          <div class="studio-layer" id="qrFrontLayer" style="bottom: 20px; right: 20px;" onclick="selectLayer(this)">
+            <div id="qrcodeFront"></div>
+          </div>
+        </div>
+
+        <!-- BACK SIDE -->
+        <div id="backSide" class="card-side">
+          <div class="studio-layer" style="top: 60px; left: 160px; width: 180px;" onclick="selectLayer(this)">
+            <img src="1000231418.png" alt="Logo">
+          </div>
+          <div class="studio-layer" style="top: 155px; left: 110px;" onclick="selectLayer(this)">
+            <div class="editable-text" contenteditable="true" style="font-size: 16px; font-weight: bold; color: var(--brand-cyan); text-align: center;">Click Vectora Solution</div>
+            <div class="editable-text" contenteditable="true" style="font-size: 11px; color: #666; text-align: center;">Vector & Graphic Design Excellence</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
   <script>
+    let activeLayer = document.getElementById('frontLogoLayer');
+    let activeSide = 'front';
+    let qrFront = null;
+
     window.onload = function() {
-      new QRCode(document.getElementById("qrcode"), {
-        width: 45, height: 45, colorDark : "#00a8b5", colorLight : "#ffffff"
+      qrFront = new QRCode(document.getElementById("qrcodeFront"), {
+        width: 60, height: 60, colorDark : "#00a8b5", colorLight : "#ffffff"
       });
-      makeElementDraggable(document.getElementById("logoWrapper"));
+      generateQRCode("https://clickvectora.com");
+      document.querySelectorAll('.studio-layer').forEach(layer => makeDraggable(layer));
     };
 
-    function handleLogoUpload(event) {
+    function switchSide(side) {
+      activeSide = side;
+      document.getElementById('btnFront').className = side === 'front' ? 'active' : '';
+      document.getElementById('btnBack').className = side === 'back' ? 'active' : '';
+      document.getElementById('frontSide').className = side === 'front' ? 'card-side active' : 'card-side';
+      document.getElementById('backSide').className = side === 'back' ? 'card-side active' : 'card-side';
+    }
+
+    function generateQRCode(text) {
+      if (qrFront) {
+        qrFront.clear();
+        qrFront.makeCode(text || "https://clickvectora.com");
+      }
+    }
+
+    function selectLayer(elmnt) {
+      document.querySelectorAll('.studio-layer').forEach(l => l.classList.remove('active-layer'));
+      activeLayer = elmnt;
+      activeLayer.classList.add('active-layer');
+      document.getElementById('scaleSlider').value = activeLayer.offsetWidth || 120;
+    }
+
+    function scaleLayer(val) {
+      if (activeLayer) activeLayer.style.width = val + 'px';
+    }
+
+    function applyColor(color) {
+      if (activeLayer && activeLayer.querySelector('.editable-text')) {
+        activeLayer.querySelector('.editable-text').style.color = color;
+      }
+    }
+
+    function addTextLayer() {
+      const side = document.getElementById(activeSide + 'Side');
+      const newLayer = document.createElement('div');
+      newLayer.className = 'studio-layer';
+      newLayer.style.top = '100px'; newLayer.style.left = '100px';
+      newLayer.innerHTML = `<div class="editable-text" contenteditable="true">New Text</div>`;
+      newLayer.onclick = function() { selectLayer(this); };
+      side.appendChild(newLayer);
+      makeDraggable(newLayer);
+      selectLayer(newLayer);
+    }
+
+    function uploadImageLayer(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-          document.getElementById('cardLogo').src = e.target.result;
+          const side = document.getElementById(activeSide + 'Side');
+          const newLayer = document.createElement('div');
+          newLayer.className = 'studio-layer';
+          newLayer.style.top = '50px'; newLayer.style.left = '50px'; newLayer.style.width = '100px';
+          newLayer.innerHTML = `<img src="${e.target.result}">`;
+          newLayer.onclick = function() { selectLayer(this); };
+          side.appendChild(newLayer);
+          makeDraggable(newLayer);
+          selectLayer(newLayer);
         };
         reader.readAsDataURL(file);
       }
     }
 
-    function scaleLogo(size) {
-      document.getElementById('cardLogo').style.maxHeight = size + 'px';
+    function deleteLayer() {
+      if (activeLayer) { activeLayer.remove(); activeLayer = null; }
     }
 
-    function changeColor(elementId, color) {
-      document.getElementById(elementId).style.color = color;
-    }
-
-    function updateText(elementId, val) {
-      document.getElementById(elementId).innerText = val;
-    }
-
-    // Drag and Drop Logic for Elements on Canvas
-    function makeElementDraggable(elmnt) {
+    function makeDraggable(elmnt) {
       let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
       elmnt.onmousedown = dragMouseDown;
 
       function dragMouseDown(e) {
+        if (e.target.isContentEditable) return;
         e.preventDefault();
-        pos3 = e.clientX;
-        pos4 = e.clientY;
+        selectLayer(elmnt);
+        pos3 = e.clientX; pos4 = e.clientY;
         document.onmouseup = closeDragElement;
         document.onmousemove = elementDrag;
       }
 
       function elementDrag(e) {
         e.preventDefault();
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
+        pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
+        pos3 = e.clientX; pos4 = e.clientY;
         elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
         elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
       }
 
       function closeDragElement() {
-        document.onmousemove = null;
-        document.onmouseup = null;
+        document.onmousemove = null; document.onmouseup = null;
       }
     }
 
-    function payAndDownload(format) {
-      const card = document.getElementById('cardCanvas');
-      html2canvas(card, { scale: 3 }).then(canvas => {
+    function downloadCard(format) {
+      const activeContainer = document.getElementById(activeSide + 'Side');
+      document.querySelectorAll('.studio-layer').forEach(l => l.classList.remove('active-layer'));
+
+      html2canvas(activeContainer, { scale: 3 }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
         if (format === 'png') {
           const link = document.createElement('a');
-          link.download = `click-vectora-card.png`;
-          link.href = imgData;
-          link.click();
+          link.download = `click-vectora-${activeSide}.png`;
+          link.href = imgData; link.click();
         } else {
           const { jsPDF } = window.jspdf;
           const pdf = new jsPDF({ orientation: 'landscape', unit: 'in', format: [3.5, 2] });
           pdf.addImage(imgData, 'PNG', 0, 0, 3.5, 2);
-          pdf.save(`click-vectora-card.pdf`);
+          pdf.save(`click-vectora-${activeSide}.pdf`);
         }
       });
     }
