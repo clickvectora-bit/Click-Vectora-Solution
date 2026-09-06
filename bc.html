@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
@@ -286,7 +286,7 @@
 </head>
 <body>
 
-  <!-- Notice Popup Modal (Loaded on Start) -->
+  <!-- Notice Popup Modal -->
   <div class="modal-overlay" id="noticeModal" style="display: flex;">
     <div class="modal">
       <div style="font-size: 2.5rem; margin-bottom: 8px;">💻📱</div>
@@ -313,12 +313,18 @@
   <div class="workspace" id="workspace">
     <div class="canvas-viewport-container">
 
-      <!-- Orientation & Format Bar -->
-      <div class="floating-panel" style="margin-bottom: 8px; width: 100%; max-width: 720px; justify-content: center; gap: 8px;">
+      <!-- Orientation, Format & Background Color Bar -->
+      <div class="floating-panel" style="margin-bottom: 8px; width: 100%; max-width: 720px; justify-content: center; gap: 8px; flex-wrap: wrap;">
         <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Card Layout:</span>
         <button class="secondary" onclick="setOrientation('horizontal')" title="Horizontal Card">📐 Horiz</button>
         <button class="secondary" onclick="setOrientation('vertical')" title="Vertical Card">📏 Vert</button>
         <button class="secondary" onclick="toggleRounded()">⭕ Radius</button>
+        
+        <div style="display: flex; align-items: center; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
+          <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted);">BG:</span>
+          <input type="color" id="cardBgColorPicker" onchange="setCanvasBackground(this.value)" value="#ffffff" title="Card Background Color">
+          <button class="secondary" style="padding: 2px 6px; font-size: 0.65rem;" onclick="setCanvasBackground('transparent')">None</button>
+        </div>
       </div>
 
       <!-- Top Tools Panel -->
@@ -364,6 +370,7 @@
 
       <!-- Object Inspector Overlay -->
       <div class="floating-panel object-inspector-panel" id="objectInspector">
+        <!-- Text Inspector Controls -->
         <div id="textInspectorControls" style="display:none; gap:5px; align-items:center; flex-wrap:wrap;">
           <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" title="Text Color">
           <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)">
@@ -375,17 +382,28 @@
           <button class="secondary" onclick="toggleStyle('bold')"><b>B</b></button>
           <button class="secondary" onclick="toggleStyle('italic')"><i>I</i></button>
           <button class="secondary" onclick="toggleStyle('underline')"><u>U</u></button>
+          <div style="display:flex; gap:2px; border-left:1px solid #CBD5E1; padding-left:5px; margin-left:3px;">
+            <button class="secondary" style="padding: 2px 6px;" onclick="setTextAlignment('left')">⬅️</button>
+            <button class="secondary" style="padding: 2px 6px;" onclick="setTextAlignment('center')">⏺️</button>
+            <button class="secondary" style="padding: 2px 6px;" onclick="setTextAlignment('right')">➡️</button>
+          </div>
         </div>
 
-        <div id="shapeInspectorControls" style="display:none; gap:5px; align-items:center; flex-wrap:wrap;">
-          <span style="font-size:0.65rem;">Fill:</span>
-          <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#FF6B00">
-          <button class="secondary" style="padding:2px 4px; font-size:0.65rem;" onclick="updateShapeProperty('fill', 'transparent')">None</button>
-          <span style="font-size:0.65rem;">Border:</span>
-          <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" value="#000000">
-          <input type="range" id="shapeBorderSize" min="0" max="20" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:45px;">
+        <!-- Shape Inspector Controls -->
+        <div id="shapeInspectorControls" style="display:none; gap:6px; align-items:center; flex-wrap:wrap;">
+          <span style="font-size:0.65rem; font-weight:600;">Fill:</span>
+          <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#FF6B00" title="Foreground Fill Color">
+          <button class="secondary" style="padding:2px 5px; font-size:0.65rem;" onclick="updateShapeProperty('fill', 'transparent')">None</button>
+          
+          <span style="font-size:0.65rem; font-weight:600; border-left:1px solid #CBD5E1; padding-left:5px;">Border:</span>
+          <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" value="#000000" title="Border Color">
+          <button class="secondary" style="padding:2px 5px; font-size:0.65rem;" onclick="updateShapeProperty('stroke', '')">None</button>
+          
+          <span style="font-size:0.65rem; font-weight:600;">Width:</span>
+          <input type="range" id="shapeBorderSize" min="0" max="25" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:50px; cursor:pointer;">
         </div>
 
+        <!-- Common Layer & Delete Controls -->
         <div style="display:flex; gap:3px; align-items:center; border-left:1px solid #CBD5E1; padding-left:5px; margin-left:3px;">
           <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
           <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('forward')" title="Step Up">🔼</button>
@@ -490,6 +508,15 @@
       resizeCanvasToFitContainer();
     }
 
+    function setCanvasBackground(color) {
+      canvas.setBackgroundColor(color, () => {
+        canvas.renderAll();
+      });
+      if (color !== 'transparent') {
+        document.getElementById('cardBgColorPicker').value = color;
+      }
+    }
+
     function updateInspector() {
       const activeObj = canvas.getActiveObject();
       if (!activeObj || Object.values(guideObjects).includes(activeObj)) {
@@ -511,9 +538,14 @@
       } else if (!activeObj.isType('image')) {
         shapeControls.style.display = 'flex';
         textControls.style.display = 'none';
+        
         if (activeObj.fill && activeObj.fill !== 'transparent') {
           document.getElementById('shapeFillColor').value = activeObj.fill;
         }
+        if (activeObj.stroke) {
+          document.getElementById('shapeBorderColor').value = activeObj.stroke;
+        }
+        document.getElementById('shapeBorderSize').value = activeObj.strokeWidth || 0;
       } else {
         textControls.style.display = 'none';
         shapeControls.style.display = 'none';
@@ -638,8 +670,12 @@
       if (canvasStates[side]) {
         canvas.loadFromJSON(canvasStates[side], () => {
           resizeCanvasToFitContainer();
+          if (canvas.backgroundColor) {
+            document.getElementById('cardBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
+          }
         });
       } else {
+        document.getElementById('cardBgColorPicker').value = '#ffffff';
         resizeCanvasToFitContainer();
       }
     }
@@ -728,6 +764,7 @@
         fontFamily: 'Poppins', 
         fill: '#0F172A', 
         fontSize: 32,
+        textAlign: 'left',
         editable: true,
         selectable: true
       });
@@ -743,6 +780,14 @@
       const activeObject = canvas.getActiveObject();
       if (activeObject && activeObject.isType('i-text')) {
         activeObject.set(prop, value);
+        canvas.renderAll();
+      }
+    }
+
+    function setTextAlignment(alignment) {
+      const activeObject = canvas.getActiveObject();
+      if (activeObject && activeObject.isType('i-text')) {
+        activeObject.set('textAlign', alignment);
         canvas.renderAll();
       }
     }
