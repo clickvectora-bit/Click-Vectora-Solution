@@ -25,19 +25,17 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; touch-action: manipulation; }
     body { display: flex; flex-direction: column; height: 100vh; background: var(--bg-workspace); color: var(--text-main); overflow: hidden; }
 
-    /* Top Control Bar */
+    /* Top Features Bar - Compact Layout */
     .top-bar {
       width: 100%;
       background: #FFFFFF;
       border-bottom: 1px solid #94A3B8;
-      padding: 8px 12px;
+      padding: 6px 10px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       z-index: 10;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      max-height: 50vh;
-      overflow-y: auto;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
 
     .brand-row {
@@ -45,15 +43,15 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #E2E8F0;
-      padding-bottom: 6px;
+      padding-bottom: 4px;
     }
 
-    .brand { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
+    .brand { font-size: 1rem; font-weight: 700; color: var(--primary); }
 
     .toolbar-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
     }
 
@@ -62,7 +60,7 @@
       align-items: center;
       gap: 4px;
       background: #F1F5F9;
-      padding: 4px 8px;
+      padding: 3px 6px;
       border-radius: 6px;
       border: 1px solid #CBD5E1;
       flex-wrap: wrap;
@@ -70,25 +68,25 @@
 
     .section-title { 
       font-weight: 600; 
-      font-size: 0.68rem; 
+      font-size: 0.65rem; 
       color: var(--text-muted); 
       text-transform: uppercase; 
-      letter-spacing: 0.4px; 
+      letter-spacing: 0.3px; 
       margin-right: 2px;
     }
 
-    .btn-group { display: flex; gap: 4px; flex-wrap: wrap; }
+    .btn-group { display: flex; gap: 3px; flex-wrap: wrap; }
     
     button {
       background: var(--primary);
       color: white;
       border: none;
-      padding: 5px 8px;
+      padding: 4px 7px;
       border-radius: 5px;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s ease;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -103,41 +101,74 @@
     button.danger:hover { background: #DC2626; }
 
     input, select {
-      padding: 4px 6px;
+      padding: 3px 5px;
       border: 1px solid #CBD5E1;
-      border-radius: 5px;
+      border-radius: 4px;
       outline: none;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       background: #FAFAFA;
     }
-    input[type="text"] { width: 120px; }
-    input[type="file"] { width: 150px; font-size: 0.68rem; }
-    input[type="color"] { height: 26px; width: 30px; cursor: pointer; padding: 1px; }
+    input[type="text"] { width: 110px; }
+    input[type="file"] { width: 140px; font-size: 0.65rem; }
+    input[type="color"] { height: 24px; width: 26px; cursor: pointer; padding: 1px; }
 
-    /* Workspace & Canvas */
+    /* Tight-Fit Workspace Area */
     .workspace {
       flex: 1;
       width: 100%;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       position: relative;
       overflow: hidden;
-      padding: 0;
+      padding: 4px;
       margin: 0;
       background: radial-gradient(#94A3B8 1px, transparent 1px);
-      background-size: 14px 14px;
+      background-size: 12px 12px;
+    }
+
+    /* Floating Canvas Top Controls */
+    .canvas-top-controls {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 6px;
+      z-index: 5;
     }
 
     .canvas-container-wrapper {
       background: #FFFFFF;
-      box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.3);
+      box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.3);
       position: relative;
     }
 
     .canvas-container-wrapper.rounded {
-      border-radius: 20px;
+      border-radius: 16px;
       overflow: hidden;
+    }
+
+    /* Floating Canvas Bottom Line Controls */
+    .canvas-bottom-controls {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 4px 8px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      z-index: 5;
+    }
+
+    /* Fixed Bottom Action Bar */
+    .bottom-action-bar {
+      width: 100%;
+      background: #FFFFFF;
+      border-top: 1px solid #94A3B8;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
     }
 
     /* Modal Styling */
@@ -154,46 +185,46 @@
     
     .modal {
       background: white;
-      padding: 20px;
+      padding: 16px;
       border-radius: 12px;
       width: 320px;
       max-width: 90%;
       text-align: center;
     }
 
-    /* Extra Large Dual 3D Card Preview */
+    /* Dual 3D Card Preview Styling */
     .modal-3d {
-      width: 1100px !important;
+      width: 1050px !important;
       max-width: 96% !important;
-      padding: 24px !important;
+      padding: 20px !important;
     }
 
     .preview-3d-wrapper {
       display: flex;
-      gap: 30px;
+      gap: 20px;
       justify-content: center;
       align-items: center;
       flex-wrap: wrap;
-      margin: 20px 0;
+      margin: 15px 0;
     }
 
     .preview-card-box {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .card-3d-container {
-      width: 480px;
-      height: 274px;
+      width: 450px;
+      height: 257px;
       perspective: 1200px;
     }
 
     @media (max-width: 1024px) {
       .card-3d-container {
-        width: 340px;
-        height: 194px;
+        width: 320px;
+        height: 183px;
       }
     }
 
@@ -203,8 +234,8 @@
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 20px 45px rgba(0,0,0,0.35);
-      border-radius: 12px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      border-radius: 10px;
     }
 
     .card-3d-inner.flipped { transform: rotateY(180deg); }
@@ -214,7 +245,7 @@
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
-      border-radius: 12px;
+      border-radius: 10px;
       overflow: hidden;
       background-size: cover;
       background-position: center;
@@ -231,38 +262,29 @@
   <div class="top-bar">
     <div class="brand-row">
       <div class="brand">🎴 Card Studio Pro</div>
-      
       <div class="btn-group">
-        <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
-        <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
-        <button style="background: #8B5CF6;" onclick="open3DPreview()">3D Dual Preview</button>
         <button class="danger" onclick="deleteSelected()">Delete Layer</button>
-        <button style="background: #10B981;" onclick="initiatePayment('png')">PNG</button>
-        <button style="background: #2563EB;" onclick="initiatePayment('pdf')">PDF</button>
       </div>
     </div>
 
     <div class="toolbar-grid">
       
       <div class="tool-group">
-        <span class="section-title">Layout & Guides</span>
+        <span class="section-title">Layout</span>
         <div class="btn-group">
           <button class="secondary" onclick="setOrientation('horizontal')">Horiz</button>
           <button class="secondary" onclick="setOrientation('vertical')">Vert</button>
           <button class="secondary" onclick="toggleRounded()">Radius</button>
-          <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed: ON</button>
-          <button class="secondary" id="trimBtn" onclick="toggleGuide('trim')">Trim: ON</button>
-          <button class="secondary" id="safetyBtn" onclick="toggleGuide('safety')">Safety: ON</button>
         </div>
       </div>
 
       <div class="tool-group">
-        <span class="section-title">Layer Order</span>
+        <span class="section-title">Layers</span>
         <div class="btn-group">
-          <button class="secondary" onclick="changeLayer('front')" title="Bring to Front">🔝 Front</button>
-          <button class="secondary" onclick="changeLayer('forward')" title="Bring Forward">🔼 Up</button>
-          <button class="secondary" onclick="changeLayer('backward')" title="Send Backward">🔽 Down</button>
-          <button class="secondary" onclick="changeLayer('back')" title="Send to Back">🔚 Back</button>
+          <button class="secondary" onclick="changeLayer('front')">🔝 Front</button>
+          <button class="secondary" onclick="changeLayer('forward')">🔼 Up</button>
+          <button class="secondary" onclick="changeLayer('backward')">🔽 Down</button>
+          <button class="secondary" onclick="changeLayer('back')">🔚 Back</button>
         </div>
       </div>
 
@@ -291,12 +313,17 @@
           <button class="secondary" onclick="addShape('triangle')">Triangle</button>
           <button class="secondary" onclick="addShape('line')">Line</button>
         </div>
-        <span style="font-size:0.68rem; margin-left:4px;">Fill:</span>
-        <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#FF6B00" title="Shape Foreground/Fill Color">
-        <span style="font-size:0.68rem;">Border:</span>
-        <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" value="#000000" title="Border Color">
-        <span style="font-size:0.68rem;">Size:</span>
-        <input type="range" id="shapeBorderSize" min="0" max="20" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width: 55px;" title="Border Thickness">
+        
+        <span style="font-size:0.65rem; margin-left:2px;">Fill:</span>
+        <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#FF6B00">
+        <button class="secondary" style="padding:2px 4px; font-size:0.65rem;" onclick="updateShapeProperty('fill', 'transparent')">None</button>
+
+        <span style="font-size:0.65rem;">Border:</span>
+        <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" value="#000000">
+        <button class="secondary" style="padding:2px 4px; font-size:0.65rem;" onclick="updateShapeProperty('stroke', 'transparent')">None</button>
+
+        <span style="font-size:0.65rem;">Width:</span>
+        <input type="range" id="shapeBorderSize" min="0" max="20" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width: 45px;">
       </div>
 
       <div class="tool-group">
@@ -314,8 +341,30 @@
   </div>
 
   <div class="workspace" id="workspace">
+    
+    <div class="canvas-top-controls">
+      <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
+      <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
+      <button style="background: #8B5CF6;" onclick="open3DPreview()">3D Dual Preview</button>
+    </div>
+
     <div class="canvas-container-wrapper" id="canvasWrapper">
       <canvas id="cardCanvas"></canvas>
+    </div>
+
+    <div class="canvas-bottom-controls">
+      <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed Line: ON</button>
+      <button class="secondary" id="trimBtn" onclick="toggleGuide('trim')">Trim Line: ON</button>
+      <button class="secondary" id="safetyBtn" onclick="toggleGuide('safety')">Safety Line: ON</button>
+    </div>
+
+  </div>
+
+  <div class="bottom-action-bar">
+    <span style="font-size:0.75rem; font-weight:600; color:var(--text-muted);">High-Res Exports</span>
+    <div class="btn-group">
+      <button style="background: #10B981; padding: 6px 14px;" onclick="initiatePayment('png')">Download PNG</button>
+      <button style="background: #2563EB; padding: 6px 14px;" onclick="initiatePayment('pdf')">Download PDF</button>
     </div>
   </div>
 
@@ -325,31 +374,31 @@
       <div class="preview-3d-wrapper">
         
         <div class="preview-card-box">
-          <span style="font-weight:600; font-size:0.85rem; color:var(--text-muted);">FRONT SIDE</span>
+          <span style="font-weight:600; font-size:0.8rem; color:var(--text-muted);">FRONT SIDE</span>
           <div class="card-3d-container">
             <div class="card-3d-inner" id="card3dInnerFront">
               <div class="card-3d-front" id="card3dFront_A"></div>
               <div class="card-3d-back" id="card3dBack_A"></div>
             </div>
           </div>
-          <button class="secondary" style="padding: 4px 12px; font-size:0.72rem;" onclick="flipCard('card3dInnerFront')">Flip Front Card</button>
+          <button class="secondary" style="padding: 4px 10px; font-size:0.7rem;" onclick="flipCard('card3dInnerFront')">Flip Front Card</button>
         </div>
 
         <div class="preview-card-box">
-          <span style="font-weight:600; font-size:0.85rem; color:var(--text-muted);">BACK SIDE</span>
+          <span style="font-weight:600; font-size:0.8rem; color:var(--text-muted);">BACK SIDE</span>
           <div class="card-3d-container">
             <div class="card-3d-inner" id="card3dInnerBack">
               <div class="card-3d-front" id="card3dFront_B"></div>
               <div class="card-3d-back" id="card3dBack_B"></div>
             </div>
           </div>
-          <button class="secondary" style="padding: 4px 12px; font-size:0.72rem;" onclick="flipCard('card3dInnerBack')">Flip Back Card</button>
+          <button class="secondary" style="padding: 4px 10px; font-size:0.7rem;" onclick="flipCard('card3dInnerBack')">Flip Back Card</button>
         </div>
 
       </div>
       
       <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-        <button style="padding: 8px 24px;" onclick="close3DModal()">Close Preview</button>
+        <button style="padding: 6px 20px;" onclick="close3DModal()">Close Preview</button>
       </div>
     </div>
   </div>
@@ -372,7 +421,7 @@
     const BASE_WIDTH = 1000;
     const BASE_HEIGHT = 571;
 
-    // Print Guides Padding
+    // Print Guides Padding Margins
     const BLEED_MARGIN = 10;
     const TRIM_MARGIN = 22;
     const SAFETY_MARGIN = 42;
@@ -396,7 +445,7 @@
       allowTouchScrolling: false
     });
 
-    // Render Print Guides Always On Top
+    // Render Print Lines Always on Top
     function renderPrintGuides() {
       ['bleed', 'trim', 'safety'].forEach(type => {
         if (guideObjects[type]) canvas.remove(guideObjects[type]);
@@ -448,18 +497,18 @@
     function toggleGuide(type) {
       if (type === 'bleed') {
         showBleed = !showBleed;
-        document.getElementById('bleedBtn').innerText = `Bleed: ${showBleed ? 'ON' : 'OFF'}`;
+        document.getElementById('bleedBtn').innerText = `Bleed Line: ${showBleed ? 'ON' : 'OFF'}`;
       } else if (type === 'trim') {
         showTrim = !showTrim;
-        document.getElementById('trimBtn').innerText = `Trim: ${showTrim ? 'ON' : 'OFF'}`;
+        document.getElementById('trimBtn').innerText = `Trim Line: ${showTrim ? 'ON' : 'OFF'}`;
       } else if (type === 'safety') {
         showSafety = !showSafety;
-        document.getElementById('safetyBtn').innerText = `Safety: ${showSafety ? 'ON' : 'OFF'}`;
+        document.getElementById('safetyBtn').innerText = `Safety Line: ${showSafety ? 'ON' : 'OFF'}`;
       }
       renderPrintGuides();
     }
 
-    // Layer Arrangement Handler
+    // Layer Arrangement
     function changeLayer(action) {
       const activeObject = canvas.getActiveObject();
       if (!activeObject || Object.values(guideObjects).includes(activeObject)) return;
@@ -473,11 +522,14 @@
       canvas.renderAll();
     }
 
-    // Auto Rescale Canvas
+    // Auto Rescale Canvas to Maximize Card Area
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspace');
-      const maxWidth = workspace.clientWidth;
-      const maxHeight = workspace.clientHeight;
+      const topControlsH = document.querySelector('.canvas-top-controls').offsetHeight || 30;
+      const bottomControlsH = document.querySelector('.canvas-bottom-controls').offsetHeight || 30;
+      
+      const maxWidth = workspace.clientWidth - 10;
+      const maxHeight = workspace.clientHeight - topControlsH - bottomControlsH - 20;
 
       let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
       let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
@@ -495,7 +547,7 @@
 
     window.addEventListener('resize', resizeCanvasToFitContainer);
 
-    // Front/Back Switcher
+    // Front / Back Side Switcher
     function switchSide(side) {
       if (currentSide === side) return;
 
@@ -517,27 +569,22 @@
       }
     }
 
-    // Dual 3D Preview Renderer
+    // Dual 3D Card Preview
     function open3DPreview() {
-      // Save current side state
       canvasStates[currentSide] = canvas.toJSON();
 
       hideGuidesForExport();
 
-      // Render Current Screen
       const currentData = canvas.toDataURL({ format: 'png', quality: 1 });
 
       let frontImg = currentSide === 'front' ? currentData : null;
       let backImg = currentSide === 'back' ? currentData : null;
 
-      // Render opposite side offscreen if available
       const tempCanvas = new fabric.Canvas(null, { width: BASE_WIDTH, height: BASE_HEIGHT, backgroundColor: '#ffffff' });
-      
       const otherSide = currentSide === 'front' ? 'back' : 'front';
 
       if (canvasStates[otherSide]) {
         tempCanvas.loadFromJSON(canvasStates[otherSide], () => {
-          // Hide guides on temp
           tempCanvas.getObjects().forEach(o => { if(o.excludeFromExport) o.visible = false; });
           tempCanvas.renderAll();
           const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1 });
@@ -596,7 +643,7 @@
       borderDashArray: [4, 4]
     });
 
-    // Object Creator & Formatting Engine
+    // Object Creators & Shape Properties Update (Includes Transparent Option Support)
     function addText() {
       const text = new fabric.IText('Your Name / Title', { left: 100, top: 100, fontFamily: 'Poppins', fill: '#0F172A', fontSize: 32 });
       canvas.add(text);
@@ -622,7 +669,6 @@
       }
     }
 
-    // Shape Drawing with Custom Stroke & Fill
     function addShape(type) {
       let shape;
       let fillColor = document.getElementById('shapeFillColor').value;
@@ -714,7 +760,7 @@
       canvas.renderAll();
     }
 
-    // Payment Gateway & Export Engine
+    // Export & Payment Gateway Handlers
     function initiatePayment(type) {
       selectedExportType = type;
       document.getElementById('paymentModal').style.display = 'flex';
