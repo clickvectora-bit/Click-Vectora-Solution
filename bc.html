@@ -36,7 +36,7 @@
       gap: 8px;
       z-index: 10;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      max-height: 45vh;
+      max-height: 50vh;
       overflow-y: auto;
     }
 
@@ -112,6 +112,7 @@
     }
     input[type="text"] { width: 120px; }
     input[type="file"] { width: 150px; font-size: 0.68rem; }
+    input[type="color"] { height: 26px; width: 30px; cursor: pointer; padding: 1px; }
 
     /* Workspace & Canvas */
     .workspace {
@@ -160,24 +161,39 @@
       text-align: center;
     }
 
-    /* Bigger 3D Card Preview Styling */
+    /* Extra Large Dual 3D Card Preview */
     .modal-3d {
-      width: 650px !important;
-      max-width: 95% !important;
+      width: 1100px !important;
+      max-width: 96% !important;
       padding: 24px !important;
     }
 
-    .card-3d-container {
-      width: 550px;
-      height: 314px;
-      perspective: 1200px;
-      margin: 20px auto;
+    .preview-3d-wrapper {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 20px 0;
     }
 
-    @media (max-width: 600px) {
+    .preview-card-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-3d-container {
+      width: 480px;
+      height: 274px;
+      perspective: 1200px;
+    }
+
+    @media (max-width: 1024px) {
       .card-3d-container {
-        width: 320px;
-        height: 183px;
+        width: 340px;
+        height: 194px;
       }
     }
 
@@ -188,7 +204,7 @@
       transform-style: preserve-3d;
       transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       box-shadow: 0 20px 45px rgba(0,0,0,0.35);
-      border-radius: 10px;
+      border-radius: 12px;
     }
 
     .card-3d-inner.flipped { transform: rotateY(180deg); }
@@ -198,10 +214,11 @@
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
-      border-radius: 10px;
+      border-radius: 12px;
       overflow: hidden;
       background-size: cover;
       background-position: center;
+      border: 1px solid rgba(0,0,0,0.1);
     }
 
     .card-3d-back { transform: rotateY(180deg); }
@@ -218,7 +235,7 @@
       <div class="btn-group">
         <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
         <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
-        <button style="background: #8B5CF6;" onclick="open3DPreview()">3D Preview</button>
+        <button style="background: #8B5CF6;" onclick="open3DPreview()">3D Dual Preview</button>
         <button class="danger" onclick="deleteSelected()">Delete Layer</button>
         <button style="background: #10B981;" onclick="initiatePayment('png')">PNG</button>
         <button style="background: #2563EB;" onclick="initiatePayment('pdf')">PDF</button>
@@ -233,16 +250,26 @@
           <button class="secondary" onclick="setOrientation('horizontal')">Horiz</button>
           <button class="secondary" onclick="setOrientation('vertical')">Vert</button>
           <button class="secondary" onclick="toggleRounded()">Radius</button>
-          <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed Line: ON</button>
-          <button class="secondary" id="trimBtn" onclick="toggleGuide('trim')">Trim Line: ON</button>
-          <button class="secondary" id="safetyBtn" onclick="toggleGuide('safety')">Safety Line: ON</button>
+          <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed: ON</button>
+          <button class="secondary" id="trimBtn" onclick="toggleGuide('trim')">Trim: ON</button>
+          <button class="secondary" id="safetyBtn" onclick="toggleGuide('safety')">Safety: ON</button>
+        </div>
+      </div>
+
+      <div class="tool-group">
+        <span class="section-title">Layer Order</span>
+        <div class="btn-group">
+          <button class="secondary" onclick="changeLayer('front')" title="Bring to Front">🔝 Front</button>
+          <button class="secondary" onclick="changeLayer('forward')" title="Bring Forward">🔼 Up</button>
+          <button class="secondary" onclick="changeLayer('backward')" title="Send Backward">🔽 Down</button>
+          <button class="secondary" onclick="changeLayer('back')" title="Send to Back">🔚 Back</button>
         </div>
       </div>
 
       <div class="tool-group">
         <span class="section-title">Text</span>
         <button onclick="addText()">+ Text</button>
-        <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" style="height: 26px; width: 30px; cursor: pointer; padding: 1px;">
+        <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" title="Text Color">
         <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)">
           <option value="Poppins">Poppins</option>
           <option value="Montserrat">Montserrat</option>
@@ -257,6 +284,22 @@
       </div>
 
       <div class="tool-group">
+        <span class="section-title">Shapes & Border</span>
+        <div class="btn-group">
+          <button class="secondary" onclick="addShape('rect')">Rect</button>
+          <button class="secondary" onclick="addShape('circle')">Circle</button>
+          <button class="secondary" onclick="addShape('triangle')">Triangle</button>
+          <button class="secondary" onclick="addShape('line')">Line</button>
+        </div>
+        <span style="font-size:0.68rem; margin-left:4px;">Fill:</span>
+        <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#FF6B00" title="Shape Foreground/Fill Color">
+        <span style="font-size:0.68rem;">Border:</span>
+        <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" value="#000000" title="Border Color">
+        <span style="font-size:0.68rem;">Size:</span>
+        <input type="range" id="shapeBorderSize" min="0" max="20" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width: 55px;" title="Border Thickness">
+      </div>
+
+      <div class="tool-group">
         <span class="section-title">Image</span>
         <input type="file" id="imageLoader" accept="image/*">
       </div>
@@ -265,16 +308,6 @@
         <span class="section-title">QR</span>
         <input type="text" id="qrInput" placeholder="URL/UPI">
         <button onclick="addQRCode()">Generate</button>
-      </div>
-
-      <div class="tool-group">
-        <span class="section-title">Shapes</span>
-        <div class="btn-group">
-          <button class="secondary" onclick="addShape('rect')">Rect</button>
-          <button class="secondary" onclick="addShape('circle')">Circle</button>
-          <button class="secondary" onclick="addShape('triangle')">Triangle</button>
-          <button class="secondary" onclick="addShape('line')">Line</button>
-        </div>
       </div>
 
     </div>
@@ -288,16 +321,35 @@
 
   <div class="modal-overlay" id="preview3DModal">
     <div class="modal modal-3d">
-      <h3>3D Print Preview</h3>
-      <div class="card-3d-container">
-        <div class="card-3d-inner" id="card3dInner">
-          <div class="card-3d-front" id="card3dFront"></div>
-          <div class="card-3d-back" id="card3dBack"></div>
+      <h3>3D Dual Card Preview</h3>
+      <div class="preview-3d-wrapper">
+        
+        <div class="preview-card-box">
+          <span style="font-weight:600; font-size:0.85rem; color:var(--text-muted);">FRONT SIDE</span>
+          <div class="card-3d-container">
+            <div class="card-3d-inner" id="card3dInnerFront">
+              <div class="card-3d-front" id="card3dFront_A"></div>
+              <div class="card-3d-back" id="card3dBack_A"></div>
+            </div>
+          </div>
+          <button class="secondary" style="padding: 4px 12px; font-size:0.72rem;" onclick="flipCard('card3dInnerFront')">Flip Front Card</button>
         </div>
+
+        <div class="preview-card-box">
+          <span style="font-weight:600; font-size:0.85rem; color:var(--text-muted);">BACK SIDE</span>
+          <div class="card-3d-container">
+            <div class="card-3d-inner" id="card3dInnerBack">
+              <div class="card-3d-front" id="card3dFront_B"></div>
+              <div class="card-3d-back" id="card3dBack_B"></div>
+            </div>
+          </div>
+          <button class="secondary" style="padding: 4px 12px; font-size:0.72rem;" onclick="flipCard('card3dInnerBack')">Flip Back Card</button>
+        </div>
+
       </div>
-      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-        <button style="padding: 8px 16px;" class="secondary" onclick="flip3DCard()">Flip Card Side</button>
-        <button style="padding: 8px 16px;" onclick="close3DModal()">Close Preview</button>
+      
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+        <button style="padding: 8px 24px;" onclick="close3DModal()">Close Preview</button>
       </div>
     </div>
   </div>
@@ -344,7 +396,7 @@
       allowTouchScrolling: false
     });
 
-    // Render Print Guides Always On Top (Highest Layer)
+    // Render Print Guides Always On Top
     function renderPrintGuides() {
       ['bleed', 'trim', 'safety'].forEach(type => {
         if (guideObjects[type]) canvas.remove(guideObjects[type]);
@@ -353,7 +405,6 @@
       let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
       let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
 
-      // Bleed Line (Outer Red Line)
       if (showBleed) {
         guideObjects.bleed = new fabric.Rect({
           left: BLEED_MARGIN, top: BLEED_MARGIN,
@@ -364,7 +415,6 @@
         canvas.add(guideObjects.bleed);
       }
 
-      // Trim Line (Middle Black Line)
       if (showTrim) {
         guideObjects.trim = new fabric.Rect({
           left: TRIM_MARGIN, top: TRIM_MARGIN,
@@ -375,7 +425,6 @@
         canvas.add(guideObjects.trim);
       }
 
-      // Safety Line (Inner Green Line)
       if (showSafety) {
         guideObjects.safety = new fabric.Rect({
           left: SAFETY_MARGIN, top: SAFETY_MARGIN,
@@ -386,7 +435,6 @@
         canvas.add(guideObjects.safety);
       }
 
-      // Force Guides to Top Z-Index
       bringGuidesToFront();
       canvas.renderAll();
     }
@@ -400,15 +448,29 @@
     function toggleGuide(type) {
       if (type === 'bleed') {
         showBleed = !showBleed;
-        document.getElementById('bleedBtn').innerText = `Bleed Line: ${showBleed ? 'ON' : 'OFF'}`;
+        document.getElementById('bleedBtn').innerText = `Bleed: ${showBleed ? 'ON' : 'OFF'}`;
       } else if (type === 'trim') {
         showTrim = !showTrim;
-        document.getElementById('trimBtn').innerText = `Trim Line: ${showTrim ? 'ON' : 'OFF'}`;
+        document.getElementById('trimBtn').innerText = `Trim: ${showTrim ? 'ON' : 'OFF'}`;
       } else if (type === 'safety') {
         showSafety = !showSafety;
-        document.getElementById('safetyBtn').innerText = `Safety Line: ${showSafety ? 'ON' : 'OFF'}`;
+        document.getElementById('safetyBtn').innerText = `Safety: ${showSafety ? 'ON' : 'OFF'}`;
       }
       renderPrintGuides();
+    }
+
+    // Layer Arrangement Handler
+    function changeLayer(action) {
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject || Object.values(guideObjects).includes(activeObject)) return;
+
+      if (action === 'front') canvas.bringToFront(activeObject);
+      else if (action === 'forward') canvas.bringForward(activeObject);
+      else if (action === 'backward') canvas.sendBackwards(activeObject);
+      else if (action === 'back') canvas.sendToBack(activeObject);
+
+      bringGuidesToFront();
+      canvas.renderAll();
     }
 
     // Auto Rescale Canvas
@@ -433,7 +495,7 @@
 
     window.addEventListener('resize', resizeCanvasToFitContainer);
 
-    // Front/Back Switching
+    // Front/Back Switcher
     function switchSide(side) {
       if (currentSide === side) return;
 
@@ -455,25 +517,62 @@
       }
     }
 
-    // Larger 3D Preview Engine
+    // Dual 3D Preview Renderer
     function open3DPreview() {
+      // Save current side state
+      canvasStates[currentSide] = canvas.toJSON();
+
       hideGuidesForExport();
+
+      // Render Current Screen
+      const currentData = canvas.toDataURL({ format: 'png', quality: 1 });
+
+      let frontImg = currentSide === 'front' ? currentData : null;
+      let backImg = currentSide === 'back' ? currentData : null;
+
+      // Render opposite side offscreen if available
+      const tempCanvas = new fabric.Canvas(null, { width: BASE_WIDTH, height: BASE_HEIGHT, backgroundColor: '#ffffff' });
       
-      const frontData = canvas.toDataURL({ format: 'png', quality: 1 });
-      document.getElementById('card3dFront').style.backgroundImage = `url(${frontData})`;
-      document.getElementById('card3dBack').style.backgroundImage = `url(${frontData})`;
+      const otherSide = currentSide === 'front' ? 'back' : 'front';
+
+      if (canvasStates[otherSide]) {
+        tempCanvas.loadFromJSON(canvasStates[otherSide], () => {
+          // Hide guides on temp
+          tempCanvas.getObjects().forEach(o => { if(o.excludeFromExport) o.visible = false; });
+          tempCanvas.renderAll();
+          const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1 });
+
+          if (currentSide === 'front') backImg = otherData;
+          else frontImg = otherData;
+
+          apply3DImages(frontImg, backImg);
+        });
+      } else {
+        if (!frontImg) frontImg = currentData;
+        if (!backImg) backImg = currentData;
+        apply3DImages(frontImg, backImg);
+      }
 
       restoreGuidesAfterExport();
       document.getElementById('preview3DModal').style.display = 'flex';
     }
 
-    function flip3DCard() {
-      document.getElementById('card3dInner').classList.toggle('flipped');
+    function apply3DImages(frontImg, backImg) {
+      document.getElementById('card3dFront_A').style.backgroundImage = `url(${frontImg})`;
+      document.getElementById('card3dBack_A').style.backgroundImage = `url(${backImg})`;
+
+      document.getElementById('card3dFront_B').style.backgroundImage = `url(${backImg})`;
+      document.getElementById('card3dBack_B').style.backgroundImage = `url(${frontImg})`;
+    }
+
+    function flipCard(elementId) {
+      document.getElementById(elementId).classList.toggle('flipped');
     }
 
     function close3DModal() {
       document.getElementById('preview3DModal').style.display = 'none';
-      document.getElementById('card3dInner').classList.remove('flipped');
+      document.getElementById('card3dInnerFront').classList.remove('flipped');
+      document.getElementById('card3dInnerBack').classList.remove('flipped');
     }
 
     function setOrientation(type) {
@@ -497,7 +596,7 @@
       borderDashArray: [4, 4]
     });
 
-    // Object Addition Handlers (Includes Auto-Front for Guides)
+    // Object Creator & Formatting Engine
     function addText() {
       const text = new fabric.IText('Your Name / Title', { left: 100, top: 100, fontFamily: 'Poppins', fill: '#0F172A', fontSize: 32 });
       canvas.add(text);
@@ -519,6 +618,40 @@
         if (style === 'bold') activeObject.set('fontWeight', activeObject.fontWeight === 'bold' ? 'normal' : 'bold');
         if (style === 'italic') activeObject.set('fontStyle', activeObject.fontStyle === 'italic' ? 'normal' : 'italic');
         if (style === 'underline') activeObject.set('underline', !activeObject.underline);
+        canvas.renderAll();
+      }
+    }
+
+    // Shape Drawing with Custom Stroke & Fill
+    function addShape(type) {
+      let shape;
+      let fillColor = document.getElementById('shapeFillColor').value;
+      let borderColor = document.getElementById('shapeBorderColor').value;
+      let borderSize = parseInt(document.getElementById('shapeBorderSize').value);
+
+      const baseOpts = {
+        left: 100, top: 100,
+        fill: fillColor,
+        stroke: borderColor,
+        strokeWidth: borderSize,
+        strokeUniform: true
+      };
+
+      if (type === 'rect') shape = new fabric.Rect({ ...baseOpts, width: 160, height: 100 });
+      else if (type === 'circle') shape = new fabric.Circle({ ...baseOpts, radius: 60 });
+      else if (type === 'triangle') shape = new fabric.Triangle({ ...baseOpts, width: 120, height: 120 });
+      else if (type === 'line') shape = new fabric.Line([80, 100, 300, 100], { stroke: fillColor, strokeWidth: borderSize || 4 });
+
+      canvas.add(shape);
+      canvas.setActiveObject(shape);
+      bringGuidesToFront();
+    }
+
+    function updateShapeProperty(prop, value) {
+      const activeObject = canvas.getActiveObject();
+      if (activeObject && !activeObject.isType('i-text') && !Object.values(guideObjects).includes(activeObject)) {
+        activeObject.set(prop, value);
+        activeObject.set('strokeUniform', true);
         canvas.renderAll();
       }
     }
@@ -555,18 +688,6 @@
           });
         }
       }, 100);
-    }
-
-    function addShape(type) {
-      let shape;
-      if (type === 'rect') shape = new fabric.Rect({ width: 160, height: 100, fill: '#FF6B00', left: 100, top: 100 });
-      else if (type === 'circle') shape = new fabric.Circle({ radius: 60, fill: '#FF6B00', left: 100, top: 100 });
-      else if (type === 'triangle') shape = new fabric.Triangle({ width: 120, height: 120, fill: '#FF6B00', left: 100, top: 100 });
-      else if (type === 'line') shape = new fabric.Line([80, 100, 300, 100], { stroke: '#FF6B00', strokeWidth: 5 });
-
-      canvas.add(shape);
-      canvas.setActiveObject(shape);
-      bringGuidesToFront();
     }
 
     function deleteSelected() {
