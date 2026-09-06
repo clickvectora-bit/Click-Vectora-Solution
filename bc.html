@@ -112,29 +112,28 @@
     input[type="file"] { width: 150px; font-size: 0.65rem; }
     input[type="color"] { height: 24px; width: 26px; cursor: pointer; padding: 1px; }
 
-    /* Absolute Center Workspace (Zero Margin & Zero Gap) */
+    /* Zero Margin Workspace Area */
     .workspace {
       flex: 1;
       width: 100%;
-      height: 100%;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       position: relative;
       overflow: hidden;
-      padding: 0 !important;
-      margin: 0 !important;
+      padding: 0;
+      margin: 0;
       background: radial-gradient(#94A3B8 1px, transparent 1px);
       background-size: 12px 12px;
     }
 
-    /* Top Overlay Controls */
+    /* Top Canvas Floating Controls */
     .canvas-top-controls {
-      position: absolute;
-      top: 10px;
       display: flex;
       gap: 6px;
-      z-index: 20;
+      margin-bottom: 6px;
+      z-index: 5;
     }
 
     .canvas-container-wrapper {
@@ -142,8 +141,6 @@
       box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.3);
       position: relative;
       transition: all 0.3s ease;
-      margin: 0 !important;
-      padding: 0 !important;
     }
 
     .canvas-container-wrapper.rounded {
@@ -151,17 +148,16 @@
       overflow: hidden;
     }
 
-    /* Bottom Overlay Controls */
+    /* Bottom Canvas Floating Controls */
     .canvas-bottom-controls {
-      position: absolute;
-      bottom: 10px;
       display: flex;
       gap: 6px;
+      margin-top: 6px;
       background: rgba(255, 255, 255, 0.9);
       padding: 4px 8px;
       border-radius: 6px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      z-index: 20;
+      z-index: 5;
     }
 
     /* Bottom Action Bar */
@@ -495,16 +491,19 @@
       canvas.renderAll();
     }
 
-    // Absolute Full Workspace Fit Engine (0 Top & Bottom Margin)
+    // Canvas Auto Scaling - Scaled with 1.0 (0 margin offset)
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspace');
+      const topControlsH = document.querySelector('.canvas-top-controls').offsetHeight || 30;
+      const bottomControlsH = document.querySelector('.canvas-bottom-controls').offsetHeight || 30;
       
       const maxWidth = workspace.clientWidth;
-      const maxHeight = workspace.clientHeight;
+      const maxHeight = workspace.clientHeight - topControlsH - bottomControlsH;
 
       let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
       let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
 
+      // Direct edge-to-edge scaling factor
       let scale = Math.min(maxWidth / targetW, maxHeight / targetH);
 
       canvas.setDimensions({
