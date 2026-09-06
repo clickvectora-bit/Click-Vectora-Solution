@@ -109,7 +109,7 @@
       background: #FAFAFA;
     }
     input[type="text"] { width: 110px; }
-    input[type="file"] { width: 140px; font-size: 0.65rem; }
+    input[type="file"] { width: 150px; font-size: 0.65rem; }
     input[type="color"] { height: 24px; width: 26px; cursor: pointer; padding: 1px; }
 
     /* Tight Workspace Area */
@@ -247,9 +247,6 @@
   <div class="top-bar">
     <div class="brand-row">
       <div class="brand">🎴 Card Studio Pro</div>
-      <div class="btn-group">
-        <button class="danger" onclick="deleteSelected()">Delete Layer</button>
-      </div>
     </div>
 
     <div class="toolbar-grid">
@@ -270,6 +267,7 @@
           <button class="secondary" onclick="changeLayer('forward')">🔼 Up</button>
           <button class="secondary" onclick="changeLayer('backward')">🔽 Down</button>
           <button class="secondary" onclick="changeLayer('back')">🔚 Back</button>
+          <button class="danger" onclick="deleteSelected()" style="margin-left: 2px;">🗑️ Delete</button>
         </div>
       </div>
 
@@ -313,7 +311,7 @@
 
       <div class="tool-group">
         <span class="section-title">Image</span>
-        <input type="file" id="imageLoader" accept="image/*">
+        <input type="file" id="imageLoader" accept="image/*" multiple>
       </div>
 
       <div class="tool-group">
@@ -412,9 +410,8 @@
       allowTouchScrolling: false
     });
 
-    // Render Print Guides Always On Top (With Fixed Line Toggles)
+    // Render Print Guides Always On Top
     function renderPrintGuides() {
-      // Clear existing guides first
       ['bleed', 'trim', 'safety'].forEach(type => {
         if (guideObjects[type]) {
           canvas.remove(guideObjects[type]);
@@ -465,7 +462,6 @@
       });
     }
 
-    // Toggle Line On/Off Fix
     function toggleGuide(type) {
       if (type === 'bleed') {
         showBleed = !showBleed;
@@ -670,17 +666,31 @@
       }
     }
 
+    // Multiple Image Loader Support
     document.getElementById('imageLoader').addEventListener('change', function (e) {
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        fabric.Image.fromURL(event.target.result, function (img) {
-          img.scaleToWidth(180);
-          canvas.add(img);
-          canvas.setActiveObject(img);
-          bringGuidesToFront();
-        });
-      };
-      if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+      const files = e.target.files;
+      if (!files || !files.length) return;
+
+      Array.from(files).forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          fabric.Image.fromURL(event.target.result, function (img) {
+            img.scaleToWidth(180);
+            // Offset positioning for multiple images
+            img.set({
+              left: 100 + (index * 20),
+              top: 100 + (index * 20)
+            });
+            canvas.add(img);
+            canvas.setActiveObject(img);
+            bringGuidesToFront();
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+      
+      // Clear value so user can upload same files again if needed
+      e.target.value = '';
     });
 
     function addQRCode() {
