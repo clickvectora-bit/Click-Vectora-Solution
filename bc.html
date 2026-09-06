@@ -17,104 +17,54 @@
       --primary: #FF6B00;
       --primary-hover: #E05D00;
       --bg-workspace: #CBD5E1;
-      --border-color: #CBD5E1;
       --text-main: #0F172A;
       --text-muted: #64748B;
+      --panel-bg: rgba(255, 255, 255, 0.96);
+      --panel-border: #CBD5E1;
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; touch-action: manipulation; }
     body { display: flex; flex-direction: column; height: 100vh; background: var(--bg-workspace); color: var(--text-main); overflow: hidden; }
 
-    /* Top Features Bar */
-    .top-bar {
+    /* Minimal Header */
+    .minimal-header {
       width: 100%;
       background: #FFFFFF;
       border-bottom: 1px solid #94A3B8;
-      padding: 8px 12px;
+      padding: 6px 12px;
       display: flex;
-      flex-direction: column;
-      gap: 6px;
+      align-items: center;
+      justify-content: space-between;
       z-index: 10;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
 
-    .brand-row-header {
-      position: relative;
+    .brand-group {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      border-bottom: 1px solid #E2E8F0;
-      padding-bottom: 6px;
-      text-align: center;
-    }
-
-    .home-link-btn {
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      text-decoration: none;
+      gap: 10px;
     }
 
     .header-logo {
-      height: 80px;
+      height: 38px;
       width: auto;
       object-fit: contain;
-      margin-bottom: 4px;
-      transition: transform 0.2s ease;
     }
-    .header-logo:hover { transform: scale(1.05); }
 
-    .header-title {
-      font-size: 1.15rem;
+    .header-title-text {
+      font-size: 0.95rem;
       font-weight: 800;
       color: var(--text-main);
-      letter-spacing: -0.5px;
-      line-height: 1.1;
+      letter-spacing: -0.3px;
     }
 
-    .header-subtitle {
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .toolbar-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .tool-group {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: #F1F5F9;
-      padding: 3px 6px;
-      border-radius: 6px;
-      border: 1px solid #CBD5E1;
-      flex-wrap: wrap;
-    }
-
-    .section-title { 
-      font-weight: 600; 
-      font-size: 0.65rem; 
-      color: var(--text-muted); 
-      text-transform: uppercase; 
-      letter-spacing: 0.3px; 
-      margin-right: 2px;
-    }
-
-    .btn-group { display: flex; gap: 3px; flex-wrap: wrap; }
-    
+    /* Common Button Styling */
     button, .btn-home {
       background: var(--primary);
       color: white;
       border: none;
-      padding: 4px 7px;
-      border-radius: 5px;
+      padding: 5px 9px;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s ease;
@@ -122,18 +72,19 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 3px;
+      gap: 4px;
       white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     button:hover, .btn-home:hover { background: var(--primary-hover); }
-    button.secondary, .btn-home.secondary { background: #FFF; color: var(--text-main); border: 1px solid #CBD5E1; }
-    button.secondary:hover, .btn-home.secondary:hover { background: #F8FAFC; border-color: #64748B; }
+    button.secondary { background: #FFF; color: var(--text-main); border: 1px solid #CBD5E1; }
+    button.secondary:hover { background: #F8FAFC; border-color: #64748B; }
     button.active-side { background: #0F172A; color: white; }
     button.danger { background: #EF4444; }
     button.danger:hover { background: #DC2626; }
 
     input, select {
-      padding: 3px 5px;
+      padding: 3px 6px;
       border: 1px solid #CBD5E1;
       border-radius: 4px;
       outline: none;
@@ -141,8 +92,7 @@
       background: #FAFAFA;
     }
     input[type="text"] { width: 110px; }
-    input[type="file"] { width: 150px; font-size: 0.65rem; }
-    input[type="color"] { height: 24px; width: 26px; cursor: pointer; padding: 1px; }
+    input[type="color"] { height: 26px; width: 28px; cursor: pointer; padding: 1px; border-radius: 4px; }
 
     /* Main Center Workspace */
     .workspace {
@@ -155,9 +105,8 @@
       position: relative;
       overflow: hidden;
       padding: 10px !important;
-      margin: 0 !important;
       background: radial-gradient(#94A3B8 1px, transparent 1px);
-      background-size: 12px 12px;
+      background-size: 14px 14px;
     }
 
     .canvas-viewport-container {
@@ -167,11 +116,56 @@
       position: relative;
     }
 
-    .canvas-top-controls {
+    /* Floating Canvas Panels */
+    .floating-panel {
+      position: absolute;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      padding: 6px 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+      backdrop-filter: blur(6px);
+      z-index: 50;
       display: flex;
+      align-items: center;
       gap: 6px;
-      margin-bottom: 6px;
+    }
+
+    /* Left Floating Add Tools Panel */
+    .left-tools-panel {
+      left: -170px;
+      top: 50%;
+      transform: translateY(-50%);
+      flex-direction: column;
+      align-items: stretch;
+      width: 155px;
+      gap: 8px;
+    }
+
+    .panel-section-title {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+      border-bottom: 1px solid #E2E8F0;
+      padding-bottom: 2px;
+    }
+
+    /* Top Floating Mode Controls */
+    .canvas-top-controls {
+      margin-bottom: 8px;
       z-index: 20;
+    }
+
+    /* Active Object Floating Inspector Overlay */
+    .object-inspector-panel {
+      top: -46px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      white-space: nowrap;
     }
 
     .canvas-container-wrapper {
@@ -179,8 +173,6 @@
       box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.3);
       position: relative;
       transition: all 0.3s ease;
-      margin: 0 !important;
-      padding: 0 !important;
     }
 
     .canvas-container-wrapper.rounded {
@@ -188,7 +180,7 @@
       overflow: hidden;
     }
 
-    /* Combined Bottom Controls & Export Area */
+    /* Bottom Floating Guides and Export Group */
     .canvas-bottom-controls-group {
       display: flex;
       flex-direction: column;
@@ -198,24 +190,26 @@
       z-index: 20;
     }
 
-    .canvas-bottom-controls {
-      display: flex;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 4px 8px;
-      border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    .canvas-export-controls {
+      border: 1px solid #CBD5E1;
     }
 
-    .canvas-export-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 5px 12px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-      border: 1px solid #CBD5E1;
+    /* Mobile Responsive Dock Adjustment */
+    @media (max-width: 900px) {
+      .left-tools-panel {
+        position: relative;
+        left: auto;
+        top: auto;
+        transform: none;
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        margin-bottom: 8px;
+      }
+      .object-inspector-panel {
+        top: auto;
+        bottom: -50px;
+      }
     }
 
     /* Modal Overlay */
@@ -239,7 +233,6 @@
       text-align: center;
     }
 
-    /* Single 3D Card Modal Styling */
     .modal-3d {
       width: 650px !important;
       max-width: 95% !important;
@@ -258,9 +251,7 @@
         width: 320px;
         height: 183px;
       }
-      .header-title { font-size: 0.95rem; }
-      .header-subtitle { display: none; }
-      .header-logo { height: 48px; }
+      .header-title-text { font-size: 0.8rem; }
     }
 
     .card-3d-inner {
@@ -294,112 +285,119 @@
 </head>
 <body>
 
-  <div class="top-bar">
-    <header class="brand-row-header">
-      <a href="index.html" class="home-link-btn">
-        <button id="homeBtn" class="secondary btn-home">🏠 Home</button>
+  <!-- Minimal Clean Header -->
+  <header class="minimal-header">
+    <div class="brand-group">
+      <a href="index.html" style="text-decoration:none;">
+        <button class="secondary" style="padding: 3px 8px;">🏠 Home</button>
       </a>
-      <img src="ClickVectora Logo - Copy.png" alt="ClickVectora Solution Logo" onerror="this.src='logo.png'; this.onerror=function(){this.src='https://via.placeholder.com/300x120?text=Click+Vectora';}" class="header-logo">
-      <h1 class="header-title">Business-Card Designer Studio</h1>
-      <p class="header-subtitle">Printable PNG & PDF Layouts</p>
-    </header>
+      <img src="ClickVectora Logo - Copy.png" alt="Logo" onerror="this.src='logo.png'; this.onerror=function(){this.style.display='none';}" class="header-logo">
+      <h1 class="header-title-text">Business Card Studio</h1>
+    </div>
+    
+    <div style="display:flex; gap:6px;">
+      <button class="secondary" onclick="setOrientation('horizontal')" title="Horizontal Card"> Horiz</button>
+      <button class="secondary" onclick="setOrientation('vertical')" title="Vertical Card"> Vert</button>
+      <button class="secondary" onclick="toggleRounded()"> Radius</button>
+    </div>
+  </header>
 
-    <div class="toolbar-grid">
+  <!-- Workspace Area -->
+  <div class="workspace" id="workspace">
+    
+    <div class="canvas-viewport-container">
       
-      <div class="tool-group">
-        <span class="section-title">Layout</span>
-        <div class="btn-group">
-          <button class="secondary" onclick="setOrientation('horizontal')">Horiz</button>
-          <button class="secondary" onclick="setOrientation('vertical')">Vert</button>
-          <button class="secondary" onclick="toggleRounded()">Radius</button>
-        </div>
+      <!-- Top Canvas Controls (Side Switch & 3D) -->
+      <div class="floating-panel canvas-top-controls">
+        <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
+        <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
+        <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D Preview</button>
       </div>
 
-      <div class="tool-group">
-        <span class="section-title">Layers</span>
-        <div class="btn-group">
-          <button class="secondary" onclick="changeLayer('front')">🔝 Front</button>
-          <button class="secondary" onclick="changeLayer('forward')">🔼 Up</button>
-          <button class="secondary" onclick="changeLayer('backward')">🔽 Down</button>
-          <button class="secondary" onclick="changeLayer('back')">🔚 Back</button>
-          <button class="danger" onclick="deleteSelected()" style="margin-left: 2px;">🗑️ Delete</button>
-        </div>
-      </div>
-
-      <div class="tool-group">
-        <span class="section-title">Text</span>
-        <button onclick="addText()">+ Text</button>
-        <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" title="Text Color">
-        <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)">
-          <option value="Poppins">Poppins</option>
-          <option value="Montserrat">Montserrat</option>
-          <option value="Roboto">Roboto</option>
-          <option value="Playfair Display">Playfair</option>
-        </select>
-        <div class="btn-group">
+      <!-- Contextual Dynamic Inspector Overlay (Shows on selecting elements) -->
+      <div class="floating-panel object-inspector-panel" id="objectInspector">
+        <!-- Text Options -->
+        <div id="textInspectorControls" style="display:none; gap:5px; align-items:center;">
+          <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" title="Text Color">
+          <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)">
+            <option value="Poppins">Poppins</option>
+            <option value="Montserrat">Montserrat</option>
+            <option value="Roboto">Roboto</option>
+            <option value="Playfair Display">Playfair</option>
+          </select>
           <button class="secondary" onclick="toggleStyle('bold')"><b>B</b></button>
           <button class="secondary" onclick="toggleStyle('italic')"><i>I</i></button>
           <button class="secondary" onclick="toggleStyle('underline')"><u>U</u></button>
         </div>
-      </div>
 
-      <div class="tool-group">
-        <span class="section-title">Shapes & Border</span>
-        <div class="btn-group">
-          <button class="secondary" onclick="addShape('rect')">Rect</button>
-          <button class="secondary" onclick="addShape('circle')">Circle</button>
-          <button class="secondary" onclick="addShape('triangle')">Triangle</button>
-          <button class="secondary" onclick="addShape('line')">Line</button>
+        <!-- Shape Options -->
+        <div id="shapeInspectorControls" style="display:none; gap:5px; align-items:center;">
+          <span style="font-size:0.65rem;">Fill:</span>
+          <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#FF6B00">
+          <button class="secondary" style="padding:2px 4px; font-size:0.65rem;" onclick="updateShapeProperty('fill', 'transparent')">None</button>
+          <span style="font-size:0.65rem;">Border:</span>
+          <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" value="#000000">
+          <input type="range" id="shapeBorderSize" min="0" max="20" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:45px;">
         </div>
-        
-        <span style="font-size:0.65rem; margin-left:2px;">Fill:</span>
-        <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#FF6B00">
-        <button class="secondary" style="padding:2px 4px; font-size:0.65rem;" onclick="updateShapeProperty('fill', 'transparent')">None</button>
 
-        <span style="font-size:0.65rem;">Border:</span>
-        <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" value="#000000">
-        <button class="secondary" style="padding:2px 4px; font-size:0.65rem;" onclick="updateShapeProperty('stroke', 'transparent')">None</button>
-
-        <span style="font-size:0.65rem;">Width:</span>
-        <input type="range" id="shapeBorderSize" min="0" max="20" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width: 45px;">
+        <!-- Layer Ordering & Delete -->
+        <div style="display:flex; gap:3px; align-items:center; border-left:1px solid #CBD5E1; padding-left:5px; margin-left:3px;">
+          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
+          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('forward')" title="Step Up">🔼</button>
+          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('backward')" title="Step Down">🔽</button>
+          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('back')" title="Send to Back">🔚</button>
+          <button class="danger" style="padding: 2px 6px;" onclick="deleteSelected()">🗑️</button>
+        </div>
       </div>
 
-      <div class="tool-group">
-        <span class="section-title">Image</span>
-        <input type="file" id="imageLoader" accept="image/*" multiple>
-      </div>
-
-      <div class="tool-group">
-        <span class="section-title">QR</span>
-        <input type="text" id="qrInput" placeholder="URL/UPI">
-        <button onclick="addQRCode()">Generate</button>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="workspace" id="workspace">
-    <div class="canvas-viewport-container">
-      <div class="canvas-top-controls">
-        <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
-        <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
-        <button style="background: #8B5CF6;" onclick="open3DPreview()">3D Preview</button>
-      </div>
-
+      <!-- Canvas Box -->
       <div class="canvas-container-wrapper" id="canvasWrapper">
         <canvas id="cardCanvas"></canvas>
       </div>
 
+      <!-- Left Floating Add Elements Panel -->
+      <div class="floating-panel left-tools-panel">
+        <div>
+          <div class="panel-section-title">Add Elements</div>
+          <button style="width:100%; margin-bottom:4px;" onclick="addText()">+ Add Text</button>
+        </div>
+
+        <div>
+          <div class="panel-section-title">Shapes</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:3px;">
+            <button class="secondary" onclick="addShape('rect')">Rect</button>
+            <button class="secondary" onclick="addShape('circle')">Circle</button>
+            <button class="secondary" onclick="addShape('triangle')">Tri</button>
+            <button class="secondary" onclick="addShape('line')">Line</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel-section-title">Upload Image</div>
+          <label class="btn-home secondary" style="width:100%; text-align:center; cursor:pointer;">
+            📁 Choose Files
+            <input type="file" id="imageLoader" accept="image/*" multiple style="display:none;">
+          </label>
+        </div>
+
+        <div>
+          <div class="panel-section-title">QR Code</div>
+          <input type="text" id="qrInput" placeholder="URL/UPI" style="width:100%; margin-bottom:4px;">
+          <button style="width:100%;" onclick="addQRCode()">+ Add QR</button>
+        </div>
+      </div>
+
+      <!-- Bottom Canvas Controls (Guides & Exports) -->
       <div class="canvas-bottom-controls-group">
-        <div class="canvas-bottom-controls">
+        <div class="floating-panel">
           <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed Line: ON</button>
           <button class="secondary" id="trimBtn" onclick="toggleGuide('trim')">Trim Line: ON</button>
           <button class="secondary" id="safetyBtn" onclick="toggleGuide('safety')">Safety Line: ON</button>
         </div>
 
-        <div class="canvas-export-controls">
+        <div class="floating-panel canvas-export-controls">
           <span style="font-size:0.7rem; font-weight:600; color:var(--text-muted);">Exports:</span>
-          <div class="btn-group">
+          <div style="display:flex; gap:4px;">
             <button style="background: #10B981; padding: 4px 10px;" onclick="initiatePayment('png')">Download PNG</button>
             <button style="background: #2563EB; padding: 4px 10px;" onclick="initiatePayment('pdf')">Download PDF</button>
           </div>
@@ -409,6 +407,7 @@
     </div>
   </div>
 
+  <!-- Single Card 3D Preview Modal -->
   <div class="modal-overlay" id="preview3DModal">
     <div class="modal modal-3d">
       <h3>3D Print Preview</h3>
@@ -426,6 +425,7 @@
     </div>
   </div>
 
+  <!-- Payment Modal -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
       <h3>Unlock HD Download</h3>
@@ -467,6 +467,45 @@
       preserveObjectStacking: true,
       allowTouchScrolling: false
     });
+
+    // Handle Active Object Selection overlay
+    canvas.on('selection:created', updateInspector);
+    canvas.on('selection:updated', updateInspector);
+    canvas.on('selection:cleared', hideInspector);
+
+    function updateInspector() {
+      const activeObj = canvas.getActiveObject();
+      if (!activeObj || Object.values(guideObjects).includes(activeObj)) {
+        hideInspector();
+        return;
+      }
+
+      const inspector = document.getElementById('objectInspector');
+      const textControls = document.getElementById('textInspectorControls');
+      const shapeControls = document.getElementById('shapeInspectorControls');
+
+      inspector.style.display = 'flex';
+
+      if (activeObj.isType('i-text')) {
+        textControls.style.display = 'flex';
+        shapeControls.style.display = 'none';
+        document.getElementById('textColor').value = activeObj.fill || '#0F172A';
+        document.getElementById('fontFamily').value = activeObj.fontFamily || 'Poppins';
+      } else if (!activeObj.isType('image')) {
+        shapeControls.style.display = 'flex';
+        textControls.style.display = 'none';
+        if (activeObj.fill && activeObj.fill !== 'transparent') {
+          document.getElementById('shapeFillColor').value = activeObj.fill;
+        }
+      } else {
+        textControls.style.display = 'none';
+        shapeControls.style.display = 'none';
+      }
+    }
+
+    function hideInspector() {
+      document.getElementById('objectInspector').style.display = 'none';
+    }
 
     // Render Print Guides Always On Top
     function renderPrintGuides() {
@@ -557,8 +596,8 @@
       const topH = topControls ? topControls.offsetHeight + 10 : 40;
       const bottomH = bottomGroup ? bottomGroup.offsetHeight + 10 : 80;
 
-      const maxWidth = workspace.clientWidth - 20;
-      const maxHeight = workspace.clientHeight - topH - bottomH - 20;
+      const maxWidth = workspace.clientWidth - (window.innerWidth > 900 ? 200 : 40);
+      const maxHeight = workspace.clientHeight - topH - bottomH - 30;
 
       let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
       let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
