@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Photo Editing Studio Pro - Custom Size & Crop</title>
+  <title>Photo Editing Studio Pro Max - Advanced Suite</title>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --primary: #8B5CF6;
-      --primary-hover: #7C3AED;
-      --bg-workspace: #CBD5E1;
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --bg-workspace: #1E293B;
       --text-main: #0F172A;
       --text-muted: #64748B;
       --panel-bg: rgba(255, 255, 255, 0.98);
@@ -29,26 +29,20 @@
     .minimal-header {
       width: 100%;
       background: #FFFFFF;
-      border-bottom: 2px solid #94A3B8;
-      padding: 16px 32px;
-      min-height: 90px;
+      border-bottom: 2px solid #CBD5E1;
+      padding: 14px 24px;
+      min-height: 80px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 10;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
       flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 20px;
+      gap: 12px;
     }
 
     .header-title-text {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: 800;
       color: var(--text-main);
       letter-spacing: -0.5px;
@@ -58,33 +52,33 @@
       background: var(--primary);
       color: white;
       border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
+      padding: 7px 12px;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: 600;
       transition: all 0.2s ease;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
       white-space: nowrap;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     button:hover { background: var(--primary-hover); }
     button.secondary { background: #FFF; color: var(--text-main); border: 1px solid #CBD5E1; }
     button.secondary:hover { background: #F8FAFC; border-color: #64748B; }
-    button.ai-btn { background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; border: none; }
-    button.danger { background: #EF4444; }
+    button.ai-btn { background: linear-gradient(135deg, #6366F1 0%, #EC4899 100%); color: white; border: none; }
+    button.danger { background: #EF4444; color: white; }
     button.danger:hover { background: #DC2626; }
     button.active-tool { background: #0F172A; color: white; }
 
     input, select {
-      padding: 6px 10px;
+      padding: 5px 8px;
       border: 1px solid #CBD5E1;
       border-radius: 6px;
       outline: none;
-      font-size: 15px !important;
+      font-size: 14px !important;
       background: #FAFAFA;
     }
 
@@ -100,8 +94,8 @@
       overflow-y: auto;
       overflow-x: hidden;
       padding: 16px 14px 72px 14px;
-      background: radial-gradient(#94A3B8 1px, transparent 1px);
-      background-size: 14px 14px;
+      background: radial-gradient(#475569 1px, transparent 1px);
+      background-size: 16px 16px;
     }
 
     .canvas-viewport-container {
@@ -110,7 +104,7 @@
       align-items: center;
       position: relative;
       width: 100%;
-      max-width: 1000px;
+      max-width: 1050px;
     }
 
     .floating-panel {
@@ -118,7 +112,7 @@
       border: 1px solid var(--panel-border);
       padding: 8px 12px;
       border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
       backdrop-filter: blur(6px);
       z-index: 50;
       display: flex;
@@ -126,20 +120,20 @@
       gap: 8px;
     }
 
-    .top-tools-panel {
+    .tools-grid {
       position: relative;
       width: 100%;
-      max-width: 920px;
+      max-width: 980px;
       margin-bottom: 10px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-around;
-      gap: 8px;
+      gap: 10px;
       padding: 10px 14px;
     }
 
     .panel-section-title {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
@@ -152,10 +146,10 @@
 
     .canvas-container-wrapper {
       background: #FFFFFF;
-      box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.3);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
       position: relative;
       border-radius: 4px;
-      margin-bottom: 13px;
+      margin-bottom: 15px;
       overflow: hidden;
     }
 
@@ -178,7 +172,7 @@
       width: 380px;
       max-width: 95%;
       text-align: center;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
     }
   </style>
 </head>
@@ -186,12 +180,13 @@
 
   <!-- Header -->
   <header class="minimal-header">
-    <div class="brand-group">
-      <h1 class="header-title-text">✨ Photo Editing Studio Pro</h1>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <h1 class="header-title-text">⚡ Photo Studio Pro Max</h1>
     </div>
     <div style="display: flex; gap: 8px;">
-      <button class="secondary" onclick="undo()">↩️ Undo</button>
-      <button class="secondary" onclick="redo()">↪️ Redo</button>
+      <button class="secondary" onclick="undo()" title="Undo (10 steps)">↩️ Undo</button>
+      <button class="secondary" onclick="redo()" title="Redo">↪️ Redo</button>
+      <button class="danger" onclick="clearCanvas()">🗑️ Reset All</button>
     </div>
   </header>
 
@@ -199,15 +194,20 @@
   <div class="workspace" id="workspace">
     <div class="canvas-viewport-container">
 
-      <!-- Action & Resize Controls Bar -->
-      <div class="floating-panel" style="margin-bottom: 10px; width: 100%; max-width: 920px; justify-content: center; gap: 8px; flex-wrap: wrap;">
-        <button onclick="document.getElementById('imageLoader').click()">📁 Open Image</button>
+      <!-- Action & Import Bar -->
+      <div class="floating-panel" style="margin-bottom: 10px; width: 100%; max-width: 980px; justify-content: center; gap: 8px; flex-wrap: wrap;">
+        <button onclick="document.getElementById('imageLoader').click()">📁 Open Photo</button>
         <input type="file" id="imageLoader" accept="image/*" style="display:none;">
 
         <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px;">
           <button class="secondary" onclick="openCustomSizeModal()">⚙️ Custom Size</button>
-          <button id="btnCropToggle" class="secondary" onclick="toggleCropMode()">✂️ Crop Image</button>
+          <button id="btnCropToggle" class="secondary" onclick="toggleCropMode()">✂️ Crop Tool</button>
           <button id="btnConfirmCrop" style="display:none; background:#10B981;" onclick="applyCrop()">✔️ Confirm Crop</button>
+        </div>
+
+        <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px;">
+          <button id="btnDrawToggle" class="secondary" onclick="toggleFreeDraw()">🖌️ Draw Brush</button>
+          <input type="color" id="drawColorPicker" onchange="changeBrushColor(this.value)" value="#4F46E5" title="Brush Color" style="height:28px; width:28px; padding:0; cursor:pointer;">
         </div>
 
         <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px;">
@@ -215,38 +215,45 @@
         </div>
       </div>
 
-      <!-- Top Tools Panel -->
-      <div class="floating-panel top-tools-panel">
+      <!-- Tools Grid Panel -->
+      <div class="floating-panel tools-grid">
         <div>
           <div class="panel-section-title">Presets</div>
           <div style="display:flex; gap:4px;">
-            <button class="secondary" onclick="setPresetSize(1080, 1080)">1:1 Square</button>
-            <button class="secondary" onclick="setPresetSize(1080, 1920)">9:16 Story</button>
-            <button class="secondary" onclick="setPresetSize(1200, 630)">16:9 Cover</button>
+            <button class="secondary" onclick="setPresetSize(1080, 1080)">1:1</button>
+            <button class="secondary" onclick="setPresetSize(1080, 1920)">Story</button>
+            <button class="secondary" onclick="setPresetSize(1200, 630)">Cover</button>
           </div>
         </div>
 
         <div>
-          <div class="panel-section-title">AI Filters</div>
+          <div class="panel-section-title">Color Adjustments</div>
+          <div style="display:flex; gap:5px; align-items:center;">
+            <label style="font-size:0.7rem;">Bright:</label>
+            <input type="range" id="brightnessRange" min="-1" max="1" step="0.1" value="0" oninput="applyColorAdjustments()" style="width:50px;">
+            <label style="font-size:0.7rem;">Contrast:</label>
+            <input type="range" id="contrastRange" min="-1" max="1" step="0.1" value="0" oninput="applyColorAdjustments()" style="width:50px;">
+            <label style="font-size:0.7rem;">Sat:</label>
+            <input type="range" id="saturationRange" min="-1" max="1" step="0.2" value="0" oninput="applyColorAdjustments()" style="width:50px;">
+          </div>
+        </div>
+
+        <div>
+          <div class="panel-section-title">Effects & Blur</div>
           <div style="display:flex; gap:4px;">
-            <button class="secondary" onclick="applyAIFilter('oil')">🎨 Oil Paint</button>
-            <button class="secondary" onclick="applyAIFilter('cyberpunk')">⚡ Cyberpunk</button>
-            <button class="secondary" onclick="removeFilters()">❌ Reset</button>
+            <button class="secondary" onclick="applyFilter('grayscale')">⚪ B&W</button>
+            <button class="secondary" onclick="applyFilter('sepia')">📜 Sepia</button>
+            <button class="secondary" onclick="applyFilter('vintage')">📽️ Vintage</button>
+            <label style="font-size:0.7rem; align-self:center;">Blur:</label>
+            <input type="range" id="blurRange" min="0" max="1" step="0.1" value="0" oninput="applyColorAdjustments()" style="width:45px;">
           </div>
         </div>
 
         <div>
-          <div class="panel-section-title">Adjustments</div>
-          <div style="display:flex; gap:6px; align-items:center;">
-            <label style="font-size:0.75rem;">Bright:</label>
-            <input type="range" id="brightnessRange" min="-1" max="1" step="0.1" value="0" oninput="adjustBrightness(this.value)" style="width:60px;">
-          </div>
-        </div>
-
-        <div>
-          <div class="panel-section-title">Overlays</div>
+          <div class="panel-section-title">Add Elements</div>
           <div style="display:flex; gap:4px;">
             <button class="secondary" onclick="addText()">+ Text</button>
+            <button class="secondary" onclick="addSticker('⭐')">⭐</button>
             <button class="danger" onclick="deleteSelected()">🗑️</button>
           </div>
         </div>
@@ -258,9 +265,9 @@
       </div>
 
       <!-- Bottom Export Controls -->
-      <div style="display: flex; gap: 8px; margin-bottom: 30px;">
-        <button style="background: #10B981; padding: 10px 20px;" onclick="initiatePayment('png')">Download HD PNG</button>
-        <button style="background: #2563EB; padding: 10px 20px;" onclick="initiatePayment('pdf')">Download HD PDF</button>
+      <div style="display: flex; gap: 10px; margin-bottom: 30px;">
+        <button style="background: #10B981; padding: 10px 22px; font-size: 0.9rem;" onclick="initiatePayment('png')">Download HD PNG</button>
+        <button style="background: #2563EB; padding: 10px 22px; font-size: 0.9rem;" onclick="initiatePayment('pdf')">Download HD PDF</button>
       </div>
 
     </div>
@@ -270,7 +277,7 @@
   <div class="modal-overlay" id="customSizeModal">
     <div class="modal">
       <h3>⚙️ Set Custom Dimensions</h3>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin: 8px 0;">Enter exact width and height in pixels.</p>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin: 8px 0;">Enter exact canvas width and height in pixels.</p>
       <div style="display: flex; gap: 10px; margin-bottom: 14px; justify-content: center;">
         <div>
           <label style="font-size: 0.75rem; display:block; text-align:left;">Width (px)</label>
@@ -292,7 +299,7 @@
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
       <h3>Unlock HD Export</h3>
-      <p>Watermark-free High-Resolution Download</p>
+      <p>Watermark-free High-Resolution Professional Download</p>
       <div style="font-size: 1.8rem; font-weight:700; color:var(--primary); margin:8px 0;">₹49</div>
       <div style="display: flex; gap: 8px; margin-top: 10px;">
         <button class="secondary" style="flex:1;" onclick="closeModal('paymentModal')">Cancel</button>
@@ -302,17 +309,18 @@
   </div>
 
   <script>
-    let canvasWidth = 600;
-    let canvasHeight = 450;
+    let canvasWidth = 700;
+    let canvasHeight = 500;
     let historyStack = [];
     let redoStack = [];
     let isApplyingHistory = false;
     let selectedExportType = 'png';
     let isCropMode = false;
     let cropRect = null;
+    let isDrawingMode = false;
 
     let canvas = new fabric.Canvas('photoCanvas', {
-      backgroundColor: '#f1f5f9',
+      backgroundColor: '#ffffff',
       preserveObjectStacking: true,
       allowTouchScrolling: false,
       enableRetinaScaling: true
@@ -353,10 +361,27 @@
       });
     }
 
+    function clearCanvas() {
+      if (confirm('Reset canvas and clear all modifications?')) {
+        canvas.clear();
+        canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas));
+        resizeCanvasViewport(700, 500);
+        resetSliders();
+        saveHistory();
+      }
+    }
+
+    function resetSliders() {
+      document.getElementById('brightnessRange').value = 0;
+      document.getElementById('contrastRange').value = 0;
+      document.getElementById('saturationRange').value = 0;
+      document.getElementById('blurRange').value = 0;
+    }
+
     function resizeCanvasViewport(targetW, targetH) {
       const workspace = document.getElementById('workspace');
       const maxWidth = workspace.clientWidth - 40;
-      const maxHeight = workspace.clientHeight - 180;
+      const maxHeight = workspace.clientHeight - 190;
 
       let scale = Math.min(maxWidth / targetW, maxHeight / targetH, 1);
       canvasWidth = targetW;
@@ -374,6 +399,7 @@
       reader.onload = function (event) {
         fabric.Image.fromURL(event.target.result, function (img) {
           canvas.clear();
+          resetSliders();
           resizeCanvasViewport(img.width, img.height);
           img.set({ left: 0, top: 0, selectable: false, evented: false });
           canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
@@ -393,7 +419,7 @@
     function applyCustomSize() {
       const w = parseInt(document.getElementById('customWidthInput').value);
       const h = parseInt(document.getElementById('customHeightInput').value);
-      if (!w || !h || w < 50 || h < 50) return alert('Please enter valid dimensions (minimum 50px).');
+      if (!w || !h || w < 50 || h < 50) return alert('Please enter valid dimensions.');
       resizeCanvasViewport(w, h);
       closeModal('customSizeModal');
       saveHistory();
@@ -404,6 +430,25 @@
       saveHistory();
     }
 
+    function toggleFreeDraw() {
+      isDrawingMode = !isDrawingMode;
+      canvas.isDrawingMode = isDrawingMode;
+      const btn = document.getElementById('btnDrawToggle');
+      if (isDrawingMode) {
+        btn.className = 'secondary active-tool';
+        canvas.freeDrawingBrush.width = 6;
+        canvas.freeDrawingBrush.color = document.getElementById('drawColorPicker').value;
+      } else {
+        btn.className = 'secondary';
+      }
+    }
+
+    function changeBrushColor(color) {
+      if (canvas.freeDrawingBrush) {
+        canvas.freeDrawingBrush.color = color;
+      }
+    }
+
     function toggleCropMode() {
       if (!canvas.backgroundImage) return alert('Open an image first!');
       isCropMode = !isCropMode;
@@ -411,20 +456,20 @@
       const btnConfirm = document.getElementById('btnConfirmCrop');
 
       if (isCropMode) {
+        if (isDrawingMode) toggleFreeDraw();
         btnToggle.className = 'secondary active-tool';
         btnConfirm.style.display = 'inline-flex';
         
-        // Add adjustable cropping box overlay
         cropRect = new fabric.Rect({
           left: canvasWidth * 0.1,
           top: canvasHeight * 0.1,
           width: canvasWidth * 0.8,
           height: canvasHeight * 0.8,
-          fill: 'rgba(0, 0, 0, 0.2)',
+          fill: 'rgba(0, 0, 0, 0.25)',
           stroke: '#FFFFFF',
           strokeWidth: 2,
           strokeDashArray: [6, 6],
-          cornerColor: '#8B5CF6',
+          cornerColor: '#4F46E5',
           cornerSize: 12,
           transparentCorners: false
         });
@@ -456,7 +501,6 @@
         height: (cropRect.height * cropRect.scaleY) / zoom
       };
 
-      // Crop background image using dataURL cropping
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = bound.width;
       tempCanvas.height = bound.height;
@@ -464,8 +508,6 @@
 
       const bgImgElement = canvas.backgroundImage.getElement();
       const currentBg = canvas.backgroundImage;
-      
-      // Calculate source offsets relative to natural image dimensions
       const scaleX = currentBg.scaleX || 1;
       const scaleY = currentBg.scaleY || 1;
 
@@ -479,6 +521,7 @@
       fabric.Image.fromURL(tempCanvas.toDataURL(), function (newImg) {
         exitCropMode();
         canvas.clear();
+        resetSliders();
         resizeCanvasViewport(bound.width, bound.height);
         newImg.set({ left: 0, top: 0, selectable: false, evented: false });
         canvas.setBackgroundImage(newImg, canvas.renderAll.bind(canvas));
@@ -486,56 +529,75 @@
       }, { crossOrigin: 'anonymous' });
     }
 
-    function runAIBgRemoval() {
-      if (!canvas.backgroundImage) return alert('Open an image first!');
-      alert('✨ AI Background subject extracted successfully!');
-      canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas));
-      saveHistory();
+    function applyColorAdjustments() {
+      const bgImg = canvas.backgroundImage;
+      if (!bgImg) return;
+
+      const brightness = parseFloat(document.getElementById('brightnessRange').value);
+      const contrast = parseFloat(document.getElementById('contrastRange').value);
+      const saturation = parseFloat(document.getElementById('saturationRange').value);
+      const blur = parseFloat(document.getElementById('blurRange').value);
+
+      bgImg.filters = [];
+      if (brightness !== 0) bgImg.filters.push(new fabric.Image.filters.Brightness({ brightness }));
+      if (contrast !== 0) bgImg.filters.push(new fabric.Image.filters.Contrast({ contrast }));
+      if (saturation !== 0) bgImg.filters.push(new fabric.Image.filters.Saturation({ saturation }));
+      if (blur > 0) bgImg.filters.push(new fabric.Image.filters.Blur({ blur }));
+
+      bgImg.applyFilters();
+      canvas.renderAll();
     }
 
-    function applyAIFilter(type) {
+    function applyFilter(type) {
       const bgImg = canvas.backgroundImage;
       if (!bgImg) return alert('Open an image first!');
       bgImg.filters = [];
-      if (type === 'oil') bgImg.filters.push(new fabric.Image.filters.Sepia(), new fabric.Image.filters.Contrast({ contrast: 0.3 }));
-      if (type === 'cyberpunk') bgImg.filters.push(new fabric.Image.filters.Invert(), new fabric.Image.filters.Brightness({ brightness: 0.1 }));
+      if (type === 'grayscale') bgImg.filters.push(new fabric.Image.filters.Grayscale());
+      if (type === 'sepia') bgImg.filters.push(new fabric.Image.filters.Sepia());
+      if (type === 'vintage') bgImg.filters.push(new fabric.Image.filters.Brownie());
       bgImg.applyFilters();
       canvas.renderAll();
       saveHistory();
     }
 
-    function removeFilters() {
-      if (!canvas.backgroundImage) return;
-      canvas.backgroundImage.filters = [];
-      canvas.backgroundImage.applyFilters();
-      canvas.renderAll();
+    function runAIBgRemoval() {
+      if (!canvas.backgroundImage) return alert('Open an image first!');
+      alert('✨ AI Background subject extracted successfully!');
+      canvas.setBackgroundColor('#f8fafc', canvas.renderAll.bind(canvas));
       saveHistory();
     }
 
-    function adjustBrightness(val) {
-      if (!canvas.backgroundImage) return;
-      const bg = canvas.backgroundImage;
-      bg.filters = bg.filters.filter(f => !(f instanceof fabric.Image.filters.Brightness));
-      if (parseFloat(val) !== 0) bg.filters.push(new fabric.Image.filters.Brightness({ brightness: parseFloat(val) }));
-      bg.applyFilters();
-      canvas.renderAll();
-    }
-
     function addText() {
-      const text = new fabric.IText('Edit Text', { 
-        left: (canvasWidth * canvas.getZoom()) / 2 - 50, 
+      if (isDrawingMode) toggleFreeDraw();
+      const text = new fabric.IText('Edit Text Here', { 
+        left: (canvasWidth * canvas.getZoom()) / 2 - 70, 
         top: (canvasHeight * canvas.getZoom()) / 2 - 20, 
-        fontFamily: 'Poppins', fill: '#ffffff', fontSize: 28, fontWeight: 'bold',
-        shadow: 'rgba(0,0,0,0.6) 2px 2px 6px'
+        fontFamily: 'Poppins', fill: '#0F172A', fontSize: 28, fontWeight: 'bold',
+        shadow: 'rgba(255,255,255,0.8) 2px 2px 4px'
       });
       canvas.add(text);
       canvas.setActiveObject(text);
       text.enterEditing();
     }
 
+    function addSticker(emoji) {
+      if (isDrawingMode) toggleFreeDraw();
+      const text = new fabric.Text(emoji, { 
+        left: (canvasWidth * canvas.getZoom()) / 2 - 25, 
+        top: (canvasHeight * canvas.getZoom()) / 2 - 25, 
+        fontSize: 54 
+      });
+      canvas.add(text);
+      canvas.setActiveObject(text);
+    }
+
     function deleteSelected() {
       const obj = canvas.getActiveObject();
-      if (obj && obj !== cropRect) { canvas.remove(obj); canvas.renderAll(); saveHistory(); }
+      if (obj && obj !== cropRect) { 
+        canvas.remove(obj); 
+        canvas.renderAll(); 
+        saveHistory(); 
+      }
     }
 
     function closeModal(id) {
@@ -553,23 +615,23 @@
         "key": "YOUR_RAZORPAY_KEY_ID",
         "amount": 4900,
         "currency": "INR",
-        "name": "Photo Editing Studio Pro",
+        "name": "Photo Studio Pro Max",
         "description": "HD Export Payment",
         "handler": function (response) {
           const dataURL = canvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 / canvas.getZoom() });
           if (selectedExportType === 'png') {
             const link = document.createElement('a');
-            link.download = `custom-photo-hd.png`;
+            link.download = `photo-pro-max-hd.png`;
             link.href = dataURL;
             link.click();
           } else {
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF({ orientation: canvasWidth > canvasHeight ? 'landscape' : 'portrait', unit: 'px', format: [canvasWidth, canvasHeight] });
             pdf.addImage(dataURL, 'PNG', 0, 0, canvasWidth, canvasHeight);
-            pdf.save(`custom-photo-hd.pdf`);
+            pdf.save(`photo-pro-max-hd.pdf`);
           }
         },
-        "theme": { "color": "#8B5CF6" }
+        "theme": { "color": "#4F46E5" }
       };
       var rzp1 = new Razorpay(options);
       rzp1.open();
