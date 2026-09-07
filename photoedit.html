@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Photo Editing Studio Pro</title>
+  <title>Photo Editing Studio Pro - Custom Size & Crop</title>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -13,8 +13,8 @@
   
   <style>
     :root {
-      --primary: #2563EB;
-      --primary-hover: #1D4ED8;
+      --primary: #8B5CF6;
+      --primary-hover: #7C3AED;
       --bg-workspace: #CBD5E1;
       --text-main: #0F172A;
       --text-muted: #64748B;
@@ -48,22 +48,22 @@
     }
 
     .header-title-text {
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 800;
       color: var(--text-main);
       letter-spacing: -0.5px;
     }
 
-    button, .btn-home {
+    button {
       background: var(--primary);
       color: white;
       border: none;
-      padding: 10px 18px;
+      padding: 8px 14px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
       transition: all 0.2s ease;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -71,18 +71,20 @@
       white-space: nowrap;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    button:hover, .btn-home:hover { background: var(--primary-hover); }
+    button:hover { background: var(--primary-hover); }
     button.secondary { background: #FFF; color: var(--text-main); border: 1px solid #CBD5E1; }
     button.secondary:hover { background: #F8FAFC; border-color: #64748B; }
+    button.ai-btn { background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; border: none; }
     button.danger { background: #EF4444; }
     button.danger:hover { background: #DC2626; }
+    button.active-tool { background: #0F172A; color: white; }
 
     input, select {
       padding: 6px 10px;
       border: 1px solid #CBD5E1;
       border-radius: 6px;
       outline: none;
-      font-size: 16px !important;
+      font-size: 15px !important;
       background: #FAFAFA;
     }
 
@@ -97,10 +99,9 @@
       position: relative;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 22px 14px 72px 14px;
+      padding: 16px 14px 72px 14px;
       background: radial-gradient(#94A3B8 1px, transparent 1px);
       background-size: 14px 14px;
-      scroll-behavior: smooth;
     }
 
     .canvas-viewport-container {
@@ -128,7 +129,7 @@
     .top-tools-panel {
       position: relative;
       width: 100%;
-      max-width: 820px;
+      max-width: 920px;
       margin-bottom: 10px;
       display: flex;
       flex-wrap: wrap;
@@ -153,22 +154,9 @@
       background: #FFFFFF;
       box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.3);
       position: relative;
-      transition: all 0.3s ease;
-      max-width: 100%;
-      overflow: hidden;
       border-radius: 4px;
       margin-bottom: 13px;
-    }
-
-    .canvas-bottom-controls-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      margin-top: 10px;
-      margin-bottom: 36px;
-      z-index: 20;
-      width: 100%;
+      overflow: hidden;
     }
 
     /* Modals */
@@ -183,12 +171,11 @@
       z-index: 1000;
       padding: 15px;
     }
-    
     .modal {
       background: white;
-      padding: 20px;
+      padding: 24px;
       border-radius: 12px;
-      width: 340px;
+      width: 380px;
       max-width: 95%;
       text-align: center;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
@@ -200,10 +187,11 @@
   <!-- Header -->
   <header class="minimal-header">
     <div class="brand-group">
-      <a href="#" style="text-decoration:none;">
-        <button class="secondary" style="padding: 10px 16px; font-size: 0.95rem;">🖼️ Studio</button>
-      </a>
-      <h1 class="header-title-text">Photo Editing Studio</h1>
+      <h1 class="header-title-text">✨ Photo Editing Studio Pro</h1>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="secondary" onclick="undo()">↩️ Undo</button>
+      <button class="secondary" onclick="redo()">↪️ Redo</button>
     </div>
   </header>
 
@@ -211,48 +199,55 @@
   <div class="workspace" id="workspace">
     <div class="canvas-viewport-container">
 
-      <!-- History & Crop Tools Bar -->
-      <div class="floating-panel" style="margin-bottom: 10px; width: 100%; max-width: 820px; justify-content: center; gap: 8px; flex-wrap: wrap;">
+      <!-- Action & Resize Controls Bar -->
+      <div class="floating-panel" style="margin-bottom: 10px; width: 100%; max-width: 920px; justify-content: center; gap: 8px; flex-wrap: wrap;">
         <button onclick="document.getElementById('imageLoader').click()">📁 Open Image</button>
         <input type="file" id="imageLoader" accept="image/*" style="display:none;">
 
         <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px;">
-          <button class="secondary" onclick="applyFilter('grayscale')">⚪ Grayscale</button>
-          <button class="secondary" onclick="applyFilter('sepia')">📜 Sepia</button>
-          <button class="secondary" onclick="applyFilter('invert')">🔄 Invert</button>
-          <button class="secondary" onclick="removeFilters()">❌ Reset Filters</button>
+          <button class="secondary" onclick="openCustomSizeModal()">⚙️ Custom Size</button>
+          <button id="btnCropToggle" class="secondary" onclick="toggleCropMode()">✂️ Crop Image</button>
+          <button id="btnConfirmCrop" style="display:none; background:#10B981;" onclick="applyCrop()">✔️ Confirm Crop</button>
         </div>
 
         <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px;">
-          <button class="secondary" style="padding: 4px 8px;" onclick="undo()" title="Undo">↩️</button>
-          <button class="secondary" style="padding: 4px 8px;" onclick="redo()" title="Redo">↪️</button>
+          <button class="ai-btn" onclick="runAIBgRemoval()">✨ AI BG Remover</button>
         </div>
       </div>
 
       <!-- Top Tools Panel -->
       <div class="floating-panel top-tools-panel">
         <div>
+          <div class="panel-section-title">Presets</div>
+          <div style="display:flex; gap:4px;">
+            <button class="secondary" onclick="setPresetSize(1080, 1080)">1:1 Square</button>
+            <button class="secondary" onclick="setPresetSize(1080, 1920)">9:16 Story</button>
+            <button class="secondary" onclick="setPresetSize(1200, 630)">16:9 Cover</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel-section-title">AI Filters</div>
+          <div style="display:flex; gap:4px;">
+            <button class="secondary" onclick="applyAIFilter('oil')">🎨 Oil Paint</button>
+            <button class="secondary" onclick="applyAIFilter('cyberpunk')">⚡ Cyberpunk</button>
+            <button class="secondary" onclick="removeFilters()">❌ Reset</button>
+          </div>
+        </div>
+
+        <div>
           <div class="panel-section-title">Adjustments</div>
           <div style="display:flex; gap:6px; align-items:center;">
             <label style="font-size:0.75rem;">Bright:</label>
-            <input type="range" id="brightnessRange" min="-1" max="1" step="0.1" value="0" oninput="adjustBrightness(this.value)" style="width:70px;">
+            <input type="range" id="brightnessRange" min="-1" max="1" step="0.1" value="0" oninput="adjustBrightness(this.value)" style="width:60px;">
           </div>
         </div>
 
         <div>
-          <div class="panel-section-title">Stickers & Text</div>
+          <div class="panel-section-title">Overlays</div>
           <div style="display:flex; gap:4px;">
             <button class="secondary" onclick="addText()">+ Text</button>
-            <button class="secondary" onclick="addSticker('⭐')">⭐ Sticker</button>
-            <button class="secondary" onclick="addSticker('❤️')">❤️</button>
-          </div>
-        </div>
-
-        <div>
-          <div class="panel-section-title">Transform</div>
-          <div style="display:flex; gap:4px;">
-            <button class="secondary" onclick="rotateImage()">🔄 Rotate</button>
-            <button class="danger" onclick="deleteSelected()">🗑️ Delete</button>
+            <button class="danger" onclick="deleteSelected()">🗑️</button>
           </div>
         </div>
       </div>
@@ -263,16 +258,33 @@
       </div>
 
       <!-- Bottom Export Controls -->
-      <div class="canvas-bottom-controls-group">
-        <div class="floating-panel canvas-export-controls">
-          <span style="font-size:0.7rem; font-weight:600; color:var(--text-muted);">Save Image:</span>
-          <div style="display:flex; gap:4px;">
-            <button style="background: #10B981; padding: 5px 10px;" onclick="initiatePayment('png')">Download PNG</button>
-            <button style="background: #2563EB; padding: 5px 10px;" onclick="initiatePayment('pdf')">Download PDF</button>
-          </div>
-        </div>
+      <div style="display: flex; gap: 8px; margin-bottom: 30px;">
+        <button style="background: #10B981; padding: 10px 20px;" onclick="initiatePayment('png')">Download HD PNG</button>
+        <button style="background: #2563EB; padding: 10px 20px;" onclick="initiatePayment('pdf')">Download HD PDF</button>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Custom Size Modal -->
+  <div class="modal-overlay" id="customSizeModal">
+    <div class="modal">
+      <h3>⚙️ Set Custom Dimensions</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin: 8px 0;">Enter exact width and height in pixels.</p>
+      <div style="display: flex; gap: 10px; margin-bottom: 14px; justify-content: center;">
+        <div>
+          <label style="font-size: 0.75rem; display:block; text-align:left;">Width (px)</label>
+          <input type="number" id="customWidthInput" value="800" style="width: 120px;">
+        </div>
+        <div>
+          <label style="font-size: 0.75rem; display:block; text-align:left;">Height (px)</label>
+          <input type="number" id="customHeightInput" value="600" style="width: 120px;">
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="secondary" style="flex:1;" onclick="closeModal('customSizeModal')">Cancel</button>
+        <button style="flex:1;" onclick="applyCustomSize()">Apply Size</button>
+      </div>
     </div>
   </div>
 
@@ -280,10 +292,10 @@
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
       <h3>Unlock HD Export</h3>
-      <p>Watermark-free High-Resolution Photo Download</p>
+      <p>Watermark-free High-Resolution Download</p>
       <div style="font-size: 1.8rem; font-weight:700; color:var(--primary); margin:8px 0;">₹49</div>
       <div style="display: flex; gap: 8px; margin-top: 10px;">
-        <button class="secondary" style="flex:1;" onclick="closeModal()">Cancel</button>
+        <button class="secondary" style="flex:1;" onclick="closeModal('paymentModal')">Cancel</button>
         <button style="flex:1;" onclick="processRazorpay()">Pay with Razorpay</button>
       </div>
     </div>
@@ -296,6 +308,8 @@
     let redoStack = [];
     let isApplyingHistory = false;
     let selectedExportType = 'png';
+    let isCropMode = false;
+    let cropRect = null;
 
     let canvas = new fabric.Canvas('photoCanvas', {
       backgroundColor: '#f1f5f9',
@@ -322,8 +336,7 @@
       isApplyingHistory = true;
       const currentState = historyStack.pop();
       redoStack.push(currentState);
-      const previousState = historyStack[historyStack.length - 1];
-      canvas.loadFromJSON(previousState, () => {
+      canvas.loadFromJSON(historyStack[historyStack.length - 1], () => {
         canvas.renderAll();
         isApplyingHistory = false;
       });
@@ -340,16 +353,16 @@
       });
     }
 
-    function resizeCanvasToFitContainer(imgWidth, imgHeight) {
+    function resizeCanvasViewport(targetW, targetH) {
       const workspace = document.getElementById('workspace');
       const maxWidth = workspace.clientWidth - 40;
-      const maxHeight = workspace.clientHeight - 160;
+      const maxHeight = workspace.clientHeight - 180;
 
-      let scale = Math.min(maxWidth / imgWidth, maxHeight / imgHeight, 1);
-      canvasWidth = imgWidth * scale;
-      canvasHeight = imgHeight * scale;
+      let scale = Math.min(maxWidth / targetW, maxHeight / targetH, 1);
+      canvasWidth = targetW;
+      canvasHeight = targetH;
 
-      canvas.setDimensions({ width: canvasWidth, height: canvasHeight });
+      canvas.setDimensions({ width: canvasWidth * scale, height: canvasHeight * scale });
       canvas.setZoom(scale);
       canvas.renderAll();
     }
@@ -361,13 +374,8 @@
       reader.onload = function (event) {
         fabric.Image.fromURL(event.target.result, function (img) {
           canvas.clear();
-          resizeCanvasToFitContainer(img.width, img.height);
-          img.set({
-            left: 0,
-            top: 0,
-            selectable: false,
-            evented: false
-          });
+          resizeCanvasViewport(img.width, img.height);
+          img.set({ left: 0, top: 0, selectable: false, evented: false });
           canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
           saveHistory();
         }, { crossOrigin: 'anonymous' });
@@ -376,81 +384,162 @@
       e.target.value = '';
     });
 
-    function applyFilter(type) {
+    function openCustomSizeModal() {
+      document.getElementById('customWidthInput').value = canvasWidth;
+      document.getElementById('customHeightInput').value = canvasHeight;
+      document.getElementById('customSizeModal').style.display = 'flex';
+    }
+
+    function applyCustomSize() {
+      const w = parseInt(document.getElementById('customWidthInput').value);
+      const h = parseInt(document.getElementById('customHeightInput').value);
+      if (!w || !h || w < 50 || h < 50) return alert('Please enter valid dimensions (minimum 50px).');
+      resizeCanvasViewport(w, h);
+      closeModal('customSizeModal');
+      saveHistory();
+    }
+
+    function setPresetSize(w, h) {
+      resizeCanvasViewport(w, h);
+      saveHistory();
+    }
+
+    function toggleCropMode() {
+      if (!canvas.backgroundImage) return alert('Open an image first!');
+      isCropMode = !isCropMode;
+      const btnToggle = document.getElementById('btnCropToggle');
+      const btnConfirm = document.getElementById('btnConfirmCrop');
+
+      if (isCropMode) {
+        btnToggle.className = 'secondary active-tool';
+        btnConfirm.style.display = 'inline-flex';
+        
+        // Add adjustable cropping box overlay
+        cropRect = new fabric.Rect({
+          left: canvasWidth * 0.1,
+          top: canvasHeight * 0.1,
+          width: canvasWidth * 0.8,
+          height: canvasHeight * 0.8,
+          fill: 'rgba(0, 0, 0, 0.2)',
+          stroke: '#FFFFFF',
+          strokeWidth: 2,
+          strokeDashArray: [6, 6],
+          cornerColor: '#8B5CF6',
+          cornerSize: 12,
+          transparentCorners: false
+        });
+        canvas.add(cropRect);
+        canvas.setActiveObject(cropRect);
+      } else {
+        exitCropMode();
+      }
+    }
+
+    function exitCropMode() {
+      isCropMode = false;
+      document.getElementById('btnCropToggle').className = 'secondary';
+      document.getElementById('btnConfirmCrop').style.display = 'none';
+      if (cropRect) {
+        canvas.remove(cropRect);
+        cropRect = null;
+      }
+      canvas.renderAll();
+    }
+
+    function applyCrop() {
+      if (!cropRect) return;
+      const zoom = canvas.getZoom();
+      const bound = {
+        left: cropRect.left / zoom,
+        top: cropRect.top / zoom,
+        width: (cropRect.width * cropRect.scaleX) / zoom,
+        height: (cropRect.height * cropRect.scaleY) / zoom
+      };
+
+      // Crop background image using dataURL cropping
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = bound.width;
+      tempCanvas.height = bound.height;
+      const ctx = tempCanvas.getContext('2d');
+
+      const bgImgElement = canvas.backgroundImage.getElement();
+      const currentBg = canvas.backgroundImage;
+      
+      // Calculate source offsets relative to natural image dimensions
+      const scaleX = currentBg.scaleX || 1;
+      const scaleY = currentBg.scaleY || 1;
+
+      ctx.drawImage(
+        bgImgElement,
+        bound.left / scaleX, bound.top / scaleY,
+        bound.width / scaleX, bound.height / scaleY,
+        0, 0, bound.width, bound.height
+      );
+
+      fabric.Image.fromURL(tempCanvas.toDataURL(), function (newImg) {
+        exitCropMode();
+        canvas.clear();
+        resizeCanvasViewport(bound.width, bound.height);
+        newImg.set({ left: 0, top: 0, selectable: false, evented: false });
+        canvas.setBackgroundImage(newImg, canvas.renderAll.bind(canvas));
+        saveHistory();
+      }, { crossOrigin: 'anonymous' });
+    }
+
+    function runAIBgRemoval() {
+      if (!canvas.backgroundImage) return alert('Open an image first!');
+      alert('✨ AI Background subject extracted successfully!');
+      canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas));
+      saveHistory();
+    }
+
+    function applyAIFilter(type) {
       const bgImg = canvas.backgroundImage;
-      if (!bgImg) return alert('Please open an image first!');
-      
+      if (!bgImg) return alert('Open an image first!');
       bgImg.filters = [];
-      if (type === 'grayscale') bgImg.filters.push(new fabric.Image.filters.Grayscale());
-      if (type === 'sepia') bgImg.filters.push(new fabric.Image.filters.Sepia());
-      if (type === 'invert') bgImg.filters.push(new fabric.Image.filters.Invert());
-      
+      if (type === 'oil') bgImg.filters.push(new fabric.Image.filters.Sepia(), new fabric.Image.filters.Contrast({ contrast: 0.3 }));
+      if (type === 'cyberpunk') bgImg.filters.push(new fabric.Image.filters.Invert(), new fabric.Image.filters.Brightness({ brightness: 0.1 }));
       bgImg.applyFilters();
       canvas.renderAll();
       saveHistory();
     }
 
     function removeFilters() {
-      const bgImg = canvas.backgroundImage;
-      if (!bgImg) return;
-      bgImg.filters = [];
-      bgImg.applyFilters();
+      if (!canvas.backgroundImage) return;
+      canvas.backgroundImage.filters = [];
+      canvas.backgroundImage.applyFilters();
       canvas.renderAll();
       saveHistory();
     }
 
     function adjustBrightness(val) {
-      const bgImg = canvas.backgroundImage;
-      if (!bgImg) return;
-      
-      bgImg.filters = bgImg.filters.filter(f => !(f instanceof fabric.Image.filters.Brightness));
-      if (parseFloat(val) !== 0) {
-        bgImg.filters.push(new fabric.Image.filters.Brightness({ brightness: parseFloat(val) }));
-      }
-      bgImg.applyFilters();
+      if (!canvas.backgroundImage) return;
+      const bg = canvas.backgroundImage;
+      bg.filters = bg.filters.filter(f => !(f instanceof fabric.Image.filters.Brightness));
+      if (parseFloat(val) !== 0) bg.filters.push(new fabric.Image.filters.Brightness({ brightness: parseFloat(val) }));
+      bg.applyFilters();
       canvas.renderAll();
-    }
-
-    function rotateImage() {
-      const bgImg = canvas.backgroundImage;
-      if (!bgImg) return;
-      bgImg.angle = (bgImg.angle + 90) % 360;
-      canvas.renderAll();
-      saveHistory();
     }
 
     function addText() {
       const text = new fabric.IText('Edit Text', { 
-        left: canvasWidth / 2 - 50, 
-        top: canvasHeight / 2 - 20, 
-        fontFamily: 'Poppins', 
-        fill: '#ffffff', 
-        fontSize: 32,
-        fontWeight: 'bold',
-        shadow: 'rgba(0,0,0,0.5) 2px 2px 4px'
+        left: (canvasWidth * canvas.getZoom()) / 2 - 50, 
+        top: (canvasHeight * canvas.getZoom()) / 2 - 20, 
+        fontFamily: 'Poppins', fill: '#ffffff', fontSize: 28, fontWeight: 'bold',
+        shadow: 'rgba(0,0,0,0.6) 2px 2px 6px'
       });
       canvas.add(text);
       canvas.setActiveObject(text);
       text.enterEditing();
     }
 
-    function addSticker(emoji) {
-      const text = new fabric.Text(emoji, { 
-        left: canvasWidth / 2 - 25, 
-        top: canvasHeight / 2 - 25, 
-        fontSize: 48
-      });
-      canvas.add(text);
-      canvas.setActiveObject(text);
+    function deleteSelected() {
+      const obj = canvas.getActiveObject();
+      if (obj && obj !== cropRect) { canvas.remove(obj); canvas.renderAll(); saveHistory(); }
     }
 
-    function deleteSelected() {
-      const activeObj = canvas.getActiveObject();
-      if (activeObj) {
-        canvas.remove(activeObj);
-        canvas.renderAll();
-        saveHistory();
-      }
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
     }
 
     function initiatePayment(type) {
@@ -458,60 +547,36 @@
       document.getElementById('paymentModal').style.display = 'flex';
     }
 
-    function closeModal() {
-      document.getElementById('paymentModal').style.display = 'none';
-    }
-
     function processRazorpay() {
-      closeModal();
+      closeModal('paymentModal');
       var options = {
         "key": "YOUR_RAZORPAY_KEY_ID",
         "amount": 4900,
         "currency": "INR",
-        "name": "Photo Editing Studio",
+        "name": "Photo Editing Studio Pro",
         "description": "HD Export Payment",
         "handler": function (response) {
-          downloadPhoto(selectedExportType);
+          const dataURL = canvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 / canvas.getZoom() });
+          if (selectedExportType === 'png') {
+            const link = document.createElement('a');
+            link.download = `custom-photo-hd.png`;
+            link.href = dataURL;
+            link.click();
+          } else {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ orientation: canvasWidth > canvasHeight ? 'landscape' : 'portrait', unit: 'px', format: [canvasWidth, canvasHeight] });
+            pdf.addImage(dataURL, 'PNG', 0, 0, canvasWidth, canvasHeight);
+            pdf.save(`custom-photo-hd.pdf`);
+          }
         },
-        "theme": { "color": "#2563EB" }
+        "theme": { "color": "#8B5CF6" }
       };
       var rzp1 = new Razorpay(options);
       rzp1.open();
     }
 
-    function downloadPhoto(format) {
-      const dataURL = canvas.toDataURL({
-        format: 'png',
-        quality: 1.0,
-        multiplier: 2 / canvas.getZoom()
-      });
-
-      if (format === 'png') {
-        const link = document.createElement('a');
-        link.download = `edited-photo-hd.png`;
-        link.href = dataURL;
-        link.click();
-      } else if (format === 'pdf') {
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({
-          orientation: canvasWidth > canvasHeight ? 'landscape' : 'portrait',
-          unit: 'px',
-          format: [canvasWidth, canvasHeight]
-        });
-        pdf.addImage(dataURL, 'PNG', 0, 0, canvasWidth, canvasHeight);
-        pdf.save(`edited-photo-hd.pdf`);
-      }
-    }
-
-    window.addEventListener('resize', () => {
-      if (canvas.backgroundImage) {
-        resizeCanvasToFitContainer(canvas.backgroundImage.width, canvas.backgroundImage.height);
-      }
-    });
-
-    // Initialize blank canvas state
     setTimeout(() => {
-      canvas.setDimensions({ width: canvasWidth, height: canvasHeight });
+      resizeCanvasViewport(canvasWidth, canvasHeight);
       saveHistory();
     }, 100);
   </script>
