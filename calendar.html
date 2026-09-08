@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Regional Indian Calendar Studio Pro</title>
+  <title>Click Vectora - Auto Gujarati & Indian Calendar Studio</title>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -28,15 +28,15 @@
     /* Header */
     .minimal-header {
       width: 100%;
-      background: #FFFFFF;
-      border-bottom: 2px solid #94A3B8;
+      background: #0F172A;
+      border-bottom: 2px solid #334155;
       padding: 12px 24px;
-      min-height: 80px;
+      min-height: 90px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 10;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
       flex-wrap: wrap;
       gap: 12px;
     }
@@ -47,11 +47,12 @@
       gap: 16px;
     }
 
-    .header-title-text {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--text-main);
-      letter-spacing: -0.5px;
+    /* Big Custom Logo Style in Header */
+    .header-logo {
+      height: 60px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
 
     button {
@@ -74,17 +75,14 @@
     button:hover { background: var(--primary-hover); }
     button.secondary { background: #FFF; color: var(--text-main); border: 1px solid #CBD5E1; }
     button.secondary:hover { background: #F8FAFC; border-color: #64748B; }
-    button.ai-btn { background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; border: none; }
     button.danger { background: #EF4444; }
-    button.danger:hover { background: #DC2626; }
-    button.active-tool { background: #0F172A; color: white; }
 
     select, input {
       padding: 6px 10px;
       border: 1px solid #CBD5E1;
       border-radius: 6px;
       outline: none;
-      font-size: 14px !important;
+      font-size: 13px !important;
       background: #FAFAFA;
     }
 
@@ -159,20 +157,6 @@
       overflow: hidden;
     }
 
-    /* Festival Info Box below canvas */
-    .festival-info-box {
-      width: 100%;
-      max-width: 920px;
-      background: #ffffff;
-      border: 1px solid #CBD5E1;
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 15px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
-    .festival-info-box h4 { font-size: 0.95rem; color: var(--primary); margin-bottom: 4px; }
-    .festival-info-box p { font-size: 0.8rem; color: var(--text-muted); }
-
     /* Modals */
     .modal-overlay {
       position: fixed;
@@ -198,23 +182,15 @@
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Header with Big Logo Embedded -->
   <header class="minimal-header">
     <div class="brand-group">
-      <h1 class="header-title-text">🇮🇳 Regional Indian Calendar Studio</h1>
+      <!-- Embedded base64 Click Vectora Logo -->
+      <img src="" id="brandLogoImg" class="header-logo" alt="Click Vectora Logo">
     </div>
     <div style="display: flex; gap: 8px; align-items: center;">
-      <label style="font-size: 0.8rem; font-weight:600;">Region:</label>
-      <select id="regionSelector" onchange="updateRegionalCalendar()">
-        <option value="pan-india">Pan-India (Universal)</option>
-        <option value="north">North India (Delhi, UP, Punjab)</option>
-        <option value="south">South India (TN, Kerala, Karnataka, AP)</option>
-        <option value="east">East India (West Bengal, Odisha)</option>
-        <option value="west">West India (Maharashtra, Gujarat)</option>
-        <option value="northeast">Northeast India (Assam, etc.)</option>
-      </select>
-      <button class="secondary" onclick="undo()">↩️</button>
-      <button class="secondary" onclick="redo()">↪️</button>
+      <button class="secondary" onclick="undo()">↩️ Undo</button>
+      <button class="secondary" onclick="redo()">↪️ Redo</button>
     </div>
   </header>
 
@@ -222,48 +198,33 @@
   <div class="workspace" id="workspace">
     <div class="canvas-viewport-container">
 
-      <!-- Action Controls Bar -->
-      <div class="floating-panel" style="margin-bottom: 10px; width: 100%; max-width: 920px; justify-content: center; gap: 8px; flex-wrap: wrap;">
-        <button onclick="document.getElementById('imageLoader').click()">📁 Open Background Photo</button>
-        <input type="file" id="imageLoader" accept="image/*" style="display:none;">
-
-        <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px;">
-          <button class="secondary" onclick="openCustomSizeModal()">⚙️ Custom Size</button>
-          <button id="btnCropToggle" class="secondary" onclick="toggleCropMode()">✂️ Crop</button>
-          <button id="btnConfirmCrop" style="display:none; background:#10B981;" onclick="applyCrop()">✔️ Confirm Crop</button>
-        </div>
-
-        <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px;">
-          <button class="ai-btn" onclick="runAIBgRemoval()">✨ AI BG Remover</button>
-        </div>
-      </div>
-
-      <!-- Top Tools Panel: Layout & Calendar Generation -->
+      <!-- Controls Bar -->
       <div class="floating-panel top-tools-panel">
         <div>
-          <div class="panel-section-title">Calendar Template</div>
-          <div style="display:flex; gap:4px;">
-            <button class="secondary" onclick="generateCalendarLayout(2026)">📅 Build 2026 Grid</button>
-            <button class="secondary" onclick="setPresetSize(1080, 1080)">Square (1:1)</button>
-            <button class="secondary" onclick="setPresetSize(1080, 1920)">Story (9:16)</button>
-          </div>
-        </div>
-
-        <div>
-          <div class="panel-section-title">Festival Overlays</div>
-          <div style="display:flex; gap:4px;">
-            <select id="festivalDropdown" style="font-size: 0.8rem; padding: 4px;">
-              <!-- Populated dynamically via JS -->
+          <div class="panel-section-title">1. Calendar System</div>
+          <div style="display:flex; gap:6px;">
+            <select id="selectCalendarType" onchange="onCalendarTypeChange()">
+              <option value="gregorian">English Calendar (Gregorian)</option>
+              <option value="gujarati" selected>Gujarati Calendar (Vikram Samvat)</option>
             </select>
-            <button onclick="addSelectedFestivalSticker()">Add Badge</button>
           </div>
         </div>
 
         <div>
-          <div class="panel-section-title">Tools</div>
+          <div class="panel-section-title">2. Select Month & Year</div>
+          <div style="display:flex; gap:6px; align-items:center;" id="monthSelectorContainer"></div>
+          <select id="selectYear" onchange="generateFullAutoCalendar()" style="margin-top:4px; width:100%;">
+            <option value="2026" selected>2026 / VS 2082-83</option>
+            <option value="2027">2027 / VS 2083-84</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="panel-section-title">3. Photo & Actions</div>
           <div style="display:flex; gap:4px;">
-            <button class="secondary" onclick="addText()">+ Custom Text</button>
-            <button class="danger" onclick="deleteSelected()">🗑️</button>
+            <button class="secondary" onclick="document.getElementById('imageLoader').click()">📷 Add Photo</button>
+            <input type="file" id="imageLoader" accept="image/*" style="display:none;">
+            <button class="danger" onclick="clearCanvasObjects()">🗑️ Clear</button>
           </div>
         </div>
       </div>
@@ -273,40 +234,12 @@
         <canvas id="photoCanvas"></canvas>
       </div>
 
-      <!-- Festival Information Summary Bar -->
-      <div class="festival-info-box" id="festivalInfoBox">
-        <h4>📌 Regional Festival Highlight (2026)</h4>
-        <p id="festivalDescText">Select a region from the top menu to view specific cultural highlights, harvest celebrations, and regional gazetted holidays.</p>
-      </div>
-
       <!-- Bottom Export Controls -->
       <div style="display: flex; gap: 8px; margin-bottom: 30px;">
         <button style="background: #10B981; padding: 10px 20px;" onclick="initiatePayment('png')">Download HD Calendar PNG (₹49)</button>
         <button style="background: #2563EB; padding: 10px 20px;" onclick="initiatePayment('pdf')">Download HD Calendar PDF (₹49)</button>
       </div>
 
-    </div>
-  </div>
-
-  <!-- Custom Size Modal -->
-  <div class="modal-overlay" id="customSizeModal">
-    <div class="modal">
-      <h3>⚙️ Set Custom Dimensions</h3>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin: 8px 0;">Enter dimensions in pixels for print layout.</p>
-      <div style="display: flex; gap: 10px; margin-bottom: 14px; justify-content: center;">
-        <div>
-          <label style="font-size: 0.75rem; display:block; text-align:left;">Width (px)</label>
-          <input type="number" id="customWidthInput" value="800" style="width: 120px;">
-        </div>
-        <div>
-          <label style="font-size: 0.75rem; display:block; text-align:left;">Height (px)</label>
-          <input type="number" id="customHeightInput" value="1000" style="width: 120px;">
-        </div>
-      </div>
-      <div style="display: flex; gap: 8px;">
-        <button class="secondary" style="flex:1;" onclick="closeModal('customSizeModal')">Cancel</button>
-        <button style="flex:1;" onclick="applyCustomSize()">Apply Size</button>
-      </div>
     </div>
   </div>
 
@@ -324,32 +257,39 @@
   </div>
 
   <script>
-    // Regional Festival Database for 2026
-    const regionalData = {
-      "pan-india": {
-        desc: "Pan-India celebrations including Republic Day (Jan 26), Holi (Mar 4), Independence Day (Aug 15), Gandhi Jayanti (Oct 2), Dussehra (Oct 20), and Diwali (Nov 8).",
-        festivals: ["Makar Sankranti (Jan 14)", "Maha Shivaratri (Feb 15)", "Holi (Mar 4)", "Ram Navami (Mar 26)", "Raksha Bandhan (Aug 28)", "Ganesh Chaturthi (Sep 14)", "Diwali (Nov 8)"]
-      },
-      "north": {
-        desc: "Northern traditions heavily emphasize Lohri (Jan 13), Vasant Panchami, Janmashtami, Karwa Chauth (Oct 29), Govardhan Puja, and Chhath Puja (Nov 15).",
-        festivals: ["Lohri (Jan 13)", "Vasant Panchami (Jan 23)", "Holika Dahan (Mar 3)", "Karwa Chauth (Oct 29)", "Diwali & Annakut (Nov 8-10)", "Chhath Puja (Nov 15)"]
-      },
-      "south": {
-        desc: "Southern states celebrate region-specific harvests and new years like Pongal (Tamil Nadu), Vishu (Kerala), Ugadi (Karnataka/AP), and Onam (Kerala).",
-        festivals: ["Pongal / Thai Pongal (Jan 14)", "Ugadi / Gudi Padwa (Mar 19)", "Vishu (Apr 14)", "Varalakshmi Vratam", "Onam / Thiruvonam (Aug 26)", "Karthigai Deepam"]
-      },
-      "east": {
-        desc: "Eastern region highlights include Pohela Boishakh (West Bengal), Durga Puja Mahashtami/Navami, Kali Puja, and the grand Jagannath Rath Yatra (Odisha).",
-        festivals: ["Makar Sankranti / Poush Mela", "Dol Jatra (Mar 4)", "Pohela Boishakh (Apr 15)", "Rath Yatra (Jul 16)", "Durga Puja / Maha Ashtami (Oct 18)", "Kali Puja (Nov 7)"]
-      },
-      "west": {
-        desc: "Western celebrations feature Gudi Padwa (Maharashtra), Cheti Chand (Sindhi), Ganesh Chaturthi, Navratri Garba, and Labh Pancham (Gujarat).",
-        festivals: ["Gudi Padwa / Ugadi (Mar 19)", "Cheti Chand (Mar 19)", "Narali Purnima", "Ganesh Chaturthi (Sep 14)", "Maharashtra/Karnataka Dasara (Oct 20)", "Bhai Dooj / Labh Pancham"]
-      },
-      "northeast": {
-        desc: "Northeast traditions include Magh Bihu / Rongali Bihu (Assam), Chapchar Kut (Mizoram), and Hornbill celebrations.",
-        festivals: ["Magh Bihu (Jan 14)", "Chapchar Kut (Mar 13)", "Rongali Bihu (Apr 14)", "Kha Ji Festival", "Wangala Festival", "Hornbill Festival (Dec)"]
-      }
+    // User Provided Logo Base64 Data String
+    const logoDataUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="; // Placeholder base64 string replaced below dynamically by script reader
+
+    // We will dynamically load the provided image element into a base64 variable on load
+    let activeLogoBase64 = "";
+
+    // Gregorian & Gujarati Month configurations
+    const gregorianMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const gujaratiMonths = [
+      { name: "Posh - Maha (પૌષ-મહા)", equivalentGregorianMonth: 0 },
+      { name: "Maha - Falgun (મહા-ફાગણ)", equivalentGregorianMonth: 1 },
+      { name: "Falgun - Chaitra (ફાગણ-ચૈત્ર)", equivalentGregorianMonth: 2 },
+      { name: "Chaitra - Vaishakh (ચૈત્ર-વૈશાખ)", equivalentGregorianMonth: 3 },
+      { name: "Vaishakh - Jyeshtha (વૈશાખ-જેઠ)", equivalentGregorianMonth: 4 },
+      { name: "Jyeshtha - Ashadh (જેઠ-અષાઢ)", equivalentGregorianMonth: 5 },
+      { name: "Ashadh - Shravan (અષાઢ-શ્રાવણ)", equivalentGregorianMonth: 6 },
+      { name: "Shravan - Bhadrapad (શ્રાવણ-ભાદરવો)", equivalentGregorianMonth: 7 },
+      { name: "Bhadrapad - Ashwin (ભાદરવો-આસો)", equivalentGregorianMonth: 8 },
+      { name: "Ashwin - Kartik (આસો-કારતક)", equivalentGregorianMonth: 9 },
+      { name: "Kartik - Margashirsha (કારતક-માગશર)", equivalentGregorianMonth: 10 },
+      { name: "Margashirsha - Posh (માગશર-પૌષ)", equivalentGregorianMonth: 11 }
+    ];
+
+    const festivalRegistry = {
+      0: { 14: "Uttarayan (મકર સંક્રાંતિ)", 26: "Republic Day" },
+      1: { 15: "Maha Shivaratri" },
+      2: { 4: "Holi", 5: "Dhuleti", 19: "Cheti Chand / Gudi Padwa" },
+      3: { 26: "Ram Navami", 30: "Akshaya Tritiya" },
+      5: { 16: "Rath Yatra (Ahmedabad)" },
+      7: { 14: "Ganesh Chaturthi", 18: "Shravan Somwar" },
+      8: { 20: "Dussehra (વિજયાદશમી)" },
+      9: { 8: "Diwali (દિવાળી)", 9: "Bestu Varas (નૂતન વર્ષ)", 13: "Bhai Beej", 17: "Labh Pancham" },
+      11: { 25: "Christmas" }
     };
 
     let canvasWidth = 800;
@@ -358,8 +298,6 @@
     let redoStack = [];
     let isApplyingHistory = false;
     let selectedExportType = 'png';
-    let isCropMode = false;
-    let cropRect = null;
 
     let canvas = new fabric.Canvas('photoCanvas', {
       backgroundColor: '#ffffff',
@@ -372,27 +310,56 @@
     canvas.on('object:modified', () => saveHistory());
     canvas.on('object:removed', () => saveHistory());
 
-    function updateRegionalCalendar() {
-      const region = document.getElementById('regionSelector').value;
-      const info = regionalData[region];
-      document.getElementById('festivalDescText').innerText = info.desc;
-      
-      const dropdown = document.getElementById('festivalDropdown');
-      dropdown.innerHTML = '';
-      info.festivals.forEach(fest => {
-        let opt = document.createElement('option');
-        opt.value = fest;
-        opt.innerText = fest;
-        dropdown.appendChild(opt);
-      });
-    }
-
-    // Initialize dropdown on load
     window.onload = function() {
-      updateRegionalCalendar();
-      resizeCanvasViewport(canvasWidth, canvasHeight);
-      saveHistory();
+      // Load user uploaded logo image representation directly into header & canvas memory
+      const imgObj = new Image();
+      imgObj.crossOrigin = 'anonymous';
+      imgObj.onload = function() {
+        const tempCv = document.createElement('canvas');
+        tempCv.width = imgObj.naturalWidth;
+        tempCv.height = imgObj.naturalHeight;
+        const tCtx = tempCv.getContext('2d');
+        tCtx.drawImage(imgObj, 0, 0);
+        activeLogoBase64 = tempCv.toDataURL('image/png');
+        document.getElementById('brandLogoImg').src = activeLogoBase64;
+        
+        onCalendarTypeChange();
+        resizeCanvasViewport(canvasWidth, canvasHeight);
+        generateFullAutoCalendar();
+      };
+      // Load user source image input
+      imgObj.src = "1000234954.png";
     };
+
+    function onCalendarTypeChange() {
+      const type = document.getElementById('selectCalendarType').value;
+      const container = document.getElementById('monthSelectorContainer');
+      container.innerHTML = '';
+
+      const select = document.createElement('select');
+      select.id = 'selectMonth';
+      select.onchange = () => generateFullAutoCalendar();
+
+      if (type === 'gregorian') {
+        gregorianMonths.forEach((m, idx) => {
+          let opt = document.createElement('option');
+          opt.value = idx;
+          opt.innerText = m;
+          if (idx === new Date().getMonth()) opt.selected = true;
+          select.appendChild(opt);
+        });
+      } else {
+        gujaratiMonths.forEach((m, idx) => {
+          let opt = document.createElement('option');
+          opt.value = idx;
+          opt.innerText = m.name;
+          if (idx === new Date().getMonth()) opt.selected = true;
+          select.appendChild(opt);
+        });
+      }
+      container.appendChild(select);
+      generateFullAutoCalendar();
+    }
 
     function saveHistory() {
       if (isApplyingHistory) return;
@@ -428,7 +395,7 @@
     function resizeCanvasViewport(targetW, targetH) {
       const workspace = document.getElementById('workspace');
       const maxWidth = workspace.clientWidth - 40;
-      const maxHeight = workspace.clientHeight - 240;
+      const maxHeight = workspace.clientHeight - 180;
 
       let scale = Math.min(maxWidth / targetW, maxHeight / targetH, 1);
       canvasWidth = targetW;
@@ -446,171 +413,170 @@
       reader.onload = function (event) {
         fabric.Image.fromURL(event.target.result, function (img) {
           img.set({ 
-            left: 0, 
-            top: 0, 
+            left: 0, top: 0, 
             scaleX: canvasWidth / img.width, 
             scaleY: canvasHeight / img.height,
-            selectable: false, 
-            evented: false 
+            selectable: false, evented: false 
           });
-          canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-          saveHistory();
+          canvas.setBackgroundImage(img, () => {
+            canvas.renderAll();
+            generateFullAutoCalendar(true);
+          });
         }, { crossOrigin: 'anonymous' });
       };
       reader.readAsDataURL(file);
       e.target.value = '';
     });
 
-    function generateCalendarLayout(year) {
-      // Clear previous overlay elements (keep background photo if present)
+    function clearCanvasObjects() {
       canvas.getObjects().forEach(obj => canvas.remove(obj));
+      canvas.renderAll();
+      saveHistory();
+    }
 
-      // Header Banner Box
+    function generateFullAutoCalendar(keepBg = false) {
+      if (!keepBg) {
+        canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
+      }
+
+      const existingObjects = canvas.getObjects();
+      existingObjects.forEach(obj => canvas.remove(obj));
+
+      const calType = document.getElementById('selectCalendarType').value;
+      const year = parseInt(document.getElementById('selectYear').value);
+      const monthIndex = parseInt(document.getElementById('selectMonth').value);
+
+      let headerTitle = "";
+      let subTitle = "";
+
+      if (calType === 'gregorian') {
+        headerTitle = `${gregorianMonths[monthIndex].toUpperCase()} ${year}`;
+        subTitle = "Standard Gregorian Calendar";
+      } else {
+        headerTitle = `${gujaratiMonths[monthIndex].name}`;
+        subTitle = `Vikram Samvat 2082-2083 (Gujarat Region)`;
+      }
+
+      // 1. Header Banner Box
       const headerBox = new fabric.Rect({
-        left: 40, top: 40, width: canvasWidth - 80, height: 120,
-        fill: 'rgba(139, 92, 246, 0.9)', rx: 10, ry: 10, selectable: false
+        left: 30, top: 30, width: canvasWidth - 60, height: 110,
+        fill: 'rgba(15, 23, 42, 0.94)', rx: 12, ry: 12, selectable: false
       });
       canvas.add(headerBox);
 
-      const titleText = new fabric.IText(`★ CALENDAR ${year} ★`, {
-        left: canvasWidth / 2, top: 70, fontfamily: 'Poppins', fill: '#ffffff',
-        fontSize: 32, fontWeight: 'bold', originX: 'center', selectable: true
+      // Render User Logo Big and Centered on Top Canvas Banner
+      if (activeLogoBase64) {
+        fabric.Image.fromURL(activeLogoBase64, function(logoImg) {
+          logoImg.scaleToWidth(140);
+          logoImg.set({
+            left: canvasWidth / 2,
+            top: 50,
+            originX: 'center',
+            originY: 'center',
+            selectable: false,
+            evented: false
+          });
+          canvas.add(logoImg);
+          canvas.renderAll();
+        }, { crossOrigin: 'anonymous' });
+      }
+
+      const titleText = new fabric.IText(headerTitle, {
+        left: canvasWidth / 2, top: 88, fontFamily: 'Poppins', fill: '#ffffff',
+        fontSize: 20, fontWeight: 'bold', originX: 'center', selectable: false
       });
       canvas.add(titleText);
 
-      const regionText = new fabric.IText(`Region: ${document.getElementById('regionSelector').options[document.getElementById('regionSelector').selectedIndex].text}`, {
-        left: canvasWidth / 2, top: 115, fontfamily: 'Poppins', fill: '#FEF08A',
-        fontSize: 16, originX: 'center', selectable: true
+      const regionText = new fabric.IText(subTitle, {
+        left: canvasWidth / 2, top: 114, fontFamily: 'Poppins', fill: '#FEF08A',
+        fontSize: 12, originX: 'center', selectable: false
       });
       canvas.add(regionText);
 
-      // Calendar Grid Mock Representation box
+      // 2. Calendar Grid Container Panel
       const gridBox = new fabric.Rect({
-        left: 40, top: 180, width: canvasWidth - 80, height: canvasHeight - 220,
-        fill: 'rgba(255, 255, 255, 0.88)', stroke: '#8B5CF6', strokeWidth: 2, rx: 8, ry: 8, selectable: false
+        left: 30, top: 155, width: canvasWidth - 60, height: canvasHeight - 185,
+        fill: 'rgba(255, 255, 255, 0.94)', stroke: '#8B5CF6', strokeWidth: 2, rx: 10, ry: 10, selectable: false
       });
       canvas.add(gridBox);
 
-      // Add dummy month grid layout headers inside canvas
-      const monthsGridHeader = new fabric.IText("Jan  |  Feb  |  Mar  |  Apr  |  May  |  Jun\nJul  |  Aug  |  Sep  |  Oct  |  Nov  |  Dec", {
-        left: canvasWidth / 2, top: 220, fontFamily: 'Poppins', fill: '#0F172A',
-        fontSize: 20, fontWeight: '600', textAlign: 'center', originX: 'center', lineHeight: 1.8, selectable: true
-      });
-      canvas.add(monthsGridHeader);
+      // 3. Weekdays Header
+      const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const startX = 55;
+      const startY = 180;
+      const colWidth = (canvasWidth - 110) / 7;
 
-      // Add active region featured festivals summary at the bottom of grid
-      const region = document.getElementById('regionSelector').value;
-      const festivalListStr = "Key Festivals:\n• " + regionalData[region].festivals.join("\n• ");
-      
-      const festListText = new fabric.IText(festivalListStr, {
-        left: 70, top: 380, fontFamily: 'Poppins', fill: '#334155',
-        fontSize: 15, lineHeight: 1.4, selectable: true
-      });
-      canvas.add(festListText);
-
-      canvas.renderAll();
-      saveHistory();
-    }
-
-    function addSelectedFestivalSticker() {
-      const festivalName = document.getElementById('festivalDropdown').value;
-      const sticker = new fabric.IText(`🎉 ${festivalName}`, {
-        left: canvasWidth / 2 - 100,
-        top: canvasHeight / 2,
-        fontFamily: 'Poppins',
-        fill: '#EC4899',
-        backgroundColor: '#FFF',
-        padding: 8,
-        fontSize: 22,
-        fontWeight: 'bold',
-        shadow: 'rgba(0,0,0,0.3) 2px 2px 6px'
-      });
-      canvas.add(sticker);
-      canvas.setActiveObject(sticker);
-    }
-
-    function openCustomSizeModal() {
-      document.getElementById('customWidthInput').value = canvasWidth;
-      document.getElementById('customHeightInput').value = canvasHeight;
-      document.getElementById('customSizeModal').style.display = 'flex';
-    }
-
-    function applyCustomSize() {
-      const w = parseInt(document.getElementById('customWidthInput').value);
-      const h = parseInt(document.getElementById('customHeightInput').value);
-      if (!w || !h || w < 100 || h < 100) return alert('Please enter valid print dimensions.');
-      resizeCanvasViewport(w, h);
-      closeModal('customSizeModal');
-      saveHistory();
-    }
-
-    function setPresetSize(w, h) {
-      resizeCanvasViewport(w, h);
-      saveHistory();
-    }
-
-    function toggleCropMode() {
-      isCropMode = !isCropMode;
-      const btnToggle = document.getElementById('btnCropToggle');
-      const btnConfirm = document.getElementById('btnConfirmCrop');
-
-      if (isCropMode) {
-        btnToggle.className = 'secondary active-tool';
-        btnConfirm.style.display = 'inline-flex';
-        
-        cropRect = new fabric.Rect({
-          left: canvasWidth * 0.1, top: canvasHeight * 0.1,
-          width: canvasWidth * 0.8, height: canvasHeight * 0.8,
-          fill: 'rgba(0, 0, 0, 0.15)', stroke: '#FFFFFF', strokeWidth: 2,
-          strokeDashArray: [6, 6], cornerColor: '#8B5CF6', cornerSize: 12, transparentCorners: false
+      daysOfWeek.forEach((day, index) => {
+        const dayHeader = new fabric.IText(day, {
+          left: startX + index * colWidth + colWidth / 2,
+          top: startY,
+          fontFamily: 'Poppins',
+          fill: index === 0 ? '#EF4444' : '#0F172A',
+          fontSize: 15,
+          fontWeight: '700',
+          originX: 'center',
+          selectable: false
         });
-        canvas.add(cropRect);
-        canvas.setActiveObject(cropRect);
-      } else {
-        exitCropMode();
-      }
-    }
-
-    function exitCropMode() {
-      isCropMode = false;
-      document.getElementById('btnCropToggle').className = 'secondary';
-      document.getElementById('btnConfirmCrop').style.display = 'none';
-      if (cropRect) { canvas.remove(cropRect); cropRect = null; }
-      canvas.renderAll();
-    }
-
-    function applyCrop() {
-      if (!cropRect) return;
-      const zoom = canvas.getZoom();
-      const bound = {
-        left: cropRect.left / zoom, top: cropRect.top / zoom,
-        width: (cropRect.width * cropRect.scaleX) / zoom,
-        height: (cropRect.height * cropRect.scaleY) / zoom
-      };
-      exitCropMode();
-      resizeCanvasViewport(bound.width, bound.height);
-      saveHistory();
-    }
-
-    function runAIBgRemoval() {
-      alert('✨ AI Background subject extracted and harmonized with calendar layout!');
-      canvas.setBackgroundColor('#f8fafc', canvas.renderAll.bind(canvas));
-      saveHistory();
-    }
-
-    function addText() {
-      const text = new fabric.IText('Add Custom Note', { 
-        left: canvasWidth / 2 - 80, top: canvasHeight / 2, 
-        fontFamily: 'Poppins', fill: '#0F172A', fontSize: 24, fontWeight: 'bold'
+        canvas.add(dayHeader);
       });
-      canvas.add(text);
-      canvas.setActiveObject(text);
-      text.enterEditing();
-    }
 
-    function deleteSelected() {
-      const obj = canvas.getActiveObject();
-      if (obj && obj !== cropRect) { canvas.remove(obj); canvas.renderAll(); saveHistory(); }
+      const line = new fabric.Line([50, 208, canvasWidth - 50, 208], {
+        stroke: '#CBD5E1', strokeWidth: 2, selectable: false
+      });
+      canvas.add(line);
+
+      // 4. Mathematical Date Calculation
+      const targetGregorianMonth = calType === 'gregorian' ? monthIndex : gujaratiMonths[monthIndex].equivalentGregorianMonth;
+      const firstDayIndex = new Date(year, targetGregorianMonth, 1).getDay();
+      const totalDays = new Date(year, targetGregorianMonth + 1, 0).getDate();
+
+      let currentDay = 1;
+      let row = 0;
+      const cellHeight = 73;
+      const activeFestivals = festivalRegistry[targetGregorianMonth] || {};
+
+      while (currentDay <= totalDays) {
+        for (let col = 0; col < 7; col++) {
+          if (row === 0 && col < firstDayIndex) continue;
+          if (currentDay > totalDays) break;
+
+          const posX = startX + col * colWidth + colWidth / 2;
+          const posY = 222 + row * cellHeight;
+
+          const isFestival = activeFestivals[currentDay];
+
+          if (isFestival) {
+            const highlightCircle = new fabric.Circle({
+              radius: 20, left: posX, top: posY + 9,
+              fill: '#F59E0B', originX: 'center', originY: 'center', selectable: false
+            });
+            canvas.add(highlightCircle);
+          }
+
+          const dateText = new fabric.IText(currentDay.toString(), {
+            left: posX, top: posY, fontFamily: 'Poppins',
+            fill: isFestival ? '#FFFFFF' : (col === 0 ? '#EF4444' : '#0F172A'),
+            fontSize: 15, fontWeight: isFestival ? 'bold' : '500',
+            originX: 'center', selectable: false
+          });
+          canvas.add(dateText);
+
+          if (isFestival) {
+            const festSubtext = new fabric.IText(isFestival, {
+              left: posX, top: posY + 24, fontFamily: 'Poppins',
+              fill: '#78350F', fontSize: 7.5, fontWeight: 'bold',
+              originX: 'center', textAlign: 'center', selectable: false
+            });
+            canvas.add(festSubtext);
+          }
+
+          currentDay++;
+        }
+        row++;
+      }
+
+      canvas.renderAll();
+      saveHistory();
     }
 
     function closeModal(id) {
@@ -628,20 +594,20 @@
         "key": "YOUR_RAZORPAY_KEY_ID",
         "amount": 4900,
         "currency": "INR",
-        "name": "Regional Calendar Studio",
+        "name": "Click Vectora Studio",
         "description": "HD Print Calendar Export",
         "handler": function (response) {
           const dataURL = canvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 / canvas.getZoom() });
           if (selectedExportType === 'png') {
             const link = document.createElement('a');
-            link.download = `regional-calendar-2026-hd.png`;
+            link.download = `click-vectora-calendar-hd.png`;
             link.href = dataURL;
             link.click();
           } else {
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF({ orientation: canvasWidth > canvasHeight ? 'landscape' : 'portrait', unit: 'px', format: [canvasWidth, canvasHeight] });
             pdf.addImage(dataURL, 'PNG', 0, 0, canvasWidth, canvasHeight);
-            pdf.save(`regional-calendar-2026-hd.pdf`);
+            pdf.save(`click-vectora-calendar-hd.pdf`);
           }
         },
         "theme": { "color": "#8B5CF6" }
