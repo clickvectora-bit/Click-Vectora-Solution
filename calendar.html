@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
@@ -230,16 +230,16 @@
     }
 
     .modal-templates {
-      width: 600px !important;
+      width: 680px !important;
       max-width: 95% !important;
       text-align: left !important;
     }
 
     .template-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
       gap: 12px;
-      max-height: 380px;
+      max-height: 400px;
       overflow-y: auto;
       margin: 15px 0;
       padding: 4px;
@@ -252,7 +252,6 @@
       cursor: pointer;
       transition: all 0.2s ease;
       background: #F8FAFC;
-      text-align: center;
     }
     .template-card:hover {
       border-color: var(--primary);
@@ -260,7 +259,7 @@
       transform: translateY(-2px);
     }
     .template-card h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--text-main); }
-    .template-card p { font-size: 0.75rem; color: var(--text-muted); }
+    .template-card p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
 
     .modal-3d {
       width: 720px !important;
@@ -477,35 +476,43 @@
   <div class="modal-overlay" id="templatesModal">
     <div class="modal modal-templates">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <h3 style="font-size: 1.1rem; font-weight: 700;">✨ Ready-Made Design Templates</h3>
+        <h3 style="font-size: 1.1rem; font-weight: 700;">✨ Rich Graphic & Modern Templates</h3>
         <button class="secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="closeTemplatesModal()">✕</button>
       </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted);">Select a professional layout to instantly load onto your current canvas size:</p>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Select a professional multi-element design template packed with vectors and custom layouts:</p>
       
       <div class="template-grid">
+        <div class="template-card" onclick="loadTemplate('cybertech')">
+          <h4>🚀 Cyber-Tech UI</h4>
+          <p>Modern dark-mode aesthetic with neon accent frames & badges.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('neobrutal')">
+          <h4>🎨 Neo-Brutalism</h4>
+          <p>High-impact bold blocks, vibrant contrast boxes & heavy frames.</p>
+        </div>
         <div class="template-card" onclick="loadTemplate('business')">
-          <h4>💼 Business Promo</h4>
-          <p>Clean corporate style for services & announcements.</p>
+          <h4>💼 Corporate Pro</h4>
+          <p>Clean geometry and structured dual-tone professional layout.</p>
         </div>
         <div class="template-card" onclick="loadTemplate('sale')">
-          <h4>🏷️ Mega Sale</h4>
-          <p>High-energy banner with discount emphasis.</p>
+          <h4>🏷️ Flash Sale Blast</h4>
+          <p>High-energy visual grid with dynamic discount callouts.</p>
         </div>
         <div class="template-card" onclick="loadTemplate('event')">
-          <h4>🎉 Event Flyer</h4>
-          <p>Bold typography layout for parties & gatherings.</p>
+          <h4>🎉 Festival & Party</h4>
+          <p>Vibrant multi-shape layers designed for maximum buzz.</p>
         </div>
         <div class="template-card" onclick="loadTemplate('youtube')">
-          <h4>▶️ Viral Thumbnail</h4>
-          <p>High CTR style with contrast boxes and titles.</p>
+          <h4>▶️ High-CTR Thumbnail</h4>
+          <p>Optimized focal blocks tailored for YouTube engagement.</p>
         </div>
         <div class="template-card" onclick="loadTemplate('restaurant')">
-          <h4>🍔 Food & Cafe</h4>
-          <p>Appetizing layout ideal for menus and specials.</p>
+          <h4>🍔 Gourmet Menu</h4>
+          <p>Appetizing framing with soft pastel tone blocks.</p>
         </div>
         <div class="template-card" onclick="loadTemplate('minimal')">
-          <h4>✨ Minimalist</h4>
-          <p>Classy, clean, and spacious typography design.</p>
+          <h4>✨ Neo-Minimalist</h4>
+          <p>Spacious, refined typography paired with geometric lines.</p>
         </div>
       </div>
 
@@ -609,73 +616,128 @@
       document.getElementById('templatesModal').style.display = 'none';
     }
 
-    /* Template Presets Engine */
+    /* Enhanced Graphic Template Presets Engine */
     function loadTemplate(templateType) {
       closeTemplatesModal();
       canvas.clear();
       const fmt = formats[currentFormatKey];
 
-      if (templateType === 'business') {
+      if (templateType === 'cybertech') {
+        canvas.setBackgroundColor('#0B0F19', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0B0F19';
+
+        const outerFrame = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#00F0FF', strokeWidth: 2, rx: 12, ry: 12 });
+        const accentBlob = new fabric.Circle({ left: fmt.width - 180, top: 50, radius: 80, fill: '#7C3AED', opacity: 0.4 });
+        const badgeBg = new fabric.Rect({ left: 55, top: 55, width: 140, height: 32, fill: '#00F0FF', rx: 4, ry: 4 });
+        const badgeText = new fabric.IText('NEXT-GEN AI', { left: 65, top: 61, fontFamily: 'Montserrat', fill: '#0B0F19', fontSize: 13, fontWeight: 'bold' });
+        
+        const title = new fabric.IText('FUTURE OF\nDIGITAL DESIGN', { left: 55, top: 140, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 34, fontWeight: '900', lineHeight: 1.1 });
+        const subtitle = new fabric.IText('Immersive multi-platform framework & interactive visual systems.', { left: 55, top: 250, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 15 });
+        const bottomCard = new fabric.Rect({ left: 55, top: fmt.height - 110, width: fmt.width - 110, height: 60, fill: '#1E293B', stroke: '#334155', strokeWidth: 1, rx: 8, ry: 8 });
+        const ctaText = new fabric.IText('EXPLORE ECOSYSTEM ➔', { left: 80, top: fmt.height - 90, fontFamily: 'Montserrat', fill: '#00F0FF', fontSize: 16, fontWeight: 'bold' });
+
+        canvas.add(outerFrame, accentBlob, badgeBg, badgeText, title, subtitle, bottomCard, ctaText);
+      }
+      else if (templateType === 'neobrutal') {
+        canvas.setBackgroundColor('#FFF500', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FFF500';
+
+        const shadowBox = new fabric.Rect({ left: 50, top: 50, width: fmt.width - 90, height: fmt.height - 90, fill: '#000000', rx: 0, ry: 0 });
+        const mainBox = new fabric.Rect({ left: 35, top: 35, width: fmt.width - 90, height: fmt.height - 90, fill: '#FFFFFF', stroke: '#000000', strokeWidth: 4, rx: 0, ry: 0 });
+        
+        const tagBox = new fabric.Rect({ left: 65, top: 65, width: 130, height: 40, fill: '#FF0055', stroke: '#000000', strokeWidth: 3 });
+        const tagTxt = new fabric.IText('TREND 2026', { left: 78, top: 73, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: '900' });
+
+        const mainTitle = new fabric.IText('BOLD &\nRAW STYLE', { left: 65, top: 140, fontFamily: 'Montserrat', fill: '#000000', fontSize: 44, fontWeight: '900', lineHeight: 1.0 });
+        const desc = new fabric.IText('High-contrast graphic blocks designed to capture attention instantly.', { left: 65, top: 260, width: fmt.width - 160, fontFamily: 'Poppins', fill: '#334155', fontSize: 15 });
+
+        const btnBg = new fabric.Rect({ left: 65, top: fmt.height - 140, width: 200, height: 50, fill: '#00FFFF', stroke: '#000000', strokeWidth: 3 });
+        const btnTxt = new fabric.IText('GET STARTED', { left: 95, top: fmt.height - 124, fontFamily: 'Montserrat', fill: '#000000', fontSize: 16, fontWeight: '900' });
+
+        canvas.add(shadowBox, mainBox, tagBox, tagTxt, mainTitle, desc, btnBg, btnTxt);
+      }
+      else if (templateType === 'business') {
         canvas.setBackgroundColor('#0F172A', () => {});
         document.getElementById('posterBgColorPicker').value = '#0F172A';
 
-        const rect = new fabric.Rect({ left: 40, top: 40, width: fmt.width - 80, height: fmt.height - 80, fill: 'transparent', stroke: '#FF6B00', strokeWidth: 3, rx: 8, ry: 8 });
-        const title = new fabric.IText('ELEVATE YOUR BUSINESS', { left: 70, top: 120, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 32, fontWeight: 'bold' });
-        const subtitle = new fabric.IText('Professional Graphic & Web Development Solutions', { left: 70, top: 175, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 16 });
-        const cta = new fabric.IText('CONTACT US TODAY', { left: 70, top: fmt.height - 150, fontFamily: 'Poppins', fill: '#FF6B00', fontSize: 18, fontWeight: 'bold' });
+        const topBanner = new fabric.Rect({ left: 0, top: 0, width: fmt.width, height: 180, fill: '#1E293B' });
+        const accentLine = new fabric.Rect({ left: 50, top: 180, width: fmt.width - 100, height: 4, fill: '#FF6B00' });
         
-        canvas.add(rect, title, subtitle, cta);
+        const title = new fabric.IText('ELEVATE YOUR BUSINESS', { left: 50, top: 60, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 28, fontWeight: 'bold' });
+        const subtitle = new fabric.IText('Professional Graphic & Web Development Solutions', { left: 50, top: 110, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 15 });
+        
+        const featureBox1 = new fabric.Rect({ left: 50, top: 220, width: fmt.width - 100, height: 60, fill: '#1E293B', rx: 6, ry: 6 });
+        const fText1 = new fabric.IText('✓ Custom Brand Identity & Marketing Collateral', { left: 70, top: 238, fontFamily: 'Poppins', fill: '#E2E8F0', fontSize: 14 });
+
+        const featureBox2 = new fabric.Rect({ left: 50, top: 295, width: fmt.width - 100, height: 60, fill: '#1E293B', rx: 6, ry: 6 });
+        const fText2 = new fabric.IText('✓ High-Performance Web & Mobile Apps', { left: 70, top: 313, fontFamily: 'Poppins', fill: '#E2E8F0', fontSize: 14 });
+
+        const cta = new fabric.IText('CONTACT: hello@clickvectorasolution.com', { left: 50, top: fmt.height - 80, fontFamily: 'Poppins', fill: '#FF6B00', fontSize: 15, fontWeight: 'bold' });
+        
+        canvas.add(topBanner, accentLine, title, subtitle, featureBox1, fText1, featureBox2, fText2, cta);
       } 
       else if (templateType === 'sale') {
         canvas.setBackgroundColor('#FF6B00', () => {});
         document.getElementById('posterBgColorPicker').value = '#FF6B00';
 
-        const tagTitle = new fabric.IText('MEGA SALE', { left: fmt.width / 2 - 130, top: 80, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 48, fontWeight: 'bold', textAlign: 'center' });
-        const discount = new fabric.IText('50% OFF', { left: fmt.width / 2 - 110, top: 160, fontFamily: 'Montserrat', fill: '#0F172A', fontSize: 64, fontWeight: 'bold', textAlign: 'center' });
-        const desc = new fabric.IText('Limited Time Offer across all store items!', { left: fmt.width / 2 - 150, top: 260, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 16, textAlign: 'center' });
+        const circleShape = new fabric.Circle({ left: fmt.width - 220, top: -50, radius: 140, fill: '#E05D00', opacity: 0.6 });
+        const tagTitle = new fabric.IText('MEGA SALE', { left: 50, top: 60, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 42, fontWeight: '900' });
+        
+        const discountCard = new fabric.Rect({ left: 50, top: 140, width: fmt.width - 100, height: 130, fill: '#FFFFFF', rx: 12, ry: 12, shadow: 'rgba(0,0,0,0.15) 0px 10px 20px' });
+        const discount = new fabric.IText('50% OFF', { left: 80, top: 165, fontFamily: 'Montserrat', fill: '#FF6B00', fontSize: 56, fontWeight: '900' });
+        const desc = new fabric.IText('Limited Time Offer across all store items & services!', { left: 50, top: 300, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 16, fontWeight: '600' });
 
-        canvas.add(tagTitle, discount, desc);
+        canvas.add(circleShape, tagTitle, discountCard, discount, desc);
       }
       else if (templateType === 'event') {
         canvas.setBackgroundColor('#7C3AED', () => {});
         document.getElementById('posterBgColorPicker').value = '#7C3AED';
 
-        const title = new fabric.IText('SUMMER FEST 2026', { left: 60, top: 100, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 36, fontWeight: 'bold' });
-        const subtitle = new fabric.IText('Live Music, Food & Art Exhibition', { left: 60, top: 155, fontFamily: 'Poppins', fill: '#E9D5FF', fontSize: 18 });
-        const dateBox = new fabric.Rect({ left: 60, top: fmt.height - 180, width: 220, height: 70, fill: '#FFFFFF', rx: 8, ry: 8 });
-        const dateText = new fabric.IText('SATURDAY, 7 PM', { left: 80, top: fmt.height - 155, fontFamily: 'Poppins', fill: '#7C3AED', fontSize: 18, fontWeight: 'bold' });
+        const polyDecor = new fabric.Triangle({ left: fmt.width - 150, top: 30, width: 120, height: 120, fill: '#8B5CF6', opacity: 0.5 });
+        const title = new fabric.IText('SUMMER FEST 2026', { left: 50, top: 80, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 34, fontWeight: 'bold' });
+        const subtitle = new fabric.IText('Live Music, Food & Creative Exhibitions', { left: 50, top: 135, fontFamily: 'Poppins', fill: '#E9D5FF', fontSize: 17 });
+        
+        const dateBox = new fabric.Rect({ left: 50, top: fmt.height - 160, width: fmt.width - 100, height: 75, fill: '#FFFFFF', rx: 10, ry: 10 });
+        const dateText = new fabric.IText('📅 SATURDAY, 7 PM ONWARDS', { left: 75, top: fmt.height - 135, fontFamily: 'Poppins', fill: '#7C3AED', fontSize: 17, fontWeight: 'bold' });
 
-        canvas.add(title, subtitle, dateBox, dateText);
+        canvas.add(polyDecor, title, subtitle, dateBox, dateText);
       }
       else if (templateType === 'youtube') {
         setFormat('yt');
-        canvas.setBackgroundColor('#1E293B', () => {});
-        document.getElementById('posterBgColorPicker').value = '#1E293B';
+        canvas.setBackgroundColor('#0F172A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0F172A';
 
-        const box = new fabric.Rect({ left: 40, top: 40, width: 340, height: 350, fill: '#EF4444', rx: 12, ry: 12 });
-        const title = new fabric.IText('HOW TO BUILD\nAWESOME APPS!', { left: 410, top: 120, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 36, fontWeight: 'bold' });
+        const accentBox = new fabric.Rect({ left: 30, top: 30, width: 320, height: 372, fill: '#EF4444', rx: 12, ry: 12 });
+        const title = new fabric.IText('HOW TO BUILD\nAWESOME APPS!', { left: 380, top: 110, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 36, fontWeight: '900', lineHeight: 1.1 });
+        const badge = new fabric.Rect({ left: 380, top: 220, width: 180, height: 38, fill: '#10B981', rx: 6, ry: 6 });
+        const badgeTxt = new fabric.IText('100% PRACTICAL', { left: 395, top: 227, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: 'bold' });
 
-        canvas.add(box, title);
+        canvas.add(accentBox, title, badge, badgeTxt);
       }
       else if (templateType === 'restaurant') {
         canvas.setBackgroundColor('#FFFBEB', () => {});
         document.getElementById('posterBgColorPicker').value = '#FFFBEB';
 
-        const title = new fabric.IText('THE GOURMET CAFE', { left: fmt.width / 2 - 150, top: 80, fontFamily: 'Playfair Display', fill: '#78350F', fontSize: 36, fontWeight: 'bold', textAlign: 'center' });
-        const item1 = new fabric.IText('✨ Artisanal Coffee & Pastries', { left: 80, top: 180, fontFamily: 'Poppins', fill: '#451A03', fontSize: 20 });
-        const item2 = new fabric.IText('✨ Woodfire Pizza Specials', { left: 80, top: 230, fontFamily: 'Poppins', fill: '#451A03', fontSize: 20 });
-        const footer = new fabric.IText('Open Daily: 9 AM - 11 PM', { left: fmt.width / 2 - 110, top: fmt.height - 100, fontFamily: 'Poppins', fill: '#B45309', fontSize: 16 });
+        const frameBox = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#D97706', strokeWidth: 2, rx: 8, ry: 8 });
+        const title = new fabric.IText('THE GOURMET CAFE', { left: fmt.width / 2 - 150, top: 70, fontFamily: 'Playfair Display', fill: '#78350F', fontSize: 34, fontWeight: 'bold', textAlign: 'center' });
+        
+        const item1 = new fabric.IText('☕ Artisanal Coffee & Pastries', { left: 60, top: 160, fontFamily: 'Poppins', fill: '#451A03', fontSize: 18 });
+        const item2 = new fabric.IText('🍕 Woodfire Special Pizzas', { left: 60, top: 210, fontFamily: 'Poppins', fill: '#451A03', fontSize: 18 });
+        const item3 = new fabric.IText('🍰 Signature Desserts & Shakes', { left: 60, top: 260, fontFamily: 'Poppins', fill: '#451A03', fontSize: 18 });
+        
+        const footer = new fabric.IText('Open Daily: 9 AM - 11 PM', { left: fmt.width / 2 - 115, top: fmt.height - 80, fontFamily: 'Poppins', fill: '#B45309', fontSize: 15, fontWeight: '600' });
 
-        canvas.add(title, item1, item2, footer);
+        canvas.add(frameBox, title, item1, item2, item3, footer);
       }
       else if (templateType === 'minimal') {
         canvas.setBackgroundColor('#F8FAFC', () => {});
         document.getElementById('posterBgColorPicker').value = '#F8FAFC';
 
+        const lineDec = new fabric.Rect({ left: 60, top: fmt.height / 2 - 90, width: 60, height: 4, fill: '#0F172A' });
         const title = new fabric.IText('LESS IS MORE', { left: 60, top: fmt.height / 2 - 60, fontFamily: 'Playfair Display', fill: '#0F172A', fontSize: 44, fontWeight: 'bold' });
-        const subtitle = new fabric.IText('Clean typography & thoughtful design layouts.', { left: 60, top: fmt.height / 2 + 10, fontFamily: 'Poppins', fill: '#64748B', fontSize: 16 });
+        const subtitle = new fabric.IText('Clean typography & balanced design systems for modern brands.', { left: 60, top: fmt.height / 2 + 10, width: fmt.width - 120, fontFamily: 'Poppins', fill: '#64748B', fontSize: 15 });
 
-        canvas.add(title, subtitle);
+        canvas.add(lineDec, title, subtitle);
       }
 
       canvas.renderAll();
