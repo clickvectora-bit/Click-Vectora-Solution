@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
@@ -139,7 +139,7 @@
     .top-tools-panel {
       position: relative;
       width: 100%;
-      max-width: 780px;
+      max-width: 890px;
       margin-bottom: 10px;
       display: flex;
       flex-wrap: wrap;
@@ -203,7 +203,7 @@
       .header-title-text { font-size: 1.4rem; }
       .header-logo { height: 60px; }
       .top-tools-panel { gap: 6px; padding: 6px; }
-      .top-tools-panel > div { flex: 1; min-width: 110px; }
+      .top-tools-panel > div { flex: 1; min-width: 90px; }
     }
 
     /* Modals */
@@ -228,6 +228,76 @@
       text-align: center;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
     }
+
+    .modal-templates {
+      width: 760px !important;
+      max-width: 95% !important;
+      text-align: left !important;
+    }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+      max-height: 420px;
+      overflow-y: auto;
+      margin: 15px 0;
+      padding: 4px;
+    }
+
+    .template-card {
+      border: 2px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #F8FAFC;
+    }
+    .template-card:hover {
+      border-color: var(--primary);
+      background: #FFF7ED;
+      transform: translateY(-2px);
+    }
+    .template-card h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--text-main); }
+    .template-card p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* Clipart Modal */
+    .modal-clipart {
+      width: 620px !important;
+      max-width: 95% !important;
+      text-align: left !important;
+    }
+
+    .clipart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      max-height: 360px;
+      overflow-y: auto;
+      margin: 15px 0;
+      padding: 4px;
+    }
+
+    .clipart-card {
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      text-align: center;
+      background: #F8FAFC;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .clipart-card:hover {
+      border-color: var(--primary);
+      background: #FFF7ED;
+      transform: translateY(-2px);
+    }
+    .clipart-icon { font-size: 2rem; }
+    .clipart-label { font-size: 0.8rem; font-weight: 600; color: var(--text-main); }
 
     .modal-3d {
       width: 720px !important;
@@ -339,6 +409,16 @@
       <!-- Top Tools Panel -->
       <div class="floating-panel top-tools-panel">
         <div>
+          <div class="panel-section-title">Templates</div>
+          <button style="background: #0EA5E9; width:100%;" onclick="openTemplatesModal()">✨ Templates</button>
+        </div>
+
+        <div>
+          <div class="panel-section-title">Clipart</div>
+          <button style="background: #10B981; width:100%;" onclick="openClipartModal()">🎨 Clipart</button>
+        </div>
+
+        <div>
           <div class="panel-section-title">Add Text</div>
           <button style="width:100%;" onclick="addText()">+ Text</button>
         </div>
@@ -435,6 +515,134 @@
     </div>
   </div>
 
+  <!-- Templates Selection Modal -->
+  <div class="modal-overlay" id="templatesModal">
+    <div class="modal modal-templates">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">✨ Occasion & Industry Templates</h3>
+        <button class="secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="closeTemplatesModal()">✕</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Select a professional multi-element design template packed with vectors and custom layouts:</p>
+      
+      <div class="template-grid">
+        <div class="template-card" onclick="loadTemplate('birthday')">
+          <h4>🎂 Birthday Party</h4>
+          <p>Joyful festive balloons, celebratory cake banner & party invite.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('wedding')">
+          <h4>💍 Wedding & Reception</h4>
+          <p>Elegant golden typography, floral romance & invitation layout.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('festival')">
+          <h4>🪔 Festive Celebration</h4>
+          <p>Vibrant traditional deepavali/diwali glowing festive greeting.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('opening')">
+          <h4>🏢 Grand Opening</h4>
+          <p>High-buzz ribbon cut announcement & opening banner.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('fitness')">
+          <h4>💪 Fitness & Gym</h4>
+          <p>High-energy intense workout challenge & training poster.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('realestate')">
+          <h4>🏡 Real Estate Property</h4>
+          <p>Professional open house & property listing banner.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('cybertech')">
+          <h4>🚀 Cyber-Tech UI</h4>
+          <p>Modern dark-mode aesthetic with neon accent frames & badges.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('neobrutal')">
+          <h4>🎨 Neo-Brutalism</h4>
+          <p>High-impact bold blocks, vibrant contrast boxes & heavy frames.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('business')">
+          <h4>💼 Corporate Pro</h4>
+          <p>Clean geometry and structured dual-tone professional layout.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('sale')">
+          <h4>🏷️ Flash Sale Blast</h4>
+          <p>High-energy visual grid with dynamic discount callouts.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('event')">
+          <h4>🎉 Festival & Party</h4>
+          <p>Vibrant multi-shape layers designed for maximum buzz.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('youtube')">
+          <h4>▶️ High-CTR Thumbnail</h4>
+          <p>Optimized focal blocks tailored for YouTube engagement.</p>
+        </div>
+      </div>
+
+      <button style="width: 100%; margin-top: 10px;" onclick="closeTemplatesModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Clipart & Elements Library Modal -->
+  <div class="modal-overlay" id="clipartModal">
+    <div class="modal modal-clipart">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">🎨 Clipart & Design Elements</h3>
+        <button class="secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="closeClipartModal()">✕</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Click any element below to insert it instantly onto your canvas:</p>
+      
+      <div class="clipart-grid">
+        <div class="clipart-card" onclick="addClipartElement('⭐', 'Burst Star')">
+          <span class="clipart-icon">⭐</span>
+          <span class="clipart-label">Burst Star</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🔥', 'Fire Flame')">
+          <span class="clipart-icon">🔥</span>
+          <span class="clipart-label">Hot / Trend</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('✅', 'Check Badge')">
+          <span class="clipart-icon">✅</span>
+          <span class="clipart-label">Verified Check</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🏷️', 'Discount Tag')">
+          <span class="clipart-icon">🏷️</span>
+          <span class="clipart-label">Offer Tag</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('💡', 'Idea Bulb')">
+          <span class="clipart-icon">💡</span>
+          <span class="clipart-label">Idea & Tip</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('📍', 'Location Pin')">
+          <span class="clipart-icon">📍</span>
+          <span class="clipart-label">Location Pin</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🛡️', 'Shield Badge')">
+          <span class="clipart-icon">🛡️</span>
+          <span class="clipart-label">Security Shield</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🎁', 'Gift Box')">
+          <span class="clipart-icon">🎁</span>
+          <span class="clipart-label">Bonus / Gift</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🚀', 'Rocket Boost')">
+          <span class="clipart-icon">🚀</span>
+          <span class="clipart-label">Fast Growth</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('👑', 'Crown Icon')">
+          <span class="clipart-icon">👑</span>
+          <span class="clipart-label">Premium Crown</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('❤️', 'Heart Icon')">
+          <span class="clipart-icon">❤️</span>
+          <span class="clipart-label">Like / Love</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('⚡', 'Lightning Bolt')">
+          <span class="clipart-icon">⚡</span>
+          <span class="clipart-label">Fast Action</span>
+        </div>
+      </div>
+
+      <button style="width: 100%; margin-top: 10px;" onclick="closeClipartModal()">Cancel</button>
+    </div>
+  </div>
+
   <!-- Interactive 3D Preview Modal -->
   <div class="modal-overlay" id="preview3DModal">
     <div class="modal modal-3d">
@@ -472,7 +680,6 @@
   <div id="qrcode-hidden"></div>
 
   <script>
-    // Reduced design area dimensions by another 10% (cumulative ~19% reduction from original)
     const formats = {
       a4: { width: 615, height: 869, name: 'A4 Poster' },
       a3: { width: 615, height: 869, name: 'A3 Poster' },
@@ -521,6 +728,228 @@
         btn.innerText = '📏 Guides: OFF';
       }
       canvas.requestRenderAll();
+    }
+
+    /* Modal Controls */
+    function openTemplatesModal() {
+      document.getElementById('templatesModal').style.display = 'flex';
+    }
+
+    function closeTemplatesModal() {
+      document.getElementById('templatesModal').style.display = 'none';
+    }
+
+    function openClipartModal() {
+      document.getElementById('clipartModal').style.display = 'flex';
+    }
+
+    function closeClipartModal() {
+      document.getElementById('clipartModal').style.display = 'none';
+    }
+
+    /* Clipart Insertion Engine */
+    function addClipartElement(emoji, label) {
+      closeClipartModal();
+      const fmt = formats[currentFormatKey];
+      
+      const textObj = new fabric.IText(emoji, {
+        left: (fmt.width / 2) - 40,
+        top: (fmt.height / 2) - 40,
+        fontSize: 72,
+        textAlign: 'center',
+        selectable: true
+      });
+
+      canvas.add(textObj);
+      canvas.setActiveObject(textObj);
+      canvas.requestRenderAll();
+      saveHistory();
+    }
+
+    /* Graphic Template Presets Engine */
+    function loadTemplate(templateType) {
+      closeTemplatesModal();
+      canvas.clear();
+      const fmt = formats[currentFormatKey];
+
+      if (templateType === 'birthday') {
+        canvas.setBackgroundColor('#FEF3C7', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FEF3C7';
+
+        const frameBox = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#F59E0B', strokeWidth: 3, rx: 12, ry: 12 });
+        const topEmoji = new fabric.IText('🎂🎈🎉', { left: fmt.width / 2 - 75, top: 70, fontSize: 48, selectable: true });
+        const title = new fabric.IText('HAPPY BIRTHDAY', { left: fmt.width / 2 - 145, top: 140, fontFamily: 'Montserrat', fill: '#B45309', fontSize: 32, fontWeight: '900', textAlign: 'center' });
+        const subtitle = new fabric.IText('Join us for an unforgettable celebration!', { left: fmt.width / 2 - 160, top: 210, fontFamily: 'Poppins', fill: '#78350F', fontSize: 16, textAlign: 'center' });
+        
+        const detailsBox = new fabric.Rect({ left: 55, top: fmt.height - 220, width: fmt.width - 110, height: 110, fill: '#FFFFFF', rx: 8, ry: 8, shadow: 'rgba(0,0,0,0.1) 0px 8px 16px' });
+        const detailsTxt = new fabric.IText('📅 Date: This Saturday, 6 PM\n📍 Venue: Grand Celebration Hall\n🎁 RSVP Required', { left: 80, top: fmt.height - 200, fontFamily: 'Poppins', fill: '#1E293B', fontSize: 14, lineHeight: 1.5 });
+
+        canvas.add(frameBox, topEmoji, title, subtitle, detailsBox, detailsTxt);
+      }
+      else if (templateType === 'wedding') {
+        canvas.setBackgroundColor('#FFF1F2', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FFF1F2';
+
+        const frameBox = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#E11D48', strokeWidth: 2, rx: 8, ry: 8 });
+        const topEmoji = new fabric.IText('💍✨', { left: fmt.width / 2 - 40, top: 70, fontSize: 44 });
+        const title = new fabric.IText('SAVE THE DATE', { left: fmt.width / 2 - 130, top: 140, fontFamily: 'Playfair Display', fill: '#9F1239', fontSize: 30, fontWeight: 'bold' });
+        const names = new fabric.IText('Aarav & Priya', { left: fmt.width / 2 - 110, top: 200, fontFamily: 'Playfair Display', fill: '#4C0519', fontSize: 36, fontWeight: 'bold' });
+        const subtitle = new fabric.IText('Together with their families invite you to celebrate their wedding reception.', { left: 60, top: 270, width: fmt.width - 120, fontFamily: 'Poppins', fill: '#881337', fontSize: 15, textAlign: 'center' });
+        
+        const venue = new fabric.IText('Grand Palace Gardens | 7:00 PM Onwards', { left: fmt.width / 2 - 165, top: fmt.height - 90, fontFamily: 'Poppins', fill: '#9F1239', fontSize: 14, fontWeight: '600' });
+
+        canvas.add(frameBox, topEmoji, title, names, subtitle, venue);
+      }
+      else if (templateType === 'festival') {
+        canvas.setBackgroundColor('#78350F', () => {});
+        document.getElementById('posterBgColorPicker').value = '#78350F';
+
+        const topEmoji = new fabric.IText('🪔✨🪔', { left: fmt.width / 2 - 75, top: 60, fontSize: 48 });
+        const title = new fabric.IText('HAPPY DIWALI', { left: fmt.width / 2 - 135, top: 130, fontFamily: 'Montserrat', fill: '#FDE047', fontSize: 34, fontWeight: '900' });
+        const subtitle = new fabric.IText('May the festival of lights fill your life with joy, prosperity and endless happiness.', { left: 50, top: 210, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#FEF3C7', fontSize: 16, textAlign: 'center' });
+        
+        const greetingBox = new fabric.Rect({ left: 50, top: fmt.height - 180, width: fmt.width - 100, height: 80, fill: '#451A03', stroke: '#F59E0B', strokeWidth: 1, rx: 8, ry: 8 });
+        const greetTxt = new fabric.IText('Warmest Wishes from Our Family to Yours!', { left: 75, top: fmt.height - 150, fontFamily: 'Poppins', fill: '#FDE047', fontSize: 15, fontWeight: 'bold' });
+
+        canvas.add(topEmoji, title, subtitle, greetingBox, greetTxt);
+      }
+      else if (templateType === 'opening') {
+        canvas.setBackgroundColor('#065F46', () => {});
+        document.getElementById('posterBgColorPicker').value = '#065F46';
+
+        const bannerBox = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#34D399', strokeWidth: 2, rx: 8, ry: 8 });
+        const emoji = new fabric.IText('🏢🎉', { left: fmt.width / 2 - 40, top: 60, fontSize: 44 });
+        const title = new fabric.IText('GRAND OPENING', { left: fmt.width / 2 - 145, top: 130, fontFamily: 'Montserrat', fill: '#6EE7B7', fontSize: 34, fontWeight: '900' });
+        const subtitle = new fabric.IText('We are thrilled to announce the launch of our new branch!', { left: 50, top: 210, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#D1FAE5', fontSize: 16, textAlign: 'center' });
+        
+        const ctaBox = new fabric.Rect({ left: 60, top: fmt.height - 170, width: fmt.width - 120, height: 60, fill: '#047857', rx: 6, ry: 6 });
+        const ctaText = new fabric.IText('📍 Visit Us Today | Special Discounts', { left: fmt.width / 2 - 145, top: fmt.height - 148, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 15, fontWeight: 'bold' });
+
+        canvas.add(bannerBox, emoji, title, subtitle, ctaBox, ctaText);
+      }
+      else if (templateType === 'fitness') {
+        canvas.setBackgroundColor('#18181B', () => {});
+        document.getElementById('posterBgColorPicker').value = '#18181B';
+
+        const accentBar = new fabric.Rect({ left: 40, top: 40, width: 6, height: 120, fill: '#EF4444' });
+        const title = new fabric.IText('TRANSFORM\nYOUR BODY', { left: 65, top: 40, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 38, fontWeight: '900', lineHeight: 1.0 });
+        const subtitle = new fabric.IText('Join the ultimate 30-day endurance and strength challenge.', { left: 65, top: 180, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#A1A1AA', fontSize: 15 });
+        
+        const cardBox = new fabric.Rect({ left: 50, top: 260, width: fmt.width - 100, height: 100, fill: '#27272A', rx: 8, ry: 8 });
+        const cardText = new fabric.IText('⚡ Expert Trainers\n💪 Modern Equipment\n🔥 Personal Diet Plans', { left: 75, top: 275, fontFamily: 'Poppins', fill: '#FAFAFA', fontSize: 14, lineHeight: 1.4 });
+
+        canvas.add(accentBar, title, subtitle, cardBox, cardText);
+      }
+      else if (templateType === 'realestate') {
+        canvas.setBackgroundColor('#1E3A8A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#1E3A8A';
+
+        const topBadge = new fabric.Rect({ left: 50, top: 50, width: 140, height: 34, fill: '#F59E0B', rx: 4, ry: 4 });
+        const badgeTxt = new fabric.IText('FOR SALE', { left: 68, top: 57, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: 'bold' });
+        
+        const title = new fabric.IText('LUXURY VILLA\nFOR SALE', { left: 50, top: 110, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 34, fontWeight: '900', lineHeight: 1.1 });
+        const subtitle = new fabric.IText('Prime Location • 4 Bedrooms • Modern Amenities • Spacious Garden', { left: 50, top: 210, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#93C5FD', fontSize: 15 });
+
+        const contactBox = new fabric.Rect({ left: 50, top: fmt.height - 150, width: fmt.width - 100, height: 65, fill: '#1D4ED8', rx: 6, ry: 6 });
+        const contactTxt = new fabric.IText('📞 Call Now: +91 98765 43210', { left: fmt.width / 2 - 120, top: fmt.height - 128, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 16, fontWeight: 'bold' });
+
+        canvas.add(topBadge, badgeTxt, title, subtitle, contactBox, contactTxt);
+      }
+      else if (templateType === 'cybertech') {
+        canvas.setBackgroundColor('#0B0F19', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0B0F19';
+
+        const outerFrame = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#00F0FF', strokeWidth: 2, rx: 12, ry: 12 });
+        const accentBlob = new fabric.Circle({ left: fmt.width - 180, top: 50, radius: 80, fill: '#7C3AED', opacity: 0.4 });
+        const badgeBg = new fabric.Rect({ left: 55, top: 55, width: 140, height: 32, fill: '#00F0FF', rx: 4, ry: 4 });
+        const badgeText = new fabric.IText('NEXT-GEN AI', { left: 65, top: 61, fontFamily: 'Montserrat', fill: '#0B0F19', fontSize: 13, fontWeight: 'bold' });
+        
+        const title = new fabric.IText('FUTURE OF\nDIGITAL DESIGN', { left: 55, top: 140, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 34, fontWeight: '900', lineHeight: 1.1 });
+        const subtitle = new fabric.IText('Immersive multi-platform framework & interactive visual systems.', { left: 55, top: 250, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 15 });
+        const bottomCard = new fabric.Rect({ left: 55, top: fmt.height - 110, width: fmt.width - 110, height: 60, fill: '#1E293B', stroke: '#334155', strokeWidth: 1, rx: 8, ry: 8 });
+        const ctaText = new fabric.IText('EXPLORE ECOSYSTEM ➔', { left: 80, top: fmt.height - 90, fontFamily: 'Montserrat', fill: '#00F0FF', fontSize: 16, fontWeight: 'bold' });
+
+        canvas.add(outerFrame, accentBlob, badgeBg, badgeText, title, subtitle, bottomCard, ctaText);
+      }
+      else if (templateType === 'neobrutal') {
+        canvas.setBackgroundColor('#FFF500', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FFF500';
+
+        const shadowBox = new fabric.Rect({ left: 50, top: 50, width: fmt.width - 90, height: fmt.height - 90, fill: '#000000', rx: 0, ry: 0 });
+        const mainBox = new fabric.Rect({ left: 35, top: 35, width: fmt.width - 90, height: fmt.height - 90, fill: '#FFFFFF', stroke: '#000000', strokeWidth: 4, rx: 0, ry: 0 });
+        
+        const tagBox = new fabric.Rect({ left: 65, top: 65, width: 130, height: 40, fill: '#FF0055', stroke: '#000000', strokeWidth: 3 });
+        const tagTxt = new fabric.IText('TREND 2026', { left: 78, top: 73, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: '900' });
+
+        const mainTitle = new fabric.IText('BOLD &\nRAW STYLE', { left: 65, top: 140, fontFamily: 'Montserrat', fill: '#000000', fontSize: 44, fontWeight: '900', lineHeight: 1.0 });
+        const desc = new fabric.IText('High-contrast graphic blocks designed to capture attention instantly.', { left: 65, top: 260, width: fmt.width - 160, fontFamily: 'Poppins', fill: '#334155', fontSize: 15 });
+
+        const btnBg = new fabric.Rect({ left: 65, top: fmt.height - 140, width: 200, height: 50, fill: '#00FFFF', stroke: '#000000', strokeWidth: 3 });
+        const btnTxt = new fabric.IText('GET STARTED', { left: 95, top: fmt.height - 124, fontFamily: 'Montserrat', fill: '#000000', fontSize: 16, fontWeight: '900' });
+
+        canvas.add(shadowBox, mainBox, tagBox, tagTxt, mainTitle, desc, btnBg, btnTxt);
+      }
+      else if (templateType === 'business') {
+        canvas.setBackgroundColor('#0F172A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0F172A';
+
+        const topBanner = new fabric.Rect({ left: 0, top: 0, width: fmt.width, height: 180, fill: '#1E293B' });
+        const accentLine = new fabric.Rect({ left: 50, top: 180, width: fmt.width - 100, height: 4, fill: '#FF6B00' });
+        
+        const title = new fabric.IText('ELEVATE YOUR BUSINESS', { left: 50, top: 60, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 28, fontWeight: 'bold' });
+        const subtitle = new fabric.IText('Professional Graphic & Web Development Solutions', { left: 50, top: 110, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 15 });
+        
+        const featureBox1 = new fabric.Rect({ left: 50, top: 220, width: fmt.width - 100, height: 60, fill: '#1E293B', rx: 6, ry: 6 });
+        const fText1 = new fabric.IText('✓ Custom Brand Identity & Marketing Collateral', { left: 70, top: 238, fontFamily: 'Poppins', fill: '#E2E8F0', fontSize: 14 });
+
+        const featureBox2 = new fabric.Rect({ left: 50, top: 295, width: fmt.width - 100, height: 60, fill: '#1E293B', rx: 6, ry: 6 });
+        const fText2 = new fabric.IText('✓ High-Performance Web & Mobile Apps', { left: 70, top: 313, fontFamily: 'Poppins', fill: '#E2E8F0', fontSize: 14 });
+
+        const cta = new fabric.IText('CONTACT: hello@clickvectorasolution.com', { left: 50, top: fmt.height - 80, fontFamily: 'Poppins', fill: '#FF6B00', fontSize: 15, fontWeight: 'bold' });
+        
+        canvas.add(topBanner, accentLine, title, subtitle, featureBox1, fText1, featureBox2, fText2, cta);
+      } 
+      else if (templateType === 'sale') {
+        canvas.setBackgroundColor('#FF6B00', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FF6B00';
+
+        const circleShape = new fabric.Circle({ left: fmt.width - 220, top: -50, radius: 140, fill: '#E05D00', opacity: 0.6 });
+        const tagTitle = new fabric.IText('MEGA SALE', { left: 50, top: 60, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 42, fontWeight: '900' });
+        
+        const discountCard = new fabric.Rect({ left: 50, top: 140, width: fmt.width - 100, height: 130, fill: '#FFFFFF', rx: 12, ry: 12, shadow: 'rgba(0,0,0,0.15) 0px 10px 20px' });
+        const discount = new fabric.IText('50% OFF', { left: 80, top: 165, fontFamily: 'Montserrat', fill: '#FF6B00', fontSize: 56, fontWeight: '900' });
+        const desc = new fabric.IText('Limited Time Offer across all store items & services!', { left: 50, top: 300, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 16, fontWeight: '600' });
+
+        canvas.add(circleShape, tagTitle, discountCard, discount, desc);
+      }
+      else if (templateType === 'event') {
+        canvas.setBackgroundColor('#7C3AED', () => {});
+        document.getElementById('posterBgColorPicker').value = '#7C3AED';
+
+        const polyDecor = new fabric.Triangle({ left: fmt.width - 150, top: 30, width: 120, height: 120, fill: '#8B5CF6', opacity: 0.5 });
+        const title = new fabric.IText('SUMMER FEST 2026', { left: 50, top: 80, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 34, fontWeight: 'bold' });
+        const subtitle = new fabric.IText('Live Music, Food & Creative Exhibitions', { left: 50, top: 135, fontFamily: 'Poppins', fill: '#E9D5FF', fontSize: 17 });
+        
+        const dateBox = new fabric.Rect({ left: 50, top: fmt.height - 160, width: fmt.width - 100, height: 75, fill: '#FFFFFF', rx: 10, ry: 10 });
+        const dateText = new fabric.IText('📅 SATURDAY, 7 PM ONWARDS', { left: 75, top: fmt.height - 135, fontFamily: 'Poppins', fill: '#7C3AED', fontSize: 17, fontWeight: 'bold' });
+
+        canvas.add(polyDecor, title, subtitle, dateBox, dateText);
+      }
+      else if (templateType === 'youtube') {
+        setFormat('yt');
+        canvas.setBackgroundColor('#0F172A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0F172A';
+
+        const accentBox = new fabric.Rect({ left: 30, top: 30, width: 320, height: 372, fill: '#EF4444', rx: 12, ry: 12 });
+        const title = new fabric.IText('HOW TO BUILD\nAWESOME APPS!', { left: 380, top: 110, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 36, fontWeight: '900', lineHeight: 1.1 });
+        const badge = new fabric.Rect({ left: 380, top: 220, width: 180, height: 38, fill: '#10B981', rx: 6, ry: 6 });
+        const badgeTxt = new fabric.IText('100% PRACTICAL', { left: 395, top: 227, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: 'bold' });
+
+        canvas.add(accentBox, title, badge, badgeTxt);
+      }
+
+      canvas.renderAll();
+      saveHistory();
     }
 
     /* Upgraded Interactive 3D Preview Engine */
