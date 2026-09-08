@@ -1,210 +1,1526 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Menu Design Studio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        .font-heading { font-family: 'Playfair Display', serif; }
-        .font-body { font-family: 'Inter', sans-serif; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Poster & Banner Studio Pro</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #FF6B00;
+      --primary-hover: #E05D00;
+      --bg-workspace: #CBD5E1;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --panel-bg: rgba(255, 255, 255, 0.98);
+      --panel-border: #CBD5E1;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; touch-action: manipulation; }
+    body { display: flex; flex-direction: column; height: 100vh; background: var(--bg-workspace); color: var(--text-main); overflow: hidden; }
+
+    /* Header */
+    .minimal-header {
+      width: 100%;
+      background: #FFFFFF;
+      border-bottom: 2px solid #94A3B8;
+      padding: 24px 32px;
+      min-height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .header-logo {
+      height: 120px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .header-title-text {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.5px;
+    }
+
+    button, .btn-home {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    button:hover, .btn-home:hover { background: var(--primary-hover); }
+    button.secondary { background: #FFF; color: var(--text-main); border: 1px solid #CBD5E1; }
+    button.secondary:hover { background: #F8FAFC; border-color: #64748B; }
+    button.active-format { background: #0F172A; color: white; border-color: #0F172A; }
+    button.active-toggle { background: #10B981; color: white; border-color: #10B981; }
+    button.danger { background: #EF4444; }
+    button.danger:hover { background: #DC2626; }
+
+    input, select {
+      padding: 6px 10px;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      outline: none;
+      font-size: 16px !important;
+      background: #FAFAFA;
+    }
+    input[type="text"] { width: 110px; }
+    input[type="color"] { height: 32px; width: 32px; cursor: pointer; padding: 2px; border-radius: 6px; }
+
+    /* Workspace */
+    .workspace {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 22px 14px 72px 14px;
+      background: radial-gradient(#94A3B8 1px, transparent 1px);
+      background-size: 14px 14px;
+      scroll-behavior: smooth;
+    }
+
+    .canvas-viewport-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .floating-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+      backdrop-filter: blur(6px);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .top-tools-panel {
+      position: relative;
+      width: 100%;
+      max-width: 890px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 8px;
+      padding: 10px 14px;
+    }
+
+    .panel-section-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 3px;
+      border-bottom: 1px solid #E2E8F0;
+      padding-bottom: 2px;
+      text-align: center;
+    }
+
+    .object-inspector-panel {
+      position: relative;
+      margin-bottom: 10px;
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 100%;
+    }
+
+    .canvas-container-wrapper {
+      background: #FFFFFF;
+      box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.3);
+      position: relative;
+      transition: all 0.3s ease;
+      max-width: 100%;
+      overflow: hidden;
+      border-radius: 4px;
+      margin-bottom: 13px;
+    }
+
+    .canvas-bottom-controls-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      margin-bottom: 36px;
+      z-index: 20;
+      width: 100%;
+    }
+
+    .canvas-export-controls {
+      border: 1px solid #CBD5E1;
+      position: relative;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+      .minimal-header { padding: 12px 16px; min-height: 100px; }
+      .header-title-text { font-size: 1.4rem; }
+      .header-logo { height: 60px; }
+      .top-tools-panel { gap: 6px; padding: 6px; }
+      .top-tools-panel > div { flex: 1; min-width: 90px; }
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 15px;
+    }
+    
+    .modal {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 340px;
+      max-width: 95%;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-templates {
+      width: 760px !important;
+      max-width: 95% !important;
+      text-align: left !important;
+    }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+      max-height: 420px;
+      overflow-y: auto;
+      margin: 15px 0;
+      padding: 4px;
+    }
+
+    .template-card {
+      border: 2px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #F8FAFC;
+    }
+    .template-card:hover {
+      border-color: var(--primary);
+      background: #FFF7ED;
+      transform: translateY(-2px);
+    }
+    .template-card h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--text-main); }
+    .template-card p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* Clipart Modal */
+    .modal-clipart {
+      width: 620px !important;
+      max-width: 95% !important;
+      text-align: left !important;
+    }
+
+    .clipart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      max-height: 360px;
+      overflow-y: auto;
+      margin: 15px 0;
+      padding: 4px;
+    }
+
+    .clipart-card {
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      text-align: center;
+      background: #F8FAFC;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .clipart-card:hover {
+      border-color: var(--primary);
+      background: #FFF7ED;
+      transform: translateY(-2px);
+    }
+    .clipart-icon { font-size: 2rem; }
+    .clipart-label { font-size: 0.8rem; font-weight: 600; color: var(--text-main); }
+
+    .modal-3d {
+      width: 720px !important;
+      max-width: 95% !important;
+      padding: 24px !important;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    .poster-3d-viewport {
+      width: 100%;
+      height: 380px;
+      perspective: 1400px;
+      margin: 15px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      user-select: none;
+      position: relative;
+    }
+    .poster-3d-viewport:active { cursor: grabbing; }
+
+    .poster-3d-scene {
+      width: 320px;
+      height: 452px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.1s ease-out;
+    }
+
+    .poster-3d-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 12px;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255,255,255,0.2);
+    }
+
+    .poster-3d-face::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    #qrcode-hidden { display: none; }
+  </style>
 </head>
-<body class="bg-stone-900 text-stone-100 font-body min-h-screen flex flex-col">
+<body>
 
-    <!-- Header -->
-    <header class="bg-stone-950 border-b border-stone-800 p-4 shadow-md flex justify-between items-center">
-        <h1 class="text-xl font-heading font-bold tracking-wide text-amber-500">🍽️ MenuCraft Studio</h1>
-        <div class="space-x-3">
-            <button onclick="exportPDF()" class="bg-amber-600 hover:bg-amber-500 text-stone-950 font-semibold px-4 py-2 rounded-lg text-sm transition">Export PDF</button>
-            <button onclick="exportImage()" class="bg-stone-800 hover:bg-stone-700 text-stone-200 px-4 py-2 rounded-lg text-sm transition">Download PNG</button>
-        </div>
-    </header>
+  <!-- Notice Popup Modal -->
+  <div class="modal-overlay" id="noticeModal" style="display: flex;">
+    <div class="modal">
+      <div style="font-size: 2.5rem; margin-bottom: 8px;">💻📱</div>
+      <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Best Experience Notice</h3>
+      <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
+        This Studio supports <b>Desktop Mode</b> on mobile devices and works best on a <b>Desktop</b> computer for optimal results.
+      </p>
+      <button style="width: 100%; padding: 10px;" onclick="closeNoticeModal()">Got it, Let's Design!</button>
+    </div>
+  </div>
 
-    <!-- Main Workspace -->
-    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 max-w-7xl mx-auto w-full">
+  <!-- Header -->
+  <header class="minimal-header">
+    <div class="brand-group">
+      <a href="index.html" style="text-decoration:none;">
+        <button class="secondary" style="padding: 10px 16px; font-size: 0.95rem;">🏠 Home</button>
+      </a>
+      <img src="ClickVectora Logo - Copy.png" alt="Logo" onerror="this.src='logo.png'; this.onerror=function(){this.style.display='none';}" class="header-logo">
+      <h1 class="header-title-text">Poster & Banner Studio</h1>
+    </div>
+  </header>
+
+  <!-- Workspace Area -->
+  <div class="workspace" id="workspace">
+    <div class="canvas-viewport-container">
+
+      <!-- Formats, Background, Print Guides & 3D Popup Trigger Bar -->
+      <div class="floating-panel" style="margin-bottom: 10px; width: 100%; max-width: 960px; justify-content: center; gap: 6px; flex-wrap: wrap;">
+        <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Sizes:</span>
+        <button id="fmt-a4" class="secondary active-format" onclick="setFormat('a4')">📄 A4</button>
+        <button id="fmt-a3" class="secondary" onclick="setFormat('a3')">📰 A3</button>
+        <button id="fmt-standee" class="secondary" onclick="setFormat('standee')">🏛️ Standee</button>
+        <button id="fmt-yt" class="secondary" onclick="setFormat('yt')">🖼️ YT Thumb</button>
+        <button id="fmt-banner" class="secondary" onclick="setFormat('banner')">🏷️ Banner</button>
         
-        <!-- Controls Column -->
-        <section class="lg:col-span-5 bg-stone-950 border border-stone-800 rounded-xl p-5 space-y-5 overflow-y-auto max-h-[82vh]">
-            <h2 class="text-lg font-semibold border-b border-stone-800 pb-2 text-amber-400">Menu Configuration</h2>
-            
-            <!-- Restaurant Info -->
-            <div class="space-y-3">
-                <label class="block text-xs uppercase tracking-wider text-stone-400 font-medium">Restaurant Name</label>
-                <input type="text" id="inputRestoName" value="The Gourmet Bistro" class="w-full bg-stone-900 border border-stone-800 rounded-lg p-2.5 text-sm focus:border-amber-500 outline-none" oninput="updatePreview()">
-                
-                <label class="block text-xs uppercase tracking-wider text-stone-400 font-medium">Tagline / Subtitle</label>
-                <input type="text" id="inputTagline" value="Fine Dining & Artisan Cocktails" class="w-full bg-stone-900 border border-stone-800 rounded-lg p-2.5 text-sm focus:border-amber-500 outline-none" oninput="updatePreview()">
-            </div>
+        <div style="display: flex; align-items: center; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
+          <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted);">BG:</span>
+          <input type="color" id="posterBgColorPicker" onchange="setCanvasBackground(this.value)" value="#ffffff" title="Canvas Background Color">
+          <button class="secondary" style="padding: 2px 6px; font-size: 0.65rem;" onclick="setCanvasBackground('transparent')">None</button>
+        </div>
 
-            <!-- Category & Items Editor -->
-            <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <label class="text-xs uppercase tracking-wider text-stone-400 font-medium">Menu Items (JSON Format)</label>
-                    <button onclick="loadSampleData()" class="text-xs text-amber-500 hover:underline">Load Sample Data</button>
-                </div>
-                <textarea id="inputItemsJson" rows="8" class="w-full bg-stone-900 border border-stone-800 rounded-lg p-2.5 font-mono text-xs focus:border-amber-500 outline-none" oninput="updatePreview()">[
-  {
-    "category": "Starters",
-    "items": [
-      {"name": "Truffle Arancini", "desc": "Crispy risotto balls with wild mushroom and mozzarella.", "price": "$14"},
-      {"name": "Pan-Seared Scallops", "desc": "Served with pea puree and crispy pancetta.", "price": "$18"}
-    ]
-  },
-  {
-    "category": "Main Course",
-    "items": [
-      {"name": "Wagyu Ribeye Steak", "desc": "10oz prime cut with roasted garlic butter and asparagus.", "price": "$48"},
-      {"name": "Wild Mushroom Risotto", "desc": "Arborio rice, porcini broth, and aged parmesan.", "price": "$26"}
-    ]
-  }
-]</textarea>
-            </div>
+        <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
+          <button id="btnToggleGuides" class="secondary" onclick="togglePrintGuides()" title="Toggle Bleed, Trim & Safety Lines">📏 Guides: OFF</button>
+          <button style="background: #8B5CF6; color: white;" onclick="open3DPreview()" title="Open 3D Interactive Presentation">✨ 3D Preview</button>
+        </div>
 
-            <!-- Theme Settings -->
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">Theme Accent</label>
-                    <select id="selectTheme" class="w-full bg-stone-900 border border-stone-800 rounded-lg p-2.5 text-sm outline-none" onchange="updatePreview()">
-                        <option value="dark">Dark Luxury (Charcoal / Gold)</option>
-                        <option value="light">Classic Clean (Ivory / Charcoal)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">Currency Symbol</label>
-                    <input type="text" id="inputCurrency" value="$" class="w-full bg-stone-900 border border-stone-800 rounded-lg p-2.5 text-sm outline-none" oninput="updatePreview()">
-                </div>
-            </div>
-        </section>
+        <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
+          <button class="secondary" style="padding: 4px 8px;" onclick="undo()" title="Undo (10 Steps)">↩️</button>
+          <button class="secondary" style="padding: 4px 8px;" onclick="redo()" title="Redo (10 Steps)">↪️</button>
+        </div>
+      </div>
 
-        <!-- Preview Column -->
-        <section class="lg:col-span-7 flex justify-center items-start bg-stone-950 border border-stone-800 rounded-xl p-8 overflow-auto">
-            <div id="menuCanvas" class="w-[595px] min-h-[842px] bg-stone-900 text-stone-100 p-12 shadow-2xl flex flex-col justify-between border border-stone-800 transition-all duration-300">
-                
-                <!-- Menu Header -->
-                <div class="text-center space-y-2 border-b border-stone-700/50 pb-6">
-                    <h2 id="previewRestoName" class="font-heading text-3xl font-bold tracking-wider text-amber-500 uppercase">The Gourmet Bistro</h2>
-                    <p id="previewTagline" class="text-xs tracking-widest text-stone-400 uppercase">Fine Dining & Artisan Cocktails</p>
-                </div>
+      <!-- Top Tools Panel -->
+      <div class="floating-panel top-tools-panel">
+        <div>
+          <div class="panel-section-title">Templates</div>
+          <button style="background: #0EA5E9; width:100%;" onclick="openTemplatesModal()">✨ Templates</button>
+        </div>
 
-                <!-- Menu Body Content -->
-                <div id="previewCategories" class="my-8 space-y-6 flex-1">
-                    <!-- Dynamic Categories injected via JS -->
-                </div>
+        <div>
+          <div class="panel-section-title">Clipart</div>
+          <button style="background: #10B981; width:100%;" onclick="openClipartModal()">🎨 Clipart</button>
+        </div>
 
-                <!-- Menu Footer -->
-                <div class="text-center pt-6 border-t border-stone-700/50 text-[10px] tracking-widest text-stone-500 uppercase">
-                    Please inform your server of any dietary allergies. Taxes as applicable.
-                </div>
-            </div>
-        </section>
-    </main>
+        <div>
+          <div class="panel-section-title">Add Text</div>
+          <button style="width:100%;" onclick="addText()">+ Text</button>
+        </div>
 
-    <!-- Script Logic -->
-    <script>
-        function updatePreview() {
-            const restoName = document.getElementById('inputRestoName').value;
-            const tagline = document.getElementById('inputTagline').value;
-            const theme = document.getElementById('selectTheme').value;
-            const canvas = document.getElementById('menuCanvas');
+        <div>
+          <div class="panel-section-title">Shapes</div>
+          <div style="display:flex; gap:3px; justify-content:center;">
+            <button class="secondary" onclick="addShape('rect')">Rect</button>
+            <button class="secondary" onclick="addShape('circle')">Circle</button>
+            <button class="secondary" onclick="addShape('triangle')">Tri</button>
+            <button class="secondary" onclick="addShape('line')">Line</button>
+          </div>
+        </div>
 
-            document.getElementById('previewRestoName').innerText = restoName;
-            document.getElementById('previewTagline').innerText = tagline;
+        <div>
+          <div class="panel-section-title">Image</div>
+          <button class="secondary" style="width:100%; cursor:pointer;" onclick="document.getElementById('imageLoader').click()">
+            📁 Upload
+          </button>
+          <input type="file" id="imageLoader" accept="image/*" multiple style="display:none;">
+        </div>
 
-            // Theme Styling Adjustments
-            if (theme === 'light') {
-                canvas.className = "w-[595px] min-h-[842px] bg-stone-100 text-stone-900 p-12 shadow-2xl flex flex-col justify-between border border-stone-300 transition-all duration-300";
-            } else {
-                canvas.className = "w-[595px] min-h-[842px] bg-stone-900 text-stone-100 p-12 shadow-2xl flex flex-col justify-between border border-stone-800 transition-all duration-300";
-            }
+        <div>
+          <div class="panel-section-title">QR Code</div>
+          <div style="display:flex; gap:3px;">
+            <input type="text" id="qrInput" placeholder="URL/Text">
+            <button onclick="addQRCode()">+ QR</button>
+          </div>
+        </div>
+      </div>
 
-            try {
-                const rawJson = document.getElementById('inputItemsJson').value;
-                const categories = JSON.parse(rawJson);
-                let htmlContent = '';
+      <!-- Object Inspector Overlay -->
+      <div class="floating-panel object-inspector-panel" id="objectInspector">
+        <div id="textInspectorControls" style="display:none; gap:5px; align-items:center; flex-wrap:wrap;">
+          <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" title="Text Color">
+          <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)">
+            <option value="Poppins">Poppins</option>
+            <option value="Montserrat">Montserrat</option>
+            <option value="Roboto">Roboto</option>
+            <option value="Playfair Display">Playfair</option>
+          </select>
+          <button class="secondary" onclick="toggleStyle('bold')"><b>B</b></button>
+          <button class="secondary" onclick="toggleStyle('italic')"><i>I</i></button>
+          <button class="secondary" onclick="toggleStyle('underline')"><u>U</u></button>
+          <div style="display:flex; gap:2px; border-left:1px solid #CBD5E1; padding-left:5px; margin-left:3px;">
+            <button class="secondary" style="padding: 2px 6px;" onclick="setTextAlignment('left')">⬅️</button>
+            <button class="secondary" style="padding: 2px 6px;" onclick="setTextAlignment('center')">⏺️</button>
+            <button class="secondary" style="padding: 2px 6px;" onclick="setTextAlignment('right')">➡️</button>
+          </div>
+        </div>
 
-                categories.forEach(cat => {
-                    htmlContent += `
-                        <div class="space-y-3">
-                            <h3 class="font-heading text-lg font-semibold text-amber-500 border-b border-stone-700/30 pb-1">${cat.category}</h3>
-                            <div class="space-y-3">
-                    `;
-                    cat.items.forEach(item => {
-                        htmlContent += `
-                            <div class="flex justify-between items-baseline">
-                                <div class="pr-4 max-w-[80%]">
-                                    <h4 class="font-medium text-sm tracking-wide">${item.name}</h4>
-                                    <p class="text-[11px] text-stone-400 italic">${item.desc}</p>
-                                </div>
-                                <span class="font-semibold text-sm text-amber-400">${item.price}</span>
-                            </div>
-                        `;
-                    });
-                    htmlContent += `</div></div>`;
-                });
+        <div id="shapeInspectorControls" style="display:none; gap:6px; align-items:center; flex-wrap:wrap;">
+          <span style="font-size:0.65rem; font-weight:600;">Fill:</span>
+          <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#FF6B00" title="Foreground Fill Color">
+          <button class="secondary" style="padding:2px 5px; font-size:0.65rem;" onclick="updateShapeProperty('fill', 'transparent')">None</button>
+          
+          <span style="font-size:0.65rem; font-weight:600; border-left:1px solid #CBD5E1; padding-left:5px;">Border:</span>
+          <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" value="#000000" title="Border Color">
+          <button class="secondary" style="padding:2px 5px; font-size:0.65rem;" onclick="updateShapeProperty('stroke', '')">None</button>
+          
+          <span style="font-size:0.65rem; font-weight:600;">Width:</span>
+          <input type="range" id="shapeBorderSize" min="0" max="25" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:45px; cursor:pointer;">
 
-                document.getElementById('previewCategories').innerHTML = htmlContent;
-            } catch (e) {
-                document.getElementById('previewCategories').innerHTML = `<p class="text-rose-500 text-xs">Invalid JSON format in configuration panel.</p>`;
-            }
+          <span id="shapeRadiusLabel" style="font-size:0.65rem; font-weight:600; border-left:1px solid #CBD5E1; padding-left:5px;">Radius:</span>
+          <input type="range" id="shapeCornerRadius" min="0" max="50" value="0" oninput="updateShapeProperty('rx', parseInt(this.value)); updateShapeProperty('ry', parseInt(this.value));" style="width:45px; cursor:pointer;" title="Corner Radius">
+        </div>
+
+        <div style="display:flex; gap:3px; align-items:center; border-left:1px solid #CBD5E1; padding-left:5px; margin-left:3px;">
+          <button class="secondary" style="padding: 2px 5px;" onclick="duplicateSelected()" title="Duplicate Selected">📋</button>
+          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
+          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('forward')" title="Step Up">🔼</button>
+          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('backward')" title="Step Down">🔽</button>
+          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('back')" title="Send to Back">🔚</button>
+          <button class="danger" style="padding: 2px 6px;" onclick="deleteSelected()">🗑️</button>
+        </div>
+      </div>
+
+      <!-- Canvas Box -->
+      <div class="canvas-container-wrapper" id="canvasWrapper">
+        <canvas id="posterCanvas"></canvas>
+      </div>
+
+      <!-- Bottom Export Controls -->
+      <div class="canvas-bottom-controls-group">
+        <div class="floating-panel canvas-export-controls">
+          <span style="font-size:0.7rem; font-weight:600; color:var(--text-muted);">HD Exports:</span>
+          <div style="display:flex; gap:4px;">
+            <button style="background: #10B981; padding: 5px 10px;" onclick="initiatePayment('png')">Download PNG</button>
+            <button style="background: #2563EB; padding: 5px 10px;" onclick="initiatePayment('pdf')">Download PDF</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Templates Selection Modal -->
+  <div class="modal-overlay" id="templatesModal">
+    <div class="modal modal-templates">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">✨ Occasion & Industry Templates</h3>
+        <button class="secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="closeTemplatesModal()">✕</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Select a professional multi-element design template packed with vectors and custom layouts:</p>
+      
+      <div class="template-grid">
+        <div class="template-card" onclick="loadTemplate('standee')">
+          <h4>🏛️ Rollup Standee</h4>
+          <p>Vertical exhibition display banner with bold headers & contact info.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('birthday')">
+          <h4>🎂 Birthday Party</h4>
+          <p>Joyful festive balloons, celebratory cake banner & party invite.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('wedding')">
+          <h4>💍 Wedding & Reception</h4>
+          <p>Elegant golden typography, floral romance & invitation layout.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('festival')">
+          <h4>🪔 Festive Celebration</h4>
+          <p>Vibrant traditional deepavali/diwali glowing festive greeting.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('opening')">
+          <h4>🏢 Grand Opening</h4>
+          <p>High-buzz ribbon cut announcement & opening banner.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('fitness')">
+          <h4>💪 Fitness & Gym</h4>
+          <p>High-energy intense workout challenge & training poster.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('realestate')">
+          <h4>🏡 Real Estate Property</h4>
+          <p>Professional open house & property listing banner.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('cybertech')">
+          <h4>🚀 Cyber-Tech UI</h4>
+          <p>Modern dark-mode aesthetic with neon accent frames & badges.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('neobrutal')">
+          <h4>🎨 Neo-Brutalism</h4>
+          <p>High-impact bold blocks, vibrant contrast boxes & heavy frames.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('business')">
+          <h4>💼 Corporate Pro</h4>
+          <p>Clean geometry and structured dual-tone professional layout.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('sale')">
+          <h4>🏷️ Flash Sale Blast</h4>
+          <p>High-energy visual grid with dynamic discount callouts.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('event')">
+          <h4>🎉 Festival & Party</h4>
+          <p>Vibrant multi-shape layers designed for maximum buzz.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('youtube')">
+          <h4>▶️ High-CTR Thumbnail</h4>
+          <p>Optimized focal blocks tailored for YouTube engagement.</p>
+        </div>
+      </div>
+
+      <button style="width: 100%; margin-top: 10px;" onclick="closeTemplatesModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Clipart & Elements Library Modal -->
+  <div class="modal-overlay" id="clipartModal">
+    <div class="modal modal-clipart">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">🎨 Clipart & Design Elements</h3>
+        <button class="secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="closeClipartModal()">✕</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Click any element below to insert it instantly onto your canvas:</p>
+      
+      <div class="clipart-grid">
+        <div class="clipart-card" onclick="addClipartElement('⭐', 'Burst Star')">
+          <span class="clipart-icon">⭐</span>
+          <span class="clipart-label">Burst Star</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🔥', 'Fire Flame')">
+          <span class="clipart-icon">🔥</span>
+          <span class="clipart-label">Hot / Trend</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('✅', 'Check Badge')">
+          <span class="clipart-icon">✅</span>
+          <span class="clipart-label">Verified Check</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🏷️', 'Discount Tag')">
+          <span class="clipart-icon">🏷️</span>
+          <span class="clipart-label">Offer Tag</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('💡', 'Idea Bulb')">
+          <span class="clipart-icon">💡</span>
+          <span class="clipart-label">Idea & Tip</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('📍', 'Location Pin')">
+          <span class="clipart-icon">📍</span>
+          <span class="clipart-label">Location Pin</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🛡️', 'Shield Badge')">
+          <span class="clipart-icon">🛡️</span>
+          <span class="clipart-label">Security Shield</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🎁', 'Gift Box')">
+          <span class="clipart-icon">🎁</span>
+          <span class="clipart-label">Bonus / Gift</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🚀', 'Rocket Boost')">
+          <span class="clipart-icon">🚀</span>
+          <span class="clipart-label">Fast Growth</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('👑', 'Crown Icon')">
+          <span class="clipart-icon">👑</span>
+          <span class="clipart-label">Premium Crown</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('❤️', 'Heart Icon')">
+          <span class="clipart-icon">❤️</span>
+          <span class="clipart-label">Like / Love</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('⚡', 'Lightning Bolt')">
+          <span class="clipart-icon">⚡</span>
+          <span class="clipart-label">Fast Action</span>
+        </div>
+      </div>
+
+      <button style="width: 100%; margin-top: 10px;" onclick="closeClipartModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Interactive 3D Preview Modal -->
+  <div class="modal-overlay" id="preview3DModal">
+    <div class="modal modal-3d">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">✨ Interactive 3D Design Simulation</h3>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">Click & Drag to Rotate</span>
+      </div>
+
+      <div class="poster-3d-viewport" id="poster3dViewport">
+        <div class="poster-3d-scene" id="poster3dScene">
+          <div class="poster-3d-face front" id="poster3dFace"></div>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+        <button class="secondary" style="padding: 6px 16px;" onclick="reset3DRotation()">🎯 Reset View</button>
+        <button style="padding: 6px 16px; background: #0F172A;" onclick="close3DModal()">Close Preview</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal">
+      <h3>Unlock HD Poster Export</h3>
+      <p>Watermark-free High-Resolution Download</p>
+      <div style="font-size: 1.8rem; font-weight:700; color:var(--primary); margin:8px 0;">₹49</div>
+      <div style="display: flex; gap: 8px; margin-top: 10px;">
+        <button class="secondary" style="flex:1;" onclick="closeModal()">Cancel</button>
+        <button style="flex:1;" onclick="processRazorpay()">Pay with Razorpay</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="qrcode-hidden"></div>
+
+  <script>
+    const formats = {
+      a4: { width: 615, height: 869, name: 'A4 Poster' },
+      a3: { width: 615, height: 869, name: 'A3 Poster' },
+      standee: { width: 450, height: 1200, name: 'Rollup Standee Banner' },
+      yt: { width: 770, height: 432, name: 'YouTube Thumbnail' },
+      banner: { width: 770, height: 308, name: 'Web Banner' }
+    };
+
+    let currentFormatKey = 'a4';
+    let canvasFormatsData = {};
+    let historyStack = {};
+    let redoStack = {};
+    let isApplyingHistory = false;
+    let selectedExportType = 'png';
+    let showPrintGuides = false;
+
+    let canvas = new fabric.Canvas('posterCanvas', {
+      backgroundColor: '#ffffff',
+      preserveObjectStacking: true,
+      allowTouchScrolling: false,
+      enableRetinaScaling: true
+    });
+
+    canvas.on('selection:created', updateInspector);
+    canvas.on('selection:updated', updateInspector);
+    canvas.on('selection:cleared', hideInspector);
+
+    canvas.on('object:added', () => saveHistory());
+    canvas.on('object:modified', () => saveHistory());
+    canvas.on('object:removed', () => saveHistory());
+    canvas.on('after:render', drawPrintGuides);
+
+    function closeNoticeModal() {
+      document.getElementById('noticeModal').style.display = 'none';
+      resizeCanvasToFitContainer();
+      saveHistory();
+    }
+
+    function togglePrintGuides() {
+      showPrintGuides = !showPrintGuides;
+      const btn = document.getElementById('btnToggleGuides');
+      if (showPrintGuides) {
+        btn.className = 'secondary active-toggle';
+        btn.innerText = '📏 Guides: ON';
+      } else {
+        btn.className = 'secondary';
+        btn.innerText = '📏 Guides: OFF';
+      }
+      canvas.requestRenderAll();
+    }
+
+    /* Modal Controls */
+    function openTemplatesModal() {
+      document.getElementById('templatesModal').style.display = 'flex';
+    }
+
+    function closeTemplatesModal() {
+      document.getElementById('templatesModal').style.display = 'none';
+    }
+
+    function openClipartModal() {
+      document.getElementById('clipartModal').style.display = 'flex';
+    }
+
+    function closeClipartModal() {
+      document.getElementById('clipartModal').style.display = 'none';
+    }
+
+    /* Clipart Insertion Engine */
+    function addClipartElement(emoji, label) {
+      closeClipartModal();
+      const fmt = formats[currentFormatKey];
+      
+      const textObj = new fabric.IText(emoji, {
+        left: (fmt.width / 2) - 40,
+        top: (fmt.height / 2) - 40,
+        fontSize: 72,
+        textAlign: 'center',
+        selectable: true
+      });
+
+      canvas.add(textObj);
+      canvas.setActiveObject(textObj);
+      canvas.requestRenderAll();
+      saveHistory();
+    }
+
+    /* Graphic Template Presets Engine */
+    function loadTemplate(templateType) {
+      closeTemplatesModal();
+      canvas.clear();
+      const fmt = formats[currentFormatKey];
+
+      if (templateType === 'standee') {
+        setFormat('standee');
+        canvas.setBackgroundColor('#0F172A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0F172A';
+
+        const topBadgeBg = new fabric.Rect({ left: 35, top: 40, width: fmt.width - 70, height: 160, fill: '#FF6B00', rx: 12, ry: 12 });
+        const topBadgeTxt = new fabric.IText('EXHIBITION\nSTAND', { left: fmt.width / 2 - 110, top: 65, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 32, fontWeight: '900', textAlign: 'center', lineHeight: 1.1 });
+        
+        const mainTitle = new fabric.IText('ELEVATE YOUR\nBRAND PRESENCE', { left: 35, top: 250, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 26, fontWeight: '900', lineHeight: 1.2 });
+        const subtitle = new fabric.IText('Discover premium innovative software & design solutions tailored for your business growth.', { left: 35, top: 350, width: fmt.width - 70, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 14 });
+
+        const featureCard = new fabric.Rect({ left: 35, top: 460, width: fmt.width - 70, height: 180, fill: '#1E293B', rx: 10, ry: 10 });
+        const featTxt = new fabric.IText('✨ High Quality Visuals\n✨ Custom Web Apps\n✨ 24/7 Dedicated Support\n✨ Scalable SaaS Systems', { left: 55, top: 485, fontFamily: 'Poppins', fill: '#E2E8F0', fontSize: 14, lineHeight: 1.6 });
+
+        const bottomBox = new fabric.Rect({ left: 35, top: fmt.height - 220, width: fmt.width - 70, height: 160, fill: '#FF6B00', rx: 10, ry: 10 });
+        const contactTxt = new fabric.IText('📞 GET IN TOUCH\nhello@clickvectorasolution.com\n+91 98765 43210', { left: fmt.width / 2 - 130, top: fmt.height - 195, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 15, fontWeight: 'bold', textAlign: 'center', lineHeight: 1.5 });
+
+        canvas.add(topBadgeBg, topBadgeTxt, mainTitle, subtitle, featureCard, featTxt, bottomBox, contactTxt);
+      }
+      else if (templateType === 'birthday') {
+        canvas.setBackgroundColor('#FEF3C7', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FEF3C7';
+
+        const frameBox = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#F59E0B', strokeWidth: 3, rx: 12, ry: 12 });
+        const topEmoji = new fabric.IText('🎂🎈🎉', { left: fmt.width / 2 - 75, top: 70, fontSize: 48, selectable: true });
+        const title = new fabric.IText('HAPPY BIRTHDAY', { left: fmt.width / 2 - 145, top: 140, fontFamily: 'Montserrat', fill: '#B45309', fontSize: 32, fontWeight: '900', textAlign: 'center' });
+        const subtitle = new fabric.IText('Join us for an unforgettable celebration!', { left: fmt.width / 2 - 160, top: 210, fontFamily: 'Poppins', fill: '#78350F', fontSize: 16, textAlign: 'center' });
+        
+        const detailsBox = new fabric.Rect({ left: 55, top: fmt.height - 220, width: fmt.width - 110, height: 110, fill: '#FFFFFF', rx: 8, ry: 8, shadow: 'rgba(0,0,0,0.1) 0px 8px 16px' });
+        const detailsTxt = new fabric.IText('📅 Date: This Saturday, 6 PM\n📍 Venue: Grand Celebration Hall\n🎁 RSVP Required', { left: 80, top: fmt.height - 200, fontFamily: 'Poppins', fill: '#1E293B', fontSize: 14, lineHeight: 1.5 });
+
+        canvas.add(frameBox, topEmoji, title, subtitle, detailsBox, detailsTxt);
+      }
+      else if (templateType === 'wedding') {
+        canvas.setBackgroundColor('#FFF1F2', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FFF1F2';
+
+        const frameBox = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#E11D48', strokeWidth: 2, rx: 8, ry: 8 });
+        const topEmoji = new fabric.IText('💍✨', { left: fmt.width / 2 - 40, top: 70, fontSize: 44 });
+        const title = new fabric.IText('SAVE THE DATE', { left: fmt.width / 2 - 130, top: 140, fontFamily: 'Playfair Display', fill: '#9F1239', fontSize: 30, fontWeight: 'bold' });
+        const names = new fabric.IText('Aarav & Priya', { left: fmt.width / 2 - 110, top: 200, fontFamily: 'Playfair Display', fill: '#4C0519', fontSize: 36, fontWeight: 'bold' });
+        const subtitle = new fabric.IText('Together with their families invite you to celebrate their wedding reception.', { left: 60, top: 270, width: fmt.width - 120, fontFamily: 'Poppins', fill: '#881337', fontSize: 15, textAlign: 'center' });
+        
+        const venue = new fabric.IText('Grand Palace Gardens | 7:00 PM Onwards', { left: fmt.width / 2 - 165, top: fmt.height - 90, fontFamily: 'Poppins', fill: '#9F1239', fontSize: 14, fontWeight: '600' });
+
+        canvas.add(frameBox, topEmoji, title, names, subtitle, venue);
+      }
+      else if (templateType === 'festival') {
+        canvas.setBackgroundColor('#78350F', () => {});
+        document.getElementById('posterBgColorPicker').value = '#78350F';
+
+        const topEmoji = new fabric.IText('🪔✨🪔', { left: fmt.width / 2 - 75, top: 60, fontSize: 48 });
+        const title = new fabric.IText('HAPPY DIWALI', { left: fmt.width / 2 - 135, top: 130, fontFamily: 'Montserrat', fill: '#FDE047', fontSize: 34, fontWeight: '900' });
+        const subtitle = new fabric.IText('May the festival of lights fill your life with joy, prosperity and endless happiness.', { left: 50, top: 210, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#FEF3C7', fontSize: 16, textAlign: 'center' });
+        
+        const greetingBox = new fabric.Rect({ left: 50, top: fmt.height - 180, width: fmt.width - 100, height: 80, fill: '#451A03', stroke: '#F59E0B', strokeWidth: 1, rx: 8, ry: 8 });
+        const greetTxt = new fabric.IText('Warmest Wishes from Our Family to Yours!', { left: 75, top: fmt.height - 150, fontFamily: 'Poppins', fill: '#FDE047', fontSize: 15, fontWeight: 'bold' });
+
+        canvas.add(topEmoji, title, subtitle, greetingBox, greetTxt);
+      }
+      else if (templateType === 'opening') {
+        canvas.setBackgroundColor('#065F46', () => {});
+        document.getElementById('posterBgColorPicker').value = '#065F46';
+
+        const bannerBox = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#34D399', strokeWidth: 2, rx: 8, ry: 8 });
+        const emoji = new fabric.IText('🏢🎉', { left: fmt.width / 2 - 40, top: 60, fontSize: 44 });
+        const title = new fabric.IText('GRAND OPENING', { left: fmt.width / 2 - 145, top: 130, fontFamily: 'Montserrat', fill: '#6EE7B7', fontSize: 34, fontWeight: '900' });
+        const subtitle = new fabric.IText('We are thrilled to announce the launch of our new branch!', { left: 50, top: 210, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#D1FAE5', fontSize: 16, textAlign: 'center' });
+        
+        const ctaBox = new fabric.Rect({ left: 60, top: fmt.height - 170, width: fmt.width - 120, height: 60, fill: '#047857', rx: 6, ry: 6 });
+        const ctaText = new fabric.IText('📍 Visit Us Today | Special Discounts', { left: fmt.width / 2 - 145, top: fmt.height - 148, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 15, fontWeight: 'bold' });
+
+        canvas.add(bannerBox, emoji, title, subtitle, ctaBox, ctaText);
+      }
+      else if (templateType === 'fitness') {
+        canvas.setBackgroundColor('#18181B', () => {});
+        document.getElementById('posterBgColorPicker').value = '#18181B';
+
+        const accentBar = new fabric.Rect({ left: 40, top: 40, width: 6, height: 120, fill: '#EF4444' });
+        const title = new fabric.IText('TRANSFORM\nYOUR BODY', { left: 65, top: 40, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 38, fontWeight: '900', lineHeight: 1.0 });
+        const subtitle = new fabric.IText('Join the ultimate 30-day endurance and strength challenge.', { left: 65, top: 180, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#A1A1AA', fontSize: 15 });
+        
+        const cardBox = new fabric.Rect({ left: 50, top: 260, width: fmt.width - 100, height: 100, fill: '#27272A', rx: 8, ry: 8 });
+        const cardText = new fabric.IText('⚡ Expert Trainers\n💪 Modern Equipment\n🔥 Personal Diet Plans', { left: 75, top: 275, fontFamily: 'Poppins', fill: '#FAFAFA', fontSize: 14, lineHeight: 1.4 });
+
+        canvas.add(accentBar, title, subtitle, cardBox, cardText);
+      }
+      else if (templateType === 'realestate') {
+        canvas.setBackgroundColor('#1E3A8A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#1E3A8A';
+
+        const topBadge = new fabric.Rect({ left: 50, top: 50, width: 140, height: 34, fill: '#F59E0B', rx: 4, ry: 4 });
+        const badgeTxt = new fabric.IText('FOR SALE', { left: 68, top: 57, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: 'bold' });
+        
+        const title = new fabric.IText('LUXURY VILLA\nFOR SALE', { left: 50, top: 110, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 34, fontWeight: '900', lineHeight: 1.1 });
+        const subtitle = new fabric.IText('Prime Location • 4 Bedrooms • Modern Amenities • Spacious Garden', { left: 50, top: 210, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#93C5FD', fontSize: 15 });
+
+        const contactBox = new fabric.Rect({ left: 50, top: fmt.height - 150, width: fmt.width - 100, height: 65, fill: '#1D4ED8', rx: 6, ry: 6 });
+        const contactTxt = new fabric.IText('📞 Call Now: +91 98765 43210', { left: fmt.width / 2 - 120, top: fmt.height - 128, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 16, fontWeight: 'bold' });
+
+        canvas.add(topBadge, badgeTxt, title, subtitle, contactBox, contactTxt);
+      }
+      else if (templateType === 'cybertech') {
+        canvas.setBackgroundColor('#0B0F19', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0B0F19';
+
+        const outerFrame = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#00F0FF', strokeWidth: 2, rx: 12, ry: 12 });
+        const accentBlob = new fabric.Circle({ left: fmt.width - 180, top: 50, radius: 80, fill: '#7C3AED', opacity: 0.4 });
+        const badgeBg = new fabric.Rect({ left: 55, top: 55, width: 140, height: 32, fill: '#00F0FF', rx: 4, ry: 4 });
+        const badgeText = new fabric.IText('NEXT-GEN AI', { left: 65, top: 61, fontFamily: 'Montserrat', fill: '#0B0F19', fontSize: 13, fontWeight: 'bold' });
+        
+        const title = new fabric.IText('FUTURE OF\nDIGITAL DESIGN', { left: 55, top: 140, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 34, fontWeight: '900', lineHeight: 1.1 });
+        const subtitle = new fabric.IText('Immersive multi-platform framework & interactive visual systems.', { left: 55, top: 250, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 15 });
+        const bottomCard = new fabric.Rect({ left: 55, top: fmt.height - 110, width: fmt.width - 110, height: 60, fill: '#1E293B', stroke: '#334155', strokeWidth: 1, rx: 8, ry: 8 });
+        const ctaText = new fabric.IText('EXPLORE ECOSYSTEM ➔', { left: 80, top: fmt.height - 90, fontFamily: 'Montserrat', fill: '#00F0FF', fontSize: 16, fontWeight: 'bold' });
+
+        canvas.add(outerFrame, accentBlob, badgeBg, badgeText, title, subtitle, bottomCard, ctaText);
+      }
+      else if (templateType === 'neobrutal') {
+        canvas.setBackgroundColor('#FFF500', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FFF500';
+
+        const shadowBox = new fabric.Rect({ left: 50, top: 50, width: fmt.width - 90, height: fmt.height - 90, fill: '#000000', rx: 0, ry: 0 });
+        const mainBox = new fabric.Rect({ left: 35, top: 35, width: fmt.width - 90, height: fmt.height - 90, fill: '#FFFFFF', stroke: '#000000', strokeWidth: 4, rx: 0, ry: 0 });
+        
+        const tagBox = new fabric.Rect({ left: 65, top: 65, width: 130, height: 40, fill: '#FF0055', stroke: '#000000', strokeWidth: 3 });
+        const tagTxt = new fabric.IText('TREND 2026', { left: 78, top: 73, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: '900' });
+
+        const mainTitle = new fabric.IText('BOLD &\nRAW STYLE', { left: 65, top: 140, fontFamily: 'Montserrat', fill: '#000000', fontSize: 44, fontWeight: '900', lineHeight: 1.0 });
+        const desc = new fabric.IText('High-contrast graphic blocks designed to capture attention instantly.', { left: 65, top: 260, width: fmt.width - 160, fontFamily: 'Poppins', fill: '#334155', fontSize: 15 });
+
+        const btnBg = new fabric.Rect({ left: 65, top: fmt.height - 140, width: 200, height: 50, fill: '#00FFFF', stroke: '#000000', strokeWidth: 3 });
+        const btnTxt = new fabric.IText('GET STARTED', { left: 95, top: fmt.height - 124, fontFamily: 'Montserrat', fill: '#000000', fontSize: 16, fontWeight: '900' });
+
+        canvas.add(shadowBox, mainBox, tagBox, tagTxt, mainTitle, desc, btnBg, btnTxt);
+      }
+      else if (templateType === 'business') {
+        canvas.setBackgroundColor('#0F172A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0F172A';
+
+        const topBanner = new fabric.Rect({ left: 0, top: 0, width: fmt.width, height: 180, fill: '#1E293B' });
+        const accentLine = new fabric.Rect({ left: 50, top: 180, width: fmt.width - 100, height: 4, fill: '#FF6B00' });
+        
+        const title = new fabric.IText('ELEVATE YOUR BUSINESS', { left: 50, top: 60, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 28, fontWeight: 'bold' });
+        const subtitle = new fabric.IText('Professional Graphic & Web Development Solutions', { left: 50, top: 110, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 15 });
+        
+        const featureBox1 = new fabric.Rect({ left: 50, top: 220, width: fmt.width - 100, height: 60, fill: '#1E293B', rx: 6, ry: 6 });
+        const fText1 = new fabric.IText('✓ Custom Brand Identity & Marketing Collateral', { left: 70, top: 238, fontFamily: 'Poppins', fill: '#E2E8F0', fontSize: 14 });
+
+        const featureBox2 = new fabric.Rect({ left: 50, top: 295, width: fmt.width - 100, height: 60, fill: '#1E293B', rx: 6, ry: 6 });
+        const fText2 = new fabric.IText('✓ High-Performance Web & Mobile Apps', { left: 70, top: 313, fontFamily: 'Poppins', fill: '#E2E8F0', fontSize: 14 });
+
+        const cta = new fabric.IText('CONTACT: hello@clickvectorasolution.com', { left: 50, top: fmt.height - 80, fontFamily: 'Poppins', fill: '#FF6B00', fontSize: 15, fontWeight: 'bold' });
+        
+        canvas.add(topBanner, accentLine, title, subtitle, featureBox1, fText1, featureBox2, fText2, cta);
+      } 
+      else if (templateType === 'sale') {
+        canvas.setBackgroundColor('#FF6B00', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FF6B00';
+
+        const circleShape = new fabric.Circle({ left: fmt.width - 220, top: -50, radius: 140, fill: '#E05D00', opacity: 0.6 });
+        const tagTitle = new fabric.IText('MEGA SALE', { left: 50, top: 60, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 42, fontWeight: '900' });
+        
+        const discountCard = new fabric.Rect({ left: 50, top: 140, width: fmt.width - 100, height: 130, fill: '#FFFFFF', rx: 12, ry: 12, shadow: 'rgba(0,0,0,0.15) 0px 10px 20px' });
+        const discount = new fabric.IText('50% OFF', { left: 80, top: 165, fontFamily: 'Montserrat', fill: '#FF6B00', fontSize: 56, fontWeight: '900' });
+        const desc = new fabric.IText('Limited Time Offer across all store items & services!', { left: 50, top: 300, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 16, fontWeight: '600' });
+
+        canvas.add(circleShape, tagTitle, discountCard, discount, desc);
+      }
+      else if (templateType === 'event') {
+        canvas.setBackgroundColor('#7C3AED', () => {});
+        document.getElementById('posterBgColorPicker').value = '#7C3AED';
+
+        const polyDecor = new fabric.Triangle({ left: fmt.width - 150, top: 30, width: 120, height: 120, fill: '#8B5CF6', opacity: 0.5 });
+        const title = new fabric.IText('SUMMER FEST 2026', { left: 50, top: 80, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 34, fontWeight: 'bold' });
+        const subtitle = new fabric.IText('Live Music, Food & Creative Exhibitions', { left: 50, top: 135, fontFamily: 'Poppins', fill: '#E9D5FF', fontSize: 17 });
+        
+        const dateBox = new fabric.Rect({ left: 50, top: fmt.height - 160, width: fmt.width - 100, height: 75, fill: '#FFFFFF', rx: 10, ry: 10 });
+        const dateText = new fabric.IText('📅 SATURDAY, 7 PM ONWARDS', { left: 75, top: fmt.height - 135, fontFamily: 'Poppins', fill: '#7C3AED', fontSize: 17, fontWeight: 'bold' });
+
+        canvas.add(polyDecor, title, subtitle, dateBox, dateText);
+      }
+      else if (templateType === 'youtube') {
+        setFormat('yt');
+        canvas.setBackgroundColor('#0F172A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0F172A';
+
+        const accentBox = new fabric.Rect({ left: 30, top: 30, width: 320, height: 372, fill: '#EF4444', rx: 12, ry: 12 });
+        const title = new fabric.IText('HOW TO BUILD\nAWESOME APPS!', { left: 380, top: 110, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 36, fontWeight: '900', lineHeight: 1.1 });
+        const badge = new fabric.Rect({ left: 380, top: 220, width: 180, height: 38, fill: '#10B981', rx: 6, ry: 6 });
+        const badgeTxt = new fabric.IText('100% PRACTICAL', { left: 395, top: 227, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: 'bold' });
+
+        canvas.add(accentBox, title, badge, badgeTxt);
+      }
+
+      canvas.renderAll();
+      saveHistory();
+    }
+
+    /* Upgraded Interactive 3D Preview Engine */
+    let rotX = 0, rotY = 0;
+    let isDragging3D = false;
+    let startX = 0, startY = 0;
+
+    function open3DPreview() {
+      const wasGuideOn = showPrintGuides;
+      if (wasGuideOn) {
+        showPrintGuides = false;
+        canvas.requestRenderAll();
+      }
+
+      const currentData = canvas.toDataURL({ format: 'png', quality: 1 });
+
+      if (wasGuideOn) {
+        showPrintGuides = true;
+        canvas.requestRenderAll();
+      }
+
+      document.getElementById('poster3dFace').style.backgroundImage = `url(${currentData})`;
+
+      const fmt = formats[currentFormatKey];
+      const scene = document.getElementById('poster3dScene');
+      
+      if (fmt.width >= fmt.height) {
+        scene.style.width = '420px';
+        scene.style.height = `${Math.round(420 * (fmt.height / fmt.width))}px`;
+      } else {
+        scene.style.height = '320px';
+        scene.style.width = `${Math.round(320 * (fmt.width / fmt.height))}px`;
+      }
+
+      document.getElementById('preview3DModal').style.display = 'flex';
+      reset3DRotation();
+    }
+
+    const viewport3D = document.getElementById('poster3dViewport');
+    const scene3D = document.getElementById('poster3dScene');
+
+    viewport3D.addEventListener('mousedown', (e) => {
+      isDragging3D = true;
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging3D) return;
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+      
+      rotY += deltaX * 0.6;
+      rotX -= deltaY * 0.6;
+      
+      rotX = Math.max(-60, Math.min(60, rotX));
+      
+      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+
+    window.addEventListener('mouseup', () => { isDragging3D = false; });
+
+    viewport3D.addEventListener('touchstart', (e) => {
+      isDragging3D = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging3D) return;
+      const deltaX = e.touches[0].clientX - startX;
+      const deltaY = e.touches[0].clientY - startY;
+      
+      rotY += deltaX * 0.6;
+      rotX -= deltaY * 0.6;
+      
+      rotX = Math.max(-60, Math.min(60, rotX));
+      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
+
+    window.addEventListener('touchend', () => { isDragging3D = false; });
+
+    function reset3DRotation() {
+      rotX = 0;
+      rotY = 0;
+      scene3D.style.transform = `rotateX(0deg) rotateY(0deg)`;
+    }
+
+    function close3DModal() {
+      document.getElementById('preview3DModal').style.display = 'none';
+    }
+
+    function drawPrintGuides() {
+      if (!showPrintGuides) return;
+      const ctx = canvas.getContext();
+      const w = canvas.width;
+      const h = canvas.height;
+      const zoom = canvas.getZoom();
+
+      ctx.save();
+      ctx.scale(zoom, zoom);
+
+      const bleed = 15;
+      const trim = 30;
+      const safety = 50;
+
+      ctx.strokeStyle = '#EF4444';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.strokeRect(bleed, bleed, w / zoom - (bleed * 2), h / zoom - (bleed * 2));
+
+      ctx.strokeStyle = '#0F172A';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([]);
+      ctx.strokeRect(trim, trim, w / zoom - (trim * 2), h / zoom - (trim * 2));
+
+      ctx.strokeStyle = '#3B82F6';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([6, 3]);
+      ctx.strokeRect(safety, safety, w / zoom - (safety * 2), h / zoom - (safety * 2));
+
+      ctx.restore();
+    }
+
+    function setFormat(key) {
+      if (currentFormatKey === key) return;
+
+      canvasFormatsData[currentFormatKey] = JSON.stringify(canvas.toJSON());
+      currentFormatKey = key;
+      
+      document.querySelectorAll('.floating-panel button[id^="fmt-"]').forEach(btn => btn.className = 'secondary');
+      document.getElementById(`fmt-${key}`).className = 'secondary active-format';
+
+      canvas.clear();
+      canvas.backgroundColor = '#ffffff';
+
+      if (canvasFormatsData[key]) {
+        isApplyingHistory = true;
+        canvas.loadFromJSON(canvasFormatsData[key], () => {
+          resizeCanvasToFitContainer();
+          if (canvas.backgroundColor) {
+            document.getElementById('posterBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
+          }
+          isApplyingHistory = false;
+        });
+      } else {
+        document.getElementById('posterBgColorPicker').value = '#ffffff';
+        resizeCanvasToFitContainer();
+        saveHistory();
+      }
+    }
+
+    function saveHistory() {
+      if (isApplyingHistory) return;
+      if (!historyStack[currentFormatKey]) historyStack[currentFormatKey] = [];
+      if (!redoStack[currentFormatKey]) redoStack[currentFormatKey] = [];
+
+      const state = JSON.stringify({
+        objects: canvas.getObjects(),
+        background: canvas.backgroundColor
+      });
+
+      const currentStack = historyStack[currentFormatKey];
+      if (currentStack.length > 0 && currentStack[currentStack.length - 1] === state) return;
+
+      currentStack.push(state);
+      if (currentStack.length > 10) currentStack.shift();
+      redoStack[currentFormatKey] = [];
+    }
+
+    function undo() {
+      const currentStack = historyStack[currentFormatKey];
+      if (!currentStack || currentStack.length <= 1) return;
+
+      isApplyingHistory = true;
+      const currentState = currentStack.pop();
+      redoStack[currentFormatKey].push(currentState);
+
+      const previousState = currentStack[currentStack.length - 1];
+      canvas.clear();
+      canvas.loadFromJSON(previousState, () => {
+        if (canvas.backgroundColor) {
+          document.getElementById('posterBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
         }
+        isApplyingHistory = false;
+        hideInspector();
+      });
+    }
 
-        function loadSampleData() {
-            const sample = [
-                {
-                    "category": "Appetizers",
-                    "items": [
-                        {"name": "Bruschetta al Pomodoro", "desc": "Grilled artisan bread with garlic, fresh tomatoes, and basil.", "price": "$10"},
-                        {"name": "Crispy Calamari", "desc": "Served with house-made lemon garlic aioli.", "price": "$15"}
-                    ]
-                },
-                {
-                    "category": "Signature Mains",
-                    "items": [
-                        {"name": "Handmade Pappardelle", "desc": "Slow-cooked beef ragu with shaved parmesan.", "price": "$24"},
-                        {"name": "Grilled Sea Bass", "desc": "Served over herb quinoa and lemon butter reduction.", "price": "$32"}
-                    ]
-                },
-                {
-                    "category": "Desserts",
-                    "items": [
-                        {"name": "Classic Tiramisu", "desc": "Layered ladyfingers, espresso, and mascarpone cream.", "price": "$12"},
-                        {"name": "Dark Chocolate Lava Cake", "desc": "Warm molten center with vanilla bean gelato.", "price": "$14"}
-                    ]
-                }
-            ];
-            document.getElementById('inputItemsJson').value = JSON.stringify(sample, null, 2);
-            updatePreview();
+    function redo() {
+      const currentRedoStack = redoStack[currentFormatKey];
+      if (!currentRedoStack || currentRedoStack.length === 0) return;
+
+      isApplyingHistory = true;
+      const nextState = currentRedoStack.pop();
+      historyStack[currentFormatKey].push(nextState);
+
+      canvas.clear();
+      canvas.loadFromJSON(nextState, () => {
+        if (canvas.backgroundColor) {
+          document.getElementById('posterBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
         }
+        isApplyingHistory = false;
+        hideInspector();
+      });
+    }
 
-        async function exportImage() {
-            const canvasElement = document.getElementById('menuCanvas');
-            const canvas = await html2canvas(canvasElement, { scale: 2 });
-            const link = document.createElement('a');
-            link.download = 'menu-design.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+    function setCanvasBackground(color) {
+      canvas.setBackgroundColor(color, () => {
+        canvas.renderAll();
+        saveHistory();
+      });
+      if (color !== 'transparent') {
+        document.getElementById('posterBgColorPicker').value = color;
+      }
+    }
+
+    function resizeCanvasToFitContainer() {
+      const workspace = document.getElementById('workspace');
+      const maxWidth = workspace.clientWidth - 30;
+      const maxHeight = workspace.clientHeight - 133;
+
+      const fmt = formats[currentFormatKey];
+      let scale = Math.min(maxWidth / fmt.width, maxHeight / fmt.height);
+
+      canvas.setDimensions({
+        width: fmt.width * scale,
+        height: fmt.height * scale
+      });
+
+      canvas.setZoom(scale);
+      canvas.renderAll();
+    }
+
+    window.addEventListener('resize', resizeCanvasToFitContainer);
+
+    function updateInspector() {
+      const activeObj = canvas.getActiveObject();
+      if (!activeObj) {
+        hideInspector();
+        return;
+      }
+
+      const inspector = document.getElementById('objectInspector');
+      const textControls = document.getElementById('textInspectorControls');
+      const shapeControls = document.getElementById('shapeInspectorControls');
+
+      inspector.style.display = 'flex';
+
+      if (activeObj.isType('i-text')) {
+        textControls.style.display = 'flex';
+        shapeControls.style.display = 'none';
+        document.getElementById('textColor').value = activeObj.fill || '#0F172A';
+        document.getElementById('fontFamily').value = activeObj.fontFamily || 'Poppins';
+      } else if (!activeObj.isType('image') && !activeObj.isType('group')) {
+        shapeControls.style.display = 'flex';
+        textControls.style.display = 'none';
+        
+        if (activeObj.fill && activeObj.fill !== 'transparent') {
+          document.getElementById('shapeFillColor').value = activeObj.fill;
         }
-
-        async function exportPDF() {
-            const { jsPDF } = window.jspdf;
-            const canvasElement = document.getElementById('menuCanvas');
-            const canvas = await html2canvas(canvasElement, { scale: 2 });
-            const imgData = canvas.toDataURL('image/png');
-            
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-            
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-            pdf.save('menu-design.pdf');
+        if (activeObj.stroke) {
+          document.getElementById('shapeBorderColor').value = activeObj.stroke;
         }
+        document.getElementById('shapeBorderSize').value = activeObj.strokeWidth || 0;
 
-        // Initial trigger
-        updatePreview();
-    </script>
+        const isRect = activeObj.isType('rect');
+        document.getElementById('shapeCornerRadius').style.display = isRect ? 'inline-block' : 'none';
+        document.getElementById('shapeRadiusLabel').style.display = isRect ? 'inline-block' : 'none';
+        if (isRect) {
+          document.getElementById('shapeCornerRadius').value = activeObj.rx || 0;
+        }
+      } else {
+        textControls.style.display = 'none';
+        shapeControls.style.display = 'none';
+      }
+    }
+
+    function hideInspector() {
+      document.getElementById('objectInspector').style.display = 'none';
+    }
+
+    function changeLayer(action) {
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject) return;
+
+      if (action === 'front') canvas.bringToFront(activeObject);
+      else if (action === 'forward') canvas.bringForward(activeObject);
+      else if (action === 'backward') canvas.sendBackwards(activeObject);
+      else if (action === 'back') canvas.sendToBack(activeObject);
+
+      canvas.renderAll();
+      saveHistory();
+    }
+
+    function duplicateSelected() {
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject) return;
+
+      activeObject.clone(function(cloned) {
+        canvas.discardActiveObject();
+        cloned.set({
+          left: activeObject.left + 25,
+          top: activeObject.top + 25,
+          evented: true
+        });
+        if (cloned.isType('active-selection')) {
+          cloned.canvas = canvas;
+          cloned.forEachObject(obj => canvas.add(obj));
+          cloned.setCoords();
+        } else {
+          canvas.add(cloned);
+        }
+        canvas.setActiveObject(cloned);
+        canvas.requestRenderAll();
+        saveHistory();
+      });
+    }
+
+    fabric.Object.prototype.set({
+      transparentCorners: false,
+      cornerColor: '#FF6B00',
+      cornerStrokeColor: '#FFFFFF',
+      borderColor: '#FF6B00',
+      cornerSize: 12,
+      cornerStyle: 'circle',
+      borderDashArray: [4, 4],
+      hasRotatingPoint: true,
+      rotatingPointOffset: 25
+    });
+
+    function addText() {
+      const fmt = formats[currentFormatKey];
+      const text = new fabric.IText('Add Headline Here', { 
+        left: (fmt.width / 2) - 120, 
+        top: (fmt.height / 2) - 30, 
+        fontFamily: 'Poppins', 
+        fill: '#0F172A', 
+        fontSize: 36,
+        fontWeight: 'bold',
+        textAlign: 'left',
+        editable: true,
+        selectable: true
+      });
+      canvas.add(text);
+      canvas.setActiveObject(text);
+      canvas.requestRenderAll();
+      text.enterEditing();
+      text.selectAll();
+    }
+
+    function updateTextProperty(prop, value) {
+      const activeObject = canvas.getActiveObject();
+      if (activeObject && activeObject.isType('i-text')) {
+        activeObject.set(prop, value);
+        canvas.renderAll();
+        saveHistory();
+      }
+    }
+
+    function setTextAlignment(alignment) {
+      const activeObject = canvas.getActiveObject();
+      if (activeObject && activeObject.isType('i-text')) {
+        activeObject.set('textAlign', alignment);
+        canvas.renderAll();
+        saveHistory();
+      }
+    }
+
+    function toggleStyle(style) {
+      const activeObject = canvas.getActiveObject();
+      if (activeObject && activeObject.isType('i-text')) {
+        if (style === 'bold') activeObject.set('fontWeight', activeObject.fontWeight === 'bold' ? 'normal' : 'bold');
+        if (style === 'italic') activeObject.set('fontStyle', activeObject.fontStyle === 'italic' ? 'normal' : 'italic');
+        if (style === 'underline') activeObject.set('underline', !activeObject.underline);
+        canvas.renderAll();
+        saveHistory();
+      }
+    }
+
+    function addShape(type) {
+      let shape;
+      let fillColor = document.getElementById('shapeFillColor').value;
+      let borderColor = document.getElementById('shapeBorderColor').value;
+      let borderSize = parseInt(document.getElementById('shapeBorderSize').value);
+      const fmt = formats[currentFormatKey];
+
+      const baseOpts = {
+        left: (fmt.width / 2) - 80, 
+        top: (fmt.height / 2) - 50,
+        fill: fillColor,
+        stroke: borderColor,
+        strokeWidth: borderSize,
+        strokeUniform: true
+      };
+
+      if (type === 'rect') shape = new fabric.Rect({ ...baseOpts, width: 180, height: 120, rx: 0, ry: 0 });
+      else if (type === 'circle') shape = new fabric.Circle({ ...baseOpts, radius: 70 });
+      else if (type === 'triangle') shape = new fabric.Triangle({ ...baseOpts, width: 140, height: 140 });
+      else if (type === 'line') shape = new fabric.Line([80, 100, 300, 100], { stroke: fillColor, strokeWidth: borderSize || 4 });
+
+      canvas.add(shape);
+      canvas.setActiveObject(shape);
+      canvas.requestRenderAll();
+    }
+
+    function updateShapeProperty(prop, value) {
+      const activeObject = canvas.getActiveObject();
+      if (activeObject && !activeObject.isType('i-text')) {
+        activeObject.set(prop, value);
+        activeObject.set('strokeUniform', true);
+        canvas.renderAll();
+        saveHistory();
+      }
+    }
+
+    document.getElementById('imageLoader').addEventListener('change', function (e) {
+      const files = e.target.files;
+      if (!files || !files.length) return;
+      const fmt = formats[currentFormatKey];
+
+      Array.from(files).forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          fabric.Image.fromURL(event.target.result, function (img) {
+            img.scaleToWidth(250);
+            img.set({
+              left: (fmt.width / 2) - 125 + (index * 20),
+              top: (fmt.height / 2) - 125 + (index * 20),
+              cornerColor: '#FF6B00',
+              cornerSize: 12
+            });
+            canvas.add(img);
+            canvas.setActiveObject(img);
+            canvas.requestRenderAll();
+          }, { crossOrigin: 'anonymous' });
+        };
+        reader.readAsDataURL(file);
+      });
+      e.target.value = '';
+    });
+
+    function addQRCode() {
+      const text = document.getElementById('qrInput').value.trim();
+      if (!text) return alert('Enter URL / Text');
+      const qrContainer = document.getElementById('qrcode-hidden');
+      qrContainer.innerHTML = '';
+      new QRCode(qrContainer, { text: text, width: 200, height: 200 });
+
+      setTimeout(() => {
+        const imgTag = qrContainer.querySelector('img');
+        if (imgTag) {
+          fabric.Image.fromURL(imgTag.src, function (img) {
+            img.scaleToWidth(150);
+            const fmt = formats[currentFormatKey];
+            img.set({ left: (fmt.width / 2) - 75, top: (fmt.height / 2) - 75 });
+            canvas.add(img);
+            canvas.setActiveObject(img);
+            canvas.requestRenderAll();
+          }, { crossOrigin: 'anonymous' });
+        }
+      }, 100);
+    }
+
+    function deleteSelected() {
+      const activeObjects = canvas.getActiveObjects();
+      if (activeObjects.length) {
+        activeObjects.forEach(obj => canvas.remove(obj));
+        canvas.discardActiveObject();
+        canvas.renderAll();
+        saveHistory();
+      }
+    }
+
+    function initiatePayment(type) {
+      selectedExportType = type;
+      document.getElementById('paymentModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('paymentModal').style.display = 'none';
+    }
+
+    function processRazorpay() {
+      closeModal();
+      var options = {
+        "key": "rzp_live_TVvsN7S7XsvpRb",
+        "amount": 4900,
+        "currency": "INR",
+        "name": "ClickVectora Solution",
+        "description": "HD Poster Export Payment",
+        "handler": function (response) {
+          downloadPoster(selectedExportType);
+        },
+        "theme": { "color": "#FF6B00" }
+      };
+      var rzp1 = new Razorpay(options);
+      rzp1.open();
+    }
+
+    function downloadPoster(format) {
+      const wasGuideOn = showPrintGuides;
+      if (wasGuideOn) {
+        showPrintGuides = false;
+        canvas.requestRenderAll();
+      }
+
+      const fmt = formats[currentFormatKey];
+      const dataURL = canvas.toDataURL({
+        format: 'png',
+        quality: 1.0,
+        multiplier: 2 / canvas.getZoom()
+      });
+
+      if (wasGuideOn) {
+        showPrintGuides = true;
+        canvas.requestRenderAll();
+      }
+
+      if (format === 'png') {
+        const link = document.createElement('a');
+        link.download = `${currentFormatKey}-design-hd.png`;
+        link.href = dataURL;
+        link.click();
+      } else if (format === 'pdf') {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: fmt.width > fmt.height ? 'landscape' : 'portrait',
+          unit: 'px',
+          format: [fmt.width, fmt.height]
+        });
+        pdf.addImage(dataURL, 'PNG', 0, 0, fmt.width, fmt.height);
+        pdf.save(`${currentFormatKey}-design-hd.pdf`);
+      }
+    }
+
+    setTimeout(() => {
+      resizeCanvasToFitContainer();
+      saveHistory();
+    }, 100);
+  </script>
 </body>
 </html>
