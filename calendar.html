@@ -15,7 +15,7 @@
     :root {
       --primary: #8B5CF6;
       --primary-hover: #7C3AED;
-      --bg-workspace: #CBD5E1;
+      --bg-workspace: #E2E8F0;
       --text-main: #0F172A;
       --text-muted: #64748B;
       --panel-bg: rgba(255, 255, 255, 0.98);
@@ -23,33 +23,24 @@
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; touch-action: manipulation; }
-    body { display: flex; flex-direction: column; height: 100vh; background: var(--bg-workspace); color: var(--text-main); overflow: hidden; }
+    body { display: flex; flex-direction: column; width: 100vw; height: 100vh; background: var(--bg-workspace); color: var(--text-main); overflow: hidden; }
 
     /* Header */
     .minimal-header {
       width: 100%;
       background: #0F172A;
       border-bottom: 2px solid #334155;
-      padding: 12px 24px;
-      min-height: 90px;
+      padding: 10px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 10;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      flex-wrap: wrap;
-      gap: 12px;
+      flex-shrink: 0;
     }
 
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    /* Big Custom Logo Style in Header */
     .header-logo {
-      height: 60px;
+      height: 52px;
       width: auto;
       object-fit: contain;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
@@ -90,16 +81,14 @@
     .workspace {
       flex: 1;
       width: 100%;
-      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 16px 14px 72px 14px;
-      background: radial-gradient(#94A3B8 1px, transparent 1px);
-      background-size: 14px 14px;
+      padding: 12px 10px 60px 10px;
+      background: radial-gradient(#94A3B8 1.2px, transparent 1.2px);
+      background-size: 16px 16px;
     }
 
     .canvas-viewport-container {
@@ -108,32 +97,23 @@
       align-items: center;
       position: relative;
       width: 100%;
-      max-width: 1000px;
+      max-width: 850px;
     }
 
     .floating-panel {
       background: var(--panel-bg);
       border: 1px solid var(--panel-border);
-      padding: 8px 12px;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+      padding: 10px 14px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       backdrop-filter: blur(6px);
       z-index: 50;
       display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .top-tools-panel {
-      position: relative;
-      width: 100%;
-      max-width: 920px;
-      margin-bottom: 10px;
-      display: flex;
       flex-wrap: wrap;
       justify-content: space-around;
-      gap: 8px;
-      padding: 10px 14px;
+      width: 100%;
+      margin-bottom: 10px;
+      gap: 10px;
     }
 
     .panel-section-title {
@@ -150,11 +130,14 @@
 
     .canvas-container-wrapper {
       background: #FFFFFF;
-      box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.3);
+      box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.3);
       position: relative;
-      border-radius: 4px;
-      margin-bottom: 13px;
+      border-radius: 6px;
+      margin-bottom: 15px;
       overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     /* Modals */
@@ -182,11 +165,10 @@
 </head>
 <body>
 
-  <!-- Header with Big Logo Embedded -->
+  <!-- Header -->
   <header class="minimal-header">
     <div class="brand-group">
-      <!-- Embedded base64 Click Vectora Logo -->
-      <img src="" id="brandLogoImg" class="header-logo" alt="Click Vectora Logo">
+      <img src="" id="brandLogoImg" class="header-logo" alt="Click Vectora Solution">
     </div>
     <div style="display: flex; gap: 8px; align-items: center;">
       <button class="secondary" onclick="undo()">↩️ Undo</button>
@@ -198,46 +180,46 @@
   <div class="workspace" id="workspace">
     <div class="canvas-viewport-container">
 
-      <!-- Controls Bar -->
-      <div class="floating-panel top-tools-panel">
+      <!-- Toggle and Controls Bar -->
+      <div class="floating-panel">
         <div>
-          <div class="panel-section-title">1. Calendar System</div>
+          <div class="panel-section-title">1. Calendar System Toggle</div>
+          <select id="selectCalendarType" onchange="onCalendarTypeChange()">
+            <option value="gregorian" selected>English Calendar (Jan - Dec)</option>
+            <option value="gujarati">Gujarati Calendar (Vikram Samvat)</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="panel-section-title">2. Select Month & Year</div>
           <div style="display:flex; gap:6px;">
-            <select id="selectCalendarType" onchange="onCalendarTypeChange()">
-              <option value="gregorian">English Calendar (Gregorian)</option>
-              <option value="gujarati" selected>Gujarati Calendar (Vikram Samvat)</option>
+            <div id="monthSelectorContainer"></div>
+            <select id="selectYear" onchange="generateFullAutoCalendar()">
+              <option value="2026" selected>2026</option>
+              <option value="2027">2027</option>
             </select>
           </div>
         </div>
 
         <div>
-          <div class="panel-section-title">2. Select Month & Year</div>
-          <div style="display:flex; gap:6px; align-items:center;" id="monthSelectorContainer"></div>
-          <select id="selectYear" onchange="generateFullAutoCalendar()" style="margin-top:4px; width:100%;">
-            <option value="2026" selected>2026 / VS 2082-83</option>
-            <option value="2027">2027 / VS 2083-84</option>
-          </select>
-        </div>
-
-        <div>
           <div class="panel-section-title">3. Photo & Actions</div>
           <div style="display:flex; gap:4px;">
-            <button class="secondary" onclick="document.getElementById('imageLoader').click()">📷 Add Photo</button>
+            <button class="secondary" onclick="document.getElementById('imageLoader').click()">📷 Photo</button>
             <input type="file" id="imageLoader" accept="image/*" style="display:none;">
             <button class="danger" onclick="clearCanvasObjects()">🗑️ Clear</button>
           </div>
         </div>
       </div>
 
-      <!-- Canvas Box -->
+      <!-- Canvas Element Container -->
       <div class="canvas-container-wrapper" id="canvasWrapper">
         <canvas id="photoCanvas"></canvas>
       </div>
 
-      <!-- Bottom Export Controls -->
-      <div style="display: flex; gap: 8px; margin-bottom: 30px;">
-        <button style="background: #10B981; padding: 10px 20px;" onclick="initiatePayment('png')">Download HD Calendar PNG (₹49)</button>
-        <button style="background: #2563EB; padding: 10px 20px;" onclick="initiatePayment('pdf')">Download HD Calendar PDF (₹49)</button>
+      <!-- Export Buttons -->
+      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button style="background: #10B981; padding: 10px 18px;" onclick="initiatePayment('png')">Download HD PNG (₹49)</button>
+        <button style="background: #2563EB; padding: 10px 18px;" onclick="initiatePayment('pdf')">Download HD PDF (₹49)</button>
       </div>
 
     </div>
@@ -257,14 +239,15 @@
   </div>
 
   <script>
-    // User Provided Logo Base64 Data String
-    const logoDataUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="; // Placeholder base64 string replaced below dynamically by script reader
-
-    // We will dynamically load the provided image element into a base64 variable on load
     let activeLogoBase64 = "";
 
-    // Gregorian & Gujarati Month configurations
-    const gregorianMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    // Full Jan-Dec Gregorian Months Array
+    const gregorianMonths = [
+      "January", "February", "March", "April", "May", "June", 
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    // Gujarati Vikram Samvat Months Array
     const gujaratiMonths = [
       { name: "Posh - Maha (પૌષ-મહા)", equivalentGregorianMonth: 0 },
       { name: "Maha - Falgun (મહા-ફાગણ)", equivalentGregorianMonth: 1 },
@@ -281,19 +264,19 @@
     ];
 
     const festivalRegistry = {
-      0: { 14: "Uttarayan (મકર સંક્રાંતિ)", 26: "Republic Day" },
+      0: { 14: "Uttarayan", 26: "Republic Day" },
       1: { 15: "Maha Shivaratri" },
-      2: { 4: "Holi", 5: "Dhuleti", 19: "Cheti Chand / Gudi Padwa" },
+      2: { 4: "Holi", 5: "Dhuleti", 19: "Cheti Chand" },
       3: { 26: "Ram Navami", 30: "Akshaya Tritiya" },
-      5: { 16: "Rath Yatra (Ahmedabad)" },
+      5: { 16: "Rath Yatra" },
       7: { 14: "Ganesh Chaturthi", 18: "Shravan Somwar" },
-      8: { 20: "Dussehra (વિજયાદશમી)" },
-      9: { 8: "Diwali (દિવાળી)", 9: "Bestu Varas (નૂતન વર્ષ)", 13: "Bhai Beej", 17: "Labh Pancham" },
+      8: { 20: "Dussehra" },
+      9: { 8: "Diwali", 9: "Bestu Varas", 13: "Bhai Beej", 17: "Labh Pancham" },
       11: { 25: "Christmas" }
     };
 
     let canvasWidth = 800;
-    let canvasHeight = 1000;
+    let canvasHeight = 980;
     let historyStack = [];
     let redoStack = [];
     let isApplyingHistory = false;
@@ -311,7 +294,7 @@
     canvas.on('object:removed', () => saveHistory());
 
     window.onload = function() {
-      // Load user uploaded logo image representation directly into header & canvas memory
+      // Load user logo image representation
       const imgObj = new Image();
       imgObj.crossOrigin = 'anonymous';
       imgObj.onload = function() {
@@ -324,12 +307,24 @@
         document.getElementById('brandLogoImg').src = activeLogoBase64;
         
         onCalendarTypeChange();
-        resizeCanvasViewport(canvasWidth, canvasHeight);
+        resizeCanvasViewport();
         generateFullAutoCalendar();
       };
-      // Load user source image input
       imgObj.src = "1000234954.png";
     };
+
+    window.onresize = () => resizeCanvasViewport();
+
+    function resizeCanvasViewport() {
+      const workspace = document.getElementById('workspace');
+      const maxWidth = workspace.clientWidth - 30;
+      const maxHeight = workspace.clientHeight - 130;
+
+      let scale = Math.min(maxWidth / canvasWidth, maxHeight / canvasHeight, 1);
+      canvas.setDimensions({ width: canvasWidth * scale, height: canvasHeight * scale });
+      canvas.setZoom(scale);
+      canvas.renderAll();
+    }
 
     function onCalendarTypeChange() {
       const type = document.getElementById('selectCalendarType').value;
@@ -392,20 +387,6 @@
       });
     }
 
-    function resizeCanvasViewport(targetW, targetH) {
-      const workspace = document.getElementById('workspace');
-      const maxWidth = workspace.clientWidth - 40;
-      const maxHeight = workspace.clientHeight - 180;
-
-      let scale = Math.min(maxWidth / targetW, maxHeight / targetH, 1);
-      canvasWidth = targetW;
-      canvasHeight = targetH;
-
-      canvas.setDimensions({ width: canvasWidth * scale, height: canvasHeight * scale });
-      canvas.setZoom(scale);
-      canvas.renderAll();
-    }
-
     document.getElementById('imageLoader').addEventListener('change', function (e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -451,26 +432,26 @@
 
       if (calType === 'gregorian') {
         headerTitle = `${gregorianMonths[monthIndex].toUpperCase()} ${year}`;
-        subTitle = "Standard Gregorian Calendar";
+        subTitle = "Click Vectora Solution - Official Calendar";
       } else {
         headerTitle = `${gujaratiMonths[monthIndex].name}`;
-        subTitle = `Vikram Samvat 2082-2083 (Gujarat Region)`;
+        subTitle = "Vikram Samvat Calendar Edition";
       }
 
-      // 1. Header Banner Box
+      // 1. Header Box Background
       const headerBox = new fabric.Rect({
-        left: 30, top: 30, width: canvasWidth - 60, height: 110,
-        fill: 'rgba(15, 23, 42, 0.94)', rx: 12, ry: 12, selectable: false
+        left: 25, top: 20, width: canvasWidth - 50, height: 110,
+        fill: 'rgba(15, 23, 42, 0.95)', rx: 10, ry: 10, selectable: false
       });
       canvas.add(headerBox);
 
-      // Render User Logo Big and Centered on Top Canvas Banner
+      // 2. Big Logo on Print Canvas Top Header
       if (activeLogoBase64) {
         fabric.Image.fromURL(activeLogoBase64, function(logoImg) {
-          logoImg.scaleToWidth(140);
+          logoImg.scaleToWidth(130);
           logoImg.set({
             left: canvasWidth / 2,
-            top: 50,
+            top: 42,
             originX: 'center',
             originY: 'center',
             selectable: false,
@@ -482,29 +463,29 @@
       }
 
       const titleText = new fabric.IText(headerTitle, {
-        left: canvasWidth / 2, top: 88, fontFamily: 'Poppins', fill: '#ffffff',
-        fontSize: 20, fontWeight: 'bold', originX: 'center', selectable: false
+        left: canvasWidth / 2, top: 82, fontFamily: 'Poppins', fill: '#ffffff',
+        fontSize: 18, fontWeight: 'bold', originX: 'center', selectable: false
       });
       canvas.add(titleText);
 
       const regionText = new fabric.IText(subTitle, {
-        left: canvasWidth / 2, top: 114, fontFamily: 'Poppins', fill: '#FEF08A',
-        fontSize: 12, originX: 'center', selectable: false
+        left: canvasWidth / 2, top: 108, fontFamily: 'Poppins', fill: '#38BDF8',
+        fontSize: 11, originX: 'center', selectable: false
       });
       canvas.add(regionText);
 
-      // 2. Calendar Grid Container Panel
+      // 3. Calendar Grid Panel
       const gridBox = new fabric.Rect({
-        left: 30, top: 155, width: canvasWidth - 60, height: canvasHeight - 185,
-        fill: 'rgba(255, 255, 255, 0.94)', stroke: '#8B5CF6', strokeWidth: 2, rx: 10, ry: 10, selectable: false
+        left: 25, top: 145, width: canvasWidth - 50, height: canvasHeight - 165,
+        fill: 'rgba(255, 255, 255, 0.96)', stroke: '#8B5CF6', strokeWidth: 2, rx: 8, ry: 8, selectable: false
       });
       canvas.add(gridBox);
 
-      // 3. Weekdays Header
+      // 4. Weekdays Row
       const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      const startX = 55;
-      const startY = 180;
-      const colWidth = (canvasWidth - 110) / 7;
+      const startX = 50;
+      const startY = 168;
+      const colWidth = (canvasWidth - 100) / 7;
 
       daysOfWeek.forEach((day, index) => {
         const dayHeader = new fabric.IText(day, {
@@ -512,7 +493,7 @@
           top: startY,
           fontFamily: 'Poppins',
           fill: index === 0 ? '#EF4444' : '#0F172A',
-          fontSize: 15,
+          fontSize: 14,
           fontWeight: '700',
           originX: 'center',
           selectable: false
@@ -520,19 +501,19 @@
         canvas.add(dayHeader);
       });
 
-      const line = new fabric.Line([50, 208, canvasWidth - 50, 208], {
+      const line = new fabric.Line([40, 195, canvasWidth - 40, 195], {
         stroke: '#CBD5E1', strokeWidth: 2, selectable: false
       });
       canvas.add(line);
 
-      // 4. Mathematical Date Calculation
+      // 5. Date Calculation and Plotting
       const targetGregorianMonth = calType === 'gregorian' ? monthIndex : gujaratiMonths[monthIndex].equivalentGregorianMonth;
       const firstDayIndex = new Date(year, targetGregorianMonth, 1).getDay();
       const totalDays = new Date(year, targetGregorianMonth + 1, 0).getDate();
 
       let currentDay = 1;
       let row = 0;
-      const cellHeight = 73;
+      const cellHeight = 105;
       const activeFestivals = festivalRegistry[targetGregorianMonth] || {};
 
       while (currentDay <= totalDays) {
@@ -541,13 +522,13 @@
           if (currentDay > totalDays) break;
 
           const posX = startX + col * colWidth + colWidth / 2;
-          const posY = 222 + row * cellHeight;
+          const posY = 208 + row * cellHeight;
 
           const isFestival = activeFestivals[currentDay];
 
           if (isFestival) {
             const highlightCircle = new fabric.Circle({
-              radius: 20, left: posX, top: posY + 9,
+              radius: 20, left: posX, top: posY + 12,
               fill: '#F59E0B', originX: 'center', originY: 'center', selectable: false
             });
             canvas.add(highlightCircle);
@@ -563,7 +544,7 @@
 
           if (isFestival) {
             const festSubtext = new fabric.IText(isFestival, {
-              left: posX, top: posY + 24, fontFamily: 'Poppins',
+              left: posX, top: posY + 30, fontFamily: 'Poppins',
               fill: '#78350F', fontSize: 7.5, fontWeight: 'bold',
               originX: 'center', textAlign: 'center', selectable: false
             });
@@ -594,7 +575,7 @@
         "key": "YOUR_RAZORPAY_KEY_ID",
         "amount": 4900,
         "currency": "INR",
-        "name": "Click Vectora Studio",
+        "name": "Click Vectora Solution",
         "description": "HD Print Calendar Export",
         "handler": function (response) {
           const dataURL = canvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 / canvas.getZoom() });
