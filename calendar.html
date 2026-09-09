@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Universal Document & Image to PDF Converter Pro</title>
   
-  <!-- Core Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
-  <!-- Robust Sheet & Document Parsers -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   
@@ -250,31 +248,26 @@
 
   <div id="loadingOverlay">Processing file, please wait...</div>
 
-  <!-- Enhanced Fullscreen Preview Zoom Modal -->
   <div id="zoomModal" onclick="closeZoomModal()">
     <div style="position: absolute; top: 20px; right: 30px; color: white; font-size: 2rem; cursor: pointer;">&times;</div>
     <img id="zoomImage" src="" alt="Zoomed Preview">
     <p style="color: white; margin-top: 15px; font-weight: 500;" id="zoomCaption"></p>
   </div>
 
-  <!-- Header -->
   <header class="minimal-header">
     <div class="brand-group">
       <a href="index.html" style="text-decoration:none;">
         <button class="secondary" style="padding: 8px 14px;">🏠 Home</button>
       </a>
-      <img src="logo.png" alt="ClickVectora Logo" onerror="this.style.display='none';" class="header-logo">
+      <img src="1000270004.png" alt="ClickVectora Logo" onerror="this.style.display='none';" class="header-logo">
       <h1 class="header-title-text">Document to PDF Studio</h1>
     </div>
   </header>
 
-  <!-- Workspace -->
   <div class="workspace">
     
-    <!-- Left Sidebar Controls -->
     <div class="control-sidebar">
       
-      <!-- Upload Section -->
       <div class="panel-card">
         <h3>1. Add Files</h3>
         <button onclick="document.getElementById('fileLoader').click()" style="width:100%; padding: 12px;">
@@ -284,7 +277,6 @@
         <span style="font-size: 0.75rem; color: var(--text-muted); text-align: center;">Images, PDF, Word, Excel, CSV, Text</span>
       </div>
 
-      <!-- Page Settings -->
       <div class="panel-card">
         <h3>2. PDF Configuration</h3>
         
@@ -306,7 +298,6 @@
         </div>
       </div>
 
-      <!-- Action & Export -->
       <div class="panel-card">
         <h3>3. Generate & Export</h3>
         <button class="danger" onclick="clearAllFiles()" style="width:100%;">🗑️ Clear All Pages</button>
@@ -315,7 +306,6 @@
 
     </div>
 
-    <!-- Right Preview Area -->
     <div class="preview-area" id="previewArea">
       <div class="empty-state" id="emptyState">
         <div class="empty-icon">📄</div>
@@ -328,15 +318,14 @@
 
   </div>
 
-  <!-- Payment Modal -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
       <h3 style="font-size: 1.2rem; margin-bottom: 8px;">Unlock HD PDF Export</h3>
       <p style="color: var(--text-muted); font-size: 0.9rem;">Watermark-free High-Resolution Multi-Page Compilation</p>
-      <div style="font-size: 1.8rem; font-weight:700; color:var(--primary); margin:16px 0;">₹49</div>
+      <div style="font-size: 1.8rem; font-weight:700; color:var(--primary); margin:16px 0;">₹49 <span style="font-size:0.75rem; background:#FEF3C7; color:#D97706; padding:2px 6px; border-radius:4px; vertical-align:middle;">TEST MODE</span></div>
       <div style="display: flex; gap: 8px;">
         <button class="secondary" style="flex:1;" onclick="closeModal()">Cancel</button>
-        <button style="flex:1;" onclick="processRazorpay()">Pay Securely</button>
+        <button style="flex:1;" onclick="processRazorpay()">Pay Securely (Test)</button>
       </div>
     </div>
   </div>
@@ -557,12 +546,13 @@
     function processRazorpay() {
       closeModal();
       var options = {
-        "key": "rzp_live_TVvsN7S7XsvpRb",
-        "amount": 4900,
+        "key": "rzp_test_1DP5mmOlF5G5ag", // Official Razorpay Test Key
+        "amount": 4900, // ₹49.00
         "currency": "INR",
         "name": "ClickVectora Solution",
-        "description": "Multi-Page PDF Compilation Payment",
+        "description": "Multi-Page PDF Compilation Test",
         "handler": function (response) {
+          alert("Test Payment Successful! ID: " + response.razorpay_payment_id);
           generateAndDownloadPDF();
         },
         "theme": { "color": "#2563EB" }
