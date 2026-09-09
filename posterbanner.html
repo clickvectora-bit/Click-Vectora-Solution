@@ -230,7 +230,7 @@
     }
 
     .modal-templates {
-      width: 760px !important;
+      width: 780px !important;
       max-width: 95% !important;
       text-align: left !important;
     }
@@ -382,10 +382,11 @@
     <div class="canvas-viewport-container">
 
       <!-- Formats, Background, Print Guides & 3D Popup Trigger Bar -->
-      <div class="floating-panel" style="margin-bottom: 10px; width: 100%; max-width: 920px; justify-content: center; gap: 6px; flex-wrap: wrap;">
+      <div class="floating-panel" style="margin-bottom: 10px; width: 100%; max-width: 960px; justify-content: center; gap: 6px; flex-wrap: wrap;">
         <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Sizes:</span>
         <button id="fmt-a4" class="secondary active-format" onclick="setFormat('a4')">📄 A4</button>
         <button id="fmt-a3" class="secondary" onclick="setFormat('a3')">📰 A3</button>
+        <button id="fmt-standee" class="secondary" onclick="setFormat('standee')">🏛️ Standee</button>
         <button id="fmt-yt" class="secondary" onclick="setFormat('yt')">🖼️ YT Thumb</button>
         <button id="fmt-banner" class="secondary" onclick="setFormat('banner')">🏷️ Banner</button>
         
@@ -525,6 +526,30 @@
       <p style="font-size: 0.85rem; color: var(--text-muted);">Select a professional multi-element design template packed with vectors and custom layouts:</p>
       
       <div class="template-grid">
+        <div class="template-card" onclick="loadTemplate('standee')">
+          <h4>🏛️ Rollup Standee</h4>
+          <p>Vertical exhibition display banner with bold headers & contact info.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('medical')">
+          <h4>🏥 Medical & Health</h4>
+          <p>Clean clinical blue theme with wellness checkups & emergency hotline.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('startup')">
+          <h4>🚀 Startup Pitch Deck</h4>
+          <p>Modern gradient pitch layout for investor presentations & launches.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('eco')">
+          <h4>🌿 Eco & Organic</h4>
+          <p>Earthy green tones highlighting sustainability & natural products.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('restaurant')">
+          <h4>🍔 Food & Restaurant</h4>
+          <p>Appetizing vibrant layout for cafe specials & menu promotions.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('education')">
+          <h4>📚 Education & Courses</h4>
+          <p>Structured academic admissions & skill training workshop flyer.</p>
+        </div>
         <div class="template-card" onclick="loadTemplate('birthday')">
           <h4>🎂 Birthday Party</h4>
           <p>Joyful festive balloons, celebratory cake banner & party invite.</p>
@@ -564,10 +589,6 @@
         <div class="template-card" onclick="loadTemplate('sale')">
           <h4>🏷️ Flash Sale Blast</h4>
           <p>High-energy visual grid with dynamic discount callouts.</p>
-        </div>
-        <div class="template-card" onclick="loadTemplate('event')">
-          <h4>🎉 Festival & Party</h4>
-          <p>Vibrant multi-shape layers designed for maximum buzz.</p>
         </div>
         <div class="template-card" onclick="loadTemplate('youtube')">
           <h4>▶️ High-CTR Thumbnail</h4>
@@ -683,6 +704,7 @@
     const formats = {
       a4: { width: 615, height: 869, name: 'A4 Poster' },
       a3: { width: 615, height: 869, name: 'A3 Poster' },
+      standee: { width: 450, height: 1200, name: 'Rollup Standee Banner' },
       yt: { width: 770, height: 432, name: 'YouTube Thumbnail' },
       banner: { width: 770, height: 308, name: 'Web Banner' }
     };
@@ -772,7 +794,102 @@
       canvas.clear();
       const fmt = formats[currentFormatKey];
 
-      if (templateType === 'birthday') {
+      if (templateType === 'standee') {
+        setFormat('standee');
+        canvas.setBackgroundColor('#0F172A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0F172A';
+
+        const topBadgeBg = new fabric.Rect({ left: 35, top: 40, width: fmt.width - 70, height: 160, fill: '#FF6B00', rx: 12, ry: 12 });
+        const topBadgeTxt = new fabric.IText('EXHIBITION\nSTAND', { left: fmt.width / 2 - 110, top: 65, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 32, fontWeight: '900', textAlign: 'center', lineHeight: 1.1 });
+        
+        const mainTitle = new fabric.IText('ELEVATE YOUR\nBRAND PRESENCE', { left: 35, top: 250, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 26, fontWeight: '900', lineHeight: 1.2 });
+        const subtitle = new fabric.IText('Discover premium innovative software & design solutions tailored for your business growth.', { left: 35, top: 350, width: fmt.width - 70, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 14 });
+
+        const featureCard = new fabric.Rect({ left: 35, top: 460, width: fmt.width - 70, height: 180, fill: '#1E293B', rx: 10, ry: 10 });
+        const featTxt = new fabric.IText('✨ High Quality Visuals\n✨ Custom Web Apps\n✨ 24/7 Dedicated Support\n✨ Scalable SaaS Systems', { left: 55, top: 485, fontFamily: 'Poppins', fill: '#E2E8F0', fontSize: 14, lineHeight: 1.6 });
+
+        const bottomBox = new fabric.Rect({ left: 35, top: fmt.height - 220, width: fmt.width - 70, height: 160, fill: '#FF6B00', rx: 10, ry: 10 });
+        const contactTxt = new fabric.IText('📞 GET IN TOUCH\nhello@clickvectorasolution.com\n+91 98765 43210', { left: fmt.width / 2 - 130, top: fmt.height - 195, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 15, fontWeight: 'bold', textAlign: 'center', lineHeight: 1.5 });
+
+        canvas.add(topBadgeBg, topBadgeTxt, mainTitle, subtitle, featureCard, featTxt, bottomBox, contactTxt);
+      }
+      else if (templateType === 'medical') {
+        canvas.setBackgroundColor('#F0FDF4', () => {});
+        document.getElementById('posterBgColorPicker').value = '#F0FDF4';
+
+        const topBanner = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: 130, fill: '#0284C7', rx: 12, ry: 12 });
+        const iconTxt = new fabric.IText('🏥', { left: 50, top: 55, fontSize: 42 });
+        const title = new fabric.IText('HEALTHCARE &\nWELLNESS CLINIC', { left: 110, top: 55, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 24, fontWeight: '900', lineHeight: 1.1 });
+        
+        const card1 = new fabric.Rect({ left: 45, top: 190, width: fmt.width - 90, height: 90, fill: '#FFFFFF', stroke: '#BAE6FD', strokeWidth: 1, rx: 8, ry: 8 });
+        const cardTxt1 = new fabric.IText('🩺 Comprehensive Health Checkup\n✔️ Blood Test, ECG & Doctor Consultation', { left: 65, top: 210, fontFamily: 'Poppins', fill: '#0F172A', fontSize: 14, lineHeight: 1.4 });
+
+        const card2 = new fabric.Rect({ left: 45, top: 300, width: fmt.width - 90, height: 90, fill: '#FFFFFF', stroke: '#BAE6FD', strokeWidth: 1, rx: 8, ry: 8 });
+        const cardTxt2 = new fabric.IText('🕒 Open Monday to Saturday (9 AM - 8 PM)\n📞 Emergency Helpline: +91 98765 43210', { left: 65, top: 320, fontFamily: 'Poppins', fill: '#0F172A', fontSize: 14, lineHeight: 1.4 });
+
+        canvas.add(topBanner, iconTxt, title, card1, cardTxt1, card2, cardTxt2);
+      }
+      else if (templateType === 'startup') {
+        canvas.setBackgroundColor('#0F172A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0F172A';
+
+        const glowCircle = new fabric.Circle({ left: fmt.width - 160, top: -40, radius: 120, fill: '#3B82F6', opacity: 0.3 });
+        const badgeBg = new fabric.Rect({ left: 45, top: 50, width: 150, height: 32, fill: '#3B82F6', rx: 4, ry: 4 });
+        const badgeTxt = new fabric.IText('SEED ROUND', { left: 60, top: 56, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 13, fontWeight: 'bold' });
+        
+        const title = new fabric.IText('DISRUPTING\nFUTURE TECH', { left: 45, top: 110, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 36, fontWeight: '900', lineHeight: 1.1 });
+        const desc = new fabric.IText('Empowering next-gen automated workflows with robust cloud infrastructure.', { left: 45, top: 210, width: fmt.width - 90, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 15 });
+
+        const statBox = new fabric.Rect({ left: 45, top: fmt.height - 180, width: fmt.width - 90, height: 90, fill: '#1E293B', rx: 8, ry: 8 });
+        const statTxt = new fabric.IText('📈 300% YoY Growth  |  🌍 50k+ Active Users', { left: 65, top: fmt.height - 150, fontFamily: 'Poppins', fill: '#38BDF8', fontSize: 15, fontWeight: 'bold' });
+
+        canvas.add(glowCircle, badgeBg, badgeTxt, title, desc, statBox, statTxt);
+      }
+      else if (templateType === 'eco') {
+        canvas.setBackgroundColor('#ECFDF5', () => {});
+        document.getElementById('posterBgColorPicker').value = '#ECFDF5';
+
+        const frame = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#10B981', strokeWidth: 2, rx: 12, ry: 12 });
+        const topEmoji = new fabric.IText('🌿🌍', { left: fmt.width / 2 - 40, top: 70, fontSize: 44 });
+        const title = new fabric.IText('100% ORGANIC & SUSTAINABLE', { left: fmt.width / 2 - 160, top: 140, fontFamily: 'Montserrat', fill: '#047857', fontSize: 24, fontWeight: '900', textAlign: 'center' });
+        const subtitle = new fabric.IText('Protecting our planet with eco-friendly packaging and ethically sourced ingredients.', { left: 55, top: 210, width: fmt.width - 110, fontFamily: 'Poppins', fill: '#065F46', fontSize: 15, textAlign: 'center' });
+
+        const ctaBox = new fabric.Rect({ left: 60, top: fmt.height - 160, width: fmt.width - 120, height: 60, fill: '#10B981', rx: 8, ry: 8 });
+        const ctaTxt = new fabric.IText('🌱 JOIN THE GREEN MOVEMENT', { left: fmt.width / 2 - 135, top: fmt.height - 138, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: 'bold' });
+
+        canvas.add(frame, topEmoji, title, subtitle, ctaBox, ctaTxt);
+      }
+      else if (templateType === 'restaurant') {
+        canvas.setBackgroundColor('#FFFBEB', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FFFBEB';
+
+        const headerBg = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: 140, fill: '#D97706', rx: 10, ry: 10 });
+        const emoji = new fabric.IText('🍔🍟🥤', { left: fmt.width / 2 - 65, top: 50, fontSize: 36 });
+        const title = new fabric.IText('CRISPY COMBO MEAL', { left: fmt.width / 2 - 145, top: 105, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 26, fontWeight: '900' });
+        
+        const priceTag = new fabric.Rect({ left: fmt.width / 2 - 90, top: 200, width: 180, height: 60, fill: '#EF4444', rx: 30, ry: 30 });
+        const priceTxt = new fabric.IText('ONLY ₹199', { left: fmt.width / 2 - 70, top: 215, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 24, fontWeight: '900' });
+
+        const desc = new fabric.IText('Freshly prepared gourmet burger, crispy golden fries and refreshing drink.', { left: 50, top: 300, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#78350F', fontSize: 15, textAlign: 'center' });
+
+        canvas.add(headerBg, emoji, title, priceTag, priceTxt, desc);
+      }
+      else if (templateType === 'education') {
+        canvas.setBackgroundColor('#EFF6FF', () => {});
+        document.getElementById('posterBgColorPicker').value = '#EFF6FF';
+
+        const topBadge = new fabric.Rect({ left: 40, top: 40, width: 180, height: 34, fill: '#2563EB', rx: 4, ry: 4 });
+        const badgeTxt = new fabric.IText('ADMISSIONS OPEN', { left: 52, top: 47, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 13, fontWeight: 'bold' });
+
+        const title = new fabric.IText('MASTER FULL STACK\nWEB DEVELOPMENT', { left: 40, top: 100, fontFamily: 'Montserrat', fill: '#1E3A8A', fontSize: 32, fontWeight: '900', lineHeight: 1.1 });
+        const subtitle = new fabric.IText('Learn React, Node.js, Python & SQL with live mentorship and guaranteed placement assistance.', { left: 40, top: 200, width: fmt.width - 80, fontFamily: 'Poppins', fill: '#334155', fontSize: 15 });
+
+        const btnBox = new fabric.Rect({ left: 40, top: fmt.height - 150, width: 220, height: 55, fill: '#1D4ED8', rx: 8, ry: 8 });
+        const btnTxt = new fabric.IText('ENROLL NOW ➔', { left: 75, top: fmt.height - 132, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 16, fontWeight: 'bold' });
+
+        canvas.add(topBadge, badgeTxt, title, subtitle, btnBox, btnTxt);
+      }
+      else if (templateType === 'birthday') {
         canvas.setBackgroundColor('#FEF3C7', () => {});
         document.getElementById('posterBgColorPicker').value = '#FEF3C7';
 
@@ -921,19 +1038,6 @@
         const desc = new fabric.IText('Limited Time Offer across all store items & services!', { left: 50, top: 300, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 16, fontWeight: '600' });
 
         canvas.add(circleShape, tagTitle, discountCard, discount, desc);
-      }
-      else if (templateType === 'event') {
-        canvas.setBackgroundColor('#7C3AED', () => {});
-        document.getElementById('posterBgColorPicker').value = '#7C3AED';
-
-        const polyDecor = new fabric.Triangle({ left: fmt.width - 150, top: 30, width: 120, height: 120, fill: '#8B5CF6', opacity: 0.5 });
-        const title = new fabric.IText('SUMMER FEST 2026', { left: 50, top: 80, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 34, fontWeight: 'bold' });
-        const subtitle = new fabric.IText('Live Music, Food & Creative Exhibitions', { left: 50, top: 135, fontFamily: 'Poppins', fill: '#E9D5FF', fontSize: 17 });
-        
-        const dateBox = new fabric.Rect({ left: 50, top: fmt.height - 160, width: fmt.width - 100, height: 75, fill: '#FFFFFF', rx: 10, ry: 10 });
-        const dateText = new fabric.IText('📅 SATURDAY, 7 PM ONWARDS', { left: 75, top: fmt.height - 135, fontFamily: 'Poppins', fill: '#7C3AED', fontSize: 17, fontWeight: 'bold' });
-
-        canvas.add(polyDecor, title, subtitle, dateBox, dateText);
       }
       else if (templateType === 'youtube') {
         setFormat('yt');
