@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Business Card Studio Pro</title>
+  <title>Poster & Banner Studio Pro</title>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
@@ -26,7 +26,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; touch-action: manipulation; }
     body { display: flex; flex-direction: column; height: 100vh; background: var(--bg-workspace); color: var(--text-main); overflow: hidden; }
 
-    /* Header Styling */
+    /* Header */
     .minimal-header {
       width: 100%;
       background: #FFFFFF;
@@ -81,7 +81,8 @@
     button:hover, .btn-home:hover { background: var(--primary-hover); }
     button.secondary { background: #FFF; color: var(--text-main); border: 1px solid #CBD5E1; }
     button.secondary:hover { background: #F8FAFC; border-color: #64748B; }
-    button.active-side { background: #0F172A; color: white; }
+    button.active-format { background: #0F172A; color: white; border-color: #0F172A; }
+    button.active-toggle { background: #10B981; color: white; border-color: #10B981; }
     button.danger { background: #EF4444; }
     button.danger:hover { background: #DC2626; }
 
@@ -102,14 +103,15 @@
       width: 100%;
       height: 100%;
       display: flex;
-      align-items: flex-start;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       position: relative;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 24px 10px 30px 10px !important;
+      padding: 22px 14px 72px 14px;
       background: radial-gradient(#94A3B8 1px, transparent 1px);
       background-size: 14px 14px;
+      scroll-behavior: smooth;
     }
 
     .canvas-viewport-container {
@@ -137,8 +139,8 @@
     .top-tools-panel {
       position: relative;
       width: 100%;
-      max-width: 780px;
-      margin-bottom: 8px;
+      max-width: 890px;
+      margin-bottom: 10px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-around;
@@ -158,17 +160,9 @@
       text-align: center;
     }
 
-    .canvas-top-controls {
-      margin-bottom: 8px;
-      z-index: 20;
-      position: relative;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
     .object-inspector-panel {
       position: relative;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       display: none;
       flex-wrap: wrap;
       justify-content: center;
@@ -182,10 +176,8 @@
       transition: all 0.3s ease;
       max-width: 100%;
       overflow: hidden;
-    }
-
-    .canvas-container-wrapper.rounded {
-      border-radius: 16px;
+      border-radius: 4px;
+      margin-bottom: 13px;
     }
 
     .canvas-bottom-controls-group {
@@ -193,7 +185,8 @@
       flex-direction: column;
       align-items: center;
       gap: 6px;
-      margin-top: 8px;
+      margin-top: 10px;
+      margin-bottom: 36px;
       z-index: 20;
       width: 100%;
     }
@@ -210,19 +203,20 @@
       .header-title-text { font-size: 1.4rem; }
       .header-logo { height: 60px; }
       .top-tools-panel { gap: 6px; padding: 6px; }
-      .top-tools-panel > div { flex: 1; min-width: 110px; }
+      .top-tools-panel > div { flex: 1; min-width: 90px; }
     }
 
+    /* Modals */
     .modal-overlay {
       position: fixed;
-      top:0; left:0; right:0; bottom:0;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(4px);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(6px);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 1000;
-      padding: 10px;
+      padding: 15px;
     }
     
     .modal {
@@ -235,70 +229,76 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
     }
 
-    /* Template Library Modal Styling */
     .modal-templates {
-      width: 850px !important;
+      width: 780px !important;
       max-width: 95% !important;
-      max-height: 85vh;
-      display: flex;
-      flex-direction: column;
-      padding: 24px !important;
+      text-align: left !important;
     }
 
-    .templates-grid {
+    .template-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+      max-height: 420px;
       overflow-y: auto;
-      padding: 10px;
-      max-height: 60vh;
-      margin-top: 12px;
+      margin: 15px 0;
+      padding: 4px;
     }
 
     .template-card {
-      background: #F8FAFC;
-      border: 2px solid #E2E8F0;
-      border-radius: 10px;
-      padding: 14px;
+      border: 2px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 12px;
       cursor: pointer;
       transition: all 0.2s ease;
-      text-align: left;
+      background: #F8FAFC;
     }
-
     .template-card:hover {
       border-color: var(--primary);
+      background: #FFF7ED;
       transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+    .template-card h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--text-main); }
+    .template-card p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* Clipart Modal */
+    .modal-clipart {
+      width: 620px !important;
+      max-width: 95% !important;
+      text-align: left !important;
     }
 
-    .template-card h4 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 4px;
+    .clipart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      max-height: 360px;
+      overflow-y: auto;
+      margin: 15px 0;
+      padding: 4px;
     }
 
-    .template-card p {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-
-    .template-preview-box {
-      width: 100%;
-      height: 90px;
-      background: #FFF;
-      border-radius: 6px;
+    .clipart-card {
       border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      text-align: center;
+      background: #F8FAFC;
+      transition: all 0.2s ease;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.75rem;
-      color: #64748B;
+      gap: 6px;
     }
+    .clipart-card:hover {
+      border-color: var(--primary);
+      background: #FFF7ED;
+      transform: translateY(-2px);
+    }
+    .clipart-icon { font-size: 2rem; }
+    .clipart-label { font-size: 0.8rem; font-weight: 600; color: var(--text-main); }
 
-    /* 3D Preview Modal Styling */
     .modal-3d {
       width: 720px !important;
       max-width: 95% !important;
@@ -306,9 +306,9 @@
       background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     }
 
-    .card-3d-viewport {
+    .poster-3d-viewport {
       width: 100%;
-      height: 360px;
+      height: 380px;
       perspective: 1400px;
       margin: 15px auto;
       display: flex;
@@ -318,21 +318,17 @@
       user-select: none;
       position: relative;
     }
-    .card-3d-viewport:active { cursor: grabbing; }
+    .poster-3d-viewport:active { cursor: grabbing; }
 
-    .card-3d-scene {
-      width: 440px;
-      height: 251px;
+    .poster-3d-scene {
+      width: 320px;
+      height: 452px;
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.1s ease-out;
     }
 
-    @media (max-width: 600px) {
-      .card-3d-scene { width: 300px; height: 171px; }
-    }
-
-    .card-3d-face {
+    .poster-3d-face {
       position: absolute;
       width: 100%;
       height: 100%;
@@ -344,10 +340,7 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255,255,255,0.2);
     }
 
-    .card-3d-face.front { z-index: 2; }
-    .card-3d-face.back { transform: rotateY(180deg); }
-
-    .card-3d-face::after {
+    .poster-3d-face::after {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -373,19 +366,6 @@
     </div>
   </div>
 
-  <!-- Templates Library Modal -->
-  <div class="modal-overlay" id="templatesModal">
-    <div class="modal modal-templates">
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 12px;">
-        <h3 style="font-size: 1.3rem; font-weight: 700;">🎨 Professional Design Templates</h3>
-        <button class="secondary" style="padding: 4px 10px;" onclick="closeTemplatesModal()">✕ Close</button>
-      </div>
-      <div class="templates-grid" id="templatesGridContainer">
-        <!-- Templates populated dynamically via JS -->
-      </div>
-    </div>
-  </div>
-
   <!-- Header -->
   <header class="minimal-header">
     <div class="brand-group">
@@ -393,10 +373,7 @@
         <button class="secondary" style="padding: 10px 16px; font-size: 0.95rem;">🏠 Home</button>
       </a>
       <img src="ClickVectora Logo - Copy.png" alt="Logo" onerror="this.src='logo.png'; this.onerror=function(){this.style.display='none';}" class="header-logo">
-      <h1 class="header-title-text">Business Card Studio</h1>
-    </div>
-    <div>
-      <button style="background: #10B981; font-size: 0.95rem;" onclick="openTemplatesModal()">📋 Templates (18)</button>
+      <h1 class="header-title-text">Poster & Banner Studio</h1>
     </div>
   </header>
 
@@ -404,27 +381,44 @@
   <div class="workspace" id="workspace">
     <div class="canvas-viewport-container">
 
-      <!-- Orientation, Format, Background & Undo/Redo Bar -->
-      <div class="floating-panel" style="margin-bottom: 8px; width: 100%; max-width: 780px; justify-content: center; gap: 8px; flex-wrap: wrap;">
-        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Card Layout:</span>
-        <button class="secondary" onclick="setOrientation('horizontal')" title="Horizontal Card">📐 Horiz</button>
-        <button class="secondary" onclick="setOrientation('vertical')" title="Vertical Card">📏 Vert</button>
-        <button class="secondary" onclick="toggleRounded()">⭕ Radius</button>
+      <!-- Formats, Background, Print Guides & 3D Popup Trigger Bar -->
+      <div class="floating-panel" style="margin-bottom: 10px; width: 100%; max-width: 960px; justify-content: center; gap: 6px; flex-wrap: wrap;">
+        <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Sizes:</span>
+        <button id="fmt-a4" class="secondary active-format" onclick="setFormat('a4')">📄 A4</button>
+        <button id="fmt-a3" class="secondary" onclick="setFormat('a3')">📰 A3</button>
+        <button id="fmt-standee" class="secondary" onclick="setFormat('standee')">🏛️ Standee</button>
+        <button id="fmt-yt" class="secondary" onclick="setFormat('yt')">🖼️ YT Thumb</button>
+        <button id="fmt-banner" class="secondary" onclick="setFormat('banner')">🏷️ Banner</button>
         
         <div style="display: flex; align-items: center; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
           <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted);">BG:</span>
-          <input type="color" id="cardBgColorPicker" onchange="setCanvasBackground(this.value)" value="#ffffff" title="Card Background Color">
+          <input type="color" id="posterBgColorPicker" onchange="setCanvasBackground(this.value)" value="#ffffff" title="Canvas Background Color">
           <button class="secondary" style="padding: 2px 6px; font-size: 0.65rem;" onclick="setCanvasBackground('transparent')">None</button>
         </div>
 
         <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
-          <button class="secondary" style="padding: 4px 10px;" onclick="undo()" title="Undo (10 Steps)">↩️ Undo</button>
-          <button class="secondary" style="padding: 4px 10px;" onclick="redo()" title="Redo (10 Steps)">↪️ Redo</button>
+          <button id="btnToggleGuides" class="secondary" onclick="togglePrintGuides()" title="Toggle Bleed, Trim & Safety Lines">📏 Guides: OFF</button>
+          <button style="background: #8B5CF6; color: white;" onclick="open3DPreview()" title="Open 3D Interactive Presentation">✨ 3D Preview</button>
+        </div>
+
+        <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
+          <button class="secondary" style="padding: 4px 8px;" onclick="undo()" title="Undo (10 Steps)">↩️</button>
+          <button class="secondary" style="padding: 4px 8px;" onclick="redo()" title="Redo (10 Steps)">↪️</button>
         </div>
       </div>
 
       <!-- Top Tools Panel -->
       <div class="floating-panel top-tools-panel">
+        <div>
+          <div class="panel-section-title">Templates</div>
+          <button style="background: #0EA5E9; width:100%;" onclick="openTemplatesModal()">✨ Templates</button>
+        </div>
+
+        <div>
+          <div class="panel-section-title">Clipart</div>
+          <button style="background: #10B981; width:100%;" onclick="openClipartModal()">🎨 Clipart</button>
+        </div>
+
         <div>
           <div class="panel-section-title">Add Text</div>
           <button style="width:100%;" onclick="addText()">+ Text</button>
@@ -451,17 +445,10 @@
         <div>
           <div class="panel-section-title">QR Code</div>
           <div style="display:flex; gap:3px;">
-            <input type="text" id="qrInput" placeholder="URL/UPI">
+            <input type="text" id="qrInput" placeholder="URL/Text">
             <button onclick="addQRCode()">+ QR</button>
           </div>
         </div>
-      </div>
-      
-      <!-- Top Canvas Controls -->
-      <div class="floating-panel canvas-top-controls">
-        <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
-        <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
-        <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D Preview</button>
       </div>
 
       <!-- Object Inspector Overlay -->
@@ -512,19 +499,13 @@
 
       <!-- Canvas Box -->
       <div class="canvas-container-wrapper" id="canvasWrapper">
-        <canvas id="cardCanvas"></canvas>
+        <canvas id="posterCanvas"></canvas>
       </div>
 
-      <!-- Bottom Controls -->
+      <!-- Bottom Export Controls -->
       <div class="canvas-bottom-controls-group">
-        <div class="floating-panel" style="position:relative; flex-wrap:wrap; justify-content:center;">
-          <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed: ON</button>
-          <button class="secondary" id="trimBtn" onclick="toggleGuide('trim')">Trim: ON</button>
-          <button class="secondary" id="safetyBtn" onclick="toggleGuide('safety')">Safety: ON</button>
-        </div>
-
         <div class="floating-panel canvas-export-controls">
-          <span style="font-size:0.7rem; font-weight:600; color:var(--text-muted);">Exports:</span>
+          <span style="font-size:0.7rem; font-weight:600; color:var(--text-muted);">HD Exports:</span>
           <div style="display:flex; gap:4px;">
             <button style="background: #10B981; padding: 5px 10px;" onclick="initiatePayment('png')">Download PNG</button>
             <button style="background: #2563EB; padding: 5px 10px;" onclick="initiatePayment('pdf')">Download PDF</button>
@@ -535,23 +516,169 @@
     </div>
   </div>
 
-  <!-- Upgraded 3D Preview Modal -->
+  <!-- Templates Selection Modal -->
+  <div class="modal-overlay" id="templatesModal">
+    <div class="modal modal-templates">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">✨ Occasion & Industry Templates</h3>
+        <button class="secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="closeTemplatesModal()">✕</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Select a professional multi-element design template packed with vectors and custom layouts:</p>
+      
+      <div class="template-grid">
+        <div class="template-card" onclick="loadTemplate('standee')">
+          <h4>🏛️ Rollup Standee</h4>
+          <p>Vertical exhibition display banner with bold headers & contact info.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('medical')">
+          <h4>🏥 Medical & Health</h4>
+          <p>Clean clinical blue theme with wellness checkups & emergency hotline.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('startup')">
+          <h4>🚀 Startup Pitch Deck</h4>
+          <p>Modern gradient pitch layout for investor presentations & launches.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('eco')">
+          <h4>🌿 Eco & Organic</h4>
+          <p>Earthy green tones highlighting sustainability & natural products.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('restaurant')">
+          <h4>🍔 Food & Restaurant</h4>
+          <p>Appetizing vibrant layout for cafe specials & menu promotions.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('education')">
+          <h4>📚 Education & Courses</h4>
+          <p>Structured academic admissions & skill training workshop flyer.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('birthday')">
+          <h4>🎂 Birthday Party</h4>
+          <p>Joyful festive balloons, celebratory cake banner & party invite.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('wedding')">
+          <h4>💍 Wedding & Reception</h4>
+          <p>Elegant golden typography, floral romance & invitation layout.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('festival')">
+          <h4>🪔 Festive Celebration</h4>
+          <p>Vibrant traditional deepavali/diwali glowing festive greeting.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('opening')">
+          <h4>🏢 Grand Opening</h4>
+          <p>High-buzz ribbon cut announcement & opening banner.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('fitness')">
+          <h4>💪 Fitness & Gym</h4>
+          <p>High-energy intense workout challenge & training poster.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('realestate')">
+          <h4>🏡 Real Estate Property</h4>
+          <p>Professional open house & property listing banner.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('cybertech')">
+          <h4>🚀 Cyber-Tech UI</h4>
+          <p>Modern dark-mode aesthetic with neon accent frames & badges.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('neobrutal')">
+          <h4>🎨 Neo-Brutalism</h4>
+          <p>High-impact bold blocks, vibrant contrast boxes & heavy frames.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('business')">
+          <h4>💼 Corporate Pro</h4>
+          <p>Clean geometry and structured dual-tone professional layout.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('sale')">
+          <h4>🏷️ Flash Sale Blast</h4>
+          <p>High-energy visual grid with dynamic discount callouts.</p>
+        </div>
+        <div class="template-card" onclick="loadTemplate('youtube')">
+          <h4>▶️ High-CTR Thumbnail</h4>
+          <p>Optimized focal blocks tailored for YouTube engagement.</p>
+        </div>
+      </div>
+
+      <button style="width: 100%; margin-top: 10px;" onclick="closeTemplatesModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Clipart & Elements Library Modal -->
+  <div class="modal-overlay" id="clipartModal">
+    <div class="modal modal-clipart">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">🎨 Clipart & Design Elements</h3>
+        <button class="secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="closeClipartModal()">✕</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Click any element below to insert it instantly onto your canvas:</p>
+      
+      <div class="clipart-grid">
+        <div class="clipart-card" onclick="addClipartElement('⭐', 'Burst Star')">
+          <span class="clipart-icon">⭐</span>
+          <span class="clipart-label">Burst Star</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🔥', 'Fire Flame')">
+          <span class="clipart-icon">🔥</span>
+          <span class="clipart-label">Hot / Trend</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('✅', 'Check Badge')">
+          <span class="clipart-icon">✅</span>
+          <span class="clipart-label">Verified Check</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🏷️', 'Discount Tag')">
+          <span class="clipart-icon">🏷️</span>
+          <span class="clipart-label">Offer Tag</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('💡', 'Idea Bulb')">
+          <span class="clipart-icon">💡</span>
+          <span class="clipart-label">Idea & Tip</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('📍', 'Location Pin')">
+          <span class="clipart-icon">📍</span>
+          <span class="clipart-label">Location Pin</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🛡️', 'Shield Badge')">
+          <span class="clipart-icon">🛡️</span>
+          <span class="clipart-label">Security Shield</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🎁', 'Gift Box')">
+          <span class="clipart-icon">🎁</span>
+          <span class="clipart-label">Bonus / Gift</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('🚀', 'Rocket Boost')">
+          <span class="clipart-icon">🚀</span>
+          <span class="clipart-label">Fast Growth</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('👑', 'Crown Icon')">
+          <span class="clipart-icon">👑</span>
+          <span class="clipart-label">Premium Crown</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('❤️', 'Heart Icon')">
+          <span class="clipart-icon">❤️</span>
+          <span class="clipart-label">Like / Love</span>
+        </div>
+        <div class="clipart-card" onclick="addClipartElement('⚡', 'Lightning Bolt')">
+          <span class="clipart-icon">⚡</span>
+          <span class="clipart-label">Fast Action</span>
+        </div>
+      </div>
+
+      <button style="width: 100%; margin-top: 10px;" onclick="closeClipartModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Interactive 3D Preview Modal -->
   <div class="modal-overlay" id="preview3DModal">
     <div class="modal modal-3d">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <h3 style="font-size: 1.1rem; font-weight: 700;">✨ Interactive 3D Card Simulation</h3>
+        <h3 style="font-size: 1.1rem; font-weight: 700;">✨ Interactive 3D Design Simulation</h3>
         <span style="font-size: 0.75rem; color: var(--text-muted);">Click & Drag to Rotate</span>
       </div>
 
-      <div class="card-3d-viewport" id="card3dViewport">
-        <div class="card-3d-scene" id="card3dScene">
-          <div class="card-3d-face front" id="card3dFront"></div>
-          <div class="card-3d-face back" id="card3dBack"></div>
+      <div class="poster-3d-viewport" id="poster3dViewport">
+        <div class="poster-3d-scene" id="poster3dScene">
+          <div class="poster-3d-face front" id="poster3dFace"></div>
         </div>
       </div>
       
       <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-        <button class="secondary" style="padding: 6px 16px;" onclick="flip3DCardModel()">🔄 Flip Side</button>
         <button class="secondary" style="padding: 6px 16px;" onclick="reset3DRotation()">🎯 Reset View</button>
         <button style="padding: 6px 16px; background: #0F172A;" onclick="close3DModal()">Close Preview</button>
       </div>
@@ -561,8 +688,8 @@
   <!-- Payment Modal -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
-      <h3>Unlock HD Download</h3>
-      <p>Print-Ready Vectors without Print Guides</p>
+      <h3>Unlock HD Poster Export</h3>
+      <p>Watermark-free High-Resolution Download</p>
       <div style="font-size: 1.8rem; font-weight:700; color:var(--primary); margin:8px 0;">₹49</div>
       <div style="display: flex; gap: 8px; margin-top: 10px;">
         <button class="secondary" style="flex:1;" onclick="closeModal()">Cancel</button>
@@ -574,31 +701,23 @@
   <div id="qrcode-hidden"></div>
 
   <script>
-    const BASE_WIDTH = 1000;
-    const BASE_HEIGHT = 571;
+    const formats = {
+      a4: { width: 615, height: 869, name: 'A4 Poster' },
+      a3: { width: 615, height: 869, name: 'A3 Poster' },
+      standee: { width: 450, height: 1200, name: 'Rollup Standee Banner' },
+      yt: { width: 770, height: 432, name: 'YouTube Thumbnail' },
+      banner: { width: 770, height: 308, name: 'Web Banner' }
+    };
 
-    const BLEED_MARGIN = 10;
-    const TRIM_MARGIN = 22;
-    const SAFETY_MARGIN = 42;
-
-    let currentSide = 'front';
-    let canvasStates = { front: [], back: [] };
-    
-    let historyStack = { front: [], back: [] };
-    let redoStack = { front: [], back: [] };
+    let currentFormatKey = 'a4';
+    let canvasFormatsData = {};
+    let historyStack = {};
+    let redoStack = {};
     let isApplyingHistory = false;
-
-    let showBleed = true;
-    let showTrim = true;
-    let showSafety = true;
-
-    let guideObjects = { bleed: null, trim: null, safety: null };
-
-    let isRounded = false;
     let selectedExportType = 'png';
-    let currentOrientation = 'horizontal';
+    let showPrintGuides = false;
 
-    let canvas = new fabric.Canvas('cardCanvas', {
+    let canvas = new fabric.Canvas('posterCanvas', {
       backgroundColor: '#ffffff',
       preserveObjectStacking: true,
       allowTouchScrolling: false,
@@ -612,236 +731,7 @@
     canvas.on('object:added', () => saveHistory());
     canvas.on('object:modified', () => saveHistory());
     canvas.on('object:removed', () => saveHistory());
-
-    // 18 Professional Templates Collection
-    const templatesList = [
-      {
-        id: 't1', name: 'Modern Dark Tech', category: 'Tech / Startup',
-        bg: '#0F172A',
-        objects: [
-          { type: 'rect', left: 60, top: 60, width: 880, height: 451, fill: '#1E293B', rx: 12, ry: 12, stroke: '#38BDF8', strokeWidth: 2 },
-          { type: 'i-text', left: 100, top: 180, text: 'ALEX RIVERA', fontSize: 38, fontFamily: 'Poppins', fill: '#FFFFFF', fontWeight: 'bold' },
-          { type: 'i-text', left: 100, top: 235, text: 'Chief Technology Officer', fontSize: 18, fontFamily: 'Poppins', fill: '#38BDF8', fontWeight: '500' },
-          { type: 'i-text', left: 100, top: 340, text: 'alex@techstartup.io  |  +1 (555) 019-2834', fontSize: 14, fontFamily: 'Roboto', fill: '#94A3B8' }
-        ]
-      },
-      {
-        id: 't2', name: 'Executive Minimalist', category: 'Corporate',
-        bg: '#FFFFFF',
-        objects: [
-          { type: 'rect', left: 50, top: 50, width: 12, height: 471, fill: '#0F172A' },
-          { type: 'i-text', left: 90, top: 190, text: 'VIKRAM SHARMA', fontSize: 36, fontFamily: 'Montserrat', fill: '#0F172A', fontWeight: 'bold' },
-          { type: 'i-text', left: 90, top: 245, text: 'MANAGING DIRECTOR', fontSize: 14, fontFamily: 'Montserrat', fill: '#64748B', fontWeight: '600' },
-          { type: 'i-text', left: 90, top: 330, text: 'vikram@corporategroup.com  •  New Delhi, IN', fontSize: 13, fontFamily: 'Roboto', fill: '#334155' }
-        ]
-      },
-      {
-        id: 't3', name: 'Creative Studio Vibe', category: 'Design & Art',
-        bg: '#FFF7ED',
-        objects: [
-          { type: 'rect', left: 700, top: 0, width: 300, height: 571, fill: '#FF6B00' },
-          { type: 'i-text', left: 80, top: 180, text: 'ANANYA ROY', fontSize: 40, fontFamily: 'Playfair Display', fill: '#0F172A', fontWeight: 'bold' },
-          { type: 'i-text', left: 80, top: 240, text: 'Senior UI/UX Designer', fontSize: 16, fontFamily: 'Poppins', fill: '#EA580C', fontWeight: '600' },
-          { type: 'i-text', left: 80, top: 340, text: 'hello@ananyadesign.com  |  behance.net/ananya', fontSize: 13, fontFamily: 'Roboto', fill: '#475569' }
-        ]
-      },
-      {
-        id: 't4', name: 'Luxury Gold Crest', category: 'High-End / Premium',
-        bg: '#111827',
-        objects: [
-          { type: 'rect', left: 50, top: 50, width: 900, height: 471, fill: 'transparent', stroke: '#D97706', strokeWidth: 2 },
-          { type: 'i-text', left: 120, top: 190, text: 'ARJUN V. KAPOOR', fontSize: 34, fontFamily: 'Playfair Display', fill: '#FBBF24', fontWeight: 'bold' },
-          { type: 'i-text', left: 120, top: 250, text: 'FOUNDER & PRINCIPAL ARCHITECT', fontSize: 12, fontFamily: 'Montserrat', fill: '#9CA3AF', letterSpacing: 2 },
-          { type: 'i-text', left: 120, top: 340, text: 'arjun@kapoorarchitects.com  |  Mumbai', fontSize: 13, fontFamily: 'Roboto', fill: '#E5E7EB' }
-        ]
-      },
-      {
-        id: 't5', name: 'Fresh Organic Green', category: 'Eco / Natural',
-        bg: '#F0FDF4',
-        objects: [
-          { type: 'rect', left: 0, top: 0, width: 280, height: 571, fill: '#16A34A' },
-          { type: 'i-text', left: 320, top: 180, text: 'ROHIT VERMA', fontSize: 36, fontFamily: 'Poppins', fill: '#166534', fontWeight: 'bold' },
-          { type: 'i-text', left: 320, top: 235, text: 'Organic Agro Consultant', fontSize: 16, fontFamily: 'Poppins', fill: '#15803D', fontWeight: '500' },
-          { type: 'i-text', left: 320, top: 330, text: 'rohit@greenagro.org  |  +91 98765 43210', fontSize: 13, fontFamily: 'Roboto', fill: '#3F6212' }
-        ]
-      },
-      {
-        id: 't6', name: 'Vibrant Agency Red', category: 'Marketing',
-        bg: '#FFF1F2',
-        objects: [
-          { type: 'triangle', left: 750, top: -50, width: 350, height: 400, fill: '#E11D48', angle: 45 },
-          { type: 'i-text', left: 80, top: 190, text: 'NEHA GUPTA', fontSize: 38, fontFamily: 'Montserrat', fill: '#881337', fontWeight: 'bold' },
-          { type: 'i-text', left: 80, top: 245, text: 'Digital Marketing Strategist', fontSize: 16, fontFamily: 'Poppins', fill: '#E11D48', fontWeight: '600' },
-          { type: 'i-text', left: 80, top: 340, text: 'neha@growthboost.in  |  New Delhi', fontSize: 13, fontFamily: 'Roboto', fill: '#4C0519' }
-        ]
-      },
-      {
-        id: 't7', name: 'Classic Finance Blue', category: 'Finance / Legal',
-        bg: '#1E3A8A',
-        objects: [
-          { type: 'rect', left: 60, top: 60, width: 880, height: 451, fill: '#1E40AF', rx: 8, ry: 8 },
-          { type: 'i-text', left: 100, top: 180, text: 'RAJESH K. MEHTA', fontSize: 36, fontFamily: 'Roboto', fill: '#FFFFFF', fontWeight: 'bold' },
-          { type: 'i-text', left: 100, top: 235, text: 'Senior Financial Advisor, CFP', fontSize: 16, fontFamily: 'Roboto', fill: '#93C5FD', fontWeight: '400' },
-          { type: 'i-text', left: 100, top: 340, text: 'rajesh@mehtafinancial.com  |  Ahmedabad', fontSize: 13, fontFamily: 'Roboto', fill: '#BFDBFE' }
-        ]
-      },
-      {
-        id: 't8', name: 'Medical & Healthcare', category: 'Medical',
-        bg: '#F8FAFC',
-        objects: [
-          { type: 'rect', left: 0, top: 0, width: 1000, height: 110, fill: '#0EA5E9' },
-          { type: 'i-text', left: 80, top: 30, text: 'DR. PRIYA SHARMA', fontSize: 32, fontFamily: 'Poppins', fill: '#FFFFFF', fontWeight: 'bold' },
-          { type: 'i-text', left: 80, top: 220, text: 'M.D. Pediatrics & Neonatology', fontSize: 18, fontFamily: 'Poppins', fill: '#0369A1', fontWeight: '600' },
-          { type: 'i-text', left: 80, top: 340, text: 'City Care Hospital, Sector 18  |  +91 91234 56789', fontSize: 13, fontFamily: 'Roboto', fill: '#334155' }
-        ]
-      },
-      {
-        id: 't9', name: 'Real Estate Professional', category: 'Real Estate',
-        bg: '#FEF3C7',
-        objects: [
-          { type: 'rect', left: 50, top: 50, width: 900, height: 471, fill: '#FFFBEB', stroke: '#D97706', strokeWidth: 1 },
-          { type: 'i-text', left: 100, top: 180, text: 'KABIR MALHOTRA', fontSize: 36, fontFamily: 'Montserrat', fill: '#78350F', fontWeight: 'bold' },
-          { type: 'i-text', left: 100, top: 235, text: 'Principal Realtor & Property Consultant', fontSize: 15, fontFamily: 'Poppins', fill: '#B45309', fontWeight: '600' },
-          { type: 'i-text', left: 100, top: 340, text: 'kabir@primeestates.com  |  Gurugram', fontSize: 13, fontFamily: 'Roboto', fill: '#92400E' }
-        ]
-      },
-      {
-        id: 't10', name: 'Photography & Portfolio', category: 'Photography',
-        bg: '#000000',
-        objects: [
-          { type: 'circle', left: 120, top: 200, radius: 70, fill: '#333333' },
-          { type: 'i-text', left: 300, top: 190, text: 'SIMRAN KAUR', fontSize: 38, fontFamily: 'Playfair Display', fill: '#FFFFFF', fontWeight: 'bold' },
-          { type: 'i-text', left: 300, top: 250, text: 'WEDDING & FASHION PHOTOGRAPHER', fontSize: 13, fontFamily: 'Montserrat', fill: '#A3A3A3', letterSpacing: 2 },
-          { type: 'i-text', left: 300, top: 340, text: 'simran@lenscraft.studio  |  @simranframes', fontSize: 13, fontFamily: 'Roboto', fill: '#D4D4D4' }
-        ]
-      },
-      {
-        id: 't11', name: 'Modern Gradient Violet', category: 'Creative',
-        bg: '#581C87',
-        objects: [
-          { type: 'rect', left: 40, top: 40, width: 920, height: 491, fill: '#7C3AED', rx: 16, ry: 16 },
-          { type: 'i-text', left: 100, top: 190, text: 'KUNAL DESHMUKH', fontSize: 38, fontFamily: 'Poppins', fill: '#FFFFFF', fontWeight: 'bold' },
-          { type: 'i-text', left: 100, top: 245, text: 'Full Stack Engineer & Consultant', fontSize: 16, fontFamily: 'Poppins', fill: '#DDD6FE', fontWeight: '500' },
-          { type: 'i-text', left: 100, top: 340, text: 'kunal@devstudio.io  |  Pune, India', fontSize: 13, fontFamily: 'Roboto', fill: '#EDE9FE' }
-        ]
-      },
-      {
-        id: 't12', name: 'Minimalist Monogram', category: 'Minimalist',
-        bg: '#FAFAF9',
-        objects: [
-          { type: 'rect', left: 80, top: 170, width: 100, height: 230, fill: '#1C1917' },
-          { type: 'i-text', left: 110, top: 250, text: 'A', fontSize: 60, fontFamily: 'Playfair Display', fill: '#FFFFFF', fontWeight: 'bold' },
-          { type: 'i-text', left: 240, top: 200, text: 'AMITABH ROY', fontSize: 34, fontFamily: 'Montserrat', fill: '#1C1917', fontWeight: 'bold' },
-          { type: 'i-text', left: 240, top: 250, text: 'Creative Director', fontSize: 14, fontFamily: 'Montserrat', fill: '#78716C', fontWeight: '600' },
-          { type: 'i-text', left: 240, top: 340, text: 'amitabh@roycreatives.com', fontSize: 13, fontFamily: 'Roboto', fill: '#44403C' }
-        ]
-      },
-      {
-        id: 't13', name: 'Bold Cyberpunk Yellow', category: 'Trendy',
-        bg: '#FEF08A',
-        objects: [
-          { type: 'rect', left: 0, top: 0, width: 320, height: 571, fill: '#000000' },
-          { type: 'i-text', left: 360, top: 180, text: 'ZUBER KHAN', fontSize: 38, fontFamily: 'Poppins', fill: '#111827', fontWeight: 'bold' },
-          { type: 'i-text', left: 360, top: 235, text: 'Game Developer & Animator', fontSize: 16, fontFamily: 'Poppins', fill: '#854D0E', fontWeight: '600' },
-          { type: 'i-text', left: 360, top: 340, text: 'zuber@pixelcraft.games  |  Bengaluru', fontSize: 13, fontFamily: 'Roboto', fill: '#713F12' }
-        ]
-      },
-      {
-        id: 't14', name: 'Café & Bakery Artisan', category: 'Hospitality',
-        bg: '#451A03',
-        objects: [
-          { type: 'rect', left: 40, top: 40, width: 920, height: 491, fill: '#78350F', rx: 10, ry: 10 },
-          { type: 'i-text', left: 100, top: 180, text: 'MEERA NAIR', fontSize: 36, fontFamily: 'Playfair Display', fill: '#FEF3C7', fontWeight: 'bold' },
-          { type: 'i-text', left: 100, top: 240, text: 'Master Pastry Chef & Owner', fontSize: 15, fontFamily: 'Poppins', fill: '#FDE68A', fontWeight: '500' },
-          { type: 'i-text', left: 100, top: 340, text: 'meera@crustandcrumb.in  |  Kochi', fontSize: 13, fontFamily: 'Roboto', fill: '#FFFBEB' }
-        ]
-      },
-      {
-        id: 't15', name: 'Fitness & Gym Coach', category: 'Fitness',
-        bg: '#18181B',
-        objects: [
-          { type: 'rect', left: 0, top: 0, width: 1000, height: 80, fill: '#EF4444' },
-          { type: 'i-text', left: 80, top: 190, text: 'KABIR SINGH', fontSize: 38, fontFamily: 'Montserrat', fill: '#FFFFFF', fontWeight: 'bold' },
-          { type: 'i-text', left: 80, top: 245, text: 'Elite Fitness & CrossFit Trainer', fontSize: 16, fontFamily: 'Poppins', fill: '#EF4444', fontWeight: '600' },
-          { type: 'i-text', left: 80, top: 340, text: 'kabir@apexfitness.gym  |  +91 99887 76655', fontSize: 13, fontFamily: 'Roboto', fill: '#A1A1AA' }
-        ]
-      },
-      {
-        id: 't16', name: 'Lawyer & Legal Firm', category: 'Legal',
-        bg: '#FDF8F6',
-        objects: [
-          { type: 'rect', left: 50, top: 50, width: 900, height: 471, fill: '#FFFFFF', stroke: '#7C2D12', strokeWidth: 2 },
-          { type: 'i-text', left: 100, top: 180, text: 'ADVOCATE S. R. JAIN', fontSize: 34, fontFamily: 'Playfair Display', fill: '#431407', fontWeight: 'bold' },
-          { type: 'i-text', left: 100, top: 240, text: 'Supreme Court & High Court Practice', fontSize: 14, fontFamily: 'Montserrat', fill: '#7C2D12', fontWeight: '600' },
-          { type: 'i-text', left: 100, top: 340, text: 'chamber@jainassociates.law  |  New Delhi', fontSize: 13, fontFamily: 'Roboto', fill: '#57534E' }
-        ]
-      },
-      {
-        id: 't17', name: 'Salon & Spa Elegance', category: 'Beauty',
-        bg: '#FCE7F3',
-        objects: [
-          { type: 'rect', left: 60, top: 60, width: 880, height: 451, fill: '#FBCFE8', rx: 12, ry: 12 },
-          { type: 'i-text', left: 100, top: 180, text: 'TANVI SHROFF', fontSize: 36, fontFamily: 'Playfair Display', fill: '#831843', fontWeight: 'bold' },
-          { type: 'i-text', left: 100, top: 240, text: 'Hair Stylist & Makeup Artist', fontSize: 15, fontFamily: 'Poppins', fill: '#9D174D', fontWeight: '600' },
-          { type: 'i-text', left: 100, top: 340, text: 'tanvi@glamsalon.in  |  Bandra, Mumbai', fontSize: 13, fontFamily: 'Roboto', fill: '#500724' }
-        ]
-      },
-      {
-        id: 't18', name: 'Automotive & Detailing', category: 'Automotive',
-        bg: '#09090B',
-        objects: [
-          { type: 'rect', left: 0, top: 480, width: 1000, height: 91, fill: '#F59E0B' },
-          { type: 'i-text', left: 100, top: 180, text: 'SPEEDLINE MOTORS', fontSize: 38, fontFamily: 'Montserrat', fill: '#FFFFFF', fontWeight: 'bold' },
-          { type: 'i-text', left: 100, top: 235, text: 'Premium Car Detailing & PPF Studio', fontSize: 15, fontFamily: 'Poppins', fill: '#F59E0B', fontWeight: '600' },
-          { type: 'i-text', left: 100, top: 340, text: 'info@speedline.auto  |  Chandigarh', fontSize: 13, fontFamily: 'Roboto', fill: '#A1A1AA' }
-        ]
-      }
-    ];
-
-    function openTemplatesModal() {
-      const container = document.getElementById('templatesGridContainer');
-      container.innerHTML = '';
-
-      templatesList.forEach(tpl => {
-        const card = document.createElement('div');
-        card.className = 'template-card';
-        card.innerHTML = `
-          <h4>${tpl.name}</h4>
-          <p>${tpl.category}</p>
-          <div class="template-preview-box" style="background: ${tpl.bg}; color: ${tpl.bg === '#000000' || tpl.bg === '#0F172A' || tpl.bg === '#111827' || tpl.bg === '#1E3A8A' || tpl.bg === '#581C87' || tpl.bg === '#451A03' || tpl.bg === '#18181B' || tpl.bg === '#09090B' ? '#FFF' : '#000'}">
-            ${tpl.name.split(' ')[0]}
-          </div>
-        `;
-        card.onclick = () => loadTemplate(tpl);
-        container.appendChild(card);
-      });
-
-      document.getElementById('templatesModal').style.display = 'flex';
-    }
-
-    function closeTemplatesModal() {
-      document.getElementById('templatesModal').style.display = 'none';
-    }
-
-    function loadTemplate(tpl) {
-      closeTemplatesModal();
-      canvas.clear();
-      canvas.setBackgroundColor(tpl.bg, () => {
-        document.getElementById('cardBgColorPicker').value = tpl.bg === 'transparent' ? '#ffffff' : tpl.bg;
-        
-        // Load custom JSON objects
-        const jsonState = {
-          version: "5.3.1",
-          objects: tpl.objects
-        };
-
-        canvas.loadFromJSON(jsonState, () => {
-          renderPrintGuides();
-          saveHistory();
-          resizeCanvasToFitContainer();
-        });
-      });
-    }
+    canvas.on('after:render', drawPrintGuides);
 
     function closeNoticeModal() {
       document.getElementById('noticeModal').style.display = 'none';
@@ -849,57 +739,552 @@
       saveHistory();
     }
 
+    function togglePrintGuides() {
+      showPrintGuides = !showPrintGuides;
+      const btn = document.getElementById('btnToggleGuides');
+      if (showPrintGuides) {
+        btn.className = 'secondary active-toggle';
+        btn.innerText = '📏 Guides: ON';
+      } else {
+        btn.className = 'secondary';
+        btn.innerText = '📏 Guides: OFF';
+      }
+      canvas.requestRenderAll();
+    }
+
+    /* Modal Controls */
+    function openTemplatesModal() {
+      document.getElementById('templatesModal').style.display = 'flex';
+    }
+
+    function closeTemplatesModal() {
+      document.getElementById('templatesModal').style.display = 'none';
+    }
+
+    function openClipartModal() {
+      document.getElementById('clipartModal').style.display = 'flex';
+    }
+
+    function closeClipartModal() {
+      document.getElementById('clipartModal').style.display = 'none';
+    }
+
+    /* Clipart Insertion Engine */
+    function addClipartElement(emoji, label) {
+      closeClipartModal();
+      const fmt = formats[currentFormatKey];
+      
+      const textObj = new fabric.IText(emoji, {
+        left: (fmt.width / 2) - 40,
+        top: (fmt.height / 2) - 40,
+        fontSize: 72,
+        textAlign: 'center',
+        selectable: true
+      });
+
+      canvas.add(textObj);
+      canvas.setActiveObject(textObj);
+      canvas.requestRenderAll();
+      saveHistory();
+    }
+
+    /* Graphic Template Presets Engine */
+    function loadTemplate(templateType) {
+      closeTemplatesModal();
+      canvas.clear();
+      const fmt = formats[currentFormatKey];
+
+      if (templateType === 'standee') {
+        setFormat('standee');
+        canvas.setBackgroundColor('#0F172A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0F172A';
+
+        const topBadgeBg = new fabric.Rect({ left: 35, top: 40, width: fmt.width - 70, height: 160, fill: '#FF6B00', rx: 12, ry: 12 });
+        const topBadgeTxt = new fabric.IText('EXHIBITION\nSTAND', { left: fmt.width / 2 - 110, top: 65, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 32, fontWeight: '900', textAlign: 'center', lineHeight: 1.1 });
+        
+        const mainTitle = new fabric.IText('ELEVATE YOUR\nBRAND PRESENCE', { left: 35, top: 250, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 26, fontWeight: '900', lineHeight: 1.2 });
+        const subtitle = new fabric.IText('Discover premium innovative software & design solutions tailored for your business growth.', { left: 35, top: 350, width: fmt.width - 70, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 14 });
+
+        const featureCard = new fabric.Rect({ left: 35, top: 460, width: fmt.width - 70, height: 180, fill: '#1E293B', rx: 10, ry: 10 });
+        const featTxt = new fabric.IText('✨ High Quality Visuals\n✨ Custom Web Apps\n✨ 24/7 Dedicated Support\n✨ Scalable SaaS Systems', { left: 55, top: 485, fontFamily: 'Poppins', fill: '#E2E8F0', fontSize: 14, lineHeight: 1.6 });
+
+        const bottomBox = new fabric.Rect({ left: 35, top: fmt.height - 220, width: fmt.width - 70, height: 160, fill: '#FF6B00', rx: 10, ry: 10 });
+        const contactTxt = new fabric.IText('📞 GET IN TOUCH\nhello@clickvectorasolution.com\n+91 98765 43210', { left: fmt.width / 2 - 130, top: fmt.height - 195, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 15, fontWeight: 'bold', textAlign: 'center', lineHeight: 1.5 });
+
+        canvas.add(topBadgeBg, topBadgeTxt, mainTitle, subtitle, featureCard, featTxt, bottomBox, contactTxt);
+      }
+      else if (templateType === 'medical') {
+        canvas.setBackgroundColor('#F0FDF4', () => {});
+        document.getElementById('posterBgColorPicker').value = '#F0FDF4';
+
+        const topBanner = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: 130, fill: '#0284C7', rx: 12, ry: 12 });
+        const iconTxt = new fabric.IText('🏥', { left: 50, top: 55, fontSize: 42 });
+        const title = new fabric.IText('HEALTHCARE &\nWELLNESS CLINIC', { left: 110, top: 55, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 24, fontWeight: '900', lineHeight: 1.1 });
+        
+        const card1 = new fabric.Rect({ left: 45, top: 190, width: fmt.width - 90, height: 90, fill: '#FFFFFF', stroke: '#BAE6FD', strokeWidth: 1, rx: 8, ry: 8 });
+        const cardTxt1 = new fabric.IText('🩺 Comprehensive Health Checkup\n✔️ Blood Test, ECG & Doctor Consultation', { left: 65, top: 210, fontFamily: 'Poppins', fill: '#0F172A', fontSize: 14, lineHeight: 1.4 });
+
+        const card2 = new fabric.Rect({ left: 45, top: 300, width: fmt.width - 90, height: 90, fill: '#FFFFFF', stroke: '#BAE6FD', strokeWidth: 1, rx: 8, ry: 8 });
+        const cardTxt2 = new fabric.IText('🕒 Open Monday to Saturday (9 AM - 8 PM)\n📞 Emergency Helpline: +91 98765 43210', { left: 65, top: 320, fontFamily: 'Poppins', fill: '#0F172A', fontSize: 14, lineHeight: 1.4 });
+
+        canvas.add(topBanner, iconTxt, title, card1, cardTxt1, card2, cardTxt2);
+      }
+      else if (templateType === 'startup') {
+        canvas.setBackgroundColor('#0F172A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0F172A';
+
+        const glowCircle = new fabric.Circle({ left: fmt.width - 160, top: -40, radius: 120, fill: '#3B82F6', opacity: 0.3 });
+        const badgeBg = new fabric.Rect({ left: 45, top: 50, width: 150, height: 32, fill: '#3B82F6', rx: 4, ry: 4 });
+        const badgeTxt = new fabric.IText('SEED ROUND', { left: 60, top: 56, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 13, fontWeight: 'bold' });
+        
+        const title = new fabric.IText('DISRUPTING\nFUTURE TECH', { left: 45, top: 110, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 36, fontWeight: '900', lineHeight: 1.1 });
+        const desc = new fabric.IText('Empowering next-gen automated workflows with robust cloud infrastructure.', { left: 45, top: 210, width: fmt.width - 90, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 15 });
+
+        const statBox = new fabric.Rect({ left: 45, top: fmt.height - 180, width: fmt.width - 90, height: 90, fill: '#1E293B', rx: 8, ry: 8 });
+        const statTxt = new fabric.IText('📈 300% YoY Growth  |  🌍 50k+ Active Users', { left: 65, top: fmt.height - 150, fontFamily: 'Poppins', fill: '#38BDF8', fontSize: 15, fontWeight: 'bold' });
+
+        canvas.add(glowCircle, badgeBg, badgeTxt, title, desc, statBox, statTxt);
+      }
+      else if (templateType === 'eco') {
+        canvas.setBackgroundColor('#ECFDF5', () => {});
+        document.getElementById('posterBgColorPicker').value = '#ECFDF5';
+
+        const frame = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#10B981', strokeWidth: 2, rx: 12, ry: 12 });
+        const topEmoji = new fabric.IText('🌿🌍', { left: fmt.width / 2 - 40, top: 70, fontSize: 44 });
+        const title = new fabric.IText('100% ORGANIC & SUSTAINABLE', { left: fmt.width / 2 - 160, top: 140, fontFamily: 'Montserrat', fill: '#047857', fontSize: 24, fontWeight: '900', textAlign: 'center' });
+        const subtitle = new fabric.IText('Protecting our planet with eco-friendly packaging and ethically sourced ingredients.', { left: 55, top: 210, width: fmt.width - 110, fontFamily: 'Poppins', fill: '#065F46', fontSize: 15, textAlign: 'center' });
+
+        const ctaBox = new fabric.Rect({ left: 60, top: fmt.height - 160, width: fmt.width - 120, height: 60, fill: '#10B981', rx: 8, ry: 8 });
+        const ctaTxt = new fabric.IText('🌱 JOIN THE GREEN MOVEMENT', { left: fmt.width / 2 - 135, top: fmt.height - 138, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: 'bold' });
+
+        canvas.add(frame, topEmoji, title, subtitle, ctaBox, ctaTxt);
+      }
+      else if (templateType === 'restaurant') {
+        canvas.setBackgroundColor('#FFFBEB', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FFFBEB';
+
+        const headerBg = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: 140, fill: '#D97706', rx: 10, ry: 10 });
+        const emoji = new fabric.IText('🍔🍟🥤', { left: fmt.width / 2 - 65, top: 50, fontSize: 36 });
+        const title = new fabric.IText('CRISPY COMBO MEAL', { left: fmt.width / 2 - 145, top: 105, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 26, fontWeight: '900' });
+        
+        const priceTag = new fabric.Rect({ left: fmt.width / 2 - 90, top: 200, width: 180, height: 60, fill: '#EF4444', rx: 30, ry: 30 });
+        const priceTxt = new fabric.IText('ONLY ₹199', { left: fmt.width / 2 - 70, top: 215, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 24, fontWeight: '900' });
+
+        const desc = new fabric.IText('Freshly prepared gourmet burger, crispy golden fries and refreshing drink.', { left: 50, top: 300, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#78350F', fontSize: 15, textAlign: 'center' });
+
+        canvas.add(headerBg, emoji, title, priceTag, priceTxt, desc);
+      }
+      else if (templateType === 'education') {
+        canvas.setBackgroundColor('#EFF6FF', () => {});
+        document.getElementById('posterBgColorPicker').value = '#EFF6FF';
+
+        const topBadge = new fabric.Rect({ left: 40, top: 40, width: 180, height: 34, fill: '#2563EB', rx: 4, ry: 4 });
+        const badgeTxt = new fabric.IText('ADMISSIONS OPEN', { left: 52, top: 47, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 13, fontWeight: 'bold' });
+
+        const title = new fabric.IText('MASTER FULL STACK\nWEB DEVELOPMENT', { left: 40, top: 100, fontFamily: 'Montserrat', fill: '#1E3A8A', fontSize: 32, fontWeight: '900', lineHeight: 1.1 });
+        const subtitle = new fabric.IText('Learn React, Node.js, Python & SQL with live mentorship and guaranteed placement assistance.', { left: 40, top: 200, width: fmt.width - 80, fontFamily: 'Poppins', fill: '#334155', fontSize: 15 });
+
+        const btnBox = new fabric.Rect({ left: 40, top: fmt.height - 150, width: 220, height: 55, fill: '#1D4ED8', rx: 8, ry: 8 });
+        const btnTxt = new fabric.IText('ENROLL NOW ➔', { left: 75, top: fmt.height - 132, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 16, fontWeight: 'bold' });
+
+        canvas.add(topBadge, badgeTxt, title, subtitle, btnBox, btnTxt);
+      }
+      else if (templateType === 'birthday') {
+        canvas.setBackgroundColor('#FEF3C7', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FEF3C7';
+
+        const frameBox = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#F59E0B', strokeWidth: 3, rx: 12, ry: 12 });
+        const topEmoji = new fabric.IText('🎂🎈🎉', { left: fmt.width / 2 - 75, top: 70, fontSize: 48, selectable: true });
+        const title = new fabric.IText('HAPPY BIRTHDAY', { left: fmt.width / 2 - 145, top: 140, fontFamily: 'Montserrat', fill: '#B45309', fontSize: 32, fontWeight: '900', textAlign: 'center' });
+        const subtitle = new fabric.IText('Join us for an unforgettable celebration!', { left: fmt.width / 2 - 160, top: 210, fontFamily: 'Poppins', fill: '#78350F', fontSize: 16, textAlign: 'center' });
+        
+        const detailsBox = new fabric.Rect({ left: 55, top: fmt.height - 220, width: fmt.width - 110, height: 110, fill: '#FFFFFF', rx: 8, ry: 8, shadow: 'rgba(0,0,0,0.1) 0px 8px 16px' });
+        const detailsTxt = new fabric.IText('📅 Date: This Saturday, 6 PM\n📍 Venue: Grand Celebration Hall\n🎁 RSVP Required', { left: 80, top: fmt.height - 200, fontFamily: 'Poppins', fill: '#1E293B', fontSize: 14, lineHeight: 1.5 });
+
+        canvas.add(frameBox, topEmoji, title, subtitle, detailsBox, detailsTxt);
+      }
+      else if (templateType === 'wedding') {
+        canvas.setBackgroundColor('#FFF1F2', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FFF1F2';
+
+        const frameBox = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#E11D48', strokeWidth: 2, rx: 8, ry: 8 });
+        const topEmoji = new fabric.IText('💍✨', { left: fmt.width / 2 - 40, top: 70, fontSize: 44 });
+        const title = new fabric.IText('SAVE THE DATE', { left: fmt.width / 2 - 130, top: 140, fontFamily: 'Playfair Display', fill: '#9F1239', fontSize: 30, fontWeight: 'bold' });
+        const names = new fabric.IText('Aarav & Priya', { left: fmt.width / 2 - 110, top: 200, fontFamily: 'Playfair Display', fill: '#4C0519', fontSize: 36, fontWeight: 'bold' });
+        const subtitle = new fabric.IText('Together with their families invite you to celebrate their wedding reception.', { left: 60, top: 270, width: fmt.width - 120, fontFamily: 'Poppins', fill: '#881337', fontSize: 15, textAlign: 'center' });
+        
+        const venue = new fabric.IText('Grand Palace Gardens | 7:00 PM Onwards', { left: fmt.width / 2 - 165, top: fmt.height - 90, fontFamily: 'Poppins', fill: '#9F1239', fontSize: 14, fontWeight: '600' });
+
+        canvas.add(frameBox, topEmoji, title, names, subtitle, venue);
+      }
+      else if (templateType === 'festival') {
+        canvas.setBackgroundColor('#78350F', () => {});
+        document.getElementById('posterBgColorPicker').value = '#78350F';
+
+        const topEmoji = new fabric.IText('🪔✨🪔', { left: fmt.width / 2 - 75, top: 60, fontSize: 48 });
+        const title = new fabric.IText('HAPPY DIWALI', { left: fmt.width / 2 - 135, top: 130, fontFamily: 'Montserrat', fill: '#FDE047', fontSize: 34, fontWeight: '900' });
+        const subtitle = new fabric.IText('May the festival of lights fill your life with joy, prosperity and endless happiness.', { left: 50, top: 210, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#FEF3C7', fontSize: 16, textAlign: 'center' });
+        
+        const greetingBox = new fabric.Rect({ left: 50, top: fmt.height - 180, width: fmt.width - 100, height: 80, fill: '#451A03', stroke: '#F59E0B', strokeWidth: 1, rx: 8, ry: 8 });
+        const greetTxt = new fabric.IText('Warmest Wishes from Our Family to Yours!', { left: 75, top: fmt.height - 150, fontFamily: 'Poppins', fill: '#FDE047', fontSize: 15, fontWeight: 'bold' });
+
+        canvas.add(topEmoji, title, subtitle, greetingBox, greetTxt);
+      }
+      else if (templateType === 'opening') {
+        canvas.setBackgroundColor('#065F46', () => {});
+        document.getElementById('posterBgColorPicker').value = '#065F46';
+
+        const bannerBox = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#34D399', strokeWidth: 2, rx: 8, ry: 8 });
+        const emoji = new fabric.IText('🏢🎉', { left: fmt.width / 2 - 40, top: 60, fontSize: 44 });
+        const title = new fabric.IText('GRAND OPENING', { left: fmt.width / 2 - 145, top: 130, fontFamily: 'Montserrat', fill: '#6EE7B7', fontSize: 34, fontWeight: '900' });
+        const subtitle = new fabric.IText('We are thrilled to announce the launch of our new branch!', { left: 50, top: 210, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#D1FAE5', fontSize: 16, textAlign: 'center' });
+        
+        const ctaBox = new fabric.Rect({ left: 60, top: fmt.height - 170, width: fmt.width - 120, height: 60, fill: '#047857', rx: 6, ry: 6 });
+        const ctaText = new fabric.IText('📍 Visit Us Today | Special Discounts', { left: fmt.width / 2 - 145, top: fmt.height - 148, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 15, fontWeight: 'bold' });
+
+        canvas.add(bannerBox, emoji, title, subtitle, ctaBox, ctaText);
+      }
+      else if (templateType === 'fitness') {
+        canvas.setBackgroundColor('#18181B', () => {});
+        document.getElementById('posterBgColorPicker').value = '#18181B';
+
+        const accentBar = new fabric.Rect({ left: 40, top: 40, width: 6, height: 120, fill: '#EF4444' });
+        const title = new fabric.IText('TRANSFORM\nYOUR BODY', { left: 65, top: 40, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 38, fontWeight: '900', lineHeight: 1.0 });
+        const subtitle = new fabric.IText('Join the ultimate 30-day endurance and strength challenge.', { left: 65, top: 180, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#A1A1AA', fontSize: 15 });
+        
+        const cardBox = new fabric.Rect({ left: 50, top: 260, width: fmt.width - 100, height: 100, fill: '#27272A', rx: 8, ry: 8 });
+        const cardText = new fabric.IText('⚡ Expert Trainers\n💪 Modern Equipment\n🔥 Personal Diet Plans', { left: 75, top: 275, fontFamily: 'Poppins', fill: '#FAFAFA', fontSize: 14, lineHeight: 1.4 });
+
+        canvas.add(accentBar, title, subtitle, cardBox, cardText);
+      }
+      else if (templateType === 'realestate') {
+        canvas.setBackgroundColor('#1E3A8A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#1E3A8A';
+
+        const topBadge = new fabric.Rect({ left: 50, top: 50, width: 140, height: 34, fill: '#F59E0B', rx: 4, ry: 4 });
+        const badgeTxt = new fabric.IText('FOR SALE', { left: 68, top: 57, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: 'bold' });
+        
+        const title = new fabric.IText('LUXURY VILLA\nFOR SALE', { left: 50, top: 110, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 34, fontWeight: '900', lineHeight: 1.1 });
+        const subtitle = new fabric.IText('Prime Location • 4 Bedrooms • Modern Amenities • Spacious Garden', { left: 50, top: 210, width: fmt.width - 100, fontFamily: 'Poppins', fill: '#93C5FD', fontSize: 15 });
+
+        const contactBox = new fabric.Rect({ left: 50, top: fmt.height - 150, width: fmt.width - 100, height: 65, fill: '#1D4ED8', rx: 6, ry: 6 });
+        const contactTxt = new fabric.IText('📞 Call Now: +91 98765 43210', { left: fmt.width / 2 - 120, top: fmt.height - 128, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 16, fontWeight: 'bold' });
+
+        canvas.add(topBadge, badgeTxt, title, subtitle, contactBox, contactTxt);
+      }
+      else if (templateType === 'cybertech') {
+        canvas.setBackgroundColor('#0B0F19', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0B0F19';
+
+        const outerFrame = new fabric.Rect({ left: 30, top: 30, width: fmt.width - 60, height: fmt.height - 60, fill: 'transparent', stroke: '#00F0FF', strokeWidth: 2, rx: 12, ry: 12 });
+        const accentBlob = new fabric.Circle({ left: fmt.width - 180, top: 50, radius: 80, fill: '#7C3AED', opacity: 0.4 });
+        const badgeBg = new fabric.Rect({ left: 55, top: 55, width: 140, height: 32, fill: '#00F0FF', rx: 4, ry: 4 });
+        const badgeText = new fabric.IText('NEXT-GEN AI', { left: 65, top: 61, fontFamily: 'Montserrat', fill: '#0B0F19', fontSize: 13, fontWeight: 'bold' });
+        
+        const title = new fabric.IText('FUTURE OF\nDIGITAL DESIGN', { left: 55, top: 140, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 34, fontWeight: '900', lineHeight: 1.1 });
+        const subtitle = new fabric.IText('Immersive multi-platform framework & interactive visual systems.', { left: 55, top: 250, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 15 });
+        const bottomCard = new fabric.Rect({ left: 55, top: fmt.height - 110, width: fmt.width - 110, height: 60, fill: '#1E293B', stroke: '#334155', strokeWidth: 1, rx: 8, ry: 8 });
+        const ctaText = new fabric.IText('EXPLORE ECOSYSTEM ➔', { left: 80, top: fmt.height - 90, fontFamily: 'Montserrat', fill: '#00F0FF', fontSize: 16, fontWeight: 'bold' });
+
+        canvas.add(outerFrame, accentBlob, badgeBg, badgeText, title, subtitle, bottomCard, ctaText);
+      }
+      else if (templateType === 'neobrutal') {
+        canvas.setBackgroundColor('#FFF500', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FFF500';
+
+        const shadowBox = new fabric.Rect({ left: 50, top: 50, width: fmt.width - 90, height: fmt.height - 90, fill: '#000000', rx: 0, ry: 0 });
+        const mainBox = new fabric.Rect({ left: 35, top: 35, width: fmt.width - 90, height: fmt.height - 90, fill: '#FFFFFF', stroke: '#000000', strokeWidth: 4, rx: 0, ry: 0 });
+        
+        const tagBox = new fabric.Rect({ left: 65, top: 65, width: 130, height: 40, fill: '#FF0055', stroke: '#000000', strokeWidth: 3 });
+        const tagTxt = new fabric.IText('TREND 2026', { left: 78, top: 73, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: '900' });
+
+        const mainTitle = new fabric.IText('BOLD &\nRAW STYLE', { left: 65, top: 140, fontFamily: 'Montserrat', fill: '#000000', fontSize: 44, fontWeight: '900', lineHeight: 1.0 });
+        const desc = new fabric.IText('High-contrast graphic blocks designed to capture attention instantly.', { left: 65, top: 260, width: fmt.width - 160, fontFamily: 'Poppins', fill: '#334155', fontSize: 15 });
+
+        const btnBg = new fabric.Rect({ left: 65, top: fmt.height - 140, width: 200, height: 50, fill: '#00FFFF', stroke: '#000000', strokeWidth: 3 });
+        const btnTxt = new fabric.IText('GET STARTED', { left: 95, top: fmt.height - 124, fontFamily: 'Montserrat', fill: '#000000', fontSize: 16, fontWeight: '900' });
+
+        canvas.add(shadowBox, mainBox, tagBox, tagTxt, mainTitle, desc, btnBg, btnTxt);
+      }
+      else if (templateType === 'business') {
+        canvas.setBackgroundColor('#0F172A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0F172A';
+
+        const topBanner = new fabric.Rect({ left: 0, top: 0, width: fmt.width, height: 180, fill: '#1E293B' });
+        const accentLine = new fabric.Rect({ left: 50, top: 180, width: fmt.width - 100, height: 4, fill: '#FF6B00' });
+        
+        const title = new fabric.IText('ELEVATE YOUR BUSINESS', { left: 50, top: 60, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 28, fontWeight: 'bold' });
+        const subtitle = new fabric.IText('Professional Graphic & Web Development Solutions', { left: 50, top: 110, fontFamily: 'Poppins', fill: '#94A3B8', fontSize: 15 });
+        
+        const featureBox1 = new fabric.Rect({ left: 50, top: 220, width: fmt.width - 100, height: 60, fill: '#1E293B', rx: 6, ry: 6 });
+        const fText1 = new fabric.IText('✓ Custom Brand Identity & Marketing Collateral', { left: 70, top: 238, fontFamily: 'Poppins', fill: '#E2E8F0', fontSize: 14 });
+
+        const featureBox2 = new fabric.Rect({ left: 50, top: 295, width: fmt.width - 100, height: 60, fill: '#1E293B', rx: 6, ry: 6 });
+        const fText2 = new fabric.IText('✓ High-Performance Web & Mobile Apps', { left: 70, top: 313, fontFamily: 'Poppins', fill: '#E2E8F0', fontSize: 14 });
+
+        const cta = new fabric.IText('CONTACT: hello@clickvectorasolution.com', { left: 50, top: fmt.height - 80, fontFamily: 'Poppins', fill: '#FF6B00', fontSize: 15, fontWeight: 'bold' });
+        
+        canvas.add(topBanner, accentLine, title, subtitle, featureBox1, fText1, featureBox2, fText2, cta);
+      } 
+      else if (templateType === 'sale') {
+        canvas.setBackgroundColor('#FF6B00', () => {});
+        document.getElementById('posterBgColorPicker').value = '#FF6B00';
+
+        const circleShape = new fabric.Circle({ left: fmt.width - 220, top: -50, radius: 140, fill: '#E05D00', opacity: 0.6 });
+        const tagTitle = new fabric.IText('MEGA SALE', { left: 50, top: 60, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 42, fontWeight: '900' });
+        
+        const discountCard = new fabric.Rect({ left: 50, top: 140, width: fmt.width - 100, height: 130, fill: '#FFFFFF', rx: 12, ry: 12, shadow: 'rgba(0,0,0,0.15) 0px 10px 20px' });
+        const discount = new fabric.IText('50% OFF', { left: 80, top: 165, fontFamily: 'Montserrat', fill: '#FF6B00', fontSize: 56, fontWeight: '900' });
+        const desc = new fabric.IText('Limited Time Offer across all store items & services!', { left: 50, top: 300, fontFamily: 'Poppins', fill: '#FFFFFF', fontSize: 16, fontWeight: '600' });
+
+        canvas.add(circleShape, tagTitle, discountCard, discount, desc);
+      }
+      else if (templateType === 'youtube') {
+        setFormat('yt');
+        canvas.setBackgroundColor('#0F172A', () => {});
+        document.getElementById('posterBgColorPicker').value = '#0F172A';
+
+        const accentBox = new fabric.Rect({ left: 30, top: 30, width: 320, height: 372, fill: '#EF4444', rx: 12, ry: 12 });
+        const title = new fabric.IText('HOW TO BUILD\nAWESOME APPS!', { left: 380, top: 110, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 36, fontWeight: '900', lineHeight: 1.1 });
+        const badge = new fabric.Rect({ left: 380, top: 220, width: 180, height: 38, fill: '#10B981', rx: 6, ry: 6 });
+        const badgeTxt = new fabric.IText('100% PRACTICAL', { left: 395, top: 227, fontFamily: 'Montserrat', fill: '#FFFFFF', fontSize: 14, fontWeight: 'bold' });
+
+        canvas.add(accentBox, title, badge, badgeTxt);
+      }
+
+      canvas.renderAll();
+      saveHistory();
+    }
+
+    /* 🚀 NEW: Automated Template Data Binding Engine */
+    function applyTemplateData(dataMapping) {
+      // dataMapping format: { title: "New Title", subtitle: "New Subtitle", contact: "New Phone/Email" }
+      const objects = canvas.getObjects();
+      let textCount = 0;
+
+      objects.forEach(obj => {
+        if (obj.isType('i-text')) {
+          if (textCount === 0 && dataMapping.title) {
+            obj.set('text', dataMapping.title);
+          } else if (textCount === 1 && dataMapping.subtitle) {
+            obj.set('text', dataMapping.subtitle);
+          } else if (textCount >= 2 && dataMapping.contact) {
+            obj.set('text', dataMapping.contact);
+          }
+          textCount++;
+        }
+      });
+
+      canvas.renderAll();
+      saveHistory();
+    }
+
+    /* Upgraded Interactive 3D Preview Engine */
+    let rotX = 0, rotY = 0;
+    let isDragging3D = false;
+    let startX = 0, startY = 0;
+
+    function open3DPreview() {
+      const wasGuideOn = showPrintGuides;
+      if (wasGuideOn) {
+        showPrintGuides = false;
+        canvas.requestRenderAll();
+      }
+
+      const currentData = canvas.toDataURL({ format: 'png', quality: 1 });
+
+      if (wasGuideOn) {
+        showPrintGuides = true;
+        canvas.requestRenderAll();
+      }
+
+      document.getElementById('poster3dFace').style.backgroundImage = `url(${currentData})`;
+
+      const fmt = formats[currentFormatKey];
+      const scene = document.getElementById('poster3dScene');
+      
+      if (fmt.width >= fmt.height) {
+        scene.style.width = '420px';
+        scene.style.height = `${Math.round(420 * (fmt.height / fmt.width))}px`;
+      } else {
+        scene.style.height = '320px';
+        scene.style.width = `${Math.round(320 * (fmt.width / fmt.height))}px`;
+      }
+
+      document.getElementById('preview3DModal').style.display = 'flex';
+      reset3DRotation();
+    }
+
+    const viewport3D = document.getElementById('poster3dViewport');
+    const scene3D = document.getElementById('poster3dScene');
+
+    viewport3D.addEventListener('mousedown', (e) => {
+      isDragging3D = true;
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging3D) return;
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+      
+      rotY += deltaX * 0.6;
+      rotX -= deltaY * 0.6;
+      
+      rotX = Math.max(-60, Math.min(60, rotX));
+      
+      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+
+    window.addEventListener('mouseup', () => { isDragging3D = false; });
+
+    viewport3D.addEventListener('touchstart', (e) => {
+      isDragging3D = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging3D) return;
+      const deltaX = e.touches[0].clientX - startX;
+      const deltaY = e.touches[0].clientY - startY;
+      
+      rotY += deltaX * 0.6;
+      rotX -= deltaY * 0.6;
+      
+      rotX = Math.max(-60, Math.min(60, rotX));
+      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
+
+    window.addEventListener('touchend', () => { isDragging3D = false; });
+
+    function reset3DRotation() {
+      rotX = 0;
+      rotY = 0;
+      scene3D.style.transform = `rotateX(0deg) rotateY(0deg)`;
+    }
+
+    function close3DModal() {
+      document.getElementById('preview3DModal').style.display = 'none';
+    }
+
+    function drawPrintGuides() {
+      if (!showPrintGuides) return;
+      const ctx = canvas.getContext();
+      const w = canvas.width;
+      const h = canvas.height;
+      const zoom = canvas.getZoom();
+
+      ctx.save();
+      ctx.scale(zoom, zoom);
+
+      const bleed = 15;
+      const trim = 30;
+      const safety = 50;
+
+      ctx.strokeStyle = '#EF4444';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.strokeRect(bleed, bleed, w / zoom - (bleed * 2), h / zoom - (bleed * 2));
+
+      ctx.strokeStyle = '#0F172A';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([]);
+      ctx.strokeRect(trim, trim, w / zoom - (trim * 2), h / zoom - (trim * 2));
+
+      ctx.strokeStyle = '#3B82F6';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([6, 3]);
+      ctx.strokeRect(safety, safety, w / zoom - (safety * 2), h / zoom - (safety * 2));
+
+      ctx.restore();
+    }
+
+    function setFormat(key) {
+      if (currentFormatKey === key) return;
+
+      canvasFormatsData[currentFormatKey] = JSON.stringify(canvas.toJSON());
+      currentFormatKey = key;
+      
+      document.querySelectorAll('.floating-panel button[id^="fmt-"]').forEach(btn => btn.className = 'secondary');
+      document.getElementById(`fmt-${key}`).className = 'secondary active-format';
+
+      canvas.clear();
+      canvas.backgroundColor = '#ffffff';
+
+      if (canvasFormatsData[key]) {
+        isApplyingHistory = true;
+        canvas.loadFromJSON(canvasFormatsData[key], () => {
+          resizeCanvasToFitContainer();
+          if (canvas.backgroundColor) {
+            document.getElementById('posterBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
+          }
+          isApplyingHistory = false;
+        });
+      } else {
+        document.getElementById('posterBgColorPicker').value = '#ffffff';
+        resizeCanvasToFitContainer();
+        saveHistory();
+      }
+    }
+
     function saveHistory() {
       if (isApplyingHistory) return;
-      
-      const objects = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
+      if (!historyStack[currentFormatKey]) historyStack[currentFormatKey] = [];
+      if (!redoStack[currentFormatKey]) redoStack[currentFormatKey] = [];
+
       const state = JSON.stringify({
-        objects: objects,
+        objects: canvas.getObjects(),
         background: canvas.backgroundColor
       });
 
-      const currentStack = historyStack[currentSide];
+      const currentStack = historyStack[currentFormatKey];
       if (currentStack.length > 0 && currentStack[currentStack.length - 1] === state) return;
 
       currentStack.push(state);
       if (currentStack.length > 10) currentStack.shift();
-      redoStack[currentSide] = [];
+      redoStack[currentFormatKey] = [];
     }
 
     function undo() {
-      const currentStack = historyStack[currentSide];
-      if (currentStack.length <= 1) return;
+      const currentStack = historyStack[currentFormatKey];
+      if (!currentStack || currentStack.length <= 1) return;
 
       isApplyingHistory = true;
       const currentState = currentStack.pop();
-      redoStack[currentSide].push(currentState);
+      redoStack[currentFormatKey].push(currentState);
 
       const previousState = currentStack[currentStack.length - 1];
       canvas.clear();
       canvas.loadFromJSON(previousState, () => {
         if (canvas.backgroundColor) {
-          document.getElementById('cardBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
+          document.getElementById('posterBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
         }
-        renderPrintGuides();
         isApplyingHistory = false;
         hideInspector();
       });
     }
 
     function redo() {
-      const currentRedoStack = redoStack[currentSide];
-      if (currentRedoStack.length === 0) return;
+      const currentRedoStack = redoStack[currentFormatKey];
+      if (!currentRedoStack || currentRedoStack.length === 0) return;
 
       isApplyingHistory = true;
       const nextState = currentRedoStack.pop();
-      historyStack[currentSide].push(nextState);
+      historyStack[currentFormatKey].push(nextState);
 
       canvas.clear();
       canvas.loadFromJSON(nextState, () => {
         if (canvas.backgroundColor) {
-          document.getElementById('cardBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
+          document.getElementById('posterBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
         }
-        renderPrintGuides();
         isApplyingHistory = false;
         hideInspector();
       });
@@ -911,13 +1296,32 @@
         saveHistory();
       });
       if (color !== 'transparent') {
-        document.getElementById('cardBgColorPicker').value = color;
+        document.getElementById('posterBgColorPicker').value = color;
       }
     }
 
+    function resizeCanvasToFitContainer() {
+      const workspace = document.getElementById('workspace');
+      const maxWidth = workspace.clientWidth - 30;
+      const maxHeight = workspace.clientHeight - 133;
+
+      const fmt = formats[currentFormatKey];
+      let scale = Math.min(maxWidth / fmt.width, maxHeight / fmt.height);
+
+      canvas.setDimensions({
+        width: fmt.width * scale,
+        height: fmt.height * scale
+      });
+
+      canvas.setZoom(scale);
+      canvas.renderAll();
+    }
+
+    window.addEventListener('resize', resizeCanvasToFitContainer);
+
     function updateInspector() {
       const activeObj = canvas.getActiveObject();
-      if (!activeObj || Object.values(guideObjects).includes(activeObj)) {
+      if (!activeObj) {
         hideInspector();
         return;
       }
@@ -961,274 +1365,41 @@
       document.getElementById('objectInspector').style.display = 'none';
     }
 
-    function renderPrintGuides() {
-      ['bleed', 'trim', 'safety'].forEach(type => {
-        if (guideObjects[type]) {
-          canvas.remove(guideObjects[type]);
-          guideObjects[type] = null;
-        }
-      });
-
-      let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
-      let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
-
-      if (showBleed) {
-        guideObjects.bleed = new fabric.Rect({
-          left: BLEED_MARGIN, top: BLEED_MARGIN,
-          width: targetW - (BLEED_MARGIN * 2), height: targetH - (BLEED_MARGIN * 2),
-          fill: 'transparent', stroke: '#EF4444', strokeWidth: 2, strokeDashArray: [6, 6],
-          selectable: false, evented: false, excludeFromExport: true
-        });
-        canvas.add(guideObjects.bleed);
-      }
-
-      if (showTrim) {
-        guideObjects.trim = new fabric.Rect({
-          left: TRIM_MARGIN, top: TRIM_MARGIN,
-          width: targetW - (TRIM_MARGIN * 2), height: targetH - (TRIM_MARGIN * 2),
-          fill: 'transparent', stroke: '#0F172A', strokeWidth: 2,
-          selectable: false, evented: false, excludeFromExport: true
-        });
-        canvas.add(guideObjects.trim);
-      }
-
-      if (showSafety) {
-        guideObjects.safety = new fabric.Rect({
-          left: SAFETY_MARGIN, top: SAFETY_MARGIN,
-          width: targetW - (SAFETY_MARGIN * 2), height: targetH - (SAFETY_MARGIN * 2),
-          fill: 'transparent', stroke: '#10B981', strokeWidth: 2, strokeDashArray: [4, 4],
-          selectable: false, evented: false, excludeFromExport: true
-        });
-        canvas.add(guideObjects.safety);
-      }
-
-      bringGuidesToFront();
-      canvas.renderAll();
-    }
-
-    function bringGuidesToFront() {
-      Object.values(guideObjects).forEach(obj => {
-        if (obj) canvas.bringToFront(obj);
-      });
-    }
-
-    function toggleGuide(type) {
-      if (type === 'bleed') {
-        showBleed = !showBleed;
-        document.getElementById('bleedBtn').innerText = `Bleed: ${showBleed ? 'ON' : 'OFF'}`;
-      } else if (type === 'trim') {
-        showTrim = !showTrim;
-        document.getElementById('trimBtn').innerText = `Trim: ${showTrim ? 'ON' : 'OFF'}`;
-      } else if (type === 'safety') {
-        showSafety = !showSafety;
-        document.getElementById('safetyBtn').innerText = `Safety: ${showSafety ? 'ON' : 'OFF'}`;
-      }
-      renderPrintGuides();
-    }
-
     function changeLayer(action) {
       const activeObject = canvas.getActiveObject();
-      if (!activeObject || Object.values(guideObjects).includes(activeObject)) return;
+      if (!activeObject) return;
 
       if (action === 'front') canvas.bringToFront(activeObject);
       else if (action === 'forward') canvas.bringForward(activeObject);
       else if (action === 'backward') canvas.sendBackwards(activeObject);
       else if (action === 'back') canvas.sendToBack(activeObject);
 
-      bringGuidesToFront();
       canvas.renderAll();
       saveHistory();
     }
 
     function duplicateSelected() {
       const activeObject = canvas.getActiveObject();
-      if (!activeObject || Object.values(guideObjects).includes(activeObject)) return;
+      if (!activeObject) return;
 
       activeObject.clone(function(cloned) {
         canvas.discardActiveObject();
         cloned.set({
-          left: activeObject.left + 20,
-          top: activeObject.top + 20,
+          left: activeObject.left + 25,
+          top: activeObject.top + 25,
           evented: true
         });
         if (cloned.isType('active-selection')) {
           cloned.canvas = canvas;
-          cloned.forEachObject(function(obj) { canvas.add(obj); });
+          cloned.forEachObject(obj => canvas.add(obj));
           cloned.setCoords();
         } else {
           canvas.add(cloned);
         }
         canvas.setActiveObject(cloned);
-        bringGuidesToFront();
         canvas.requestRenderAll();
         saveHistory();
       });
-    }
-
-    function resizeCanvasToFitContainer() {
-      const workspace = document.getElementById('workspace');
-      const maxWidth = workspace.clientWidth - 20;
-      const maxHeight = workspace.clientHeight - 40;
-
-      let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
-      let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
-
-      let scale = Math.min(maxWidth / targetW, maxHeight / targetH);
-
-      canvas.setDimensions({
-        width: targetW * scale,
-        height: targetH * scale
-      });
-
-      canvas.setZoom(scale);
-      renderPrintGuides();
-    }
-
-    window.addEventListener('resize', resizeCanvasToFitContainer);
-
-    function switchSide(side) {
-      if (currentSide === side) return;
-
-      currentSide = side;
-      document.getElementById('btnSideA').className = side === 'front' ? 'active-side' : 'secondary';
-      document.getElementById('btnSideB').className = side === 'back' ? 'active-side' : 'secondary';
-
-      canvas.clear();
-      canvas.backgroundColor = '#ffffff';
-
-      const currentStack = historyStack[side];
-      if (currentStack.length > 0) {
-        isApplyingHistory = true;
-        canvas.loadFromJSON(currentStack[currentStack.length - 1], () => {
-          resizeCanvasToFitContainer();
-          if (canvas.backgroundColor) {
-            document.getElementById('cardBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
-          }
-          isApplyingHistory = false;
-        });
-      } else {
-        document.getElementById('cardBgColorPicker').value = '#ffffff';
-        resizeCanvasToFitContainer();
-        saveHistory();
-      }
-    }
-
-    let rotX = 0, rotY = 0;
-    let isDragging3D = false;
-    let startX = 0, startY = 0;
-
-    function open3DPreview() {
-      hideGuidesForExport();
-
-      let frontImg = '';
-      let backImg = '';
-
-      const currentData = canvas.toDataURL({ format: 'png', quality: 1 });
-      if (currentSide === 'front') frontImg = currentData;
-      else backImg = currentData;
-
-      const otherSide = currentSide === 'front' ? 'back' : 'front';
-      const tempCanvas = new fabric.Canvas(null, { width: BASE_WIDTH, height: BASE_HEIGHT, backgroundColor: '#ffffff' });
-
-      const otherStack = historyStack[otherSide];
-      if (otherStack && otherStack.length > 0) {
-        tempCanvas.loadFromJSON(otherStack[otherStack.length - 1], () => {
-          tempCanvas.getObjects().forEach(o => { if(o.excludeFromExport) o.visible = false; });
-          tempCanvas.renderAll();
-          const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1 });
-
-          if (currentSide === 'front') backImg = otherData;
-          else frontImg = otherData;
-
-          render3DTextures(frontImg, backImg);
-        });
-      } else {
-        if (currentSide === 'front') backImg = currentData;
-        else frontImg = currentData;
-        render3DTextures(frontImg, backImg);
-      }
-
-      restoreGuidesAfterExport();
-      document.getElementById('preview3DModal').style.display = 'flex';
-      reset3DRotation();
-    }
-
-    function render3DTextures(frontImg, backImg) {
-      document.getElementById('card3dFront').style.backgroundImage = `url(${frontImg})`;
-      document.getElementById('card3dBack').style.backgroundImage = `url(${backImg})`;
-
-      const scene = document.getElementById('card3dScene');
-      scene.style.width = currentOrientation === 'horizontal' ? '440px' : '280px';
-      scene.style.height = currentOrientation === 'horizontal' ? '251px' : '440px';
-    }
-
-    const viewport3D = document.getElementById('card3dViewport');
-    const scene3D = document.getElementById('card3dScene');
-
-    viewport3D.addEventListener('mousedown', (e) => {
-      isDragging3D = true;
-      startX = e.clientX;
-      startY = e.clientY;
-    });
-
-    window.addEventListener('mousemove', (e) => {
-      if (!isDragging3D) return;
-      const deltaX = e.clientX - startX;
-      const deltaY = e.clientY - startY;
-      rotY += deltaX * 0.6;
-      rotX -= deltaY * 0.6;
-      rotX = Math.max(-60, Math.min(60, rotX));
-      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-      startX = e.clientX;
-      startY = e.clientY;
-    });
-
-    window.addEventListener('mouseup', () => { isDragging3D = false; });
-
-    viewport3D.addEventListener('touchstart', (e) => {
-      isDragging3D = true;
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-    });
-
-    window.addEventListener('touchmove', (e) => {
-      if (!isDragging3D) return;
-      const deltaX = e.touches[0].clientX - startX;
-      const deltaY = e.touches[0].clientY - startY;
-      rotY += deltaX * 0.6;
-      rotX -= deltaY * 0.6;
-      rotX = Math.max(-60, Math.min(60, rotX));
-      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-    });
-
-    window.addEventListener('touchend', () => { isDragging3D = false; });
-
-    function flip3DCardModel() {
-      rotY += 180;
-      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-    }
-
-    function reset3DRotation() {
-      rotX = 0;
-      rotY = 0;
-      scene3D.style.transform = `rotateX(0deg) rotateY(0deg)`;
-    }
-
-    function close3DModal() {
-      document.getElementById('preview3DModal').style.display = 'none';
-    }
-
-    function setOrientation(type) {
-      currentOrientation = type;
-      resizeCanvasToFitContainer();
-    }
-
-    function toggleRounded() {
-      const wrapper = document.getElementById('canvasWrapper');
-      isRounded = !isRounded;
-      wrapper.classList.toggle('rounded', isRounded);
     }
 
     fabric.Object.prototype.set({
@@ -1244,22 +1415,20 @@
     });
 
     function addText() {
-      let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
-      let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
-
-      const text = new fabric.IText('Your Name / Title', { 
-        left: (targetW / 2) - 100, 
-        top: (targetH / 2) - 25, 
+      const fmt = formats[currentFormatKey];
+      const text = new fabric.IText('Add Headline Here', { 
+        left: (fmt.width / 2) - 120, 
+        top: (fmt.height / 2) - 30, 
         fontFamily: 'Poppins', 
         fill: '#0F172A', 
-        fontSize: 32,
+        fontSize: 36,
+        fontWeight: 'bold',
         textAlign: 'left',
         editable: true,
         selectable: true
       });
       canvas.add(text);
       canvas.setActiveObject(text);
-      bringGuidesToFront();
       canvas.requestRenderAll();
       text.enterEditing();
       text.selectAll();
@@ -1299,33 +1468,30 @@
       let fillColor = document.getElementById('shapeFillColor').value;
       let borderColor = document.getElementById('shapeBorderColor').value;
       let borderSize = parseInt(document.getElementById('shapeBorderSize').value);
-
-      let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
-      let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
+      const fmt = formats[currentFormatKey];
 
       const baseOpts = {
-        left: (targetW / 2) - 80, 
-        top: (targetH / 2) - 50,
+        left: (fmt.width / 2) - 80, 
+        top: (fmt.height / 2) - 50,
         fill: fillColor,
         stroke: borderColor,
         strokeWidth: borderSize,
         strokeUniform: true
       };
 
-      if (type === 'rect') shape = new fabric.Rect({ ...baseOpts, width: 160, height: 100, rx: 0, ry: 0 });
-      else if (type === 'circle') shape = new fabric.Circle({ ...baseOpts, radius: 60 });
-      else if (type === 'triangle') shape = new fabric.Triangle({ ...baseOpts, width: 120, height: 120 });
+      if (type === 'rect') shape = new fabric.Rect({ ...baseOpts, width: 180, height: 120, rx: 0, ry: 0 });
+      else if (type === 'circle') shape = new fabric.Circle({ ...baseOpts, radius: 70 });
+      else if (type === 'triangle') shape = new fabric.Triangle({ ...baseOpts, width: 140, height: 140 });
       else if (type === 'line') shape = new fabric.Line([80, 100, 300, 100], { stroke: fillColor, strokeWidth: borderSize || 4 });
 
       canvas.add(shape);
       canvas.setActiveObject(shape);
-      bringGuidesToFront();
       canvas.requestRenderAll();
     }
 
     function updateShapeProperty(prop, value) {
       const activeObject = canvas.getActiveObject();
-      if (activeObject && !activeObject.isType('i-text') && !Object.values(guideObjects).includes(activeObject)) {
+      if (activeObject && !activeObject.isType('i-text')) {
         activeObject.set(prop, value);
         activeObject.set('strokeUniform', true);
         canvas.renderAll();
@@ -1336,25 +1502,21 @@
     document.getElementById('imageLoader').addEventListener('change', function (e) {
       const files = e.target.files;
       if (!files || !files.length) return;
+      const fmt = formats[currentFormatKey];
 
       Array.from(files).forEach((file, index) => {
         const reader = new FileReader();
         reader.onload = function (event) {
           fabric.Image.fromURL(event.target.result, function (img) {
-            img.scaleToWidth(200);
-            let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
-            let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
-            
+            img.scaleToWidth(250);
             img.set({
-              left: (targetW / 2) - 100 + (index * 25),
-              top: (targetH / 2) - 75 + (index * 25),
+              left: (fmt.width / 2) - 125 + (index * 20),
+              top: (fmt.height / 2) - 125 + (index * 20),
               cornerColor: '#FF6B00',
               cornerSize: 12
             });
-
             canvas.add(img);
             canvas.setActiveObject(img);
-            bringGuidesToFront();
             canvas.requestRenderAll();
           }, { crossOrigin: 'anonymous' });
         };
@@ -1365,7 +1527,7 @@
 
     function addQRCode() {
       const text = document.getElementById('qrInput').value.trim();
-      if (!text) return alert('Enter URL / UPI');
+      if (!text) return alert('Enter URL / Text');
       const qrContainer = document.getElementById('qrcode-hidden');
       qrContainer.innerHTML = '';
       new QRCode(qrContainer, { text: text, width: 200, height: 200 });
@@ -1374,14 +1536,11 @@
         const imgTag = qrContainer.querySelector('img');
         if (imgTag) {
           fabric.Image.fromURL(imgTag.src, function (img) {
-            img.scaleToWidth(140);
-            let targetW = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
-            let targetH = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
-
-            img.set({ left: (targetW / 2) - 70, top: (targetH / 2) - 70 });
+            img.scaleToWidth(150);
+            const fmt = formats[currentFormatKey];
+            img.set({ left: (fmt.width / 2) - 75, top: (fmt.height / 2) - 75 });
             canvas.add(img);
             canvas.setActiveObject(img);
-            bringGuidesToFront();
             canvas.requestRenderAll();
           }, { crossOrigin: 'anonymous' });
         }
@@ -1391,25 +1550,11 @@
     function deleteSelected() {
       const activeObjects = canvas.getActiveObjects();
       if (activeObjects.length) {
-        activeObjects.forEach(obj => {
-          if (!Object.values(guideObjects).includes(obj)) canvas.remove(obj);
-        });
+        activeObjects.forEach(obj => canvas.remove(obj));
         canvas.discardActiveObject();
         canvas.renderAll();
         saveHistory();
       }
-    }
-
-    function hideGuidesForExport() {
-      Object.values(guideObjects).forEach(obj => { if (obj) obj.visible = false; });
-      canvas.renderAll();
-    }
-
-    function restoreGuidesAfterExport() {
-      if (guideObjects.bleed && showBleed) guideObjects.bleed.visible = true;
-      if (guideObjects.trim && showTrim) guideObjects.trim.visible = true;
-      if (guideObjects.safety && showSafety) guideObjects.safety.visible = true;
-      canvas.renderAll();
     }
 
     function initiatePayment(type) {
@@ -1428,45 +1573,55 @@
         "amount": 4900,
         "currency": "INR",
         "name": "ClickVectora Solution",
-        "description": "HD Export Payment",
-        "handler": function (response) { downloadCard(selectedExportType); },
+        "description": "HD Poster Export Payment",
+        "handler": function (response) {
+          downloadPoster(selectedExportType);
+        },
         "theme": { "color": "#FF6B00" }
       };
       var rzp1 = new Razorpay(options);
       rzp1.open();
     }
 
-    function downloadCard(format) {
-      hideGuidesForExport();
+    function downloadPoster(format) {
+      const wasGuideOn = showPrintGuides;
+      if (wasGuideOn) {
+        showPrintGuides = false;
+        canvas.requestRenderAll();
+      }
+
+      const fmt = formats[currentFormatKey];
       const dataURL = canvas.toDataURL({
         format: 'png',
         quality: 1.0,
         multiplier: 2 / canvas.getZoom()
       });
-      restoreGuidesAfterExport();
+
+      if (wasGuideOn) {
+        showPrintGuides = true;
+        canvas.requestRenderAll();
+      }
 
       if (format === 'png') {
         const link = document.createElement('a');
-        link.download = `business-card-${currentSide}-hd.png`;
+        link.download = `${currentFormatKey}-design-hd.png`;
         link.href = dataURL;
         link.click();
       } else if (format === 'pdf') {
         const { jsPDF } = window.jspdf;
-        const w = currentOrientation === 'horizontal' ? BASE_WIDTH : BASE_HEIGHT;
-        const h = currentOrientation === 'horizontal' ? BASE_HEIGHT : BASE_WIDTH;
         const pdf = new jsPDF({
-          orientation: currentOrientation === 'horizontal' ? 'landscape' : 'portrait',
+          orientation: fmt.width > fmt.height ? 'landscape' : 'portrait',
           unit: 'px',
-          format: [w, h]
+          format: [fmt.width, fmt.height]
         });
-        pdf.addImage(dataURL, 'PNG', 0, 0, w, h);
-        pdf.save(`business-card-${currentSide}-hd.pdf`);
+        pdf.addImage(dataURL, 'PNG', 0, 0, fmt.width, fmt.height);
+        pdf.save(`${currentFormatKey}-design-hd.pdf`);
       }
     }
 
     setTimeout(() => {
       resizeCanvasToFitContainer();
-      loadTemplate(templatesList[0]); // Load first template by default
+      saveHistory();
     }, 100);
   </script>
 </body>
