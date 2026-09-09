@@ -265,7 +265,7 @@
       <a href="index.html" style="text-decoration:none;">
         <button class="secondary" style="padding: 8px 14px;">🏠 Home</button>
       </a>
-      <img src="ClickVectora Logo - Copy.png" alt="Logo" onerror="this.style.display='none';" class="header-logo">
+      <img src="1000270004.png" alt="ClickVectora Logo" onerror="this.style.display='none';" class="header-logo">
       <h1 class="header-title-text">Document to PDF Studio</h1>
     </div>
   </header>
@@ -282,7 +282,6 @@
         <button onclick="document.getElementById('fileLoader').click()" style="width:100%; padding: 12px;">
           📁 Upload Files
         </button>
-        <!-- Expanded accept filter to guarantee all browsers list docx, excel, pdf, and images -->
         <input type="file" id="fileLoader" accept="image/*,.pdf,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv,.txt,.md" multiple style="display:none;">
         <span style="font-size: 0.75rem; color: var(--text-muted); text-align: center;">Images, PDF, Word, Excel, CSV, Text</span>
       </div>
@@ -345,7 +344,7 @@
   </div>
 
   <script>
-    let uploadedPages = []; // Array of objects: { dataUrl, name, type }
+    let uploadedPages = []; 
     let currentOrientation = 'portrait';
 
     function showLoader(show) {
@@ -399,7 +398,7 @@
         const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
         for (let i = 1; i <= pdfDoc.numPages; i++) {
           const page = await pdfDoc.getPage(i);
-          const viewport = page.getViewport({ scale: 2.0 }); // Higher scale for crystal clear rendering
+          const viewport = page.getViewport({ scale: 2.0 });
           const canvas = document.createElement('canvas');
           const context = canvas.getContext('2d');
           canvas.height = viewport.height;
