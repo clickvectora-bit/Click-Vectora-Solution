@@ -1056,6 +1056,29 @@
       saveHistory();
     }
 
+    /* 🚀 NEW: Automated Template Data Binding Engine */
+    function applyTemplateData(dataMapping) {
+      // dataMapping format: { title: "New Title", subtitle: "New Subtitle", contact: "New Phone/Email" }
+      const objects = canvas.getObjects();
+      let textCount = 0;
+
+      objects.forEach(obj => {
+        if (obj.isType('i-text')) {
+          if (textCount === 0 && dataMapping.title) {
+            obj.set('text', dataMapping.title);
+          } else if (textCount === 1 && dataMapping.subtitle) {
+            obj.set('text', dataMapping.subtitle);
+          } else if (textCount >= 2 && dataMapping.contact) {
+            obj.set('text', dataMapping.contact);
+          }
+          textCount++;
+        }
+      });
+
+      canvas.renderAll();
+      saveHistory();
+    }
+
     /* Upgraded Interactive 3D Preview Engine */
     let rotX = 0, rotY = 0;
     let isDragging3D = false;
