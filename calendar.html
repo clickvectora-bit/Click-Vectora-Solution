@@ -168,6 +168,7 @@
       background: #F1F5F9;
       border-radius: 4px;
       border: 1px solid #E2E8F0;
+      cursor: zoom-in;
     }
 
     .page-meta {
@@ -202,7 +203,7 @@
     }
     .empty-icon { font-size: 3.5rem; }
 
-    /* Modal Overlay */
+    /* Modal Overlays */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -225,6 +226,15 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     }
 
+    /* Enhanced Zoom Modal */
+    #zoomModal {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9); z-index: 3000;
+      display: none; align-items: center; justify-content: center; flex-direction: column; padding: 20px;
+    }
+    #zoomImage {
+      max-width: 90vw; max-height: 80vh; object-fit: contain; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); background: white;
+    }
+
     /* Loader Overlay */
     #loadingOverlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000;
@@ -241,6 +251,13 @@
 <body>
 
   <div id="loadingOverlay">Processing file, please wait...</div>
+
+  <!-- Enhanced Fullscreen Preview Zoom Modal -->
+  <div id="zoomModal" onclick="closeZoomModal()">
+    <div style="position: absolute; top: 20px; right: 30px; color: white; font-size: 2rem; cursor: pointer;">&times;</div>
+    <img id="zoomImage" src="" alt="Zoomed Preview">
+    <p style="color: white; margin-top: 15px; font-weight: 500;" id="zoomCaption"></p>
+  </div>
 
   <!-- Header -->
   <header class="minimal-header">
@@ -265,8 +282,9 @@
         <button onclick="document.getElementById('fileLoader').click()" style="width:100%; padding: 12px;">
           📁 Upload Files
         </button>
-        <input type="file" id="fileLoader" accept="image/*,application/pdf,.docx,.xlsx,.csv,.txt,.md" multiple style="display:none;">
-        <span style="font-size: 0.75rem; color: var(--text-muted); text-align: center;">Supports Images, PDF, Word, Excel, CSV, Text</span>
+        <!-- Expanded accept filter to guarantee all browsers list docx, excel, pdf, and images -->
+        <input type="file" id="fileLoader" accept="image/*,.pdf,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv,.txt,.md" multiple style="display:none;">
+        <span style="font-size: 0.75rem; color: var(--text-muted); text-align: center;">Images, PDF, Word, Excel, CSV, Text</span>
       </div>
 
       <!-- Page Settings -->
@@ -351,7 +369,12 @@
 
       showLoader(true);
       for (let file of files) {
-        await processFile(file);
+        try {
+          await processFile(file);
+        } catch (err) {
+          console.error("Error processing file:", file.name, err);
+          alert(`Could not parse file: ${file.name}. Please ensure it is not corrupted.`);
+        }
       }
       showLoader(false);
       e.target.value = '';
@@ -376,13 +399,13 @@
         const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
         for (let i = 1; i <= pdfDoc.numPages; i++) {
           const page = await pdfDoc.getPage(i);
-          const viewport = page.getViewport({ scale: 1.5 });
+          const viewport = page.getViewport({ scale: 2.0 }); // Higher scale for crystal clear rendering
           const canvas = document.createElement('canvas');
           const context = canvas.getContext('2d');
           canvas.height = viewport.height;
           canvas.width = viewport.width;
           await page.render({ canvasContext: context, viewport: viewport }).promise;
-          uploadedPages.push({ dataUrl: canvas.toDataURL('image/jpeg'), name: `${file.name} (P.${i})`, type: 'pdf_page' });
+          uploadedPages.push({ dataUrl: canvas.toDataURL('image/jpeg', 0.95), name: `${file.name} (P.${i})`, type: 'pdf_page' });
         }
       } 
       else if (ext === 'docx') {
@@ -402,12 +425,11 @@
       } 
       else if (['txt', 'md', 'json'].includes(ext)) {
         const text = await file.text();
-        const canvas = await textToCanvas(`<pre style="font-family:sans-serif; white-space:pre-wrap;">${text}</pre>`, file.name);
+        const canvas = await textToCanvas(`<pre style="font-family:sans-serif; white-space:pre-wrap; font-size:14px;">${text}</pre>`, file.name);
         uploadedPages.push({ dataUrl: canvas, name: file.name, type: 'text' });
       }
     }
 
-    // Helper to render text/HTML documents into image snapshots for previews and PDF inclusion
     function textToCanvas(htmlContent, title) {
       return new Promise((resolve) => {
         const container = document.createElement('div');
@@ -418,25 +440,24 @@
         container.style.padding = '40px';
         container.style.boxSizing = 'border-box';
         container.style.color = '#0F172A';
-        container.innerHTML = `<h2 style="margin-bottom:16px; border-bottom:2px solid #CBD5E1; padding-bottom:8px;">${title}</h2>` + htmlContent;
+        container.innerHTML = `<h2 style="margin-bottom:16px; border-bottom:2px solid #CBD5E1; padding-bottom:8px; font-family:sans-serif;">${title}</h2>` + htmlContent;
         document.body.appendChild(container);
 
-        // Simple SVG-based foreignObject rasterizer to convert DOM element to dataURL canvas
-        const data = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="${container.offsetHeight}"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml">${container.outerHTML}</div></foreignObject></svg>`;
+        const data = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="${Math.max(container.offsetHeight, 400)}"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml">${container.outerHTML}</div></foreignObject></svg>`;
         const blob = new Blob([data], { type: 'image/svg+xml;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
           canvas.width = 800;
-          canvas.height = container.offsetHeight;
+          canvas.height = Math.max(container.offsetHeight, 400);
           const ctx = canvas.getContext('2d');
           ctx.fillStyle = '#FFFFFF';
           ctx.fillRect(0, 0, canvas.width, canvas.height);
           ctx.drawImage(img, 0, 0);
           document.body.removeChild(container);
           URL.revokeObjectURL(url);
-          resolve(canvas.toDataURL('image/jpeg'));
+          resolve(canvas.toDataURL('image/jpeg', 0.95));
         };
         img.src = url;
       });
@@ -460,7 +481,7 @@
         const card = document.createElement('div');
         card.className = 'page-card';
         card.innerHTML = `
-          <img src="${page.dataUrl}" class="page-thumbnail" alt="Page ${index + 1}">
+          <img src="${page.dataUrl}" class="page-thumbnail" alt="Page ${index + 1}" title="Click to Zoom" onclick="openZoomModal('${page.dataUrl}', '${page.name}')">
           <span class="page-meta">${index + 1}. ${page.name}</span>
           <div class="page-actions">
             <button class="secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="movePage(${index}, -1)" ${index === 0 ? 'disabled' : ''}>⬅️</button>
@@ -470,6 +491,16 @@
         `;
         grid.appendChild(card);
       });
+    }
+
+    function openZoomModal(dataUrl, name) {
+      document.getElementById('zoomImage').src = dataUrl;
+      document.getElementById('zoomCaption').innerText = name;
+      document.getElementById('zoomModal').style.display = 'flex';
+    }
+
+    function closeZoomModal() {
+      document.getElementById('zoomModal').style.display = 'none';
     }
 
     function movePage(index, direction) {
