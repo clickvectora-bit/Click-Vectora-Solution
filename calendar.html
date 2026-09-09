@@ -396,7 +396,8 @@
       else if (ext === 'docx') {
         const arrayBuffer = await file.arrayBuffer();
         const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
-        const canvasData = await renderHtmlToCanvas(result.value, file.name);
+        const styledContent = `<div style="font-family: sans-serif; font-size: 15px; line-height: 1.6; color: #1E293B;">${result.value}</div>`;
+        const canvasData = await renderHtmlToCanvas(styledContent, file.name);
         uploadedPages.push({ dataUrl: canvasData, name: file.name, type: 'doc' });
       } 
       // 3. Excel Spreadsheets & CSV (.xlsx, .xls, .csv)
@@ -405,20 +406,27 @@
         const workbook = XLSX.read(arrayBuffer, { type: 'array' });
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
-        const htmlText = XLSX.utils.sheet_to_html(worksheet);
+        let htmlText = XLSX.utils.sheet_to_html(worksheet);
+        
+        // Inject clean table styles for clear spreadsheet visibility
+        htmlText = htmlText.replace(/<table/g, '<table style="border-collapse: collapse; width: 100%; font-family: sans-serif; font-size: 13px;"');
+        htmlText = htmlText.replace(/<th/g, '<th style="border: 1px solid #CBD5E1; padding: 10px; background: #E2E8F0; color: #0F172A; text-align: left;"');
+        htmlText = htmlText.replace(/<td/g, '<td style="border: 1px solid #CBD5E1; padding: 8px; color: #334155;"');
+
         const canvasData = await renderHtmlToCanvas(htmlText, file.name);
         uploadedPages.push({ dataUrl: canvasData, name: file.name, type: 'sheet' });
       } 
       // 4. Text & Markdown Files (.txt, .md, .json)
       else if (['txt', 'md', 'json'].includes(ext)) {
         const text = await file.text();
-        const formattedHtml = `<pre style="font-family:sans-serif; white-space:pre-wrap; font-size:14px; line-height:1.5;">${escapeHtml(text)}</pre>`;
+        const formattedHtml = `<pre style="font-family: monospace; white-space: pre-wrap; font-size: 14px; line-height: 1.6; background: #F8FAFC; padding: 16px; border-radius: 6px; border: 1px solid #E2E8F0;">${escapeHtml(text)}</pre>`;
         const canvasData = await renderHtmlToCanvas(formattedHtml, file.name);
         uploadedPages.push({ dataUrl: canvasData, name: file.name, type: 'text' });
       }
-      // 5. PDF fallback handler (Reads as binary and renders a notification card if worker is restricted)
+      // 5. PDF fallback handler
       else if (ext === 'pdf') {
-        const canvasData = await renderHtmlToCanvas(`<p style="color:#64748B; font-size:16px;">PDF Document: <b>${file.name}</b><br><br>Ready for compilation export.</p>`, file.name);
+        const fallbackHtml = `<div style="text-align: center; padding: 40px; color: #64748B;"><p style="font-size: 18px; font-weight: 600;">PDF Document Added</p><p style="margin-top: 8px; font-size: 14px;">${file.name}</p></div>`;
+        const canvasData = await renderHtmlToCanvas(fallbackHtml, file.name);
         uploadedPages.push({ dataUrl: canvasData, name: file.name, type: 'pdf' });
       }
     }
@@ -427,11 +435,11 @@
       return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    // Universal HTML-to-Canvas renderer for text, sheets, and documents
+    // Universal HTML-to-Canvas renderer ensuring full visibility and layout calculation
     function renderHtmlToCanvas(htmlContent, title) {
       return new Promise((resolve) => {
         const container = document.createElement('div');
-        container.style.position = 'fixed';
+        container.style.position = 'absolute';
         container.style.left = '-9999px';
         container.style.top = '0px';
         container.style.width = '800px';
@@ -439,7 +447,7 @@
         container.style.padding = '40px';
         container.style.boxSizing = 'border-box';
         container.style.color = '#0F172A';
-        container.innerHTML = `<h2 style="margin-bottom:16px; border-bottom:2px solid #CBD5E1; padding-bottom:8px; font-family:sans-serif; font-size:20px;">${title}</h2>` + htmlContent;
+        container.innerHTML = `<h2 style="margin-bottom:16px; border-bottom:2px solid #CBD5E1; padding-bottom:8px; font-family:sans-serif; font-size:20px; color:#0F172A;">${title}</h2>` + htmlContent;
         document.body.appendChild(container);
 
         setTimeout(() => {
@@ -468,7 +476,7 @@
           };
 
           img.src = url;
-        }, 50);
+        }, 100);
       });
     }
 
