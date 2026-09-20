@@ -48,6 +48,11 @@
     .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.3s; }
     .nav-links a:hover { color: var(--cyan); }
 
+    /* Active / Clicked Nav Link Color */
+    .nav-links a.active {
+      color: var(--orange) !important;
+    }
+
     .menu-toggle {
       display: none;
       background: transparent;
@@ -362,6 +367,15 @@
         icon.classList.remove('fa-xmark');
         icon.classList.add('fa-bars');
       }
+    });
+
+    // Active Link Highlighting Logic on Click
+    const navItems = document.querySelectorAll('.nav-links a');
+    navItems.forEach(link => {
+      link.addEventListener('click', function() {
+        navItems.forEach(nav => nav.classList.remove('active'));
+        this.classList.add('active');
+      });
     });
 
     function openOrderModal(serviceName) {
