@@ -48,7 +48,7 @@
     .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.3s; }
     .nav-links a:hover { color: var(--cyan); }
 
-    /* Active / Clicked Nav Link Color */
+    /* Active / Clicked Nav Link Color (Same as store/contact style) */
     .nav-links a.active {
       color: var(--orange) !important;
     }
@@ -286,7 +286,7 @@
         <div class="service-info">
           <div><h3>Posters & Banners</h3><p>Promotional graphics.</p></div>
           <a href="posterbanner.html" class="btn btn-green" style="margin-bottom: 10px;">Create</a>
-          <button class="btn btn-orange" onclick="openOrderModal('Posters & Banners')">Order Now</button>
+          <button class="btn btn-orange" onclick="openOrderModal('Poster & Banners')">Order Now</button>
         </div>
       </div>
       <div class="service-card">
@@ -369,12 +369,23 @@
       }
     });
 
-    // Active Link Highlighting Logic on Click
-    const navItems = document.querySelectorAll('.nav-links a');
-    navItems.forEach(link => {
-      link.addEventListener('click', function() {
-        navItems.forEach(nav => nav.classList.remove('active'));
-        this.classList.add('active');
+    // Smart Navigation Active State Handler (Same behavior as Contact/Store pages)
+    document.addEventListener("DOMContentLoaded", function () {
+      const links = document.querySelectorAll('.nav-links a');
+      const currentPath = window.location.pathname.split("/").pop() || "index.html";
+      const currentHash = window.location.hash;
+
+      links.forEach(link => {
+        link.addEventListener('click', function () {
+          links.forEach(nav => nav.classList.remove('active'));
+          this.classList.add('active');
+        });
+
+        // Set active state on page load based on URL/hash
+        const linkHref = link.getAttribute('href');
+        if (linkHref === currentPath + currentHash || (currentHash === "" && linkHref === currentPath)) {
+          link.classList.add('active');
+        }
       });
     });
 
@@ -398,7 +409,7 @@
       const product = document.getElementById('selectedProduct').value;
       const name = document.getElementById('custName').value;
       const email = document.getElementById('custEmail').value;
-      const phone = document.getElementById('custPhone').value;
+      const phone = document.getElementById('custPhone'].value;
       const details = document.getElementById('custDetails').value || "N/A";
       const message = `*NEW ORDER INQUIRY*\n*Service:* ${product}\n*Name:* ${name}\n*Email:* ${email}\n*Phone:* ${phone}\n*Details:* ${details}`;
       window.open(`https://wa.me/919427740360?text=${encodeURIComponent(message)}`, '_blank');
