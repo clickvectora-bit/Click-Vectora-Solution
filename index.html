@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Click Vectora Solution | Graphic Design & Vector Studio</title>
+  <!-- Browser Tab Favicon Logo -->
+  <link rel="icon" type="image/png" href="logo.png">
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      /* Light Theme Color Palette */
       --bg-main: #f8fafc;
       --bg-surface: #ffffff;
       --bg-input: #f1f5f9;
@@ -23,16 +24,9 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-
     html { scroll-behavior: smooth; }
+    body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; }
 
-    body {
-      background-color: var(--bg-main);
-      color: var(--text-main);
-      line-height: 1.6;
-    }
-
-    /* Compact Top Navigation Bar */
     nav {
       display: flex;
       justify-content: space-between;
@@ -47,48 +41,13 @@
       box-shadow: 0 1px 3px var(--shadow);
     }
 
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
+    .brand-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .brand-logo img { height: 120px; width: auto; display: block; object-fit: contain; }
 
-    .brand-logo img {
-      height: 120px;
-      width: auto;
-      display: block;
-      object-fit: contain;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.95rem;
-      font-weight: 600;
-      transition: color 0.3s;
-    }
-
+    .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.3s; }
     .nav-links a:hover { color: var(--cyan); }
 
-    .btn-nav {
-      background: linear-gradient(135deg, var(--orange), #e05d00);
-      color: #fff !important;
-      padding: 0.5rem 1.2rem;
-      border-radius: 6px;
-      font-weight: 600 !important;
-      box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);
-      cursor: pointer;
-    }
-
-    /* Mobile Hamburger Menu Toggle Button */
     .menu-toggle {
       display: none;
       background: transparent;
@@ -101,7 +60,6 @@
 
     .container { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; }
 
-    /* Hero Section */
     .hero {
       text-align: center;
       padding: 3.5rem 1rem;
@@ -112,25 +70,13 @@
       margin-bottom: 2rem;
     }
 
-    .hero h1 {
-      font-size: 2.8rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      color: var(--text-main);
-    }
-
+    .hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-main); }
     .hero h1 span {
       background: linear-gradient(135deg, var(--orange), var(--cyan));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
-    .hero p {
-      color: var(--text-muted);
-      font-size: 1.1rem;
-      max-width: 620px;
-      margin: 0 auto;
-    }
+    .hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 620px; margin: 0 auto; }
 
     .section-title {
       font-size: 1.8rem;
@@ -140,22 +86,18 @@
       align-items: center;
       gap: 10px;
     }
-
     .section-title::before {
       content: "";
-      width: 5px;
-      height: 24px;
+      width: 5px; height: 24px;
       background: var(--orange);
       border-radius: 3px;
     }
 
-    /* Portfolio Section */
     .portfolio-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.8rem;
     }
-
     .portfolio-card {
       background: var(--bg-surface);
       border-radius: 12px;
@@ -164,30 +106,21 @@
       box-shadow: 0 4px 12px var(--shadow);
       transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
     }
-
     .portfolio-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 12px 24px var(--shadow-hover);
       border-color: var(--cyan);
     }
-
-    .portfolio-card img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-    }
-
+    .portfolio-card img { width: 100%; height: 220px; object-fit: cover; }
     .portfolio-info { padding: 1.2rem; }
     .portfolio-info h3 { font-size: 1.1rem; margin-bottom: 0.3rem; color: var(--text-main); }
     .portfolio-info p { color: var(--text-muted); font-size: 0.88rem; }
 
-    /* Services Section */
     .services-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 1.8rem;
     }
-
     .service-card {
       background: var(--bg-surface);
       border-radius: 12px;
@@ -199,238 +132,87 @@
       justify-content: space-between;
       transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
     }
-
     .service-card:hover {
       transform: translateY(-4px);
       box-shadow: 0 12px 24px var(--shadow-hover);
       border-color: var(--orange);
     }
-
     .service-card img {
-      width: 100%;
-      height: 220px;
-      object-fit: contain;
-      background-color: #ffffff;
-      padding: 10px;
-      border-bottom: 1px solid var(--border);
+      width: 100%; height: 220px; object-fit: contain;
+      background-color: #ffffff; padding: 10px; border-bottom: 1px solid var(--border);
     }
-
     .service-info {
       padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      justify-content: space-between;
+      display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;
     }
-
     .service-info h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main); }
     .service-info p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem; }
 
-    /* Buttons */
     .btn {
-      width: 100%;
-      padding: 0.85rem;
-      border-radius: 8px;
-      border: none;
-      background: var(--cyan);
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
+      width: 100%; padding: 0.85rem; border-radius: 8px; border: none;
+      background: var(--cyan); color: white; font-weight: 700; cursor: pointer;
+      text-align: center; text-decoration: none; display: inline-block;
     }
-
     .btn:hover { background: #0093b3; }
-
-    .btn-orange {
-      background: var(--orange);
-      box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
-    }
-
+    .btn-orange { background: var(--orange); box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2); }
     .btn-orange:hover { background: #e05d00; }
-
-    .btn-green {
-      background: #25D366;
-      color: white;
-    }
+    .btn-green { background: #25D366; color: white; }
     .btn-green:hover { background: #128C7E; }
-
-    /* Global Input Styling */
-    form { display: grid; gap: 1.1rem; margin-top: 1rem; }
-    .input-group { display: flex; flex-direction: column; gap: 0.4rem; }
-    label { font-size: 0.85rem; color: var(--text-main); font-weight: 600; }
-
-    input, textarea {
-      width: 100%;
-      padding: 0.8rem 1rem;
-      background: var(--bg-input);
-      border: 1.5px solid var(--border);
-      color: var(--text-main);
-      border-radius: 8px;
-      font-size: 0.95rem;
-    }
 
     /* Modal Styling */
     .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(8px);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      opacity: 0;
-      padding: 1rem;
-      transition: opacity 0.3s ease;
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px);
+      justify-content: center; align-items: center; z-index: 1000; opacity: 0; padding: 1rem; transition: opacity 0.3s ease;
     }
-
     .modal-overlay.active { display: flex; opacity: 1; }
-
     .modal-card {
-      background: var(--bg-surface);
-      border-radius: 20px;
-      width: 100%;
-      max-width: 480px;
-      max-height: calc(100vh - 2rem);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      overflow: hidden;
-      transform: scale(0.95);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: var(--bg-surface); border-radius: 20px; width: 100%; max-width: 480px;
+      max-height: calc(100vh - 2rem); display: flex; flex-direction: column; position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); overflow: hidden; transform: scale(0.95); transition: transform 0.3s;
     }
-
     .modal-overlay.active .modal-card { transform: scale(1); }
-
-    .modal-header-hero {
-      background: linear-gradient(135deg, var(--orange) 0%, #ff8c38 100%);
-      padding: 1.25rem 1.5rem;
-      color: white;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .modal-header-hero h2 {
-      font-size: 1.2rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding-right: 25px;
-    }
-
-    .modal-header-hero p {
-      font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.9);
-      margin-top: 2px;
-    }
-
+    .modal-header-hero { background: linear-gradient(135deg, var(--orange) 0%, #ff8c38 100%); padding: 1.25rem 1.5rem; color: white; position: relative; }
+    .modal-header-hero h2 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
     .close-btn {
-      position: absolute;
-      top: 14px; right: 14px;
-      width: 30px; height: 30px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      cursor: pointer;
+      position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
-    
-    .close-btn:hover { background: rgba(255, 255, 255, 0.35); }
-
-    .modal-body {
-      padding: 1.25rem 1.5rem;
-      overflow-y: auto;
-      max-height: 70vh;
+    .modal-body { padding: 1.25rem 1.5rem; overflow-y: auto; max-height: 70vh; }
+    .input-group { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 1rem; }
+    label { font-size: 0.85rem; color: var(--text-main); font-weight: 600; }
+    input, textarea {
+      width: 100%; padding: 0.8rem 1rem; background: var(--bg-input); border: 1.5px solid var(--border); color: var(--text-main); border-radius: 8px; font-size: 0.95rem;
     }
-
     .selected-service-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      border-radius: 8px;
-      padding: 0.5rem 0.75rem;
-      color: #1e40af;
-      font-weight: 700;
-      font-size: 0.9rem;
+      display: flex; align-items: center; gap: 8px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.5rem 0.75rem; color: #1e40af; font-weight: 700; font-size: 0.9rem;
     }
-
-    .selected-service-badge i { color: var(--cyan); }
-    .selected-service-badge input {
-      border: none; background: transparent; padding: 0;
-      color: inherit; font-weight: inherit; font-size: inherit; pointer-events: none;
-    }
-
+    .selected-service-badge input { border: none; background: transparent; padding: 0; color: inherit; font-weight: inherit; font-size: inherit; pointer-events: none; }
     .btn-whatsapp {
-      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-      color: white;
-      padding: 0.85rem;
-      font-size: 0.95rem;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
-      margin-top: 0.5rem;
-      cursor: pointer;
-      text-decoration: none;
-      border: none;
-      width: 100%;
+      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: white; padding: 0.85rem; font-size: 0.95rem; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; cursor: pointer; border: none; margin-top: 1rem;
     }
 
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      border-top: 1px solid var(--border);
-      margin-top: 3rem;
-    }
+    footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 3rem; }
 
     @media (max-width: 768px) {
       nav { padding: 0.6rem 5%; }
       .brand-logo img { height: 85px; }
       .menu-toggle { display: block; }
       .nav-links {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 100%; left: 0; width: 100%;
-        background: rgba(255, 255, 255, 0.98);
-        padding: 1.2rem 2rem;
-        box-shadow: 0 10px 15px var(--shadow-hover);
-        border-bottom: 1px solid var(--border);
-        gap: 1.2rem; align-items: stretch; text-align: center;
+        display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%;
+        background: rgba(255, 255, 255, 0.98); padding: 1.2rem 2rem; box-shadow: 0 10px 15px var(--shadow-hover); border-bottom: 1px solid var(--border); gap: 1.2rem; text-align: center;
       }
       .nav-links.active { display: flex; }
-      .nav-links a { font-size: 1.05rem; padding: 0.5rem 0; display: block; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Header Navigation -->
   <nav>
     <a href="index.html" class="brand-logo">
-      <img src="logo.png" alt="Click Vectora Solution Logo" onerror="this.src='https://via.placeholder.com/200x80?text=Click+Vectora'">
+      <img src="logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/200x80?text=Click+Vectora'">
     </a>
-
-    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
-      <i class="fa-solid fa-bars"></i>
-    </button>
-
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
     <ul class="nav-links" id="navLinks">
       <li><a href="index.html#portfolio">Work</a></li>
       <li><a href="index.html#services">Design Services</a></li>
@@ -440,192 +222,89 @@
   </nav>
 
   <div class="container">
-    <!-- Hero Section -->
     <header class="hero">
       <h1><span>Click Vectora</span> Solution</h1>
       <p>Premier Graphic Design & Vector Studio. Custom Branding, High-End Vector Art, and Marketing Media.</p>
     </header>
 
-    <!-- Portfolio Section -->
     <h2 class="section-title" id="portfolio">Featured Work</h2>
     <div class="portfolio-grid">
       <div class="portfolio-card">
-        <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=600&q=80" alt="Logo Creation Process">
-        <div class="portfolio-info">
-          <h3>Logo & Branding Design</h3>
-          <p>Vector Concept Sketches and Final Rendering.</p>
-        </div>
+        <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=600&q=80" alt="Logo">
+        <div class="portfolio-info"><h3>Logo & Branding Design</h3><p>Vector Concept Sketches.</p></div>
       </div>
       <div class="portfolio-card">
         <img src="img/social media icon.png" onerror="this.src='https://via.placeholder.com/600x220?text=Social+Media'">
-        <div class="portfolio-info">
-          <h3>Social Media Graphics</h3>
-          <p>Custom Instagram, Facebook & ad templates.</p>
-        </div>
+        <div class="portfolio-info"><h3>Social Media Graphics</h3><p>Custom templates.</p></div>
       </div>
       <div class="portfolio-card">
-        <img src="AIVideoAds.jfif" alt="AI Video Ads" onerror="this.src='https://via.placeholder.com/600x220?text=AI+Video+Ads'">
-        <div class="portfolio-info">
-          <h3>AI Video Ads</h3>
-          <p>Enhanced Prompt Generation and Video Ads Conversions.</p>
-        </div>
+        <img src="AIVideoAds.jfif" alt="AI Video" onerror="this.src='https://via.placeholder.com/600x220?text=AI+Video+Ads'">
+        <div class="portfolio-info"><h3>AI Video Ads</h3><p>Video Ads Conversions.</p></div>
       </div>
     </div>
 
-    <!-- Services Section -->
     <h2 class="section-title" id="services">Our Design Services</h2>
     <div class="services-grid">
-
       <div class="service-card">
-        <img src="LogoDesign.jpg" alt="Logo Design" onerror="this.src='https://via.placeholder.com/300x220?text=Logo+Design'">
-        <div class="service-info">
-          <div>
-            <h3>Logo Design</h3>
-            <p>Custom Vector Logo Concepts with Source Files.</p>
-          </div>
-          <button class="btn btn-orange" onclick="openOrderModal('Logo Design')">Order Now</button>
-        </div>
-      </div>
-
-      <div class="service-card">
-        <img src="PosterBanner.png" alt="Posters & Banners" onerror="this.src='https://via.placeholder.com/300x220?text=Posters+%26+Banners'">
-        <div class="service-info">
-          <div>
-            <h3>Posters & Banners</h3>
-            <p>High-resolution print and web promotional graphics.</p>
-          </div>
-          <button class="btn btn-orange" style="margin-bottom: 10px;" onclick="openOrderModal('Posters & Banners')">Order Now</button>
-          <a href="posterbanner.html"><button class="btn btn-green">Create</button></a>
-        </div>
-      </div>
-
-      <div class="service-card">
-        <img src="FlyersBrochures.png" alt="Flyers & Brochures" onerror="this.src='https://via.placeholder.com/300x220?text=Flyers+%26+Brochures'">
-        <div class="service-info">
-          <div>
-            <h3>Flyers & Brochures</h3>
-            <p>Single & Multi-Page Marketing Layouts Ready for Print.</p>
-          </div>
-          <button class="btn btn-orange" onclick="openOrderModal('Flyers & Brochures')">Order Now</button>
-        </div>
-      </div>
-
-      <div class="service-card">
-        <img src="BusinessCard.jfif" alt="Business Cards" onerror="this.src='https://via.placeholder.com/300x220?text=Business+Cards'">
-        <div class="service-info">
-          <div>
-           <h3>Business Cards</h3>
-            <p>Double-Sided Premium Print-Ready Concepts.</p>
-          </div>
-          <button class="btn btn-orange" style="margin-bottom: 10px;" onclick="openOrderModal('Business Cards')">Order Now</button>
-          <a href="bc.html"><button class="btn btn-green">Create</button></a>
-        </div>
-      </div>
-
-      <div class="service-card">
-        <img src="SocialMediaPost.jpg" alt="Social Media Graphics" onerror="this.src='https://via.placeholder.com/300x220?text=Social+Media'">
-        <div class="service-info">
-          <div>
-            <h3>Social Media Graphics</h3>
-            <p>Engaging Posts, Stories, and Cover Banners Pack.</p>
-          </div>
-          <button class="btn btn-orange" onclick="openOrderModal('Social Media Graphics')">Order Now</button>
-        </div>
-      </div>
-
-      <div class="service-card">
-        <img src="AIVideoAds.jfif" alt="AI Video Ads" onerror="this.src='https://via.placeholder.com/300x220?text=AI+Video+Ads'">
-        <div class="service-info">
-          <div>
-            <h3>AI Video Ads</h3>
-            <p>AI-Generated Video Ads with Product</p>
-          </div>
-          <button class="btn btn-orange" onclick="openOrderModal('Digital AI Design')">Order Now</button>
-        </div>
-      </div>
-
-      <div class="service-card">
-        <img src="Menu.jpeg" alt="Menus" onerror="this.src='https://via.placeholder.com/300x220?text=Menu+Design'">
-        <div class="service-info">
-          <div>
-            <h3>Menus Ads</h3>
-            <p>Restaurant Digital/Print Menus & Promotional ad Graphics.</p>
-          </div>
-          <button class="btn btn-orange" onclick="openOrderModal('Menus Ads')">Order Now</button>
-        </div>
-      </div>
-
-      <div class="service-card">
-        <img src="Static Website.png" alt="Static Website" onerror="this.src='https://via.placeholder.com/300x220?text=Static+Website'">
-        <div class="service-info">
-          <div>
-            <h3>Static Website</h3>
-            <p>Instant Loading for A Seamless User Experience.</p>
-          </div>
-          <button class="btn btn-orange" onclick="openOrderModal('Static Website')">Order Now</button>
-        </div>
+        <img src="LogoDesign.jpg" alt="Logo" onerror="this.src='https://via.placeholder.com/300x220?text=Logo+Design'">
+        <div class="service-info"><div><h3>Logo Design</h3><p>Custom Vector Logo Concepts.</p></div><button class="btn btn-orange" onclick="openOrderModal('Logo Design')">Order Now</button></div>
       </div>
       <div class="service-card">
-        <img src="img/passport.jpg" alt="Passport Size Photo" onerror="this.src='https://via.placeholder.com/300x220?text=Logo+Design'">
-        <div class="service-info">
-          <div>
-            <h3>Passport Size Photo</h3>
-            <p></p>
-          </div>
-          <a href="passport.html"><button class="btn btn-green">Create</button></a>
-        </div>
+        <img src="PosterBanner.png" alt="Poster" onerror="this.src='https://via.placeholder.com/300x220?text=Posters'">
+        <div class="service-info"><div><h3>Posters & Banners</h3><p>Promotional graphics.</p></div><button class="btn btn-orange" style="margin-bottom: 10px;" onclick="openOrderModal('Posters & Banners')">Order Now</button><a href="posterbanner.html"><button class="btn btn-green">Create</button></a></div>
       </div>
-
+      <div class="service-card">
+        <img src="FlyersBrochures.png" alt="Flyers" onerror="this.src='https://via.placeholder.com/300x220?text=Flyers'">
+        <div class="service-info"><div><h3>Flyers & Brochures</h3><p>Marketing Layouts.</p></div><button class="btn btn-orange" onclick="openOrderModal('Flyers & Brochures')">Order Now</button></div>
+      </div>
+      <div class="service-card">
+        <img src="BusinessCard.jfif" alt="Card" onerror="this.src='https://via.placeholder.com/300x220?text=Business+Cards'">
+        <div class="service-info"><div><h3>Business Cards</h3><p>Print-Ready Concepts.</p></div><button class="btn btn-orange" style="margin-bottom: 10px;" onclick="openOrderModal('Business Cards')">Order Now</button><a href="bc.html"><button class="btn btn-green">Create</button></a></div>
+      </div>
+      <div class="service-card">
+        <img src="SocialMediaPost.jpg" alt="Social" onerror="this.src='https://via.placeholder.com/300x220?text=Social+Media'">
+        <div class="service-info"><div><h3>Social Media Graphics</h3><p>Posts and Stories.</p></div><button class="btn btn-orange" onclick="openOrderModal('Social Media Graphics')">Order Now</button></div>
+      </div>
+      <div class="service-card">
+        <img src="AIVideoAds.jfif" alt="AI" onerror="this.src='https://via.placeholder.com/300x220?text=AI+Video+Ads'">
+        <div class="service-info"><div><h3>AI Video Ads</h3><p>AI-Generated Video Ads.</p></div><button class="btn btn-orange" onclick="openOrderModal('Digital AI Design')">Order Now</button></div>
+      </div>
+      <div class="service-card">
+        <img src="Menu.jpeg" alt="Menu" onerror="this.src='https://via.placeholder.com/300x220?text=Menu+Design'">
+        <div class="service-info"><div><h3>Menus Ads</h3><p>Restaurant Menus.</p></div><button class="btn btn-orange" onclick="openOrderModal('Menus Ads')">Order Now</button></div>
+      </div>
+      <div class="service-card">
+        <img src="Static Website.png" alt="Web" onerror="this.src='https://via.placeholder.com/300x220?text=Static+Website'">
+        <div class="service-info"><div><h3>Static Website</h3><p>Instant Loading.</p></div><button class="btn btn-orange" onclick="openOrderModal('Static Website')">Order Now</button></div>
+      </div>
+      <div class="service-card">
+        <img src="img/passport.jpg" alt="Passport" onerror="this.src='https://via.placeholder.com/300x220?text=Passport+Photo'">
+        <div class="service-info"><div><h3>Passport Size Photo</h3><p></p></div><a href="passport.html"><button class="btn btn-green">Create</button></a></div>
+      </div>
     </div>
   </div>
 
-  <!-- Footer -->
   <footer>
     <p>&copy; Click Vectora Solution. All Rights Reserved.</p>
   </footer>
 
-  <!-- RESPONSIVE ORDER MODAL -->
   <div class="modal-overlay" id="orderModal">
     <div class="modal-card">
       <div class="modal-header-hero">
         <button class="close-btn" onclick="closeOrderModal()">&times;</button>
         <h2><i class="fa-solid fa-bag-shopping"></i> Quick Order Request</h2>
-        <p>Send Your Requirements Directly to Our Design Team Via WhatsApp.</p>
       </div>
-
       <div class="modal-body">
         <form onsubmit="sendToWhatsApp(event)">
           <div class="input-group">
             <label>Requested Service</label>
-            <div class="selected-service-badge">
-              <i class="fa-solid fa-layer-group"></i>
-              <input type="text" id="selectedProduct" readonly>
-            </div>
+            <div class="selected-service-badge"><i class="fa-solid fa-layer-group"></i><input type="text" id="selectedProduct" readonly></div>
           </div>
-
-          <div class="input-group">
-            <label for="custName">Your Name</label>
-            <input type="text" id="custName" placeholder="e.g. Alex Smith" required minlength="2">
-          </div>
-
-          <div class="input-group">
-            <label for="custEmail">Email Address</label>
-            <input type="email" id="custEmail" placeholder="alex@example.com" required>
-          </div>
-
-          <div class="input-group">
-            <label for="custPhone">WhatsApp / Mobile Number</label>
-            <input type="tel" id="custPhone" placeholder="10-digit Phone Number" required pattern="[0-9]{10}" maxlength="10">
-          </div>
-
-          <div class="input-group">
-            <label for="custDetails">Project Details & Requirements</label>
-            <textarea id="custDetails" rows="3" placeholder="Describe your design specifications, dimensions..."></textarea>
-          </div>
-
-          <button type="submit" class="btn-whatsapp">
-            <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Start Chat on WhatsApp
-          </button>
+          <div class="input-group"><label>Your Name</label><input type="text" id="custName" required minlength="2"></div>
+          <div class="input-group"><label>Email Address</label><input type="email" id="custEmail" required></div>
+          <div class="input-group"><label>WhatsApp / Mobile Number</label><input type="tel" id="custPhone" required pattern="[0-9]{10}" maxlength="10"></div>
+          <div class="input-group"><label>Project Details</label><textarea id="custDetails" rows="3"></textarea></div>
+          <button type="submit" class="btn-whatsapp"><i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Start Chat on WhatsApp</button>
         </form>
       </div>
     </div>
@@ -634,56 +313,37 @@
   <script>
     const menuToggle = document.getElementById('menuToggle');
     const navLinks = document.getElementById('navLinks');
-
     menuToggle.addEventListener('click', () => {
       navLinks.classList.toggle('active');
       const icon = menuToggle.querySelector('i');
-      if (navLinks.classList.contains('active')) {
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-xmark');
-      } else {
-        icon.classList.remove('fa-xmark');
-        icon.classList.add('fa-bars');
-      }
+      icon.classList.toggle('fa-bars');
+      icon.classList.toggle('fa-xmark');
     });
 
     function openOrderModal(serviceName) {
       document.getElementById('selectedProduct').value = serviceName;
       const modal = document.getElementById('orderModal');
       modal.style.display = 'flex';
-      setTimeout(() => { modal.classList.add('active'); }, 10);
+      setTimeout(() => modal.classList.add('active'), 10);
     }
-
     function closeOrderModal() {
       const modal = document.getElementById('orderModal');
       modal.classList.remove('active');
-      setTimeout(() => { modal.style.display = 'none'; }, 300);
+      setTimeout(() => modal.style.display = 'none', 300);
     }
-
     window.onclick = function(event) {
       const modal = document.getElementById('orderModal');
       if (event.target === modal) closeOrderModal();
     }
-
     function sendToWhatsApp(event) {
       event.preventDefault();
-      const companyPhone = "919427740360";
       const product = document.getElementById('selectedProduct').value;
       const name = document.getElementById('custName').value;
       const email = document.getElementById('custEmail').value;
       const phone = document.getElementById('custPhone').value;
       const details = document.getElementById('custDetails').value || "N/A";
-
-      const message = 
-        `*NEW ORDER INQUIRY - CLICK VECTORA SOLUTION*\n\n` +
-        `*Service:* ${product}\n` +
-        `*Name:* ${name}\n` +
-        `*Email:* ${email}\n` +
-        `*Phone:* ${phone}\n` +
-        `*Details:* ${details}`;
-
-      const whatsappUrl = `https://wa.me/${companyPhone}?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
+      const message = `*NEW ORDER INQUIRY*\n*Service:* ${product}\n*Name:* ${name}\n*Email:* ${email}\n*Phone:* ${phone}\n*Details:* ${details}`;
+      window.open(`https://wa.me/919427740360?text=${encodeURIComponent(message)}`, '_blank');
       closeOrderModal();
     }
   </script>
