@@ -54,7 +54,6 @@
       text-decoration: none;
     }
 
-    /* INCREASED LOGO SIZE (Desktop) */
     .brand-logo img {
       height: 120px;
       width: auto;
@@ -227,103 +226,6 @@
     .service-info h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main); }
     .service-info p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem; }
 
-    .affiliate-badge {
-      display: inline-block;
-      background: #ff9900;
-      color: #000;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      margin-bottom: 0.5rem;
-    }
-    .product-price {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: var(--orange);
-      margin: 0.4rem 0;
-    }
-    .product-price span {
-      text-decoration: line-through;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      font-weight: normal;
-      margin-left: 6px;
-    }
-
-    /* Contact Details Section */
-    .contact-main-section {
-      background: var(--bg-surface);
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 20px var(--shadow);
-      padding: 3rem 2rem;
-      margin-top: 4rem;
-      scroll-margin-top: 100px;
-    }
-
-    .contact-header { text-align: center; margin-bottom: 2.5rem; }
-    .contact-header h2 { font-size: 2rem; color: var(--text-main); }
-    .contact-header p { color: var(--text-muted); margin-top: 0.5rem; }
-
-    .contact-wrapper {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2.5rem;
-    }
-
-    .contact-info-list { display: flex; flex-direction: column; gap: 1.5rem; }
-
-    .info-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 1.2rem;
-      padding: 1rem;
-      background: var(--bg-main);
-      border-radius: 10px;
-      border: 1px solid var(--border);
-    }
-
-    .info-item i { font-size: 1.5rem; color: var(--orange); margin-top: 3px; }
-    .info-item h4 { font-size: 1rem; color: var(--text-main); margin-bottom: 0.2rem; }
-    .info-item p, .info-item a { font-size: 0.9rem; color: var(--text-muted); text-decoration: none; }
-    .info-item a:hover { color: var(--cyan); }
-
-    .social-handles { margin-top: 0.5rem; }
-    .social-handles p { font-weight: 600; color: var(--text-main); margin-bottom: 0.8rem; }
-    .social-links { display: flex; gap: 0.8rem; }
-
-    .social-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--bg-main);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-main);
-      font-size: 1.1rem;
-      text-decoration: none !important;
-      transition: all 0.3s ease;
-    }
-
-    .social-icon:hover {
-      background: var(--orange);
-      color: #fff;
-      border-color: var(--orange);
-      transform: translateY(-3px);
-    }
-
-    .contact-form-box {
-      background: var(--bg-main);
-      padding: 1.8rem;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-    }
-
-    .contact-form-box h3 { font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-main); }
-
     /* Buttons */
     .btn {
       width: 100%;
@@ -349,15 +251,11 @@
 
     .btn-orange:hover { background: #e05d00; }
 
-    .btn-amazon {
-      background: #ff9900;
-      color: #111;
-      box-shadow: 0 4px 12px rgba(255, 153, 0, 0.25);
+    .btn-green {
+      background: #25D366;
+      color: white;
     }
-
-    .btn-amazon:hover {
-      background: #e68a00;
-    }
+    .btn-green:hover { background: #128C7E; }
 
     /* Global Input Styling */
     form { display: grid; gap: 1.1rem; margin-top: 1rem; }
@@ -372,24 +270,13 @@
       color: var(--text-main);
       border-radius: 8px;
       font-size: 0.95rem;
-      transition: all 0.2s ease;
-    }
-
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: var(--cyan);
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(0, 168, 204, 0.15);
     }
 
     /* Modal Styling */
     .modal-overlay {
       display: none;
       position: fixed;
-      top: 0; 
-      left: 0; 
-      width: 100%; 
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(8px);
       justify-content: center;
@@ -400,10 +287,7 @@
       transition: opacity 0.3s ease;
     }
 
-    .modal-overlay.active {
-      display: flex;
-      opacity: 1;
-    }
+    .modal-overlay.active { display: flex; opacity: 1; }
 
     .modal-card {
       background: var(--bg-surface);
@@ -421,9 +305,7 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    .modal-overlay.active .modal-card {
-      transform: scale(1);
-    }
+    .modal-overlay.active .modal-card { transform: scale(1); }
 
     .modal-header-hero {
       background: linear-gradient(135deg, var(--orange) 0%, #ff8c38 100%);
@@ -450,10 +332,8 @@
 
     .close-btn {
       position: absolute;
-      top: 14px; 
-      right: 14px;
-      width: 30px;
-      height: 30px;
+      top: 14px; right: 14px;
+      width: 30px; height: 30px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.2);
       color: white;
@@ -463,12 +343,9 @@
       justify-content: center;
       font-size: 1.1rem;
       cursor: pointer;
-      transition: background 0.2s ease;
     }
     
-    .close-btn:hover { 
-      background: rgba(255, 255, 255, 0.35); 
-    }
+    .close-btn:hover { background: rgba(255, 255, 255, 0.35); }
 
     .modal-body {
       padding: 1.25rem 1.5rem;
@@ -489,18 +366,10 @@
       font-size: 0.9rem;
     }
 
-    .selected-service-badge i {
-      color: var(--cyan);
-    }
-
+    .selected-service-badge i { color: var(--cyan); }
     .selected-service-badge input {
-      border: none;
-      background: transparent;
-      padding: 0;
-      color: inherit;
-      font-weight: inherit;
-      font-size: inherit;
-      pointer-events: none;
+      border: none; background: transparent; padding: 0;
+      color: inherit; font-weight: inherit; font-size: inherit; pointer-events: none;
     }
 
     .btn-whatsapp {
@@ -515,11 +384,10 @@
       gap: 10px;
       box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
       margin-top: 0.5rem;
-    }
-    
-    .btn-whatsapp:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      width: 100%;
     }
 
     footer {
@@ -531,71 +399,23 @@
       margin-top: 3rem;
     }
 
-    /* RESPONSIVE MEDIA QUERIES (MOBILE FIXES) */
     @media (max-width: 768px) {
-      nav { 
-        padding: 0.6rem 5%; 
-      }
-
-      /* INCREASED LOGO SIZE (Mobile) */
-      .brand-logo img { 
-        height: 85px; 
-      }
-
-      .menu-toggle {
-        display: block;
-      }
-
-      /* Mobile Slide Navigation Bar */
+      nav { padding: 0.6rem 5%; }
+      .brand-logo img { height: 85px; }
+      .menu-toggle { display: block; }
       .nav-links {
         display: none;
         flex-direction: column;
         position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
+        top: 100%; left: 0; width: 100%;
         background: rgba(255, 255, 255, 0.98);
         padding: 1.2rem 2rem;
         box-shadow: 0 10px 15px var(--shadow-hover);
         border-bottom: 1px solid var(--border);
-        gap: 1.2rem;
-        align-items: stretch;
-        text-align: center;
+        gap: 1.2rem; align-items: stretch; text-align: center;
       }
-
-      .nav-links.active {
-        display: flex;
-      }
-
-      .nav-links a {
-        font-size: 1.05rem;
-        padding: 0.5rem 0;
-        display: block;
-      }
-
-      .btn-nav {
-        margin-top: 0.5rem;
-      }
-
-      .container {
-        padding: 1.5rem 1rem;
-      }
-
-      .hero {
-        padding: 2.2rem 1rem;
-      }
-
-      .hero h1 { 
-        font-size: 2rem; 
-      }
-
-      .contact-wrapper { 
-        grid-template-columns: 1fr; 
-      }
-
-      .contact-main-section {
-        padding: 2rem 1.2rem;
-      }
+      .nav-links.active { display: flex; }
+      .nav-links a { font-size: 1.05rem; padding: 0.5rem 0; display: block; }
     }
   </style>
 </head>
@@ -603,20 +423,19 @@
 
   <!-- Header Navigation -->
   <nav>
-    <a href="#" class="brand-logo">
+    <a href="index.html" class="brand-logo">
       <img src="logo.png" alt="Click Vectora Solution Logo" onerror="this.src='https://via.placeholder.com/200x80?text=Click+Vectora'">
     </a>
 
-    <!-- Hamburger Toggle Button for Mobile -->
     <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
       <i class="fa-solid fa-bars"></i>
     </button>
 
     <ul class="nav-links" id="navLinks">
-      <li><a href="#portfolio">Work</a></li>
-      <li><a href="#services">Design Services</a></li>
-      <li><a href="#amazon-products">Online Store</a></li>
-      <li><a href="#contact-section">Contact Us</a></li>
+      <li><a href="index.html#portfolio">Work</a></li>
+      <li><a href="index.html#services">Design Services</a></li>
+      <li><a href="store.html">Online Store</a></li>
+      <li><a href="contact.html">Contact Us</a></li>
     </ul>
   </nav>
 
@@ -675,8 +494,8 @@
             <h3>Posters & Banners</h3>
             <p>High-resolution print and web promotional graphics.</p>
           </div>
-          <button class="btn btn-orange" style="margin-bottom: 10px;"  onclick="openOrderModal('Posters & Banners')">Order Now</button>
-<a href="posterbanner.html"><button class="btn btn-green">Create</button></a>
+          <button class="btn btn-orange" style="margin-bottom: 10px;" onclick="openOrderModal('Posters & Banners')">Order Now</button>
+          <a href="posterbanner.html"><button class="btn btn-green">Create</button></a>
         </div>
       </div>
 
@@ -698,8 +517,8 @@
            <h3>Business Cards</h3>
             <p>Double-Sided Premium Print-Ready Concepts.</p>
           </div>
-          <button class="btn btn-orange" style="margin-bottom: 10px;"  onclick="openOrderModal('Business Cards')">Order Now</button>
-<a href="bc.html"><button class="btn btn-green">Create</button></a>
+          <button class="btn btn-orange" style="margin-bottom: 10px;" onclick="openOrderModal('Business Cards')">Order Now</button>
+          <a href="bc.html"><button class="btn btn-green">Create</button></a>
         </div>
       </div>
 
@@ -743,7 +562,7 @@
             <h3>Static Website</h3>
             <p>Instant Loading for A Seamless User Experience.</p>
           </div>
-         <button class="btn btn-orange" onclick="openOrderModal('Static Website')">Order Now</button>
+          <button class="btn btn-orange" onclick="openOrderModal('Static Website')">Order Now</button>
         </div>
       </div>
       <div class="service-card">
@@ -753,94 +572,16 @@
             <h3>Passport Size Photo</h3>
             <p></p>
           </div>
-         <a href="passport.html"><button class="btn btn-green">Create</button></a>
+          <a href="passport.html"><button class="btn btn-green">Create</button></a>
         </div>
       </div>
 
     </div>
-
-    <!-- Amazon Recommended Products Section -->
-    <h2 class="section-title" id="amazon-products">Recommended Amazon Products</h2>
-    <div class="services-grid" id="affiliate-grid">
-      <p style="color: var(--text-muted); grid-column: 1/-1;">Fetching live Amazon deals & design tools...</p>
-    </div>
-      
-    <!-- Contact Us Section -->
-    <section class="contact-main-section" id="contact-section">
-      <div class="contact-header">
-        <h2>Contact Us</h2>
-        <p>Get In Touch With Our Team for Custom Vector Design Inquiries or Project Proposals.</p>
-      </div>
-
-      <div class="contact-wrapper">
-        <!-- Direct Contact Details -->
-        <div class="contact-info-list">
-          <div class="info-item">
-            <i class="fa-solid fa-envelope"></i>
-            <div>
-              <h4>Email Support</h4>
-              <a href="mailto:clickvectora@gmail.com">clickvectora@gmail.com</a>
-            </div>
-          </div>
-
-          <div class="info-item">
-            <i class="fa-brands fa-whatsapp"></i>
-            <div>
-              <h4>WhatsApp Chat</h4>
-              <a href="https://wa.me/919427740360" target="_blank" rel="noopener noreferrer">+91 94277 40360</a>
-            </div>
-          </div>
-
-          <div class="info-item">
-            <i class="fa-solid fa-clock"></i>
-            <div>
-              <h4>Working Hours</h4>
-              <p>Mon - Sat: 9:00 AM - 7:00 PM IST</p>
-            </div>
-          </div>
-
-          <div class="social-handles">
-            <p>Connect With Us</p>
-            <div class="social-links">
-              <a href="https://www.instagram.com/clickvectora/" target="_blank" rel="noopener noreferrer" class="social-icon" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-              <a href="https://www.youtube.com/@ClickVectora" target="_blank" rel="noopener noreferrer" class="social-icon" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Inline Contact Form -->
-        <div class="contact-form-box">
-          <h3>Send Us a Message</h3>
-          <form onsubmit="sendDirectMessage(event)">
-            <div class="input-group">
-              <label for="directName">Full Name</label>
-              <input type="text" id="directName" placeholder="Full Name" required minlength="2">
-            </div>
-            <div class="input-group">
-              <label for="directEmail">Email Address</label>
-              <input type="email" id="directEmail" placeholder="name@example.com" required>
-            </div>
-            <div class="input-group">
-              <label for="directPhone">Mobile Number</label>
-              <input type="tel" id="directPhone" placeholder="10-digit Mobile Number" required pattern="[0-9]{10}" maxlength="10" title="Please enter a valid 10-digit mobile number" onkeypress="return /[0-9]/i.test(event.key)">
-            </div>
-            <div class="input-group">
-              <label for="directMsg">Message</label>
-              <textarea id="directMsg" rows="3" placeholder="How can we help you?" required minlength="5"></textarea>
-            </div>
-            <button type="submit" class="btn btn-orange">Send Message</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
   </div>
 
   <!-- Footer -->
   <footer>
     <p>&copy; Click Vectora Solution. All Rights Reserved.</p>
-    <p style="font-size: 0.78rem; margin-top: 0.4rem;">As an Amazon Associate, We Earn From Qualifying Purchases Through Affiliate Links.</p>
   </footer>
 
   <!-- RESPONSIVE ORDER MODAL -->
@@ -874,15 +615,15 @@
 
           <div class="input-group">
             <label for="custPhone">WhatsApp / Mobile Number</label>
-            <input type="tel" id="custPhone" placeholder="10-digit Phone Number" required pattern="[0-9]{10}" maxlength="10" title="Please enter a valid 10-digit phone number" onkeypress="return /[0-9]/i.test(event.key)">
+            <input type="tel" id="custPhone" placeholder="10-digit Phone Number" required pattern="[0-9]{10}" maxlength="10">
           </div>
 
           <div class="input-group">
             <label for="custDetails">Project Details & Requirements</label>
-            <textarea id="custDetails" rows="3" placeholder="Describe your design specifications, dimensions, color preferences..."></textarea>
+            <textarea id="custDetails" rows="3" placeholder="Describe your design specifications, dimensions..."></textarea>
           </div>
 
-          <button type="submit" class="btn btn-whatsapp">
+          <button type="submit" class="btn-whatsapp">
             <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Start Chat on WhatsApp
           </button>
         </form>
@@ -891,9 +632,6 @@
   </div>
 
   <script>
-    // =========================================
-    // MOBILE NAVIGATION TOGGLE SCRIPT
-    // =========================================
     const menuToggle = document.getElementById('menuToggle');
     const navLinks = document.getElementById('navLinks');
 
@@ -909,34 +647,17 @@
       }
     });
 
-    // Mobile nav link click closes menu
-    document.querySelectorAll('.nav-links a').forEach(link => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('active');
-        const icon = menuToggle.querySelector('i');
-        icon.classList.remove('fa-xmark');
-        icon.classList.add('fa-bars');
-      });
-    });
-
-    // =========================================
-    // ORDER MODAL LOGIC
-    // =========================================
     function openOrderModal(serviceName) {
       document.getElementById('selectedProduct').value = serviceName;
       const modal = document.getElementById('orderModal');
       modal.style.display = 'flex';
-      setTimeout(() => {
-        modal.classList.add('active');
-      }, 10);
+      setTimeout(() => { modal.classList.add('active'); }, 10);
     }
 
     function closeOrderModal() {
       const modal = document.getElementById('orderModal');
       modal.classList.remove('active');
-      setTimeout(() => {
-        modal.style.display = 'none';
-      }, 300);
+      setTimeout(() => { modal.style.display = 'none'; }, 300);
     }
 
     window.onclick = function(event) {
@@ -945,170 +666,26 @@
     }
 
     function sendToWhatsApp(event) {
-  event.preventDefault();
+      event.preventDefault();
+      const companyPhone = "919427740360";
+      const product = document.getElementById('selectedProduct').value;
+      const name = document.getElementById('custName').value;
+      const email = document.getElementById('custEmail').value;
+      const phone = document.getElementById('custPhone').value;
+      const details = document.getElementById('custDetails').value || "N/A";
 
-  const companyPhone = "919427740360";
+      const message = 
+        `*NEW ORDER INQUIRY - CLICK VECTORA SOLUTION*\n\n` +
+        `*Service:* ${product}\n` +
+        `*Name:* ${name}\n` +
+        `*Email:* ${email}\n` +
+        `*Phone:* ${phone}\n` +
+        `*Details:* ${details}`;
 
-  const product = document.getElementById('selectedProduct').value;
-  const name = document.getElementById('custName').value;
-  const email = document.getElementById('custEmail').value;
-  const phone = document.getElementById('custPhone').value;
-  const details = document.getElementById('custDetails').value || "N/A";
-
-  const message = 
-    `*NEW ORDER INQUIRY - CLICK VECTORA SOLUTION*\n\n` +
-    `*Service:* ${product}\n` +
-    `*Name:* ${name}\n` +
-    `*Email:* ${email}\n` +
-    `*Phone:* ${phone}\n` +
-    `*Details:* ${details}`;
-
-  const whatsappUrl = `https://wa.me/${companyPhone}?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, '_blank');
-  closeOrderModal();
-}
-
-function sendDirectMessage(event) {
-  event.preventDefault();
-
-  const companyPhone = "919427740360";
-  const name = document.getElementById('directName').value;
-  const email = document.getElementById('directEmail').value;
-  const phone = document.getElementById('directPhone').value;
-  const msg = document.getElementById('directMsg').value;
-
-  const message = 
-    `*GENERAL INQUIRY - WEBSITE CONTACT FORM*\n\n` +
-    `*Name:* ${name}\n` +
-    `*Email:* ${email}\n` +
-    `*Mobile:* ${phone}\n` +
-    `*Message:* ${msg}`;
-
-  const whatsappUrl = `https://wa.me/${companyPhone}?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, '_blank');
-}
-    // =========================================
-    // AMAZON PRODUCTS RENDER LOGIC
-    // =========================================
-    const AMAZON_TAG = "clickvectora-21";
-
-    const affiliateProducts = [
-      {
-        title: "Native M2 Pro Water Purifier by Urban Company",
-        price: "",
-        originalPrice: "",
-        imageUrl: "https://m.media-amazon.com/images/I/61bRe+7bhlL._AC_SL1500_.jpg",
-        description: "Preset Touch Dispensing + Battery | Smart Real-time Tracking | 10-Stage RO+UV+Copper+Alkaline+Mineraliser | No Service for 2 Years",
-        url: "https://link.amazon/B0eWCGjvf?tag=" + AMAZON_TAG,
-        asin: "B0G4CHKBGP"
-      },
-      {
-        title: "Ezee Black Medium Garbage Bags 180 Pcs",
-        price: "",
-        originalPrice: "",
-        imageUrl: "https://m.media-amazon.com/images/I/71D6PuAPSSL._SL1500_.jpg",
-        description: "19 X 21 Inch | 30 Pcs x Pack of 6 | Dustbin Trash Bag",
-        url: "https://www.amazon.in/dp/B074CW3JV4?tag=" + AMAZON_TAG, 
-        asin: "B074CW3JV4"
-      },
-      {
-        title: "Aluminium Badminton Racket Combo",
-        price: "",
-        originalPrice: "",
-        imageUrl: "https://m.media-amazon.com/images/I/61BAz4RFXAL._AC_SL1500_.jpg",
-        description: "Hundred Powertek 200 Aluminium Badminton Racket Combo, 2 Strung Rackets with 1 Full Cover & 3 Aura Nylon Shuttlecocks",
-        url: "https://www.amazon.in/dp/B0CZXCFR3P?tag=" + AMAZON_TAG, 
-        asin: "B0CZXCFR3P"
-      },
-         {
-        title: "Karaoke Mic with Speaker",
-        price: "",
-        originalPrice: "",
-        imageUrl: "https://m.media-amazon.com/images/I/61ijIp-5KZL._SL1100_.jpg",
-        description: "Wireless Mini Portable Bluetooth Speaker with Microphone & LED Lights | Cute Birthday Gift for Kids Musical Toys for Boys, Girls and Adults",
-        url: "https://link.amazon/B0iRJZifL?tag=" + AMAZON_TAG, 
-        asin: "B0DRPCR5VK"
-      },
-         {
-        title: "Weight Machine",
-        price: "",
-        originalPrice: "",
-        imageUrl: "https://m.media-amazon.com/images/I/61nlxzaekZL._SL1500_.jpg",
-        description: "Digital Weighing Scale with Step-On Technology, Error Indicator, 1 Year Warranty & Batteries Included - Dura-Glass PS 120",
-        url: "https://link.amazon/B04wTPKCt?tag=" + AMAZON_TAG, 
-        asin: "B0CHJ4BK2C"
-      },
-      {
-        title: "HP Keyboard and Mouse Combo",
-        price: "",
-        originalPrice: "",
-        imageUrl: "https://m.media-amazon.com/images/I/61-fupzH-CL._SL1500_.jpg",
-        description: "Working Range 2.4G Wireless Technology / 3 Years Warranty (4SC12PA), Black",
-        url: "https://link.amazon/B0eLranDg?tag=" + AMAZON_TAG, 
-        asin: "B07V82W5CN"
-      },
-      {
-        title: "boAt Bluetooth Neckband",
-        price: "",
-        originalPrice: "",
-        imageUrl: "https://m.media-amazon.com/images/I/61B5hIAmvdL._SY450_.jpg",
-        description: "40 Hours Battery, Dual Pair, Fast Charge, ENx Technology, App Support, Magnetic Buds, Wireless in Ear Earphones with Mic (Active Black)",
-        url: "https://link.amazon/B0dQZf13t?tag=" + AMAZON_TAG, 
-        asin: "B0F7Y54PJX"
-      },
-       {
-        title: "10 Meter RJ45 LAN Cable",
-        price: "",
-        originalPrice: "",
-        imageUrl: "https://m.media-amazon.com/images/I/81Huc99OLQL._SL1500_.jpg",
-        description: "RJ45 cat6 Ethernet Patch Cable LAN Cable Internet Network Computer Cable Cord High Speed Gigabit Category UTP Wires For PC, Modem, Router, LAN ADSL – BLACK 10M",
-        url: "https://link.amazon/B0beUIv2K?tag=" + AMAZON_TAG, 
-        asin: "B089NVZND2"
-      }, 
-{
-        title: "Oakter Mini UPS for Router",
-        price: "",
-        originalPrice: "",
-        imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T1/images/I/61NytjwzadL._SL1500_.jpg",
-        description: "Backup Upto 4 Hours 2x2000 mAh 14.8 Whr| WiFi UPS Power Backup During Power Cuts | UPS Broadband Modem | Current Surge & Deep Discharge Protection",
-        url: "https://link.amazon/B0ey9fIh1?tag=" + AMAZON_TAG, 
-        asin: "B074CW3JV4"
-      }
-    ];
-
-    async function loadAmazonProducts() {
-      renderProducts(affiliateProducts);
+      const whatsappUrl = `https://wa.me/${companyPhone}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+      closeOrderModal();
     }
-
-    function renderProducts(items) {
-      const container = document.getElementById('affiliate-grid');
-      container.innerHTML = items.map(item => {
-        const affiliateUrl = item.url && item.url.trim() !== "" 
-          ? item.url 
-          : `https://www.amazon.in/dp/${item.asin}?tag=${AMAZON_TAG}`;
-
-        const fallbackImg = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80";
-
-        return `
-          <div class="service-card">
-            <img src="${item.imageUrl}" alt="${item.title}" onerror="this.onerror=null; this.src='${fallbackImg}';">
-            <div class="service-info">
-              <div>
-                <span class="affiliate-badge"><i class="fa-brands fa-amazon"></i> Amazon Choice</span>
-                <h3>${item.title}</h3>
-                ${item.price ? `<div class="product-price">${item.price} ${item.originalPrice ? `<span>${item.originalPrice}</span>` : ''}</div>` : ''}
-                <p>${item.description}</p>
-              </div>
-              <a href="${affiliateUrl}" target="_blank" rel="noopener sponsored" class="btn btn-amazon">
-                View on Amazon <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; margin-left:4px;"></i>
-              </a>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    document.addEventListener('DOMContentLoaded', loadAmazonProducts);
   </script>
 </body>
 </html>
