@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Passport Photo Studio - ClickVectora Solution</title>
+  <title>AI Passport Photo Studio - Click Vectora Solution</title>
   
+  <!-- Browser Tab Favicon Logo -->
+  <link rel="icon" type="image/png" href="img/logo/logo1.png">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <script src="https://cdn.tailwindcss.com"></script>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
@@ -33,10 +39,45 @@
       --shadow-hover: rgba(15, 23, 42, 0.12);
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    html { scroll-behavior: smooth; }
+
     body {
       background-color: var(--bg-main);
       color: var(--text-main);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* Navigation Bar matching index.html */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 5%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px var(--shadow);
+    }
+
+    .brand-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .brand-logo img { height: 70px; width: auto; display: block; object-fit: contain; }
+
+    .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--cyan); }
+
+    .menu-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 1.6rem;
+      color: var(--text-main);
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
     }
 
     .theme-card {
@@ -95,19 +136,62 @@
       background-color: var(--bg-input);
       border: 1px solid var(--border);
     }
+
+    @media (max-width: 768px) {
+      nav { padding: 0.4rem 5%; }
+      .brand-logo img { height: 55px; }
+      .menu-toggle { display: block; }
+      .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: var(--bg-surface);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+      }
+      .nav-links.active {
+        max-height: 350px;
+      }
+      .nav-links li {
+        width: 100%;
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-links a {
+        display: block;
+        padding: 1rem 1.5rem;
+        width: 100%;
+      }
+    }
   </style>
 </head>
-<body class="p-4 md:p-8 min-h-screen">
+<body class="min-h-screen">
 
-  <div class="max-w-6xl mx-auto theme-card rounded-2xl p-6 md:p-8 transition-all relative">
+  <!-- Navigation Bar with Home Link Added -->
+  <nav>
+    <a href="index.html" class="brand-logo">
+      <img src="img/logo/logo.png" alt="Click Vectora Solution Logo" onerror="this.src='https://via.placeholder.com/200x80?text=Click+Vectora'">
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html"><i class="fa-solid fa-house mr-1"></i> Home</a></li>
+      <li><a href="index.html#portfolio">Work</a></li>
+      <li><a href="index.html#services">Design Services</a></li>
+      <li><a href="store.html">Online Store</a></li>
+      <li><a href="contact.html">Contact Us</a></li>
+    </ul>
+  </nav>
+
+  <div class="max-w-6xl mx-auto theme-card rounded-2xl p-6 md:p-8 transition-all relative my-8">
     
     <header class="flex flex-col items-center mb-6 border-b pb-6 relative" style="border-color: var(--border)">
-      <a href="index.html">
-      <button id="homeBtn" class="absolute left-0 top-0 btn-secondary px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm hover:scale-105 cursor-pointer">
-        🏠 Home
-      </button></a>
-      <img src="ClickVectora Logo - Copy.png" alt="ClickVectora Solution Logo" onerror="this.src='logo.png'; this.onerror=function(){this.src='https://via.placeholder.com/300x120?text=Click+Vectora';}" class="h-36 md:h-48 w-auto object-contain mb-3 transition-transform hover:scale-105">
-      <h1 class="text-3xl font-extrabold tracking-tight">AI Passport Photo Studio</h1>
+      <h1 class="text-3xl font-extrabold tracking-tight mt-2">AI Passport Photo Studio</h1>
       <p class="text-sm text-muted mt-1 text-center">Custom Paper Sizes, AI Background Removal, Crop Controls & Printable PDF Layouts</p>
     </header>
 
@@ -243,12 +327,28 @@
         </button>
       </div>
       <div class="w-full overflow-auto flex justify-center items-center p-2 rounded-xl" style="background-color: var(--bg-input);">
-        <img id="previewModalImg" src="" alt="Full Sheet Preview" class="max-h-[70vh] object-contain shadow-md rounded">
+        <img id="previewModalImg" alt="Full Sheet Preview" class="max-h-[70vh] object-contain shadow-md rounded">
       </div>
     </div>
   </div>
 
   <script>
+    // Responsive Navbar Menu Toggle Script matching index.html
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      const icon = menuToggle.querySelector('i');
+      if (navLinks.classList.contains('active')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-xmark');
+      } else {
+        icon.classList.remove('fa-xmark');
+        icon.classList.add('fa-bars');
+      }
+    });
+
     const CONFIG = {
       RAZORPAY_KEY_ID: "rzp_live_TVvsN7S7XsvpRb", 
       AMOUNT_IN_INR: 10,
@@ -268,7 +368,6 @@
     };
 
     const DOM = {
-      homeBtn: document.getElementById('homeBtn'),
       uploadInput: document.getElementById('uploadInput'),
       fileLabel: document.getElementById('fileLabel'),
       image: document.getElementById('image'),
@@ -297,10 +396,6 @@
       closePreviewModalBtn: document.getElementById('closePreviewModalBtn'),
       modalPreviewHeading: document.getElementById('modalPreviewHeading')
     };
-
-    DOM.homeBtn.addEventListener('click', () => {
-      window.location.href = window.location.pathname;
-    });
 
     DOM.pageSizeSelect.addEventListener('change', (e) => {
       const option = e.target.options[e.target.selectedIndex];
@@ -541,14 +636,10 @@
       DOM.previewModal.classList.add('hidden');
     });
 
-    // High-Resolution PDF Download Trigger using jsPDF
     function triggerPDFDownload() {
       const { jsPDF } = window.jspdf;
-      
-      // Determine orientation based on dimensions
       const orientation = state.pageWidth > state.pageHeight ? 'l' : 'p';
       
-      // Create jsPDF instance using points or pixels format
       const pdf = new jsPDF({
         orientation: orientation,
         unit: 'px',
@@ -574,7 +665,7 @@
         currency: "INR",
         name: CONFIG.PAYEE_NAME,
         description: "High-Resolution Printable Passport PDF Sheet",
-        image: "ClickVectora Logo - Copy.png",
+        image: "img/logo/logo1.png",
         handler: function (response) {
           if (response.razorpay_payment_id) {
             triggerPDFDownload();
