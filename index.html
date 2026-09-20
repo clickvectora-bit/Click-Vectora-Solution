@@ -31,7 +31,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.8rem 5%;
+      padding: 0.5rem 5%; /* Header padding kam ki gayi hai */
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
@@ -41,8 +41,8 @@
       box-shadow: 0 1px 3px var(--shadow);
     }
 
-    .brand-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-    .brand-logo img { height: 120px; width: auto; display: block; object-fit: contain; }
+    .brand-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .brand-logo img { height: 70px; /* Logo height 120px se kam karke 70px ki gayi hai */ width: auto; display: block; object-fit: contain; }
 
     .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
     .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.3s; }
@@ -195,8 +195,8 @@
     footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 3rem; }
 
     @media (max-width: 768px) {
-      nav { padding: 0.6rem 5%; }
-      .brand-logo img { height: 85px; }
+      nav { padding: 0.4rem 5%; }
+      .brand-logo img { height: 50px; }
       .menu-toggle { display: block; }
       .nav-links {
         display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%;
@@ -234,7 +234,7 @@
         <div class="portfolio-info"><h3>Logo & Branding Design</h3><p>Vector Concept Sketches.</p></div>
       </div>
       <div class="portfolio-card">
-        <img src="img/social media icon.png" onerror="this.src='https://via.placeholder.com/600x220?text=Social+Media'">
+        <img src="img/social media icon.png" onerror="this.src='https://via.placeholder.com/600x220?text=Social+Media'" alt="Social Media">
         <div class="portfolio-info"><h3>Social Media Graphics</h3><p>Custom templates.</p></div>
       </div>
       <div class="portfolio-card">
@@ -246,44 +246,51 @@
     <h2 class="section-title" id="services">Our Design Services</h2>
     <div class="services-grid">
       <div class="service-card">
-        <img src="LogoDesign.jpg" alt="Logo" onerror="this.src='https://via.placeholder.com/300x220?text=Logo+Design'">
+        <img src="LogoDesign.jpg" alt="Logo Design" onerror="this.src='https://via.placeholder.com/300x220?text=Logo+Design'">
         <div class="service-info"><div><h3>Logo Design</h3><p>Custom Vector Logo Concepts.</p></div><button class="btn btn-orange" onclick="openOrderModal('Logo Design')">Order Now</button></div>
       </div>
       <div class="service-card">
         <img src="PosterBanner.png" alt="Poster" onerror="this.src='https://via.placeholder.com/300x220?text=Posters'">
-        <div class="service-info"><div><h3>Posters & Banners</h3><p>Promotional graphics.</p></div>
-<a href="posterbanner.html"><button class="btn btn-green" style="margin-bottom: 10px;">Create</button></a>
-<button class="btn btn-orange" onclick="openOrderModal('Posters & Banners')">Order Now</button></div>
+        <div class="service-info">
+          <div><h3>Posters & Banners</h3><p>Promotional graphics.</p></div>
+          <a href="posterbanner.html" class="btn btn-green" style="margin-bottom: 10px;">Create</a>
+          <button class="btn btn-orange" onclick="openOrderModal('Posters & Banners')">Order Now</button>
+        </div>
       </div>
       <div class="service-card">
         <img src="FlyersBrochures.png" alt="Flyers" onerror="this.src='https://via.placeholder.com/300x220?text=Flyers'">
         <div class="service-info"><div><h3>Flyers & Brochures</h3><p>Marketing Layouts.</p></div><button class="btn btn-orange" onclick="openOrderModal('Flyers & Brochures')">Order Now</button></div>
       </div>
       <div class="service-card">
-        <img src="BusinessCard.jfif" alt="Card" onerror="this.src='https://via.placeholder.com/300x220?text=Business+Cards'">
-        <div class="service-info"><div><h3>Business Cards</h3><p>Print-Ready Concepts.</p></div>
-<a href="bc.html"><button class="btn btn-green" style="margin-bottom: 10px;">Create</button></a>
-<button class="btn btn-orange" style="margin-bottom: 10px;" onclick="openOrderModal('Business Cards')">Order Now</button></div>
+        <img src="BusinessCard.jfif" alt="Business Cards" onerror="this.src='https://via.placeholder.com/300x220?text=Business+Cards'">
+        <div class="service-info">
+          <div><h3>Business Cards</h3><p>Print-Ready Concepts.</p></div>
+          <a href="bc.html" class="btn btn-green" style="margin-bottom: 10px;">Create</a>
+          <button class="btn btn-orange" style="margin-bottom: 10px;" onclick="openOrderModal('Business Cards')">Order Now</button>
+        </div>
       </div>
       <div class="service-card">
-        <img src="SocialMediaPost.jpg" alt="Social" onerror="this.src='https://via.placeholder.com/300x220?text=Social+Media'">
+        <img src="SocialMediaPost.jpg" alt="Social Media" onerror="this.src='https://via.placeholder.com/300x220?text=Social+Media'">
         <div class="service-info"><div><h3>Social Media Graphics</h3><p>Posts and Stories.</p></div><button class="btn btn-orange" onclick="openOrderModal('Social Media Graphics')">Order Now</button></div>
       </div>
       <div class="service-card">
-        <img src="AIVideoAds.jfif" alt="AI" onerror="this.src='https://via.placeholder.com/300x220?text=AI+Video+Ads'">
+        <img src="AIVideoAds.jfif" alt="AI Video" onerror="this.src='https://via.placeholder.com/300x220?text=AI+Video+Ads'">
         <div class="service-info"><div><h3>AI Video Ads</h3><p>AI-Generated Video Ads.</p></div><button class="btn btn-orange" onclick="openOrderModal('Digital AI Design')">Order Now</button></div>
       </div>
       <div class="service-card">
-        <img src="Menu.jpeg" alt="Menu" onerror="this.src='https://via.placeholder.com/300x220?text=Menu+Design'">
+        <img src="Menu.jpeg" alt="Menu Design" onerror="this.src='https://via.placeholder.com/300x220?text=Menu+Design'">
         <div class="service-info"><div><h3>Menus Ads</h3><p>Restaurant Menus.</p></div><button class="btn btn-orange" onclick="openOrderModal('Menus Ads')">Order Now</button></div>
       </div>
       <div class="service-card">
-        <img src="Static Website.png" alt="Web" onerror="this.src='https://via.placeholder.com/300x220?text=Static+Website'">
+        <img src="Static Website.png" alt="Static Website" onerror="this.src='https://via.placeholder.com/300x220?text=Static+Website'">
         <div class="service-info"><div><h3>Static Website</h3><p>Instant Loading.</p></div><button class="btn btn-orange" onclick="openOrderModal('Static Website')">Order Now</button></div>
       </div>
       <div class="service-card">
-        <img src="img/passport.jpg" alt="Passport" onerror="this.src='https://via.placeholder.com/300x220?text=Passport+Photo'">
-        <div class="service-info"><div><h3>Passport Size Photo</h3><p></p></div><a href="passport.html"><button class="btn btn-green">Create</button></a></div>
+        <img src="img/passport.jpg" alt="Passport Photo" onerror="this.src='https://via.placeholder.com/300x220?text=Passport+Photo'">
+        <div class="service-info">
+          <div><h3>Passport Size Photo</h3><p></p></div>
+          <a href="passport.html" class="btn btn-green">Create</a>
+        </div>
       </div>
     </div>
   </div>
