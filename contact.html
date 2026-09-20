@@ -25,10 +25,10 @@
     body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; }
 
     nav {
-      display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 5%;
+      display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 5%;
       background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
     }
-    .brand-logo img { height: 120px; width: auto; display: block; object-fit: contain; }
+    .brand-logo img { height: 70px; /* Logo height homepage ke jaisi kam ki gayi hai */ width: auto; display: block; object-fit: contain; }
     .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
     .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; }
     .nav-links a:hover { color: var(--cyan); }
@@ -70,7 +70,11 @@
 
     footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 3rem; }
 
-    @media (max-width: 768px) { .contact-wrapper { grid-template-columns: 1xl; } }
+    @media (max-width: 768px) {
+      nav { padding: 0.4rem 5%; }
+      .brand-logo img { height: 50px; }
+      .contact-wrapper { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
