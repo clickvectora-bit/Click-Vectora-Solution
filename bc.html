@@ -36,8 +36,8 @@
 
     /* Navigation Header (Matching index.html) */
     nav {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
       padding: 0.5rem 5%;
       background: rgba(255, 255, 255, 0.95);
@@ -56,14 +56,16 @@
       text-decoration: none; 
     }
     .brand-logo img { height: 70px; width: auto; display: block; object-fit: contain; }
-    .brand-title {
-      font-size: 1.15rem;
+    
+    .brand-title-center {
+      text-align: center;
+      font-size: 1.25rem;
       font-weight: 700;
       color: var(--text-main);
       letter-spacing: -0.3px;
     }
 
-    .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; justify-self: flex-end; }
     .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.3s; }
     .nav-links a:hover { color: var(--cyan); }
 
@@ -75,6 +77,7 @@
       color: var(--text-main);
       cursor: pointer;
       padding: 0.2rem 0.5rem;
+      justify-self: flex-end;
     }
 
     button, .btn-home {
@@ -221,10 +224,10 @@
       justify-content: center;
     }
 
-    @media (max-width: 768px) {
-      nav { padding: 0.4rem 5%; }
+    @media (max-width: 900px) {
+      nav { display: flex; justify-content: space-between; padding: 0.4rem 5%; }
+      .brand-title-center { display: none; } /* Hide center title on smaller viewports to prevent crowding, or let mobile view handle it */
       .brand-logo img { height: 50px; }
-      .brand-title { font-size: 1rem; }
       .menu-toggle { display: block; }
       .nav-links {
         position: absolute;
@@ -243,7 +246,7 @@
         background-color: #ffffff;
       }
       .nav-links.active {
-        max-height: 300px;
+        max-height: 350px;
       }
       .nav-links li {
         width: 100%;
@@ -359,10 +362,11 @@
   <nav>
     <a href="index.html" class="brand-logo">
       <img src="img/logo/logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/200x80?text=Click+Vectora'">
-      <span class="brand-title">Business Card Studio</span>
     </a>
+    <div class="brand-title-center">Business Card Studio</div>
     <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
     <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
       <li><a href="index.html#portfolio">Work</a></li>
       <li><a href="index.html#services">Design Services</a></li>
       <li><a href="store.html">Online Store</a></li>
