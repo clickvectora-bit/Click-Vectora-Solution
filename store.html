@@ -34,8 +34,38 @@
     .nav-links a:hover { color: var(--cyan); }
 
     .container { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; }
-    .section-title { font-size: 1.8rem; margin: 1.5rem 0; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+    .section-title { font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
     .section-title::before { content: ""; width: 5px; height: 24px; background: var(--orange); border-radius: 3px; }
+
+    /* Filter Buttons Styling */
+    .filter-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 2.5rem;
+    }
+    .filter-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.6rem 1.2rem;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px var(--shadow);
+    }
+    .filter-btn:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+    .filter-btn.active {
+      background: var(--cyan);
+      color: #ffffff;
+      border-color: var(--cyan);
+      box-shadow: 0 4px 12px rgba(0, 168, 204, 0.3);
+    }
 
     .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.8rem; }
     .service-card {
@@ -71,6 +101,17 @@
 
   <div class="container">
     <h2 class="section-title">Recommended Amazon Products</h2>
+    
+    <!-- Filter Buttons Container -->
+    <div class="filter-container" id="filter-buttons">
+      <button class="filter-btn active" data-category="All">All Products</button>
+      <button class="filter-btn" data-category="Electronics & Tech">Electronics & Tech</button>
+      <button class="filter-btn" data-category="Home Appliances & Utilities">Home Appliances</button>
+      <button class="filter-btn" data-category="Fitness & Sports">Fitness & Sports</button>
+      <button class="filter-btn" data-category="Entertainment & Audio">Entertainment & Audio</button>
+    </div>
+
+    <!-- Products Grid Container -->
     <div class="services-grid" id="affiliate-grid">
       <p style="color: var(--text-muted); grid-column: 1/-1;">Fetching live Amazon deals...</p>
     </div>
@@ -83,25 +124,35 @@
   <script>
     const AMAZON_TAG = "clickvectora-21";
     const affiliateProducts = [
-      { title: "Native M2 Pro Water Purifier", imageUrl: "https://m.media-amazon.com/images/I/61bRe+7bhlL._AC_SL1500_.jpg", description: "Preset Touch Dispensing + Battery | Smart Real-time Tracking", asin: "B0G4CHKBGP" },
-      { title: "Ezee Black Medium Garbage Bags 180 Pcs", imageUrl: "https://m.media-amazon.com/images/I/71D6PuAPSSL._SL1500_.jpg", description: "19 X 21 Inch | 30 Pcs x Pack of 6", asin: "B074CW3JV4" },
-      { title: "Aluminium Badminton Racket Combo", imageUrl: "https://m.media-amazon.com/images/I/61BAz4RFXAL._AC_SL1500_.jpg", description: "Hundred Powertek 200 Aluminium Badminton Racket Combo", asin: "B0CZXCFR3P" },
-      { title: "Karaoke Mic with Speaker", imageUrl: "https://m.media-amazon.com/images/I/61ijIp-5KZL._SL1100_.jpg", description: "Wireless Mini Portable Bluetooth Speaker with Microphone", asin: "B0DRPCR5VK" },
-      { title: "Weight Machine", imageUrl: "https://m.media-amazon.com/images/I/61nlxzaekZL._SL1500_.jpg", description: "Digital Weighing Scale with Step-On Technology", asin: "B0CHJ4BK2C" },
-      { title: "HP Keyboard and Mouse Combo", imageUrl: "https://m.media-amazon.com/images/I/61-fupzH-CL._SL1500_.jpg", description: "Working Range 2.4G Wireless Technology", asin: "B07V82W5CN" },
-      { title: "Yoga Mat", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/61mx7nZOGnL._SL1500_.jpg", description: "Home Gym - Yoga Mat for Gym Workout & Yoga Exercise", asin: "B0D9VVMMQ4" },
-      { title: "10 Meter RJ45 LAN Cable", imageUrl: "https://m.media-amazon.com/images/I/81Huc99OLQL._SL1500_.jpg", description: "RJ45 cat6 Ethernet Patch Cable LAN Cable", asin: "B089NVZND2" },
-      { title: "Oakter Mini UPS for Router", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T1/images/I/61NytjwzadL._SL1500_.jpg", description: "Backup Upto 4 Hours WiFi UPS Power Backup", asin: "B08HLZ28QC" }
+      { category: "Home Appliances & Utilities", title: "Native M2 Pro Water Purifier", imageUrl: "https://m.media-amazon.com/images/I/61bRe+7bhlL._AC_SL1500_.jpg", description: "Preset Touch Dispensing + Battery | Smart Real-time Tracking", asin: "B0G4CHKBGP" },
+      { category: "Home Appliances & Utilities", title: "Ezee Black Medium Garbage Bags 180 Pcs", imageUrl: "https://m.media-amazon.com/images/I/71D6PuAPSSL._SL1500_.jpg", description: "19 X 21 Inch | 30 Pcs x Pack of 6", asin: "B074CW3JV4" },
+      { category: "Fitness & Sports", title: "Aluminium Badminton Racket Combo", imageUrl: "https://m.media-amazon.com/images/I/61BAz4RFXAL._AC_SL1500_.jpg", description: "Hundred Powertek 200 Aluminium Badminton Racket Combo", asin: "B0CZXCFR3P" },
+      { category: "Entertainment & Audio", title: "Karaoke Mic with Speaker", imageUrl: "https://m.media-amazon.com/images/I/61ijIp-5KZL._SL1100_.jpg", description: "Wireless Mini Portable Bluetooth Speaker with Microphone", asin: "B0DRPCR5VK" },
+      { category: "Fitness & Sports", title: "Weight Machine", imageUrl: "https://m.media-amazon.com/images/I/61nlxzaekZL._SL1500_.jpg", description: "Digital Weighing Scale with Step-On Technology", asin: "B0CHJ4BK2C" },
+      { category: "Electronics & Tech", title: "HP Keyboard and Mouse Combo", imageUrl: "https://m.media-amazon.com/images/I/61-fupzH-CL._SL1500_.jpg", description: "Working Range 2.4G Wireless Technology", asin: "B07V82W5CN" },
+      { category: "Fitness & Sports", title: "Yoga Mat", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/61mx7nZOGnL._SL1500_.jpg", description: "Home Gym - Yoga Mat for Gym Workout & Yoga Exercise", asin: "B0D9VVMMQ4" },
+      { category: "Electronics & Tech", title: "10 Meter RJ45 LAN Cable", imageUrl: "https://m.media-amazon.com/images/I/81Huc99OLQL._SL1500_.jpg", description: "RJ45 cat6 Ethernet Patch Cable LAN Cable", asin: "B089NVZND2" },
+      { category: "Electronics & Tech", title: "Oakter Mini UPS for Router", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T1/images/I/61NytjwzadL._SL1500_.jpg", description: "Backup Upto 4 Hours WiFi UPS Power Backup", asin: "B08HLZ28QC" }
     ];
 
-    document.addEventListener('DOMContentLoaded', () => {
+    function renderProducts(filterCategory) {
       const container = document.getElementById('affiliate-grid');
-      container.innerHTML = affiliateProducts.map(item => `
+      
+      const filtered = filterCategory === 'All' 
+        ? affiliateProducts 
+        : affiliateProducts.filter(item => item.category === filterCategory);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">No products found in this category.</p>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => `
         <div class="service-card">
           <img src="${item.imageUrl}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/600x400?text=Product';">
           <div class="service-info">
             <div>
-              <span class="affiliate-badge"><i class="fa-brands fa-amazon"></i> Amazon Choice</span>
+              <span class="affiliate-badge"><l class="fa-brands fa-amazon"></l> Amazon Choice</span>
               <h3>${item.title}</h3>
               <p>${item.description}</p>
             </div>
@@ -111,6 +162,26 @@
           </div>
         </div>
       `).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initial render (All products)
+      renderProducts('All');
+
+      // Filter button click event handler
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Remove active class from all buttons
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          // Add active class to clicked button
+          button.classList.add('active');
+
+          // Render filtered products
+          const selectedCategory = button.getAttribute('data-category');
+          renderProducts(selectedCategory);
+        });
+      });
     });
   </script>
 </body>
