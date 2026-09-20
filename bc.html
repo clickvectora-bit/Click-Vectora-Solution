@@ -5,60 +5,76 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Business Card Studio Pro</title>
   
+  <!-- Favicon / Tab Icon -->
+  <link rel="icon" type="image/png" href="img/logo/logo1.png">
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
       --primary: #FF6B00;
       --primary-hover: #E05D00;
+      --cyan: #00a8cc;
       --bg-workspace: #CBD5E1;
       --text-main: #0F172A;
       --text-muted: #64748B;
+      --border: #e2e8f0;
       --panel-bg: rgba(255, 255, 255, 0.98);
       --panel-border: #CBD5E1;
+      --shadow: rgba(15, 23, 42, 0.06);
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; touch-action: manipulation; }
     body { display: flex; flex-direction: column; height: 100vh; background: var(--bg-workspace); color: var(--text-main); overflow: hidden; }
 
-    /* 3X Bigger Header */
-    .minimal-header {
-      width: 100%;
-      background: #FFFFFF;
-      border-bottom: 2px solid #94A3B8;
-      padding: 24px 32px;
-      min-height: 150px;
+    /* Navigation Header (Matching index.html) */
+    nav {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      z-index: 10;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .brand-group {
-      display: flex;
       align-items: center;
-      gap: 24px;
+      padding: 0.5rem 5%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px var(--shadow);
     }
 
-    .header-logo {
-      height: 120px;
-      width: auto;
-      object-fit: contain;
+    .brand-logo { 
+      display: flex; 
+      align-items: center; 
+      gap: 10px; 
+      text-decoration: none; 
     }
-
-    .header-title-text {
-      font-size: 2.5rem;
-      font-weight: 800;
+    .brand-logo img { height: 70px; width: auto; display: block; object-fit: contain; }
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
       color: var(--text-main);
-      letter-spacing: -0.5px;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--cyan); }
+
+    .menu-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 1.6rem;
+      color: var(--text-main);
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
     }
 
     button, .btn-home {
@@ -102,12 +118,12 @@
       width: 100%;
       height: 100%;
       display: flex;
-      align-items: flex-start; /* Changed from center to push away from header */
+      align-items: flex-start;
       justify-content: center;
       position: relative;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 24px 10px 30px 10px !important; /* Added top padding */
+      padding: 24px 10px 30px 10px !important;
       background: radial-gradient(#94A3B8 1px, transparent 1px);
       background-size: 14px 14px;
     }
@@ -206,9 +222,38 @@
     }
 
     @media (max-width: 768px) {
-      .minimal-header { padding: 12px 16px; min-height: 100px; }
-      .header-title-text { font-size: 1.4rem; }
-      .header-logo { height: 60px; }
+      nav { padding: 0.4rem 5%; }
+      .brand-logo img { height: 50px; }
+      .brand-title { font-size: 1rem; }
+      .menu-toggle { display: block; }
+      .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: var(--bg-surface);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+        background-color: #ffffff;
+      }
+      .nav-links.active {
+        max-height: 300px;
+      }
+      .nav-links li {
+        width: 100%;
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-links a {
+        display: block;
+        padding: 1rem 1.5rem;
+        width: 100%;
+      }
       .top-tools-panel { gap: 6px; padding: 6px; }
       .top-tools-panel > div { flex: 1; min-width: 110px; }
     }
@@ -310,16 +355,20 @@
     </div>
   </div>
 
-  <!-- Header -->
-  <header class="minimal-header">
-    <div class="brand-group">
-      <a href="index.html" style="text-decoration:none;">
-        <button class="secondary" style="padding: 10px 16px; font-size: 0.95rem;">🏠 Home</button>
-      </a>
-      <img src="ClickVectora Logo - Copy.png" alt="Logo" onerror="this.src='logo.png'; this.onerror=function(){this.style.display='none';}" class="header-logo">
-      <h1 class="header-title-text">Business Card Studio</h1>
-    </div>
-  </header>
+  <!-- Navbar (Matching index.html) -->
+  <nav>
+    <a href="index.html" class="brand-logo">
+      <img src="img/logo/logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/200x80?text=Click+Vectora'">
+      <span class="brand-title">Business Card Studio</span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#portfolio">Work</a></li>
+      <li><a href="index.html#services">Design Services</a></li>
+      <li><a href="store.html">Online Store</a></li>
+      <li><a href="contact.html">Contact Us</a></li>
+    </ul>
+  </nav>
 
   <!-- Workspace Area -->
   <div class="workspace" id="workspace">
@@ -495,6 +544,22 @@
   <div id="qrcode-hidden"></div>
 
   <script>
+    // Navigation Menu Toggle Script
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      const icon = menuToggle.querySelector('i');
+      if (navLinks.classList.contains('active')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-xmark');
+      } else {
+        icon.classList.remove('fa-xmark');
+        icon.classList.add('fa-bars');
+      }
+    });
+
     const BASE_WIDTH = 1000;
     const BASE_HEIGHT = 571;
 
