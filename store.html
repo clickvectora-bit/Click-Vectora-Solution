@@ -25,10 +25,10 @@
     body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; }
 
     nav {
-      display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 5%;
+      display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 5%;
       background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
     }
-    .brand-logo img { height: 120px; width: auto; display: block; object-fit: contain; }
+    .brand-logo img { height: 70px; /* Logo height baaki pages ke jaisi kam ki gayi hai */ width: auto; display: block; object-fit: contain; }
     .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
     .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; }
     .nav-links a:hover { color: var(--cyan); }
@@ -84,6 +84,11 @@
     .btn-amazon:hover { background: #e68a00; }
 
     footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 3rem; }
+
+    @media (max-width: 768px) {
+      nav { padding: 0.4rem 5%; }
+      .brand-logo img { height: 50px; }
+    }
   </style>
 </head>
 <body>
@@ -152,7 +157,7 @@
           <img src="${item.imageUrl}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/600x400?text=Product';">
           <div class="service-info">
             <div>
-              <span class="affiliate-badge"><l class="fa-brands fa-amazon"></l> Amazon Choice</span>
+              <span class="affiliate-badge"><i class="fa-brands fa-amazon"></i> Amazon Choice</span>
               <h3>${item.title}</h3>
               <p>${item.description}</p>
             </div>
@@ -165,19 +170,14 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Initial render (All products)
       renderProducts('All');
 
-      // Filter button click event handler
       const filterButtons = document.querySelectorAll('.filter-btn');
       filterButtons.forEach(button => {
         button.addEventListener('click', () => {
-          // Remove active class from all buttons
           filterButtons.forEach(btn => btn.classList.remove('active'));
-          // Add active class to clicked button
           button.classList.add('active');
 
-          // Render filtered products
           const selectedCategory = button.getAttribute('data-category');
           renderProducts(selectedCategory);
         });
