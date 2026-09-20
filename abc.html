@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Store | Click Vectora Solution</title>
+  <!-- Browser Tab Favicon Logo -->
+  <link rel="icon" type="image/png" href="logo.png">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-main: #f8fafc;
+      --bg-surface: #ffffff;
+      --orange: #ff6b00;
+      --cyan: #00a8cc;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: rgba(15, 23, 42, 0.06);
+      --shadow-hover: rgba(15, 23, 42, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; }
+
+    nav {
+      display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 5%;
+      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+    }
+    .brand-logo img { height: 120px; width: auto; display: block; object-fit: contain; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; }
+    .nav-links a:hover { color: var(--cyan); }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; }
+    .section-title { font-size: 1.8rem; margin: 2.5rem 0 1.5rem 0; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+    .section-title::before { content: ""; width: 5px; height: 24px; background: var(--orange); border-radius: 3px; }
+
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.8rem; margin-bottom: 2rem; }
+    .service-card {
+      background: var(--bg-surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+      box-shadow: 0 4px 12px var(--shadow); display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s;
+    }
+    .service-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px var(--shadow-hover); border-color: var(--orange); }
+    .service-card img { width: 100%; height: 220px; object-fit: contain; background: #fff; padding: 10px; border-bottom: 1px solid var(--border); }
+    .service-info { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
+    .service-info h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main); }
+    .service-info p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem; }
+
+    .affiliate-badge { display: inline-block; background: #ff9900; color: #000; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; }
+    .btn { width: 100%; padding: 0.85rem; border-radius: 8px; border: none; font-weight: 700; text-align: center; text-decoration: none; display: inline-block; cursor: pointer; }
+    .btn-amazon { background: #ff9900; color: #111; box-shadow: 0 4px 12px rgba(255, 153, 0, 0.25); }
+    .btn-amazon:hover { background: #e68a00; }
+
+    footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 3rem; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="brand-logo"><img src="logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/200x80?text=Click+Vectora'"></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#portfolio">Work</a></li>
+      <li><a href="index.html#services">Design Services</a></li>
+      <li><a href="store.html" style="color: var(--cyan);">Online Store</a></li>
+      <li><a href="contact.html">Contact Us</a></li>
+    </ul>
+  </nav>
+
+  <div class="container" id="store-container">
+    <p style="color: var(--text-muted); text-align: center;">Fetching live Amazon deals...</p>
+  </div>
+
+  <footer>
+    <p>&copy; Click Vectora Solution. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    const AMAZON_TAG = "clickvectora-21";
+    
+    // Products grouped by category
+    const categorizedProducts = [
+      {
+        category: "Electronics & Gadgets",
+        products: [
+          { title: "Native M2 Pro Water Purifier", imageUrl: "https://m.media-amazon.com/images/I/61bRe+7bhlL._AC_SL1500_.jpg", description: "Preset Touch Dispensing + Battery | Smart Real-time Tracking", asin: "B0G4CHKBGP" },
+          { title: "Karaoke Mic with Speaker", imageUrl: "https://m.media-amazon.com/images/I/61ijIp-5KZL._SL1100_.jpg", description: "Wireless Mini Portable Bluetooth Speaker with Microphone", asin: "B0DRPCR5VK" },
+          { title: "HP Keyboard and Mouse Combo", imageUrl: "https://m.media-amazon.com/images/I/61-fupzH-CL._SL1500_.jpg", description: "Working Range 2.4G Wireless Technology", asin: "B07V82W5CN" },
+          { title: "boAt Bluetooth Neckband", imageUrl: "https://m.media-amazon.com/images/I/61B5hIAmvdL._SY450_.jpg", description: "40 Hours Battery, Dual Pair, Fast Charge", asin: "B0F7Y54PJX" },
+          { title: "10 Meter RJ45 LAN Cable", imageUrl: "https://m.media-amazon.com/images/I/81Huc99OLQL._SL1500_.jpg", description: "RJ45 cat6 Ethernet Patch Cable LAN Cable", asin: "B089NVZND2" },
+          { title: "Oakter Mini UPS for Router", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T1/images/I/61NytjwzadL._SL1500_.jpg", description: "Backup Upto 4 Hours WiFi UPS Power Backup", asin: "B074CW3JV4" }
+        ]
+      },
+      {
+        category: "Home & Daily Essentials",
+        products: [
+          { title: "Ezee Black Medium Garbage Bags 180 Pcs", imageUrl: "https://m.media-amazon.com/images/I/71D6PuAPSSL._SL1500_.jpg", description: "19 X 21 Inch | 30 Pcs x Pack of 6", asin: "B074CW3JV4" }
+        ]
+      },
+      {
+        category: "Sports & Fitness",
+        products: [
+          { title: "Aluminium Badminton Racket Combo", imageUrl: "https://m.media-amazon.com/images/I/61BAz4RFXAL._AC_SL1500_.jpg", description: "Hundred Powertek 200 Aluminium Badminton Racket Combo", asin: "B0CZXCFR3P" },
+          { title: "Weight Machine", imageUrl: "https://m.media-amazon.com/images/I/61nlxzaekZL._SL1500_.jpg", description: "Digital Weighing Scale with Step-On Technology", asin: "B0CHJ4BK2C" }
+        ]
+      }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('store-container');
+      
+      let htmlContent = '';
+      
+      categorizedProducts.forEach(group => {
+        htmlContent += `
+          <h2 class="section-title">${group.category}</h2>
+          <div class="services-grid">
+            ${group.products.map(item => `
+              <div class="service-card">
+                <img src="${item.imageUrl}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/600x400?text=Product';">
+                <div class="service-info">
+                  <div>
+                    <span class="affiliate-badge"><i class="fa-brands fa-amazon"></i> Amazon Choice</span>
+                    <h3>${item.title}</h3>
+                    <p>${item.description}</p>
+                  </div>
+                  <a href="https://www.amazon.in/dp/${item.asin}?tag=${AMAZON_TAG}" target="_blank" rel="noopener sponsored" class="btn btn-amazon">
+                    View on Amazon <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; margin-left:4px;"></i>
+                  </a>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      });
+
+      container.innerHTML = htmlContent;
+    });
+  </script>
+</body>
+</html>
