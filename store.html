@@ -28,12 +28,23 @@
       display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 5%;
       background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
     }
-    .brand-logo img { height: 70px; /* Logo height baaki pages ke jaisi kam ki gayi hai */ width: auto; display: block; object-fit: contain; }
+    .brand-logo img { height: 70px; width: auto; display: block; object-fit: contain; }
+    
     .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
-    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s; }
     .nav-links a:hover { color: var(--cyan); }
 
-    .container { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; }
+    /* Mobile Hamburger Menu Toggle Button */
+    .menu-toggle {
+      display: none;
+      font-size: 1.5rem;
+      color: var(--text-main);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
     .section-title { font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
     .section-title::before { content: ""; width: 5px; height: 24px; background: var(--orange); border-radius: 3px; }
 
@@ -42,7 +53,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.8rem;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
     }
     .filter-btn {
       background: var(--bg-surface);
@@ -67,7 +78,7 @@
       box-shadow: 0 4px 12px rgba(0, 168, 204, 0.3);
     }
 
-    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.8rem; }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
     .service-card {
       background: var(--bg-surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
       box-shadow: 0 4px 12px var(--shadow); display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s;
@@ -85,9 +96,39 @@
 
     footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 3rem; }
 
+    /* Mobile Responsive Media Query */
     @media (max-width: 768px) {
-      nav { padding: 0.4rem 5%; }
-      .brand-logo img { height: 50px; }
+      .menu-toggle { display: block; }
+      .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: var(--bg-surface);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+      }
+      .nav-links.active {
+        max-height: 300px;
+      }
+      .nav-links li {
+        width: 100%;
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-links a {
+        display: block;
+        padding: 1rem 1.5rem;
+        width: 100%;
+      }
+      .brand-logo img { height: 55px; }
+      .container { padding: 1.5rem 1rem; }
+      .section-title { font-size: 1.4rem; }
     }
   </style>
 </head>
@@ -95,7 +136,10 @@
 
   <nav>
     <a href="index.html" class="brand-logo"><img src="img/logo/logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/200x80?text=Click+Vectora'"></a>
-    <ul class="nav-links">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <ul class="nav-links" id="nav-links">
       <li><a href="index.html">Home</a></li>
       <li><a href="index.html#portfolio">Work</a></li>
       <li><a href="index.html#services">Design Services</a></li>
@@ -127,6 +171,22 @@
   </footer>
 
   <script>
+    // Mobile Navigation Toggle Script
+    const menuToggle = document.getElementById('menu-toggle');
+    const navLinks = document.getElementById('nav-links');
+
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      const icon = menuToggle.querySelector('i');
+      if (navLinks.classList.contains('active')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-xmark');
+      } else {
+        icon.classList.remove('fa-xmark');
+        icon.classList.add('fa-bars');
+      }
+    });
+
     const AMAZON_TAG = "clickvectora-21";
     const affiliateProducts = [
       { category: "Home Appliances & Utilities", title: "Native M2 Pro Water Purifier", imageUrl: "https://m.media-amazon.com/images/I/61bRe+7bhlL._AC_SL1500_.jpg", description: "Preset Touch Dispensing + Battery | Smart Real-time Tracking", asin: "B0G4CHKBGP" },
