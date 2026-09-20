@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Poster & Banner Studio Pro</title>
+  <title>Poster & Banner Studio</title>
   
   <!-- Favicon / Tab Icon -->
   <link rel="icon" type="image/png" href="img/logo/logo1.png">
@@ -59,10 +59,12 @@
     
     .brand-title-center {
       text-align: center;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-main);
+      font-size: 1.35rem;
+      font-weight: 800;
       letter-spacing: -0.3px;
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; justify-self: flex-end; }
@@ -384,12 +386,28 @@
       border-radius: 12px;
       pointer-events: none;
     }
+    .hero {
+      text-align: center;
+      padding: 3.5rem 1rem;
+      background: var(--bg-surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px var(--shadow);
+      margin-bottom: 2rem;
+    }
+
+    .hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-main); }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--orange), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 620px; margin: 0 auto; }
 
     #qrcode-hidden { display: none; }
   </style>
 </head>
 <body>
-
   <!-- Notice Popup Modal -->
   <div class="modal-overlay" id="noticeModal" style="display: flex;">
     <div class="modal">
@@ -417,7 +435,6 @@
       <li><a href="contact.html">Contact Us</a></li>
     </ul>
   </nav>
-
   <!-- Workspace Area -->
   <div class="workspace" id="workspace">
     <div class="canvas-viewport-container">
