@@ -48,9 +48,9 @@
     .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.3s; }
     .nav-links a:hover { color: var(--cyan); }
 
-    /* Active / Clicked Nav Link Color (Same as store/contact style) */
+    /* Active / Clicked Nav Link Color changed to Cyan (#00a8cc) */
     .nav-links a.active {
-      color: var(--orange) !important;
+      color: var(--cyan) !important;
     }
 
     .menu-toggle {
@@ -94,7 +94,7 @@
     .section-title::before {
       content: "";
       width: 5px; height: 24px;
-      background: var(--orange);
+      background: var(--cyan);
       border-radius: 3px;
     }
 
@@ -140,7 +140,7 @@
     .service-card:hover {
       transform: translateY(-4px);
       box-shadow: 0 12px 24px var(--shadow-hover);
-      border-color: var(--orange);
+      border-color: var(--cyan);
     }
     .service-card img {
       width: 100%; height: 220px; object-fit: contain;
@@ -177,7 +177,7 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); overflow: hidden; transform: scale(0.95); transition: transform 0.3s;
     }
     .modal-overlay.active .modal-card { transform: scale(1); }
-    .modal-header-hero { background: linear-gradient(135deg, var(--orange) 0%, #ff8c38 100%); padding: 1.25rem 1.5rem; color: white; position: relative; }
+    .modal-header-hero { background: linear-gradient(135deg, var(--cyan) 0%, #00819c 100%); padding: 1.25rem 1.5rem; color: white; position: relative; }
     .modal-header-hero h2 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
     .close-btn {
       position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%;
@@ -245,9 +245,9 @@
     </a>
     <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
     <ul class="nav-links" id="navLinks">
-      <li class="fa-solid fa-house mr-1"><a href="index.html"> Home</a></li>
-      <li><a href="index.html#portfolio">Work</a></li>
-      <li><a href="index.html#services">Design Services</a></li>
+      <li class="fa-solid fa-house mr-1"><a href="index.html" class="active"> Home</a></li>
+      <li><a href="#portfolio">Work</a></li>
+      <li><a href="#services">Design Services</a></li>
       <li><a href="store.html">Online Store</a></li>
       <li><a href="contact.html">Contact Us</a></li>
     </ul>
@@ -286,7 +286,7 @@
         <div class="service-info">
           <div><h3>Posters & Banners</h3><p>Promotional graphics.</p></div>
           <a href="posterbanner.html" class="btn btn-green" style="margin-bottom: 10px;">Create</a>
-          <button class="btn btn-orange" onclick="openOrderModal('Poster & Banners')">Order Now</button>
+          <button class="btn btn-orange" onclick="openOrderModal('Posters & Banners')">Order Now</button>
         </div>
       </div>
       <div class="service-card">
@@ -369,23 +369,45 @@
       }
     });
 
-    // Smart Navigation Active State Handler (Same behavior as Contact/Store pages)
+    // Active State Handling for Clicks and Sections Scroll (Cyan Theme)
     document.addEventListener("DOMContentLoaded", function () {
       const links = document.querySelectorAll('.nav-links a');
-      const currentPath = window.location.pathname.split("/").pop() || "index.html";
-      const currentHash = window.location.hash;
-
+      
       links.forEach(link => {
         link.addEventListener('click', function () {
           links.forEach(nav => nav.classList.remove('active'));
           this.classList.add('active');
         });
+      });
 
-        // Set active state on page load based on URL/hash
-        const linkHref = link.getAttribute('href');
-        if (linkHref === currentPath + currentHash || (currentHash === "" && linkHref === currentPath)) {
-          link.classList.add('active');
-        }
+      const servicesSection = document.getElementById('services');
+      const portfolioSection = document.getElementById('portfolio');
+      
+      window.addEventListener('scroll', () => {
+        let scrollPos = window.scrollY + 150;
+        
+        links.forEach(link => {
+          const href = link.getAttribute('href');
+          
+          if (href.includes('#services') && servicesSection) {
+            const top = servicesSection.offsetTop;
+            const height = servicesSection.offsetHeight + 400;
+            if (scrollPos >= top && scrollPos < top + height) {
+              links.forEach(nav => nav.classList.remove('active'));
+              link.classList.add('active');
+            }
+          } else if (href.includes('#portfolio') && portfolioSection) {
+            const top = portfolioSection.offsetTop;
+            const height = portfolioSection.offsetHeight + 200;
+            if (scrollPos >= top && scrollPos < top + height) {
+              links.forEach(nav => nav.classList.remove('active'));
+              link.classList.add('active');
+            }
+          } else if ((href === 'index.html' || href === '#') && window.scrollY < 200) {
+            links.forEach(nav => nav.classList.remove('active'));
+            document.querySelector('.nav-links a[href="index.html"]').classList.add('active');
+          }
+        });
       });
     });
 
@@ -409,7 +431,7 @@
       const product = document.getElementById('selectedProduct').value;
       const name = document.getElementById('custName').value;
       const email = document.getElementById('custEmail').value;
-      const phone = document.getElementById('custPhone'].value;
+      const phone = document.getElementById('custPhone').value;
       const details = document.getElementById('custDetails').value || "N/A";
       const message = `*NEW ORDER INQUIRY*\n*Service:* ${product}\n*Name:* ${name}\n*Email:* ${email}\n*Phone:* ${phone}\n*Details:* ${details}`;
       window.open(`https://wa.me/919427740360?text=${encodeURIComponent(message)}`, '_blank');
