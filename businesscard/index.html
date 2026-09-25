@@ -57,11 +57,11 @@
       gap: 10px; 
       text-decoration: none; 
     }
-    .brand-logo img { height: 70px; width: auto; display: block; object-fit: contain; }
+    .brand-logo img { height: 60px; width: auto; display: block; object-fit: contain; }
     
     .brand-title-center {
       text-align: center;
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       font-weight: 800;
       letter-spacing: -0.3px;
       background: linear-gradient(135deg, var(--primary), var(--cyan));
@@ -119,12 +119,31 @@
     input[type="text"] { width: 100%; }
     input[type="color"] { height: 32px; width: 32px; cursor: pointer; padding: 2px; border-radius: 6px; }
 
-    /* Layout Structure: Left Sidebar + Workspace */
+    /* Layout Structure */
     .app-layout {
       display: flex;
       flex: 1;
       overflow: hidden;
       width: 100%;
+      position: relative;
+    }
+
+    /* Mobile Toolbar Toggle Floating Button */
+    .mobile-toolbar-toggle {
+      display: none;
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 60;
+      background: var(--primary);
+      color: white;
+      border-radius: 50px;
+      padding: 12px 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+      font-weight: 700;
+      font-size: 0.9rem;
+      align-items: center;
+      gap: 8px;
     }
 
     /* Left Sidebar Styling */
@@ -140,6 +159,7 @@
       z-index: 40;
       box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
       backdrop-filter: blur(6px);
+      transition: transform 0.3s ease-in-out;
     }
 
     .sidebar-section {
@@ -163,7 +183,7 @@
       margin-bottom: 2px;
     }
 
-    /* Fixed Workspace Area with Extra Top Spacing */
+    /* Workspace Area */
     .workspace {
       flex: 1;
       height: 100%;
@@ -173,7 +193,7 @@
       position: relative;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 40px 10px 30px 10px !important;
+      padding: 20px 10px !important;
       background: radial-gradient(#94A3B8 1px, transparent 1px);
       background-size: 14px 14px;
     }
@@ -185,7 +205,6 @@
       position: relative;
       width: 100%;
       max-width: 1000px;
-      margin-top: 15px;
     }
 
     .floating-panel {
@@ -202,7 +221,7 @@
     }
 
     .canvas-top-controls {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       z-index: 20;
       position: relative;
       flex-wrap: wrap;
@@ -233,11 +252,13 @@
       border-radius: 16px;
     }
 
+    /* Mobile Media Queries */
     @media (max-width: 900px) {
-      nav { display: flex; justify-content: space-between; padding: 0.4rem 5%; }
+      nav { display: flex; justify-content: space-between; padding: 0.4rem 4%; }
       .brand-title-center { display: none; }
-      .brand-logo img { height: 50px; }
+      .brand-logo img { height: 45px; }
       .menu-toggle { display: block; }
+      
       .nav-links {
         position: absolute;
         top: 100%;
@@ -257,9 +278,34 @@
       .nav-links.active { max-height: 350px; }
       .nav-links li { width: 100%; border-bottom: 1px solid var(--border); }
       .nav-links a { display: block; padding: 1rem 1.5rem; width: 100%; }
-      .app-layout { flex-direction: column; overflow-y: auto; }
-      .left-sidebar { width: 100%; max-height: none; border-right: none; border-bottom: 1px solid var(--panel-border); }
-      .workspace { overflow-y: visible; padding-top: 20px !important; }
+
+      .app-layout { flex-direction: column; }
+      
+      /* Make sidebar an absolute floating drawer for mobile */
+      .left-sidebar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        transform: translateY(100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.99);
+      }
+      .left-sidebar.mobile-open {
+        transform: translateY(0);
+      }
+      
+      .mobile-toolbar-toggle {
+        display: flex;
+      }
+
+      .workspace { 
+        padding: 10px !important; 
+        height: 100%;
+      }
     }
 
     /* Modals */
@@ -327,7 +373,7 @@
 
     .card-3d-viewport {
       width: 100%;
-      height: 380px;
+      height: 320px;
       perspective: 1500px;
       margin: 15px auto;
       display: flex;
@@ -340,8 +386,8 @@
     .card-3d-viewport:active { cursor: grabbing; }
 
     .card-3d-scene {
-      width: 440px;
-      height: 251px;
+      width: 360px;
+      height: 205px;
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.05s ease-out;
@@ -371,11 +417,11 @@
   <div class="modal-overlay" id="noticeModal" style="display: flex;">
     <div class="modal">
       <div style="font-size: 2.5rem; margin-bottom: 8px;">💻📱</div>
-      <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Best Experience Notice</h3>
+      <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Mobile Studio Ready</h3>
       <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
-        This Studio supports <b>Desktop Mode</b> on mobile devices and works best on a <b>Desktop</b> computer for optimal results.
+        Optimized for mobile touch controls. Use the floating <b>Edit Tools</b> button at the bottom right to customize elements!
       </p>
-      <button style="width: 100%; padding: 10px;" onclick="closeNoticeModal()">Got it, Let's Design!</button>
+      <button style="width: 100%; padding: 10px;" onclick="closeNoticeModal()">Start Designing</button>
     </div>
   </div>
 
@@ -398,9 +444,20 @@
   <!-- App Layout Container (Left Sidebar + Workspace) -->
   <div class="app-layout">
 
+    <!-- Floating Mobile Toggle Button -->
+    <button class="mobile-toolbar-toggle" id="mobileSidebarToggle" onclick="toggleMobileSidebar()">
+      <i class="fa-solid fa-sliders"></i> Edit Tools
+    </button>
+
     <!-- Left Hand Side Toolbar & Features Sidebar -->
-    <aside class="left-sidebar">
+    <aside class="left-sidebar" id="leftSidebar">
       
+      <!-- Mobile Close Bar Header inside Sidebar -->
+      <div style="display:flex; justify-content:space-between; align-items:center; display:none;" id="mobileCloseHeader">
+        <span style="font-weight:700; font-size:1rem; color:var(--text-main);">Studio Controls</span>
+        <button class="secondary" style="padding:4px 10px;" onclick="toggleMobileSidebar()">✕ Close</button>
+      </div>
+
       <!-- Templates Section -->
       <div class="sidebar-section">
         <div class="panel-section-title">Templates</div>
@@ -438,8 +495,8 @@
       <div class="sidebar-section">
         <div class="panel-section-title">History</div>
         <div style="display: flex; gap: 6px;">
-          <button class="secondary" style="flex:1; padding: 6px;" onclick="undo()" title="Undo (10 Steps)">↩️ Undo</button>
-          <button class="secondary" style="flex:1; padding: 6px;" onclick="redo()" title="Redo (10 Steps)">↪️ Redo</button>
+          <button class="secondary" style="flex:1; padding: 6px;" onclick="undo()" title="Undo">↩️ Undo</button>
+          <button class="secondary" style="flex:1; padding: 6px;" onclick="redo()" title="Redo">↪️ Redo</button>
         </div>
       </div>
 
@@ -466,7 +523,7 @@
         <div style="margin-top: 6px;">
           <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); margin-bottom: 2px;">QR Code Generator:</div>
           <div style="display:flex; gap:4px;">
-            <input type="text" id="qrInput" placeholder="Enter URL or UPI link">
+            <input type="text" id="qrInput" placeholder="Enter URL or UPI">
             <button onclick="addQRCode()">+ QR</button>
           </div>
         </div>
@@ -504,7 +561,7 @@
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <span style="font-size:0.75rem; font-weight:600;">Fill Color:</span>
             <div style="display: flex; gap: 4px; align-items: center;">
-              <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#FF6B00" title="Foreground Fill Color">
+              <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#FF6B00" title="Fill Color">
               <button class="secondary" style="padding: 2px 6px; font-size: 0.65rem;" onclick="updateShapeProperty('fill', 'transparent')">None</button>
             </div>
           </div>
@@ -519,24 +576,24 @@
 
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <span style="font-size:0.75rem; font-weight:600;">Border Width:</span>
-            <input type="range" id="shapeBorderSize" min="0" max="25" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:120px; cursor:pointer;">
+            <input type="range" id="shapeBorderSize" min="0" max="25" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:100px; cursor:pointer;">
           </div>
 
           <div style="display: flex; align-items: center; justify-content: space-between;" id="shapeRadiusRow">
-            <span id="shapeRadiusLabel" style="font-size:0.75rem; font-weight:600;">Corner Radius:</span>
-            <input type="range" id="shapeCornerRadius" min="0" max="50" value="0" oninput="updateShapeProperty('rx', parseInt(this.value)); updateShapeProperty('ry', parseInt(this.value));" style="width:120px; cursor:pointer;" title="Corner Radius">
+            <span id="shapeRadiusLabel" style="font-size:0.75rem; font-weight:600;">Radius:</span>
+            <input type="range" id="shapeCornerRadius" min="0" max="50" value="0" oninput="updateShapeProperty('rx', parseInt(this.value)); updateShapeProperty('ry', parseInt(this.value));" style="width:100px; cursor:pointer;">
           </div>
         </div>
 
-        <!-- Common Object Actions (Duplicate, Layers, Delete) -->
+        <!-- Common Object Actions -->
         <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-top: 4px;">
-          <button class="secondary" style="padding: 4px;" onclick="duplicateSelected()" title="Duplicate Selected">📋</button>
+          <button class="secondary" style="padding: 4px;" onclick="duplicateSelected()" title="Duplicate">📋</button>
           <button class="secondary" style="padding: 4px;" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
           <button class="secondary" style="padding: 4px;" onclick="changeLayer('forward')" title="Step Up">🔼</button>
           <button class="secondary" style="padding: 4px;" onclick="changeLayer('backward')" title="Step Down">🔽</button>
           <button class="secondary" style="padding: 4px;" onclick="changeLayer('back')" title="Send to Back">🔚</button>
         </div>
-        <button class="danger" style="width: 100%; margin-top: 4px; padding: 6px;" onclick="deleteSelected()">🗑️ Delete Selected Item</button>
+        <button class="danger" style="width: 100%; margin-top: 4px; padding: 6px;" onclick="deleteSelected()">🗑️ Delete Selected</button>
       </div>
 
       <!-- Guides & Print Lines Section -->
@@ -566,9 +623,9 @@
 
         <!-- Top Canvas Controls (Side Switcher & 3D Preview) -->
         <div class="floating-panel canvas-top-controls">
-          <button id="btnSideA" class="active-side" onclick="switchSide('front')">Side A (Front)</button>
-          <button id="btnSideB" class="secondary" onclick="switchSide('back')">Side B (Back)</button>
-          <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D Preview</button>
+          <button id="btnSideA" class="active-side" onclick="switchSide('front')">Front</button>
+          <button id="btnSideB" class="secondary" onclick="switchSide('back')">Back</button>
+          <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D</button>
         </div>
 
         <!-- Canvas Box -->
@@ -666,6 +723,18 @@
       }
     });
 
+    // Mobile Sidebar Drawer Toggle
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('leftSidebar');
+      const closeHeader = document.getElementById('mobileCloseHeader');
+      sidebar.classList.toggle('mobile-open');
+      if (sidebar.classList.contains('mobile-open')) {
+        closeHeader.style.display = 'flex';
+      } else {
+        closeHeader.style.display = 'none';
+      }
+    }
+
     const CARD_HORIZ_WIDTH = 1000;
     const CARD_HORIZ_HEIGHT = 571;
 
@@ -700,7 +769,7 @@
     let canvas = new fabric.Canvas('cardCanvas', {
       backgroundColor: '#ffffff',
       preserveObjectStacking: true,
-      allowTouchScrolling: false,
+      allowTouchScrolling: true,
       enableRetinaScaling: true
     });
 
@@ -712,7 +781,6 @@
     canvas.on('object:modified', () => saveHistory());
     canvas.on('object:removed', () => saveHistory());
 
-    // Mouse wheel zoom support
     canvas.on('mouse:wheel', function(opt) {
       const delta = opt.e.deltaY;
       let zoom = canvas.getZoom();
@@ -1126,11 +1194,11 @@
 
       const scene = document.getElementById('card3dScene');
       if (currentOrientation === 'horizontal') {
-        scene.style.width = '440px';
-        scene.style.height = '251px';
+        scene.style.width = '360px';
+        scene.style.height = '205px';
       } else {
-        scene.style.width = '251px';
-        scene.style.height = '440px';
+        scene.style.width = '205px';
+        scene.style.height = '360px';
       }
     }
 
@@ -1209,7 +1277,7 @@
       cornerColor: '#FF6B00',
       cornerStrokeColor: '#FFFFFF',
       borderColor: '#FF6B00',
-      cornerSize: 12,
+      cornerSize: 14,
       cornerStyle: 'circle',
       borderDashArray: [4, 4],
       hasRotatingPoint: true,
@@ -1314,7 +1382,7 @@
               left: (BASE_WIDTH / 2) - 70 + (index * 20),
               top: (BASE_HEIGHT / 2) - 70 + (index * 20),
               cornerColor: '#FF6B00',
-              cornerSize: 12
+              cornerSize: 14
             });
 
             canvas.add(img);
