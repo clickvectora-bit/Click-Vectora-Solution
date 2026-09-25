@@ -128,22 +128,19 @@
       position: relative;
     }
 
-    /* Mobile Toolbar Toggle Floating Button */
+    /* Mobile Toolbar Toggle Floating Button (Moved to top right area) */
     .mobile-toolbar-toggle {
       display: none;
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      z-index: 60;
       background: var(--primary);
       color: white;
-      border-radius: 50px;
-      padding: 12px 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+      border-radius: 20px;
+      padding: 6px 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      margin-bottom: 8px;
     }
 
     /* Left Sidebar Styling */
@@ -172,7 +169,7 @@
 
     .sidebar-section:last-child {
       border-bottom: none;
-      padding-bottom: 20px; /* Extra spacing at the bottom so export buttons are fully clear */
+      padding-bottom: 25px; 
     }
 
     .panel-section-title {
@@ -282,7 +279,6 @@
 
       .app-layout { flex-direction: column; }
       
-      /* Make sidebar an absolute floating drawer for mobile */
       .left-sidebar {
         position: absolute;
         top: 0;
@@ -300,7 +296,7 @@
       }
       
       .mobile-toolbar-toggle {
-        display: flex;
+        display: inline-flex;
       }
 
       .workspace { 
@@ -420,7 +416,7 @@
       <div style="font-size: 2.5rem; margin-bottom: 8px;">💻📱</div>
       <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Mobile Studio Ready</h3>
       <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
-        Optimized for mobile touch controls. Use the floating <b>Edit Tools</b> button at the bottom right to customize elements!
+        Optimized for mobile touch controls. Use the <b>Edit Tools</b> button at the top to customize elements!
       </p>
       <button style="width: 100%; padding: 10px;" onclick="closeNoticeModal()">Start Designing</button>
     </div>
@@ -445,15 +441,10 @@
   <!-- App Layout Container (Left Sidebar + Workspace) -->
   <div class="app-layout">
 
-    <!-- Floating Mobile Toggle Button -->
-    <button class="mobile-toolbar-toggle" id="mobileSidebarToggle" onclick="toggleMobileSidebar()">
-      <i class="fa-solid fa-sliders"></i> Edit Tools
-    </button>
-
     <!-- Left Hand Side Toolbar & Features Sidebar -->
     <aside class="left-sidebar" id="leftSidebar">
       
-      <!-- Mobile Close Bar Header inside Sidebar (Placed at the very top) -->
+      <!-- Mobile Close Bar Header inside Sidebar -->
       <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom: 6px; border-bottom: 1px solid #CBD5E1; display:none;" id="mobileCloseHeader">
         <span style="font-weight:700; font-size:1rem; color:var(--text-main);">Studio Controls</span>
         <button class="secondary" style="padding:4px 10px;" onclick="toggleMobileSidebar()">✕ Close</button>
@@ -622,11 +613,18 @@
     <main class="workspace" id="workspace">
       <div class="canvas-viewport-container">
 
-        <!-- Top Canvas Controls (Side Switcher & 3D Preview) -->
-        <div class="floating-panel canvas-top-controls">
-          <button id="btnSideA" class="active-side" onclick="switchSide('front')">Front</button>
-          <button id="btnSideB" class="secondary" onclick="switchSide('back')">Back</button>
-          <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D</button>
+        <!-- Top Canvas Controls & Mobile Edit Tools Toggle Button -->
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 12px; z-index: 20; position: relative;">
+          <!-- Floating Mobile Toggle Button (Positioned above the side switchers) -->
+          <button class="mobile-toolbar-toggle" id="mobileSidebarToggle" onclick="toggleMobileSidebar()">
+            <i class="fa-solid fa-sliders"></i> Edit Tools
+          </button>
+
+          <div class="floating-panel canvas-top-controls" style="margin-bottom: 0; width: auto;">
+            <button id="btnSideA" class="active-side" onclick="switchSide('front')">Front</button>
+            <button id="btnSideB" class="secondary" onclick="switchSide('back')">Back</button>
+            <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D</button>
+          </div>
         </div>
 
         <!-- Canvas Box -->
@@ -1081,7 +1079,7 @@
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspace');
       const maxWidth = workspace.clientWidth - 20;
-      const maxHeight = workspace.clientHeight - 60;
+      const maxHeight = workspace.clientHeight - 80;
 
       baseFitScale = Math.min(maxWidth / BASE_WIDTH, maxHeight / BASE_HEIGHT);
       currentZoomScale = baseFitScale;
