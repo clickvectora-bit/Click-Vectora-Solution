@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -248,7 +249,7 @@
       <li><a href="/" class="active">Home</a></li>
       <li><a href="/#portfolio">Work</a></li>
       <li><a href="/#services">Design Services</a></li>
-      <li><a href="/store/">Online Store</a></li>
+      <li><a href="/store">Online Store</a></li>
       <li><a href="contact.html">Contact Us</a></li>
     </ul>
   </nav>
@@ -403,9 +404,9 @@
               links.forEach(nav => nav.classList.remove('active'));
               link.classList.add('active');
             }
-          } else if ((href === 'index.html' || href === '#') && window.scrollY < 200) {
+          } else if ((href === '/' || href === '#') && window.scrollY < 200) {
             links.forEach(nav => nav.classList.remove('active'));
-            document.querySelector('.nav-links a[href="index.html"]').classList.add('active');
+            document.querySelector('.nav-links a[href="/"]').classList.add('active');
           }
         });
       });
