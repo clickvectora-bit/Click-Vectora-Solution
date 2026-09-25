@@ -46,8 +46,7 @@
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
+      position: relative;
       z-index: 100;
       box-shadow: 0 1px 3px var(--shadow);
     }
@@ -117,21 +116,64 @@
       font-size: 16px !important;
       background: #FAFAFA;
     }
-    input[type="text"] { width: 110px; }
+    input[type="text"] { width: 100%; }
     input[type="color"] { height: 32px; width: 32px; cursor: pointer; padding: 2px; border-radius: 6px; }
 
-    /* Fixed Workspace Spacing */
+    /* Layout Structure: Left Sidebar + Workspace */
+    .app-layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    /* Left Sidebar Styling */
+    .left-sidebar {
+      width: 320px;
+      background: var(--panel-bg);
+      border-right: 1px solid var(--panel-border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      overflow-y: auto;
+      z-index: 40;
+      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+      backdrop-filter: blur(6px);
+    }
+
+    .sidebar-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .sidebar-section:last-child {
+      border-bottom: none;
+    }
+
+    .panel-section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    /* Fixed Workspace Area with Extra Top Spacing */
     .workspace {
       flex: 1;
-      width: 100%;
       height: 100%;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: center;
       position: relative;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 24px 10px 30px 10px !important;
+      padding: 40px 10px 30px 10px !important;
       background: radial-gradient(#94A3B8 1px, transparent 1px);
       background-size: 14px 14px;
     }
@@ -143,6 +185,7 @@
       position: relative;
       width: 100%;
       max-width: 1000px;
+      margin-top: 15px; /* Added separation from header boundary */
     }
 
     .floating-panel {
@@ -158,45 +201,23 @@
       gap: 8px;
     }
 
-    .top-tools-panel {
-      position: relative;
-      width: 100%;
-      max-width: 820px;
-      margin-bottom: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      gap: 8px;
-      padding: 10px 14px;
-    }
-
-    .panel-section-title {
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 3px;
-      border-bottom: 1px solid #E2E8F0;
-      padding-bottom: 2px;
-      text-align: center;
-    }
-
     .canvas-top-controls {
-      margin-bottom: 8px;
+      margin-bottom: 16px; /* Increased separation gap above the card preview */
       z-index: 20;
       position: relative;
       flex-wrap: wrap;
       justify-content: center;
+      width: 100%;
     }
 
     .object-inspector-panel {
-      position: relative;
-      margin-bottom: 8px;
       display: none;
-      flex-wrap: wrap;
-      justify-content: center;
-      max-width: 100%;
+      flex-direction: column;
+      gap: 8px;
+      background: #F8FAFC;
+      border: 1px dashed var(--primary);
+      padding: 10px;
+      border-radius: 8px;
     }
 
     .canvas-container-wrapper {
@@ -210,23 +231,6 @@
 
     .canvas-container-wrapper.rounded {
       border-radius: 16px;
-    }
-
-    .canvas-bottom-controls-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      margin-top: 8px;
-      z-index: 20;
-      width: 100%;
-    }
-
-    .canvas-export-controls {
-      border: 1px solid #CBD5E1;
-      position: relative;
-      flex-wrap: wrap;
-      justify-content: center;
     }
 
     @media (max-width: 900px) {
@@ -248,12 +252,14 @@
         transition: max-height 0.3s ease-in-out;
         border-bottom: 1px solid var(--border);
         box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+        z-index: 1000;
       }
       .nav-links.active { max-height: 350px; }
       .nav-links li { width: 100%; border-bottom: 1px solid var(--border); }
       .nav-links a { display: block; padding: 1rem 1.5rem; width: 100%; }
-      .top-tools-panel { gap: 6px; padding: 6px; }
-      .top-tools-panel > div { flex: 1; min-width: 110px; }
+      .app-layout { flex-direction: column; overflow-y: auto; }
+      .left-sidebar { width: 100%; max-height: none; border-right: none; border-bottom: 1px solid var(--panel-border); }
+      .workspace { overflow-y: visible; padding-top: 20px !important; }
     }
 
     /* Modals */
@@ -311,9 +317,9 @@
     .template-card h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--text-main); }
     .template-card p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
 
-    /* Enhanced 3D Preview Modal Styling */
+    /* 3D Preview Modal Styling */
     .modal-3d {
-      width: 720px !important;
+      width: 760px !important;
       max-width: 95% !important;
       padding: 24px !important;
       background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -321,8 +327,8 @@
 
     .card-3d-viewport {
       width: 100%;
-      height: 360px;
-      perspective: 1400px;
+      height: 380px;
+      perspective: 1500px;
       margin: 15px auto;
       display: flex;
       align-items: center;
@@ -334,15 +340,11 @@
     .card-3d-viewport:active { cursor: grabbing; }
 
     .card-3d-scene {
-      width: 440px;
-      height: 311px;
+      width: 320px;
+      height: 452px;
       position: relative;
       transform-style: preserve-3d;
-      transition: transform 0.1s ease-out;
-    }
-
-    @media (max-width: 600px) {
-      .card-3d-scene { width: 300px; height: 212px; }
+      transition: transform 0.05s ease-out;
     }
 
     .card-3d-face {
@@ -351,23 +353,15 @@
       height: 100%;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
-      border-radius: 12px;
-      background-size: cover;
+      border-radius: 8px;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
       background-position: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255,255,255,0.2);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
     }
 
-    .card-3d-face.front { z-index: 2; }
+    .card-3d-face.front { z-index: 2; transform: rotateY(0deg); }
     .card-3d-face.back { transform: rotateY(180deg); }
-
-    .card-3d-face::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
-      border-radius: 12px;
-      pointer-events: none;
-    }
 
     #qrcode-hidden { display: none; }
   </style>
@@ -402,144 +396,190 @@
     </ul>
   </nav>
 
-  <!-- Workspace Area -->
-  <div class="workspace" id="workspace">
-    <div class="canvas-viewport-container">
+  <!-- App Layout Container (Left Sidebar + Workspace) -->
+  <div class="app-layout">
 
-      <!-- Orientation, Format, Background & Undo/Redo Bar -->
-      <div class="floating-panel" style="margin-bottom: 8px; width: 100%; max-width: 780px; justify-content: center; gap: 8px; flex-wrap: wrap;">
-        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Format:</span>
-        <button class="secondary" onclick="setDocumentFormat('menuSingle')" title="Single Page Menu (A4 Portrait)">📄 Single Page</button>
-        <button class="secondary" onclick="setDocumentFormat('menuBiFold')" title="Bi-Fold Menu (A4 Landscape Spread)">📜 Bi-Fold Spread</button>
-        <button class="secondary" onclick="toggleRounded()">⭕ Radius</button>
-        
-        <div style="display: flex; align-items: center; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
-          <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted);">BG:</span>
-          <input type="color" id="cardBgColorPicker" onchange="setCanvasBackground(this.value)" value="#121212" title="Background Color">
-          <button class="secondary" style="padding: 2px 6px; font-size: 0.65rem;" onclick="setCanvasBackground('transparent')">None</button>
+    <!-- Left Hand Side Toolbar & Features Sidebar -->
+    <aside class="left-sidebar">
+      
+      <!-- Templates Section -->
+      <div class="sidebar-section">
+        <div class="panel-section-title">Templates</div>
+        <button style="background: #0EA5E9; width:100%;" onclick="openTemplatesModal()">✨ Templates</button>
+      </div>
+
+      <!-- Format & Background Section -->
+      <div class="sidebar-section">
+        <div class="panel-section-title">Format & Background</div>
+        <div style="display: flex; gap: 4px;">
+          <button class="secondary" style="flex:1;" onclick="setDocumentFormat('menuSingle')" title="Single Page Menu (A4 Portrait)">📄 Single</button>
+          <button class="secondary" style="flex:1;" onclick="setDocumentFormat('menuBiFold')" title="Bi-Fold Menu (A4 Landscape Spread)">📜 Bi-Fold</button>
+          <button class="secondary" onclick="toggleRounded()" title="Toggle Rounded Corners">⭕ Radius</button>
         </div>
-
-        <div style="display: flex; gap: 4px; border-left: 1px solid #CBD5E1; padding-left: 8px; margin-left: 4px;">
-          <button class="secondary" style="padding: 4px 10px;" onclick="undo()" title="Undo (10 Steps)">↩️ Undo</button>
-          <button class="secondary" style="padding: 4px 10px;" onclick="redo()" title="Redo (10 Steps)">↪️ Redo</button>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+          <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">BG Color:</span>
+          <div style="display: flex; gap: 4px; align-items: center;">
+            <input type="color" id="cardBgColorPicker" onchange="setCanvasBackground(this.value)" value="#121212" title="Background Color">
+            <button class="secondary" style="padding: 4px 8px; font-size: 0.7rem;" onclick="setCanvasBackground('transparent')">None</button>
+          </div>
         </div>
       </div>
 
-      <!-- Top Tools Panel -->
-      <div class="floating-panel top-tools-panel">
-        <div>
-          <div class="panel-section-title">Templates</div>
-          <button style="background: #0EA5E9; width:100%;" onclick="openTemplatesModal()">✨ Templates</button>
+      <!-- Zoom Controls Section -->
+      <div class="sidebar-section">
+        <div class="panel-section-title">Zoom Controls</div>
+        <div style="display: flex; gap: 6px;">
+          <button class="secondary" style="flex:1; padding: 6px;" onclick="zoomCanvas(0.1)" title="Zoom In">🔍+ Zoom In</button>
+          <button class="secondary" style="flex:1; padding: 6px;" onclick="zoomCanvas(-0.1)" title="Zoom Out">🔍- Zoom Out</button>
+        </div>
+        <button class="secondary" style="width: 100%; margin-top: 4px; padding: 4px; font-size: 0.75rem;" onclick="resetZoom()" title="Reset to Fit View">Reset Zoom</button>
+      </div>
+
+      <!-- History (Undo / Redo) Section -->
+      <div class="sidebar-section">
+        <div class="panel-section-title">History</div>
+        <div style="display: flex; gap: 6px;">
+          <button class="secondary" style="flex:1; padding: 6px;" onclick="undo()" title="Undo (10 Steps)">↩️ Undo</button>
+          <button class="secondary" style="flex:1; padding: 6px;" onclick="redo()" title="Redo (10 Steps)">↪️ Redo</button>
+        </div>
+      </div>
+
+      <!-- Add Elements Section -->
+      <div class="sidebar-section">
+        <div class="panel-section-title">Add Elements</div>
+        <button style="width:100%; margin-bottom: 4px;" onclick="addText()">+ Add Text Line</button>
+        
+        <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); margin-top: 4px;">Shapes:</div>
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+          <button class="secondary" style="padding: 6px 2px;" onclick="addShape('rect')">Rect</button>
+          <button class="secondary" style="padding: 6px 2px;" onclick="addShape('circle')">Circle</button>
+          <button class="secondary" style="padding: 6px 2px;" onclick="addShape('triangle')">Tri</button>
+          <button class="secondary" style="padding: 6px 2px;" onclick="addShape('line')">Line</button>
         </div>
 
-        <div>
-          <div class="panel-section-title">Add Text</div>
-          <button style="width:100%;" onclick="addText()">+ Text</button>
-        </div>
-
-        <div>
-          <div class="panel-section-title">Shapes</div>
-          <div style="display:flex; gap:3px; justify-content:center;">
-            <button class="secondary" onclick="addShape('rect')">Rect</button>
-            <button class="secondary" onclick="addShape('circle')">Circle</button>
-            <button class="secondary" onclick="addShape('triangle')">Tri</button>
-            <button class="secondary" onclick="addShape('line')">Line</button>
-          </div>
-        </div>
-
-        <div>
-          <div class="panel-section-title">Image</div>
+        <div style="margin-top: 6px;">
           <button class="secondary" style="width:100%; cursor:pointer;" onclick="document.getElementById('imageLoader').click()">
-            📁 Upload
+            📁 Upload Image(s)
           </button>
           <input type="file" id="imageLoader" accept="image/*" multiple style="display:none;">
         </div>
 
-        <div>
-          <div class="panel-section-title">QR Code</div>
-          <div style="display:flex; gap:3px;">
-            <input type="text" id="qrInput" placeholder="URL/Menu">
+        <div style="margin-top: 6px;">
+          <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); margin-bottom: 2px;">QR Code Generator:</div>
+          <div style="display:flex; gap:4px;">
+            <input type="text" id="qrInput" placeholder="Enter URL or Menu link">
             <button onclick="addQRCode()">+ QR</button>
           </div>
         </div>
       </div>
-      
-      <!-- Top Canvas Controls -->
-      <div class="floating-panel canvas-top-controls">
-        <button id="btnSideA" class="active-side" onclick="switchSide('front')">Page 1 (Front)</button>
-        <button id="btnSideB" class="secondary" onclick="switchSide('back')">Page 2 (Back)</button>
-        <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D Preview</button>
-      </div>
 
-      <!-- Object Inspector Overlay -->
-      <div class="floating-panel object-inspector-panel" id="objectInspector">
-        <div id="textInspectorControls" style="display:none; gap:5px; align-items:center; flex-wrap:wrap;">
-          <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#FFFFFF" title="Text Color">
-          <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)">
-            <option value="Poppins">Poppins</option>
-            <option value="Playfair Display">Playfair</option>
-            <option value="Montserrat">Montserrat</option>
-            <option value="Roboto">Roboto</option>
-          </select>
-          <button class="secondary" onclick="toggleStyle('bold')"><b>B</b></button>
-          <button class="secondary" onclick="toggleStyle('italic')"><i>I</i></button>
-          <button class="secondary" onclick="toggleStyle('underline')"><u>U</u></button>
-          <div style="display:flex; gap:2px; border-left:1px solid #CBD5E1; padding-left:5px; margin-left:3px;">
-            <button class="secondary" style="padding: 2px 6px;" onclick="setTextAlignment('left')">⬅️</button>
-            <button class="secondary" style="padding: 2px 6px;" onclick="setTextAlignment('center')">⏺️</button>
-            <button class="secondary" style="padding: 2px 6px;" onclick="setTextAlignment('right')">➡️</button>
+      <!-- Object Inspector Panel (Dynamic) -->
+      <div class="sidebar-section object-inspector-panel" id="objectInspector">
+        <div class="panel-section-title" style="color: var(--primary);">Selected Item Settings</div>
+        
+        <!-- Text Inspector Controls -->
+        <div id="textInspectorControls" style="display:none; flex-direction:column; gap:6px;">
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#FFFFFF" title="Text Color">
+            <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)" style="flex:1;">
+              <option value="Poppins">Poppins</option>
+              <option value="Playfair Display">Playfair</option>
+              <option value="Montserrat">Montserrat</option>
+              <option value="Roboto">Roboto</option>
+            </select>
           </div>
-        </div>
-
-        <div id="shapeInspectorControls" style="display:none; gap:6px; align-items:center; flex-wrap:wrap;">
-          <span style="font-size:0.65rem; font-weight:600;">Fill:</span>
-          <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#FF6B00" title="Foreground Fill Color">
-          <button class="secondary" style="padding:2px 5px; font-size:0.65rem;" onclick="updateShapeProperty('fill', 'transparent')">None</button>
-          
-          <span style="font-size:0.65rem; font-weight:600; border-left:1px solid #CBD5E1; padding-left:5px;">Border:</span>
-          <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" value="#D4AF37" title="Border Color">
-          <button class="secondary" style="padding:2px 5px; font-size:0.65rem;" onclick="updateShapeProperty('stroke', '')">None</button>
-          
-          <span style="font-size:0.65rem; font-weight:600;">Width:</span>
-          <input type="range" id="shapeBorderSize" min="0" max="25" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:45px; cursor:pointer;">
-
-          <span id="shapeRadiusLabel" style="font-size:0.65rem; font-weight:600; border-left:1px solid #CBD5E1; padding-left:5px;">Radius:</span>
-          <input type="range" id="shapeCornerRadius" min="0" max="50" value="0" oninput="updateShapeProperty('rx', parseInt(this.value)); updateShapeProperty('ry', parseInt(this.value));" style="width:45px; cursor:pointer;" title="Corner Radius">
-        </div>
-
-        <div style="display:flex; gap:3px; align-items:center; border-left:1px solid #CBD5E1; padding-left:5px; margin-left:3px;">
-          <button class="secondary" style="padding: 2px 5px;" onclick="duplicateSelected()" title="Duplicate Selected">📋</button>
-          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
-          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('forward')" title="Step Up">🔼</button>
-          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('backward')" title="Step Down">🔽</button>
-          <button class="secondary" style="padding: 2px 5px;" onclick="changeLayer('back')" title="Send to Back">🔚</button>
-          <button class="danger" style="padding: 2px 6px;" onclick="deleteSelected()">🗑️</button>
-        </div>
-      </div>
-
-      <!-- Canvas Box -->
-      <div class="canvas-container-wrapper" id="canvasWrapper">
-        <canvas id="cardCanvas"></canvas>
-      </div>
-
-      <!-- Bottom Controls -->
-      <div class="canvas-bottom-controls-group">
-        <div class="floating-panel" style="position:relative; flex-wrap:wrap; justify-content:center;">
-          <button class="secondary" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed: ON</button>
-          <button class="secondary" id="trimBtn" onclick="toggleGuide('trim')">Trim: ON</button>
-          <button class="secondary" id="safetyBtn" onclick="toggleGuide('safety')">Safety: ON</button>
-        </div>
-
-        <div class="floating-panel canvas-export-controls">
-          <span style="font-size:0.7rem; font-weight:600; color:var(--text-muted);">Exports:</span>
+          <div style="display:flex; gap:4px; align-items:center;">
+            <button class="secondary" style="flex:1;" onclick="toggleStyle('bold')"><b>B</b></button>
+            <button class="secondary" style="flex:1;" onclick="toggleStyle('italic')"><i>I</i></button>
+            <button class="secondary" style="flex:1;" onclick="toggleStyle('underline')"><u>U</u></button>
+          </div>
           <div style="display:flex; gap:4px;">
-            <button style="background: #10B981; padding: 5px 10px;" onclick="initiatePayment('png')">Download PNG</button>
-            <button style="background: #2563EB; padding: 5px 10px;" onclick="initiatePayment('pdf')">Download PDF</button>
+            <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('left')">⬅️ Left</button>
+            <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('center')">⏺️ Center</button>
+            <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('right')">➡️ Right</button>
           </div>
+        </div>
+
+        <!-- Shape Inspector Controls -->
+        <div id="shapeInspectorControls" style="display:none; flex-direction:column; gap:6px;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size:0.75rem; font-weight:600;">Fill Color:</span>
+            <div style="display: flex; gap: 4px; align-items: center;">
+              <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" value="#FF6B00" title="Foreground Fill Color">
+              <button class="secondary" style="padding: 2px 6px; font-size: 0.65rem;" onclick="updateShapeProperty('fill', 'transparent')">None</button>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size:0.75rem; font-weight:600;">Border Color:</span>
+            <div style="display: flex; gap: 4px; align-items: center;">
+              <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" value="#D4AF37" title="Border Color">
+              <button class="secondary" style="padding: 2px 6px; font-size: 0.65rem;" onclick="updateShapeProperty('stroke', '')">None</button>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size:0.75rem; font-weight:600;">Border Width:</span>
+            <input type="range" id="shapeBorderSize" min="0" max="25" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:120px; cursor:pointer;">
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between;" id="shapeRadiusRow">
+            <span id="shapeRadiusLabel" style="font-size:0.75rem; font-weight:600;">Corner Radius:</span>
+            <input type="range" id="shapeCornerRadius" min="0" max="50" value="0" oninput="updateShapeProperty('rx', parseInt(this.value)); updateShapeProperty('ry', parseInt(this.value));" style="width:120px; cursor:pointer;" title="Corner Radius">
+          </div>
+        </div>
+
+        <!-- Common Object Actions (Duplicate, Layers, Delete) -->
+        <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-top: 4px;">
+          <button class="secondary" style="padding: 4px;" onclick="duplicateSelected()" title="Duplicate Selected">📋</button>
+          <button class="secondary" style="padding: 4px;" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
+          <button class="secondary" style="padding: 4px;" onclick="changeLayer('forward')" title="Step Up">🔼</button>
+          <button class="secondary" style="padding: 4px;" onclick="changeLayer('backward')" title="Step Down">🔽</button>
+          <button class="secondary" style="padding: 4px;" onclick="changeLayer('back')" title="Send to Back">🔚</button>
+        </div>
+        <button class="danger" style="width: 100%; margin-top: 4px; padding: 6px;" onclick="deleteSelected()">🗑️ Delete Selected Item</button>
+      </div>
+
+      <!-- Guides & Print Lines Section -->
+      <div class="sidebar-section">
+        <div class="panel-section-title">Print Guides</div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
+          <button class="secondary" style="padding: 6px 2px; font-size: 0.75rem;" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed: ON</button>
+          <button class="secondary" style="padding: 6px 2px; font-size: 0.75rem;" id="trimBtn" onclick="toggleGuide('trim')">Trim: ON</button>
+          <button class="secondary" style="padding: 6px 2px; font-size: 0.75rem;" id="safetyBtn" onclick="toggleGuide('safety')">Safety: ON</button>
         </div>
       </div>
 
-    </div>
+      <!-- Export & Download Section -->
+      <div class="sidebar-section">
+        <div class="panel-section-title">Exports & Downloads</div>
+        <div style="display: flex; gap: 4px;">
+          <button style="background: #10B981; flex:1; padding: 6px;" onclick="initiatePayment('png')">Download PNG</button>
+          <button style="background: #2563EB; flex:1; padding: 6px;" onclick="initiatePayment('pdf')">Download PDF</button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Workspace Area -->
+    <main class="workspace" id="workspace">
+      <div class="canvas-viewport-container">
+
+        <!-- Top Canvas Controls (Page Switcher & 3D Preview) -->
+        <div class="floating-panel canvas-top-controls">
+          <button id="btnSideA" class="active-side" onclick="switchSide('front')">Page 1 (Front)</button>
+          <button id="btnSideB" class="secondary" onclick="switchSide('back')">Page 2 (Back)</button>
+          <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D Preview</button>
+        </div>
+
+        <!-- Canvas Box -->
+        <div class="canvas-container-wrapper" id="canvasWrapper">
+          <canvas id="cardCanvas"></canvas>
+        </div>
+
+      </div>
+    </main>
+
   </div>
 
   <!-- Templates Selection Modal -->
@@ -639,6 +679,9 @@
     let BASE_WIDTH = MENU_SINGLE_WIDTH;
     let BASE_HEIGHT = MENU_SINGLE_HEIGHT;
 
+    let currentZoomScale = 1;
+    let baseFitScale = 1;
+
     const BLEED_MARGIN = 12;
     const TRIM_MARGIN = 26;
     const SAFETY_MARGIN = 48;
@@ -673,6 +716,45 @@
     canvas.on('object:added', () => saveHistory());
     canvas.on('object:modified', () => saveHistory());
     canvas.on('object:removed', () => saveHistory());
+
+    // Mouse wheel zoom support
+    canvas.on('mouse:wheel', function(opt) {
+      const delta = opt.e.deltaY;
+      let zoom = canvas.getZoom();
+      zoom *= 0.99 ** delta;
+      if (zoom > 3.0) zoom = 3.0;
+      if (zoom < 0.2) zoom = 0.2;
+      
+      currentZoomScale = zoom;
+      canvas.setZoom(zoom);
+      
+      // Resize canvas element dimensions accordingly
+      canvas.setDimensions({
+        width: BASE_WIDTH * zoom,
+        height: BASE_HEIGHT * zoom
+      });
+      
+      opt.e.preventDefault();
+      opt.e.stopPropagation();
+    });
+
+    function zoomCanvas(amount) {
+      let zoom = canvas.getZoom() + amount;
+      if (zoom > 3.0) zoom = 3.0;
+      if (zoom < 0.2) zoom = 0.2;
+
+      currentZoomScale = zoom;
+      canvas.setZoom(zoom);
+      canvas.setDimensions({
+        width: BASE_WIDTH * zoom,
+        height: BASE_HEIGHT * zoom
+      });
+      renderPrintGuides();
+    }
+
+    function resetZoom() {
+      resizeCanvasToFitContainer();
+    }
 
     function closeNoticeModal() {
       document.getElementById('noticeModal').style.display = 'none';
@@ -856,8 +938,9 @@
         document.getElementById('shapeBorderSize').value = activeObj.strokeWidth || 0;
 
         const isRect = activeObj.isType('rect');
-        document.getElementById('shapeCornerRadius').style.display = isRect ? 'inline-block' : 'none';
-        document.getElementById('shapeRadiusLabel').style.display = isRect ? 'inline-block' : 'none';
+        document.getElementById('shapeCornerRadius').style.display = isRect ? 'block' : 'none';
+        document.getElementById('shapeRadiusLabel').style.display = isRect ? 'block' : 'none';
+        document.getElementById('shapeRadiusRow').style.display = isRect ? 'flex' : 'none';
         if (isRect) {
           document.getElementById('shapeCornerRadius').value = activeObj.rx || 0;
         }
@@ -977,16 +1060,17 @@
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspace');
       const maxWidth = workspace.clientWidth - 20;
-      const maxHeight = workspace.clientHeight - 40;
+      const maxHeight = workspace.clientHeight - 60;
 
-      let scale = Math.min(maxWidth / BASE_WIDTH, maxHeight / BASE_HEIGHT);
+      baseFitScale = Math.min(maxWidth / BASE_WIDTH, maxHeight / BASE_HEIGHT);
+      currentZoomScale = baseFitScale;
 
       canvas.setDimensions({
-        width: BASE_WIDTH * scale,
-        height: BASE_HEIGHT * scale
+        width: BASE_WIDTH * baseFitScale,
+        height: BASE_HEIGHT * baseFitScale
       });
 
-      canvas.setZoom(scale);
+      canvas.setZoom(baseFitScale);
       renderPrintGuides();
     }
 
@@ -1055,7 +1139,7 @@
       let frontImg = '';
       let backImg = '';
 
-      const currentData = canvas.toDataURL({ format: 'png', quality: 1 });
+      const currentData = canvas.toDataURL({ format: 'png', quality: 1, multiplier: 1 });
       
       if (currentSide === 'front') {
         frontImg = currentData;
@@ -1071,7 +1155,7 @@
         tempCanvas.loadFromJSON(otherStack[otherStack.length - 1], () => {
           tempCanvas.getObjects().forEach(o => { if(o.excludeFromExport) o.visible = false; });
           tempCanvas.renderAll();
-          const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1 });
+          const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 1 });
 
           if (currentSide === 'front') backImg = otherData;
           else frontImg = otherData;
@@ -1094,8 +1178,14 @@
       document.getElementById('card3dBack').style.backgroundImage = `url(${backImg})`;
 
       const scene = document.getElementById('card3dScene');
-      scene.style.width = currentFormat === 'menuSingle' ? '320px' : '440px';
-      scene.style.height = currentFormat === 'menuSingle' ? '452px' : '311px';
+      
+      if (currentFormat === 'menuSingle') {
+        scene.style.width = '280px';
+        scene.style.height = '395px';
+      } else {
+        scene.style.width = '420px';
+        scene.style.height = '296px';
+      }
     }
 
     const viewport3D = document.getElementById('card3dViewport');
