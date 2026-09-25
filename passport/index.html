@@ -184,7 +184,31 @@
     }
   </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen relative">
+
+  <!-- Centered Preview Pop-Up Modal (Floating Dialog) -->
+  <div id="previewModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden justify-center items-center z-[99999] p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl flex flex-col max-w-4xl w-full max-h-[90vh] overflow-hidden p-6 animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Pop-Up Header -->
+      <div class="flex justify-between items-center pb-4 border-b border-slate-800">
+        <h3 id="modalPreviewHeading" class="text-lg font-bold text-white">Sheet Preview Pop-Up</h3>
+        <button id="closePreviewModalBtn" class="btn-secondary px-3 py-1.5 rounded-xl text-sm font-bold shadow transition hover:bg-slate-200">
+          ✕ Close
+        </button>
+      </div>
+
+      <!-- Pop-Up Body with Scrollable Image Container -->
+      <div class="flex-1 overflow-auto flex justify-center items-center py-4">
+        <img id="previewModalImg" alt="Sheet Preview" class="max-h-[70vh] max-w-full object-contain shadow-lg rounded-lg border border-slate-700 bg-white">
+      </div>
+
+      <!-- Pop-Up Footer Note -->
+      <div class="pt-3 border-t border-slate-800 text-center text-xs text-slate-400">
+        Click outside the pop-up box or use the close button to return.
+      </div>
+    </div>
+  </div>
 
   <!-- Navigation Bar with Gradient Title matching posterbanner.html -->
   <nav>
@@ -222,7 +246,7 @@
             <span id="bgStatus" class="text-xs font-medium text-teal-600 hidden">✓ Background Processed</span>
           </div>
 
-          <div class="grid grid-cols-7 gap-1.5 md:gap-2">
+          <div class="grid grid-cols-8 gap-1.5 md:gap-2">
             <button id="undoBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold disabled:opacity-40" disabled title="Undo Action">↩️ Undo</button>
             <button id="redoBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold disabled:opacity-40" disabled title="Redo Action">↪️ Redo</button>
             <button id="zoomInBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold" title="Zoom In">🔍 +</button>
@@ -230,6 +254,7 @@
             <button id="rotateLeftBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold" title="Rotate Left">🔄 -90°</button>
             <button id="rotateRightBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold" title="Rotate Right">🔄 +90°</button>
             <button id="resetCropBtn" class="btn-secondary text-xs py-2 rounded-lg font-semibold" title="Reset Frame">💥 Reset</button>
+            <button id="clearPhotoBtn" class="bg-red-100 text-red-700 hover:bg-red-200 text-xs py-2 rounded-lg font-semibold transition" title="Clear Image">🗑️ Clear</button>
           </div>
 
           <div class="img-container rounded-xl overflow-hidden flex items-center justify-center w-full">
@@ -309,7 +334,7 @@
           <div class="w-full flex justify-between items-center">
             <h2 id="previewHeading" class="text-lg font-bold">A4 Sheet Preview (300 DPI)</h2>
             <button id="viewModalBtn" class="btn-cyan text-xs px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1 shadow-sm disabled:opacity-50" disabled>
-              🔍 Preview Full Sheet
+              🔍 Preview Pop-Up
             </button>
           </div>
 
@@ -325,20 +350,6 @@
       </section>
 
     </main>
-  </div>
-
-  <div id="previewModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex flex-col items-center justify-center p-4 z-50">
-    <div class="theme-card rounded-2xl max-w-4xl w-full max-h-[90vh] p-6 relative flex flex-col items-center">
-      <div class="w-full flex justify-between items-center mb-4 border-b pb-3" style="border-color: var(--border);">
-        <h3 id="modalPreviewHeading" class="text-lg font-bold">Sheet Preview (Full Screen)</h3>
-        <button id="closePreviewModalBtn" class="btn-secondary px-3 py-1 rounded-lg text-xs font-bold">
-          ✕ Close
-        </button>
-      </div>
-      <div class="w-full overflow-auto flex justify-center items-center p-2 rounded-xl" style="background-color: var(--bg-input);">
-        <img id="previewModalImg" alt="Full Sheet Preview" class="max-h-[70vh] object-contain shadow-md rounded">
-      </div>
-    </div>
   </div>
 
   <script>
@@ -383,6 +394,7 @@
       
       undoBtn: document.getElementById('undoBtn'),
       redoBtn: document.getElementById('redoBtn'),
+      clearPhotoBtn: document.getElementById('clearPhotoBtn'),
       removeBgBtn: document.getElementById('removeBgBtn'),
       enhanceAiBtn: document.getElementById('enhanceAiBtn'),
       autoCenterBtn: document.getElementById('autoCenterBtn'),
@@ -415,7 +427,7 @@
       
       const label = option.text.split('(')[0].trim();
       DOM.previewHeading.innerText = `${label} Sheet Preview (300 DPI)`;
-      DOM.modalPreviewHeading.innerText = `${label} Sheet Preview (Full Screen)`;
+      DOM.modalPreviewHeading.innerText = `${label} Sheet Preview (Pop-Up)`;
     });
 
     function pushHistory(dataUrl) {
@@ -476,6 +488,22 @@
       });
 
       DOM.bgStatus.classList.add('hidden');
+    });
+
+    // Clear photo button functionality
+    DOM.clearPhotoBtn.addEventListener('click', () => {
+      if (state.cropper) {
+        state.cropper.destroy();
+        state.cropper = null;
+      }
+      DOM.image.src = '';
+      DOM.image.classList.add('hidden');
+      DOM.uploadInput.value = '';
+      DOM.fileLabel.innerText = 'No file selected';
+      DOM.bgStatus.classList.add('hidden');
+      state.historyStack = [];
+      state.historyIndex = -1;
+      updateHistoryButtons();
     });
 
     document.getElementById('zoomInBtn').addEventListener('click', () => state.cropper && state.cropper.zoom(0.1));
@@ -636,13 +664,23 @@
       DOM.viewModalBtn.disabled = false;
     });
 
+    // Pop-Up Modal Event Handlers
     DOM.viewModalBtn.addEventListener('click', () => {
       DOM.previewModalImg.src = DOM.canvas.toDataURL('image/jpeg', 0.95);
       DOM.previewModal.classList.remove('hidden');
+      DOM.previewModal.classList.add('flex');
     });
 
     DOM.closePreviewModalBtn.addEventListener('click', () => {
+      DOM.previewModal.classList.remove('flex');
       DOM.previewModal.classList.add('hidden');
+    });
+
+    DOM.previewModal.addEventListener('click', (e) => {
+      if (e.target === DOM.previewModal) {
+        DOM.previewModal.classList.remove('flex');
+        DOM.previewModal.classList.add('hidden');
+      }
     });
 
     function triggerPDFDownload() {
