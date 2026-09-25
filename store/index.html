@@ -129,6 +129,24 @@
       .brand-logo img { height: 55px; }
       .container { padding: 1.5rem 1rem; }
       .section-title { font-size: 1.4rem; }
+
+      /* Mobile Slider CSS */
+      .services-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 1rem;
+        padding-bottom: 1rem;
+        scrollbar-width: none; /* Firefox */
+      }
+      .services-grid::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+      }
+      .service-card {
+        min-width: 100%;
+        flex: 0 0 100%;
+        scroll-snap-align: center;
+      }
     }
   </style>
 </head>
@@ -209,9 +227,36 @@
       { category: "Electronics & Tech", title: "Panasonic 1.5 Ton 5 Star", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/61zSrwlyMxL._SL1500_.jpg", description: "Wi-Fi Inverter Smart Split AC (Matter/MirAIe, AI, DustBuster, 55°C Oper., Copper Condenser", asin: "B0GHR4W2DR" },
       { category: "Electronics & Tech", title: "Voltas 1.5 Ton 3 Star", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/51TjEqdi+uL._SL1200_.jpg", description: "Inverter Split AC (Copper, 5 Step Adjustable Mode, Anti-dust Filter, 183INV CAV, White)", asin: "B0GSZRBDND" },
       { category: "Electronics & Tech", title: "Voltas 1.5 ton 3 Star", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/51ggXokvcTL._SL1200_.jpg", description: "New star rated, Inverter Split AC (Copper, Convertible 6-in-1 cooling modes, Ai Enabled, 4-way Swing, Sleep Mode, Auto Clean", asin: "B0GSZSLW6N" }
-
-
     ];
+
+    let autoSlideInterval = null;
+
+    function startAutoSlide() {
+      // Sirf mobile screens (<= 768px) ke liye auto-slide run karega
+      if (window.innerWidth <= 768) {
+        if (autoSlideInterval) clearInterval(autoSlideInterval);
+        
+        autoSlideInterval = setInterval(() => {
+          const grid = document.getElementById('affiliate-grid');
+          if (!grid) return;
+          const cards = grid.querySelectorAll('.service-card');
+          if (cards.length === 0) return;
+
+          // Pata karein kaunsa card abhi visible hai
+          let currentIndex = 0;
+          cards.forEach((card, index) => {
+            const rect = card.getBoundingClientRect();
+            if (rect.left >= 0 && rect.left < window.innerWidth / 2) {
+              currentIndex = index;
+            }
+          });
+
+          // Agle card ka index nikal kar scroll karein, agar last hai toh wapas pehle par aa jayein
+          let nextIndex = (currentIndex + 1) % cards.length;
+          cards[nextIndex].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }, 3000); // 3 seconds interval
+      }
+    }
 
     function renderProducts(filterCategory) {
       const container = document.getElementById('affiliate-grid');
@@ -222,6 +267,7 @@
 
       if (filtered.length === 0) {
         container.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">No products found in this category.</p>`;
+        if (autoSlideInterval) clearInterval(autoSlideInterval);
         return;
       }
 
@@ -240,6 +286,9 @@
           </div>
         </div>
       `).join('');
+
+      // Products render hone ke baad auto-slider start karein
+      startAutoSlide();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -254,6 +303,15 @@
           const selectedCategory = button.getAttribute('data-category');
           renderProducts(selectedCategory);
         });
+      });
+
+      // Window resize hone par auto-slide ko manage karna
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && autoSlideInterval) {
+          clearInterval(autoSlideInterval);
+        } else if (window.innerWidth <= 768) {
+          startAutoSlide();
+        }
       });
     });
   </script>
