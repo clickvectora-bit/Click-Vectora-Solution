@@ -57,11 +57,11 @@
       gap: 10px; 
       text-decoration: none; 
     }
-    .brand-logo img { height: 70px; width: auto; display: block; object-fit: contain; }
+    .brand-logo img { height: 60px; width: auto; display: block; object-fit: contain; }
     
     .brand-title-center {
       text-align: center;
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       font-weight: 800;
       letter-spacing: -0.3px;
       background: linear-gradient(135deg, var(--primary), var(--cyan));
@@ -119,12 +119,28 @@
     input[type="text"] { width: 100%; }
     input[type="color"] { height: 32px; width: 32px; cursor: pointer; padding: 2px; border-radius: 6px; }
 
-    /* Layout Structure: Left Sidebar + Workspace */
+    /* Layout Structure */
     .app-layout {
       display: flex;
       flex: 1;
       overflow: hidden;
       width: 100%;
+      position: relative;
+    }
+
+    /* Mobile Toolbar Toggle Floating Button */
+    .mobile-toolbar-toggle {
+      display: none;
+      background: var(--primary);
+      color: white;
+      border-radius: 20px;
+      padding: 6px 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      font-weight: 700;
+      font-size: 0.85rem;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
     }
 
     /* Left Sidebar Styling */
@@ -134,24 +150,26 @@
       border-right: 1px solid var(--panel-border);
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 16px;
+      gap: 10px;
+      padding: 14px 16px;
       overflow-y: auto;
       z-index: 40;
       box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
       backdrop-filter: blur(6px);
+      transition: transform 0.3s ease-in-out;
     }
 
     .sidebar-section {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      padding-bottom: 10px;
+      padding-bottom: 8px;
       border-bottom: 1px solid #E2E8F0;
     }
 
     .sidebar-section:last-child {
       border-bottom: none;
+      padding-bottom: 25px; 
     }
 
     .panel-section-title {
@@ -163,7 +181,7 @@
       margin-bottom: 2px;
     }
 
-    /* Fixed Workspace Area with Extra Top Spacing */
+    /* Workspace Area */
     .workspace {
       flex: 1;
       height: 100%;
@@ -173,7 +191,7 @@
       position: relative;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 40px 10px 30px 10px !important;
+      padding: 20px 10px !important;
       background: radial-gradient(#94A3B8 1px, transparent 1px);
       background-size: 14px 14px;
     }
@@ -185,7 +203,6 @@
       position: relative;
       width: 100%;
       max-width: 1000px;
-      margin-top: 15px; /* Added separation from header boundary */
     }
 
     .floating-panel {
@@ -202,7 +219,7 @@
     }
 
     .canvas-top-controls {
-      margin-bottom: 16px; /* Increased separation gap above the card preview */
+      margin-bottom: 12px;
       z-index: 20;
       position: relative;
       flex-wrap: wrap;
@@ -233,11 +250,13 @@
       border-radius: 16px;
     }
 
+    /* Mobile Media Queries */
     @media (max-width: 900px) {
-      nav { display: flex; justify-content: space-between; padding: 0.4rem 5%; }
+      nav { display: flex; justify-content: space-between; padding: 0.4rem 4%; }
       .brand-title-center { display: none; }
-      .brand-logo img { height: 50px; }
+      .brand-logo img { height: 45px; }
       .menu-toggle { display: block; }
+      
       .nav-links {
         position: absolute;
         top: 100%;
@@ -257,9 +276,33 @@
       .nav-links.active { max-height: 350px; }
       .nav-links li { width: 100%; border-bottom: 1px solid var(--border); }
       .nav-links a { display: block; padding: 1rem 1.5rem; width: 100%; }
-      .app-layout { flex-direction: column; overflow-y: auto; }
-      .left-sidebar { width: 100%; max-height: none; border-right: none; border-bottom: 1px solid var(--panel-border); }
-      .workspace { overflow-y: visible; padding-top: 20px !important; }
+
+      .app-layout { flex-direction: column; }
+      
+      .left-sidebar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        transform: translateY(100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.99);
+      }
+      .left-sidebar.mobile-open {
+        transform: translateY(0);
+      }
+      
+      .mobile-toolbar-toggle {
+        display: inline-flex;
+      }
+
+      .workspace { 
+        padding: 10px !important; 
+        height: 100%;
+      }
     }
 
     /* Modals */
@@ -372,11 +415,11 @@
   <div class="modal-overlay" id="noticeModal" style="display: flex;">
     <div class="modal">
       <div style="font-size: 2.5rem; margin-bottom: 8px;">💻📱</div>
-      <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Best Experience Notice</h3>
+      <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Menu Studio Ready</h3>
       <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
-        This Studio supports <b>Desktop Mode</b> on mobile devices and works best on a <b>Desktop</b> computer for optimal results.
+        Optimized for mobile touch controls. Use the <b>Edit Tools</b> button at the top to customize menu items & layout!
       </p>
-      <button style="width: 100%; padding: 10px;" onclick="closeNoticeModal()">Got it, Let's Design!</button>
+      <button style="width: 100%; padding: 10px;" onclick="closeNoticeModal()">Start Designing</button>
     </div>
   </div>
 
@@ -400,8 +443,14 @@
   <div class="app-layout">
 
     <!-- Left Hand Side Toolbar & Features Sidebar -->
-    <aside class="left-sidebar">
+    <aside class="left-sidebar" id="leftSidebar">
       
+      <!-- Mobile Close Bar Header inside Sidebar -->
+      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom: 6px; border-bottom: 1px solid #CBD5E1; display:none;" id="mobileCloseHeader">
+        <span style="font-weight:700; font-size:1rem; color:var(--text-main);">Studio Controls</span>
+        <button class="secondary" style="padding:4px 10px;" onclick="toggleMobileSidebar()">✕ Close</button>
+      </div>
+
       <!-- Templates Section -->
       <div class="sidebar-section">
         <div class="panel-section-title">Templates</div>
@@ -520,16 +569,16 @@
 
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <span style="font-size:0.75rem; font-weight:600;">Border Width:</span>
-            <input type="range" id="shapeBorderSize" min="0" max="25" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:120px; cursor:pointer;">
+            <input type="range" id="shapeBorderSize" min="0" max="25" value="0" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" style="width:100px; cursor:pointer;">
           </div>
 
           <div style="display: flex; align-items: center; justify-content: space-between;" id="shapeRadiusRow">
-            <span id="shapeRadiusLabel" style="font-size:0.75rem; font-weight:600;">Corner Radius:</span>
-            <input type="range" id="shapeCornerRadius" min="0" max="50" value="0" oninput="updateShapeProperty('rx', parseInt(this.value)); updateShapeProperty('ry', parseInt(this.value));" style="width:120px; cursor:pointer;" title="Corner Radius">
+            <span id="shapeRadiusLabel" style="font-size:0.75rem; font-weight:600;">Radius:</span>
+            <input type="range" id="shapeCornerRadius" min="0" max="50" value="0" oninput="updateShapeProperty('rx', parseInt(this.value)); updateShapeProperty('ry', parseInt(this.value));" style="width:100px; cursor:pointer;">
           </div>
         </div>
 
-        <!-- Common Object Actions (Duplicate, Layers, Delete) -->
+        <!-- Common Object Actions -->
         <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-top: 4px;">
           <button class="secondary" style="padding: 4px;" onclick="duplicateSelected()" title="Duplicate Selected">📋</button>
           <button class="secondary" style="padding: 4px;" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
@@ -554,8 +603,8 @@
       <div class="sidebar-section">
         <div class="panel-section-title">Exports & Downloads</div>
         <div style="display: flex; gap: 4px;">
-          <button style="background: #10B981; flex:1; padding: 6px;" onclick="initiatePayment('png')">Download PNG</button>
-          <button style="background: #2563EB; flex:1; padding: 6px;" onclick="initiatePayment('pdf')">Download PDF</button>
+          <button style="background: #10B981; flex:1; padding: 8px 4px;" onclick="initiatePayment('png')">Download PNG</button>
+          <button style="background: #2563EB; flex:1; padding: 8px 4px;" onclick="initiatePayment('pdf')">Download PDF</button>
         </div>
       </div>
 
@@ -565,11 +614,18 @@
     <main class="workspace" id="workspace">
       <div class="canvas-viewport-container">
 
-        <!-- Top Canvas Controls (Page Switcher & 3D Preview) -->
-        <div class="floating-panel canvas-top-controls">
-          <button id="btnSideA" class="active-side" onclick="switchSide('front')">Page 1 (Front)</button>
-          <button id="btnSideB" class="secondary" onclick="switchSide('back')">Page 2 (Back)</button>
-          <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D Preview</button>
+        <!-- Top Canvas Controls & Mobile Edit Tools Toggle Button -->
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 12px; z-index: 20; position: relative;">
+          <!-- Floating Mobile Toggle Button -->
+          <button class="mobile-toolbar-toggle" id="mobileSidebarToggle" onclick="toggleMobileSidebar()">
+            <i class="fa-solid fa-sliders"></i> Edit Tools
+          </button>
+
+          <div class="floating-panel canvas-top-controls" style="margin-bottom: 0; width: auto;">
+            <button id="btnSideA" class="active-side" onclick="switchSide('front')">Page 1 (Front)</button>
+            <button id="btnSideB" class="secondary" onclick="switchSide('back')">Page 2 (Back)</button>
+            <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D</button>
+          </div>
         </div>
 
         <!-- Canvas Box -->
@@ -667,6 +723,18 @@
       }
     });
 
+    // Mobile Sidebar Drawer Toggle
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('leftSidebar');
+      const closeHeader = document.getElementById('mobileCloseHeader');
+      sidebar.classList.toggle('mobile-open');
+      if (sidebar.classList.contains('mobile-open')) {
+        closeHeader.style.display = 'flex';
+      } else {
+        closeHeader.style.display = 'none';
+      }
+    }
+
     // Single Page Menu dimensions (A4 vertical ratio proportions)
     const MENU_SINGLE_WIDTH = 800;
     const MENU_SINGLE_HEIGHT = 1131;
@@ -728,7 +796,6 @@
       currentZoomScale = zoom;
       canvas.setZoom(zoom);
       
-      // Resize canvas element dimensions accordingly
       canvas.setDimensions({
         width: BASE_WIDTH * zoom,
         height: BASE_HEIGHT * zoom
@@ -846,15 +913,10 @@
       });
 
       const currentStack = historyStack[currentSide];
-      
       if (currentStack.length > 0 && currentStack[currentStack.length - 1] === state) return;
 
       currentStack.push(state);
-      
-      if (currentStack.length > 10) {
-        currentStack.shift();
-      }
-      
+      if (currentStack.length > 10) currentStack.shift();
       redoStack[currentSide] = [];
     }
 
@@ -1043,9 +1105,7 @@
         });
         if (cloned.isType('active-selection')) {
           cloned.canvas = canvas;
-          cloned.forEachObject(function(obj) {
-            canvas.add(obj);
-          });
+          cloned.forEachObject(function(obj) { canvas.add(obj); });
           cloned.setCoords();
         } else {
           canvas.add(cloned);
@@ -1141,11 +1201,8 @@
 
       const currentData = canvas.toDataURL({ format: 'png', quality: 1, multiplier: 1 });
       
-      if (currentSide === 'front') {
-        frontImg = currentData;
-      } else {
-        backImg = currentData;
-      }
+      if (currentSide === 'front') frontImg = currentData;
+      else backImg = currentData;
 
       const otherSide = currentSide === 'front' ? 'back' : 'front';
       const tempCanvas = new fabric.Canvas(null, { width: BASE_WIDTH, height: BASE_HEIGHT, backgroundColor: '#121212' });
@@ -1178,7 +1235,6 @@
       document.getElementById('card3dBack').style.backgroundImage = `url(${backImg})`;
 
       const scene = document.getElementById('card3dScene');
-      
       if (currentFormat === 'menuSingle') {
         scene.style.width = '280px';
         scene.style.height = '395px';
@@ -1384,7 +1440,7 @@
 
     function addQRCode() {
       const text = document.getElementById('qrInput').value.trim();
-      if (!text) return alert('Enter URL or Menu Link');
+      if (!text) return alert('Enter URL or Menu link');
       const qrContainer = document.getElementById('qrcode-hidden');
       qrContainer.innerHTML = '';
       new QRCode(qrContainer, { text: text, width: 200, height: 200 });
@@ -1394,7 +1450,6 @@
         if (imgTag) {
           fabric.Image.fromURL(imgTag.src, function (img) {
             img.scaleToWidth(140);
-            
             img.set({ 
               left: (BASE_WIDTH / 2) - 70, 
               top: (BASE_HEIGHT / 2) - 70 
