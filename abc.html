@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Store | Click Vectora Solution</title>
+  <!-- Browser Tab Favicon Logo -->
+  <link rel="icon" type="image/png" href="../img/logo/logo1.png">
+  <link rel="icon" type="image/png" href="../img/logo/logo1.png">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-main: #e2e8f0;
+      --bg-surface: #ffffff;
+      --orange: #ff6b00;
+      --cyan: #00a8cc;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: rgba(15, 23, 42, 0.06);
+      --shadow-hover: rgba(15, 23, 42, 0.12);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; }
+
+    nav {
+      display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 5%;
+      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+    }
+    .brand-logo img { height: 70px; width: auto; display: block; object-fit: contain; }
+    
+    .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--cyan); }
+
+    /* Mobile Hamburger Menu Toggle Button */
+    .menu-toggle {
+      display: none;
+      font-size: 1.5rem;
+      color: var(--text-main);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+    .section-title { font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+    .section-title::before { content: ""; width: 5px; height: 24px; background: var(--orange); border-radius: 3px; }
+
+    /* Filter Buttons Styling */
+    .filter-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+    }
+    .filter-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.6rem 1.2rem;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px var(--shadow);
+    }
+    .filter-btn:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+    .filter-btn.active {
+      background: var(--cyan);
+      color: #ffffff;
+      border-color: var(--cyan);
+      box-shadow: 0 4px 12px rgba(0, 168, 204, 0.3);
+    }
+
+    /* Slider Wrapper for Mobile Arrows */
+    .slider-wrapper {
+      position: relative;
+      display: block;
+    }
+
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    .service-card {
+      background: var(--bg-surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+      box-shadow: 0 4px 12px var(--shadow); display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s;
+    }
+    .service-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px var(--shadow-hover); border-color: var(--orange); }
+    .service-card img { width: 100%; height: 220px; object-fit: contain; background: #fff; padding: 10px; border-bottom: 1px solid var(--border); }
+    .service-info { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
+    .service-info h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main); }
+    .service-info p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem; }
+
+    .affiliate-badge { display: inline-block; background: #ff9900; color: #000; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; }
+    .btn { width: 100%; padding: 0.85rem; border-radius: 8px; border: none; font-weight: 700; text-align: center; text-decoration: none; display: inline-block; cursor: pointer; }
+    .btn-amazon { background: #ff9900; color: #111; box-shadow: 0 4px 12px rgba(255, 153, 0, 0.25); }
+    .btn-amazon:hover { background: #e68a00; }
+
+    /* Slider Navigation Arrows (Initially Hidden on Desktop) */
+    .slider-arrow {
+      display: none;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .slider-arrow:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .slider-arrow.left-arrow { left: 10px; }
+    .slider-arrow.right-arrow { right: 10px; }
+
+    footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 3rem; background: #ffffff; }
+
+    /* Mobile Responsive Media Query */
+    @media (max-width: 768px) {
+      .menu-toggle { display: block; }
+      .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: var(--bg-surface);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+      }
+      .nav-links.active {
+        max-height: 300px;
+      }
+      .nav-links li {
+        width: 100%;
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-links a {
+        display: block;
+        padding: 1rem 1.5rem;
+        width: 100%;
+      }
+      .brand-logo img { height: 55px; }
+      .container { padding: 1.5rem 1rem; }
+      .section-title { font-size: 1.4rem; }
+
+      /* Show Slider Arrows on Mobile */
+      .slider-arrow {
+        display: flex;
+      }
+
+      /* Mobile Slider CSS */
+      .services-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 1rem;
+        padding-bottom: 1rem;
+        scrollbar-width: none; /* Firefox */
+      }
+      .services-grid::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+      }
+      .service-card {
+        min-width: 100%;
+        flex: 0 0 100%;
+        scroll-snap-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="../" class="brand-logo"><img src="../img/logo/logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/200x80?text=Click+Vectora'"></a>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="../">Home</a></li>
+      <li><a href="../#portfolio">Work</a></li>
+      <li><a href="../#services">Design Services</a></li>
+      <li><a href="/store" style="color: var(--cyan);">Online Store</a></li>
+      <li><a href="../contact">Contact Us</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h2 class="section-title">Recommended Amazon Products</h2>
+    
+    <!-- Filter Buttons Container -->
+    <div class="filter-container" id="filter-buttons">
+      <button class="filter-btn active" data-category="All">All Products</button>
+      <button class="filter-btn" data-category="Electronics & Tech">Electronics & Tech</button>
+      <button class="filter-btn" data-category="Home Appliances & Utilities">Home Appliances</button>
+      <button class="filter-btn" data-category="Fitness & Sports">Fitness & Sports</button>
+      <button class="filter-btn" data-category="Entertainment & Audio">Entertainment & Audio</button>
+    </div>
+
+    <!-- Products Slider Wrapper with Left/Right Arrows -->
+    <div class="slider-wrapper" id="slider-wrapper">
+      <button class="slider-arrow left-arrow" id="slide-left" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
+      <!-- Products Grid Container -->
+      <div class="services-grid" id="affiliate-grid">
+        <p style="color: var(--text-muted); grid-column: 1/-1;">Fetching live Amazon deals...</p>
+      </div>
+      <button class="slider-arrow right-arrow" id="slide-right" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Click Vectora Solution. All Rights Reserved.</p>
+    <p>"We are a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.in / Amazon.com."</p>
+  </footer>
+
+  <script>
+    // Mobile Navigation Toggle Script
+    const menuToggle = document.getElementById('menu-toggle');
+    const navLinks = document.getElementById('nav-links');
+
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      const icon = menuToggle.querySelector('i');
+      if (navLinks.classList.contains('active')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-xmark');
+      } else {
+        icon.classList.remove('fa-xmark');
+        icon.classList.add('fa-bars');
+      }
+    });
+
+    const AMAZON_TAG = "clickvectora-21";
+    const affiliateProducts = [
+      { category: "Home Appliances & Utilities", title: "Native M2 Pro Water Purifier", imageUrl: "https://m.media-amazon.com/images/I/61bRe+7bhlL._AC_SL1500_.jpg", description: "Preset Touch Dispensing + Battery | Smart Real-time Tracking", asin: "B0G4CHKBGP" },
+      { category: "Home Appliances & Utilities", title: "Ezee Black Medium Garbage Bags 180 Pcs", imageUrl: "https://m.media-amazon.com/images/I/71D6PuAPSSL._SL1500_.jpg", description: "19 X 21 Inch | 30 Pcs x Pack of 6", asin: "B074CW3JV4" },
+      { category: "Home Appliances & Utilities", title: "IFB essentials Washing Machine Cleaner", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/714f09WRKmL._AC_UF1000,1000_QL80_FMwebp_.jpg", description: "Washing Machine Drum Cleaner & Tub Cleaner -100G(10)", asin: "B0C9QLZCY4"},
+      { category: "Home Appliances & Utilities", title: "Mattress Protector", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/715aL0OabfL._SL1254_.jpg", description: "Breathable & Hypoallergenic Bed Protector | Queen Size (78x60)", asin: "B09LQVDFHQ"},
+      { category: "Home Appliances & Utilities", title: "Double Sided Station Wall Clock", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/816Vtho3TXL._SL1500_.jpg", description: "Shiny Gold | Designer Clock for Living Room & Bedroom", asin: "B08L3WL9N4" },
+       { category: "Home Appliances & Utilities", title: "Baby Potty Ladder Seat", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/81n3I+pF2UL._SL1500_.jpg", description: "Foldable with Height Adjustment & PU Cushion, Fits All Western Toilet Seat", asin: "B0FX4GWVN9" },
+      { category: "Fitness & Sports", title: "Aluminium Badminton Racket Combo", imageUrl: "https://m.media-amazon.com/images/I/61BAz4RFXAL._AC_SL1500_.jpg", description: "Hundred Powertek 200 Aluminium Badminton Racket Combo", asin: "B0CZXCFR3P" },
+      { category: "Fitness & Sports", title: "Weight Machine", imageUrl: "https://m.media-amazon.com/images/I/61nlxzaekZL._SL1500_.jpg", description: "Digital Weighing Scale with Step-On Technology", asin: "B0CHJ4BK2C" },
+      { category: "Fitness & Sports", title: "Yoga Mat", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/61mx7nZOGnL._SL1500_.jpg", description: "Home Gym - Yoga Mat for Gym Workout & Yoga Exercise", asin: "B0D9VVMMQ4" },
+      { category: "Entertainment & Audio", title: "Karaoke Mic with Speaker", imageUrl: "https://m.media-amazon.com/images/I/61ijIp-5KZL._SL1100_.jpg", description: "Wireless Mini Portable Bluetooth Speaker with Microphone", asin: "B0DRPCR5VK" },
+      { category: "Electronics & Tech", title: "HP Keyboard and Mouse Combo", imageUrl: "https://m.media-amazon.com/images/I/61-fupzH-CL._SL1500_.jpg", description: "Working Range 2.4G Wireless Technology", asin: "B07V82W5CN" },
+      { category: "Electronics & Tech", title: "10 Meter RJ45 LAN Cable", imageUrl: "https://m.media-amazon.com/images/I/81Huc99OLQL._SL1500_.jpg", description: "RJ45 cat6 Ethernet Patch Cable LAN Cable", asin: "B089NVZND2" },
+      { category: "Electronics & Tech", title: "Oakter Mini UPS for Router", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T1/images/I/61NytjwzadL._SL1500_.jpg", description: "Backup Upto 4 Hours WiFi UPS Power Backup", asin: "B08HLZ28QC" },
+      { category: "Electronics & Tech", title: "APC Back-UPS", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/51PIIdmOSLL._SL1500_.jpg", description: "100VA / 660W UPS | Backup for Desktop PC, WiFi Router & Home Office", asin: "B01ELNPG2I" },
+      { category: "Electronics & Tech", title: "CP PLUS Wi-Fi CCTV Camera", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/61L5qsJNl6L._SL1500_.jpg", description: "360° Pan & Tilt | View & Talk | Smart Detection Suite | IR Night Vision | Cloud Recording ", asin: "B0FPRFBXQM" },
+      { category: "Electronics & Tech", title: "Panasonic 1.0 Ton 3 Star", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/61Pca7f3SfL._SL1500_.jpg", description: "Premium WiFi Inverter Smart Split AC(DustBuster Tech,Matter Enabled, AI, Higher Airflow, Copper Cond.", asin: "B0GHR4P5KV" },
+      { category: "Electronics & Tech", title: "Panasonic 1.5 Ton 5 Star", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/61zSrwlyMxL._SL1500_.jpg", description: "Wi-Fi Inverter Smart Split AC (Matter/MirAIe, AI, DustBuster, 55°C Oper., Copper Condenser", asin: "B0GHR4W2DR" },
+      { category: "Electronics & Tech", title: "Voltas 1.5 Ton 3 Star", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/51TjEqdi+uL._SL1200_.jpg", description: "Inverter Split AC (Copper, 5 Step Adjustable Mode, Anti-dust Filter, 183INV CAV, White)", asin: "B0GSZRBDND" },
+      { category: "Electronics & Tech", title: "Voltas 1.5 ton 3 Star", imageUrl: "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T2/images/I/51ggXokvcTL._SL1200_.jpg", description: "New star rated, Inverter Split AC (Copper, Convertible 6-in-1 cooling modes, Ai Enabled, 4-way Swing, Sleep Mode, Auto Clean", asin: "B0GSZSLW6N" }
+    ];
+
+    let autoSlideInterval = null;
+    let isPaused = false;
+
+    function startAutoSlide() {
+      if (window.innerWidth <= 768) {
+        if (autoSlideInterval) clearInterval(autoSlideInterval);
+        
+        autoSlideInterval = setInterval(() => {
+          if (isPaused) return; // Agar user ne hold kiya hua hai toh slide nahi hoga
+
+          const grid = document.getElementById('affiliate-grid');
+          if (!grid) return;
+          const cards = grid.querySelectorAll('.service-card');
+          if (cards.length === 0) return;
+
+          let currentIndex = 0;
+          cards.forEach((card, index) => {
+            const rect = card.getBoundingClientRect();
+            if (rect.left >= 0 && rect.left < window.innerWidth / 2) {
+              currentIndex = index;
+            }
+          });
+
+          let nextIndex = (currentIndex + 1) % cards.length;
+          cards[nextIndex].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }, 3000);
+      }
+    }
+
+    function scrollSlider(direction) {
+      const grid = document.getElementById('affiliate-grid');
+      if (!grid) return;
+      const cards = grid.querySelectorAll('.service-card');
+      if (cards.length === 0) return;
+
+      let currentIndex = 0;
+      cards.forEach((card, index) => {
+        const rect = card.getBoundingClientRect();
+        if (rect.left >= 0 && rect.left < window.innerWidth / 2) {
+          currentIndex = index;
+        }
+      });
+
+      let targetIndex;
+      if (direction === 'next') {
+        targetIndex = (currentIndex + 1) % cards.length;
+      } else {
+        targetIndex = (currentIndex - 1 + cards.length) % cards.length;
+      }
+      cards[targetIndex].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+
+    function renderProducts(filterCategory) {
+      const container = document.getElementById('affiliate-grid');
+      
+      const filtered = filterCategory === 'All' 
+        ? affiliateProducts 
+        : affiliateProducts.filter(item => item.category === filterCategory);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">No products found in this category.</p>`;
+        if (autoSlideInterval) clearInterval(autoSlideInterval);
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => `
+        <div class="service-card">
+          <img src="${item.imageUrl}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/600x400?text=Product';">
+          <div class="service-info">
+            <div>
+              <span class="affiliate-badge"><i class="fa-brands fa-amazon"></i> Amazon Choice</span>
+              <h3>${item.title}</h3>
+              <p>${item.description}</p>
+            </div>
+            <a href="https://www.amazon.in/dp/${item.asin}?tag=${AMAZON_TAG}" target="_blank" rel="noopener sponsored" class="btn btn-amazon">
+              View on Amazon <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem; margin-left:4px;"></i>
+            </a>
+          </div>
+        </div>
+      `).join('');
+
+      startAutoSlide();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts('All');
+
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          const selectedCategory = button.getAttribute('data-category');
+          renderProducts(selectedCategory);
+        });
+      });
+
+      // Arrow Button Click Events
+      document.getElementById('slide-left').addEventListener('click', () => scrollSlider('prev'));
+      document.getElementById('slide-right').addEventListener('click', () => scrollSlider('next'));
+
+      // Hold / Press functionality to pause/stop slider
+      const sliderWrapper = document.getElementById('slider-wrapper');
+
+      const pauseSlider = () => { isPaused = true; };
+      const resumeSlider = () => { isPaused = false; };
+
+      // Mouse Events (Desktop/Laptop click and hold)
+      sliderWrapper.addEventListener('mousedown', pauseSlider);
+      window.addEventListener('mouseup', resumeSlider);
+
+      // Touch Events (Mobile touch and hold)
+      sliderWrapper.addEventListener('touchstart', pauseSlider);
+      window.addEventListener('touchend', resumeSlider);
+
+      // Window resize handler
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && autoSlideInterval) {
+          clearInterval(autoSlideInterval);
+        } else if (window.innerWidth <= 768) {
+          startAutoSlide();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
