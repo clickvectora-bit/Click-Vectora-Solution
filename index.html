@@ -199,8 +199,13 @@
     /* Ultra-Modern AI Video Showcase Grid */
     .ultra-video-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr;
       gap: 1rem;
+    }
+    @media (min-width: 769px) {
+      .ultra-video-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
     .ultra-video-card {
       background: linear-gradient(145deg, #ffffff, #f8fafc);
@@ -326,7 +331,6 @@
       .hero { padding: 2rem 1rem; }
       .hero h1 { font-size: 2rem; }
       .container { padding: 2rem 1rem; }
-      .ultra-video-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -457,7 +461,8 @@
 
   <!-- Ultra-Modern AI Video Ads Showcase Modal -->
   <div class="modal-overlay" id="multiVideoModal">
-    <div class="modal-card" style="max-width: 580px;">
+    <!-- Desktop width increased to 920px (3 columns fit perfectly) -->
+    <div class="modal-card" style="max-width: 920px;">
       <div class="modal-header-hero">
         <button class="close-btn" onclick="closeMultiVideoModal()">&times;</button>
         <h2><i class="fa-solid fa-video"></i> AI Video Ads Showcase</h2>
