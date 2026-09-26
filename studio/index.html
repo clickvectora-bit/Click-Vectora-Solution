@@ -13,9 +13,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
-  <!-- Externalized Templates Data Script -->
-  <script src="templates.js"></script>
-  
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
@@ -193,6 +190,10 @@
       flex-direction: column;
       gap: 10px;
       transition: all 0.2s ease;
+    }
+    .product-selector-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(255, 107, 0, 0.08);
     }
     .product-grid-options {
       display: grid;
@@ -377,6 +378,7 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
     }
 
+    /* Modern Redesigned Notice Modal */
     .notice-modal-box {
       width: 420px !important;
       background: linear-gradient(145deg, #ffffff, #f8fafc);
@@ -386,6 +388,11 @@
       box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
       text-align: center;
       position: relative;
+      animation: modalSlideUp 0.3s ease-out;
+    }
+    @keyframes modalSlideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
     .notice-icon-wrapper {
       width: 64px;
@@ -398,9 +405,21 @@
       margin: 0 auto 16px auto;
       font-size: 1.8rem;
       color: var(--primary);
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
     }
-    .notice-modal-box h3 { font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; }
-    .notice-modal-box p { font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; }
+    .notice-modal-box h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+    .notice-modal-box p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
     .notice-modal-box button {
       width: 100%;
       padding: 12px;
@@ -408,6 +427,11 @@
       font-size: 0.95rem;
       font-weight: 600;
       background: linear-gradient(135deg, var(--primary), #e66000);
+      box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);
+    }
+    .notice-modal-box button:hover {
+      filter: brightness(1.05);
+      box-shadow: 0 6px 16px rgba(255, 107, 0, 0.35);
     }
 
     .modal-templates {
@@ -492,7 +516,7 @@
 </head>
 <body>
 
-  <!-- Notice Popup Modal -->
+  <!-- Notice Popup Modal (Redesigned) -->
   <div class="modal-overlay" id="noticeModal" style="display: flex;">
     <div class="modal notice-modal-box">
       <div class="notice-icon-wrapper">
@@ -500,7 +524,7 @@
       </div>
       <h3>Design Studio Ready</h3>
       <p>
-        Select your products and professional format specs. Brand-new modern templates automatically match your selected category! On mobile, tap <b>Edit Tools</b> to open your studio controls.
+        Select your products and professional format specs seamlessly. Product-specific templates automatically match your selected category! On mobile, tap <b>Edit Tools</b> to open your studio controls.
       </p>
       <button onclick="closeNoticeModal()">Start Designing</button>
     </div>
@@ -537,6 +561,7 @@
       <div class="sidebar-section">
         <div class="panel-section-title">Product & Format</div>
         <div class="product-selector-card">
+          <!-- Hidden select to retain underlying logic state -->
           <select id="mainCategorySelect" onchange="onMainCategoryChange()" style="display:none;">
             <option value="card">Business Card</option>
             <option value="flyer">Flyer</option>
@@ -603,7 +628,7 @@
       <!-- Templates Section -->
       <div class="sidebar-section">
         <div class="panel-section-title">Templates</div>
-        <button style="background: #0EA5E9; width:100%;" onclick="openTemplatesModal()">✨ Browse Modern Templates</button>
+        <button style="background: #0EA5E9; width:100%;" onclick="openTemplatesModal()">✨ Browse Templates</button>
       </div>
 
       <!-- Zoom Controls Section -->
@@ -654,7 +679,7 @@
         </div>
       </div>
 
-      <!-- Object Inspector Panel -->
+      <!-- Object Inspector Panel (Dynamic) -->
       <div class="sidebar-section object-inspector-panel" id="objectInspector">
         <div class="panel-section-title" style="color: var(--primary);">Selected Item Settings</div>
         
@@ -769,13 +794,13 @@
   <div class="modal-overlay" id="templatesModal">
     <div class="modal modal-templates">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <h3 id="templateModalTitle" style="font-size: 1.1rem; font-weight: 700;">✨ Modern Templates</h3>
+        <h3 id="templateModalTitle" style="font-size: 1.1rem; font-weight: 700;">✨ Templates</h3>
         <button class="secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="closeTemplatesModal()">✕</button>
       </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted);" id="templateModalDesc">Select a pre-designed modern layout:</p>
+      <p style="font-size: 0.85rem; color: var(--text-muted);" id="templateModalDesc">Select a pre-designed layout tailored for your selected product:</p>
       
       <div class="template-grid" id="templateGridContainer">
-        <!-- Dynamically populated -->
+        <!-- Dynamically populated based on active product -->
       </div>
 
       <div style="text-align: right; margin-top: 10px;">
@@ -844,6 +869,71 @@
       sidebar.classList.toggle('mobile-open');
       closeHeader.style.display = sidebar.classList.contains('mobile-open') ? 'flex' : 'none';
     }
+
+    // Sub-Categories Mapping & Dimensions
+    const SUB_CATEGORIES = {
+      card: [
+        { id: 'card_horiz', name: 'Horizontal Standard (1000x571)', width: 1000, height: 571 },
+        { id: 'card_vert', name: 'Vertical Modern (571x1000)', width: 571, height: 1000 }
+      ],
+      flyer: [
+        { id: 'flyer_a4', name: 'A4 Portrait (800x1131)', width: 800, height: 1131 },
+        { id: 'flyer_square', name: 'Square Event Flyer (900x900)', width: 900, height: 900 }
+      ],
+      brochure: [
+        { id: 'brochure_trifold', name: 'Tri-Fold Landscape (1131x800)', width: 1131, height: 800 },
+        { id: 'brochure_bifold', name: 'Bi-Fold Standard (1000x800)', width: 1000, height: 800 }
+      ],
+      poster: [
+        { id: 'poster_event', name: 'Event Poster (800x1200)', width: 800, height: 1200 },
+        { id: 'poster_square', name: 'Social Post Poster (1000x1000)', width: 1000, height: 1000 }
+      ],
+      banner: [
+        { id: 'banner_web', name: 'Website Hero Banner (1200x600)', width: 1200, height: 600 },
+        { id: 'banner_social', name: 'Social Media Cover (1200x630)', width: 1200, height: 630 }
+      ],
+      standee: [
+        { id: 'standee_rollup', name: 'Roll-Up Standee (800x2000)', width: 800, height: 2000 },
+        { id: 'standee_xframe', name: 'X-Standee Display (700x1600)', width: 700, height: 1600 }
+      ],
+      menu: [
+        { id: 'menu_restaurant', name: 'Restaurant Menu Standard (800x1100)', width: 800, height: 1100 },
+        { id: 'menu_cafe', name: 'Cafe & Bar Card (700x1000)', width: 700, height: 1000 }
+      ]
+    };
+
+    // Product-Specific Templates Data
+    const PRODUCT_TEMPLATES = {
+      card: [
+        { id: 'card_corporate', title: '🏢 Corporate Minimal', desc: 'Clean executive business card layout with structured sidebar.', type: 'corporate' },
+        { id: 'card_creative', title: '🎨 Creative Studio', desc: 'Vibrant color branding ideal for designers and agencies.', type: 'creative' },
+        { id: 'card_modern', title: '⚡ Modern Dark', desc: 'High-contrast dark theme with sharp typography accents.', type: 'modern' }
+      ],
+      flyer: [
+        { id: 'flyer_sale', title: '🏷️ Mega Sale Event', desc: 'High-impact promotional layout with bold discount text.', type: 'flyer_sale' },
+        { id: 'flyer_biz', title: '📈 Business Services', desc: 'Professional corporate services promotion layout.', type: 'flyer_biz' }
+      ],
+      brochure: [
+        { id: 'brochure_travel', title: '✈️ Tourism & Travel', desc: 'Scenic multi-panel layout designed for travel packages.', type: 'brochure_travel' },
+        { id: 'brochure_realestate', title: '🏡 Real Estate Showcase', desc: 'Clean layout for properties and features list.', type: 'brochure_realestate' }
+      ],
+      poster: [
+        { id: 'poster_concert', title: '🎸 Music Concert', desc: 'Bold energetic visual layout for events and gigs.', type: 'poster_concert' },
+        { id: 'poster_seminar', title: '💡 Tech Seminar', desc: 'Professional informational poster layout.', type: 'poster_seminar' }
+      ],
+      banner: [
+        { id: 'banner_ecommerce', title: '🛍️ E-Commerce Promo', desc: 'Wide banner optimized for web stores and sales banners.', type: 'banner_ecommerce' },
+        { id: 'banner_brand', title: '🌐 Corporate Web Hero', desc: 'Clean brand introduction banner for website headers.', type: 'banner_brand' }
+      ],
+      standee: [
+        { id: 'standee_promo', title: '📢 Promotional Roll-Up', desc: 'High-visibility vertical layout for exhibitions and events.', type: 'standee_promo' },
+        { id: 'standee_corporate', title: '💼 Corporate Standee', desc: 'Sleek corporate branding display stand.', type: 'standee_corporate' }
+      ],
+      menu: [
+        { id: 'menu_fine', title: '🍷 Fine Dining Menu', desc: 'Elegant menu styling with classic typography headings.', type: 'menu_fine' },
+        { id: 'menu_cafe', title: '☕ Cafe & Bakery Menu', desc: 'Warm coffee shop aesthetic with itemized pricing blocks.', type: 'menu_cafe' }
+      ]
+    };
 
     let currentFormatType = 'card_horiz';
     let BASE_WIDTH = 1000;
@@ -969,7 +1059,7 @@
       const templates = PRODUCT_TEMPLATES[mainCategory] || PRODUCT_TEMPLATES['card'];
       const gridContainer = document.getElementById('templateGridContainer');
       
-      document.getElementById('templateModalTitle').innerText = `✨ ${mainCategory.toUpperCase()} Modern Templates`;
+      document.getElementById('templateModalTitle').innerText = `✨ ${mainCategory.toUpperCase()} Templates`;
       document.getElementById('templateModalDesc').innerText = `Select a pre-designed layout tailored for your ${mainCategory}:`;
 
       gridContainer.innerHTML = '';
@@ -990,8 +1080,62 @@
       closeTemplatesModal();
       canvas.clear();
       
-      // Calls updated template builder from templates.js
-      applyTemplateObjects(canvas, templateType, BASE_WIDTH, BASE_HEIGHT, setCanvasBackground);
+      if (templateType === 'corporate' || templateType === 'card_corporate') {
+        setCanvasBackground('#ffffff');
+        let rect = new fabric.Rect({ left: 40, top: 40, width: 200, height: BASE_HEIGHT - 80, fill: '#0F172A', rx: 6, ry: 6, selectable: true });
+        let title = new fabric.IText('JOHN DOE', { left: 270, top: 120, fontSize: 32, fontFamily: 'Poppins', fill: '#0F172A', fontWeight: 'bold' });
+        let subtitle = new fabric.IText('Senior Executive', { left: 270, top: 170, fontSize: 16, fontFamily: 'Poppins', fill: '#64748B' });
+        let contact = new fabric.IText('hello@clickvectorasolution.com\n+91 98765 43210', { left: 270, top: 240, fontSize: 14, fontFamily: 'Poppins', fill: '#0F172A', lineHeight: 1.4 });
+        canvas.add(rect, title, subtitle, contact);
+      } else if (templateType === 'creative' || templateType === 'card_creative') {
+        setCanvasBackground('#FFF7ED');
+        let bgShape = new fabric.Rect({ left: 0, top: 0, width: 350, height: BASE_HEIGHT, fill: '#FF6B00', selectable: true });
+        let title = new fabric.IText('CREATIVE STUDIO', { left: 380, top: 150, fontSize: 28, fontFamily: 'Poppins', fill: '#0F172A', fontWeight: 'bold' });
+        let desc = new fabric.IText('Visual Branding & Digital Design', { left: 380, top: 200, fontSize: 15, fontFamily: 'Poppins', fill: '#64748B' });
+        canvas.add(bgShape, title, desc);
+      } else if (templateType === 'modern' || templateType === 'card_modern') {
+        setCanvasBackground('#0F172A');
+        let title = new fabric.IText('ALEX SMITH', { left: 80, top: 140, fontSize: 36, fontFamily: 'Montserrat', fill: '#FFFFFF', fontWeight: 'bold' });
+        let subtitle = new fabric.IText('UI/UX PRODUCT ARCHITECT', { left: 80, top: 195, fontSize: 14, fontFamily: 'Montserrat', fill: '#0EA5E9', charSpacing: 100 });
+        let contact = new fabric.IText('alex@vectorasolution.com • www.clickvectorasolution.com', { left: 80, top: 320, fontSize: 13, fontFamily: 'Roboto', fill: '#94A3B8' });
+        canvas.add(title, subtitle, contact);
+      } else if (templateType === 'flyer_sale' || templateType === 'flyer_biz') {
+        setCanvasBackground('#FEF3C7');
+        let header = new fabric.Rect({ left: 50, top: 50, width: BASE_WIDTH - 100, height: 140, fill: '#DC2626', rx: 8, ry: 8 });
+        let title = new fabric.IText('MEGA SALE 50% OFF', { left: 80, top: 90, fontSize: 36, fontFamily: 'Poppins', fill: '#FFFFFF', fontWeight: 'bold' });
+        let details = new fabric.IText('Limited Time Offer Across All Collections.\nVisit our store or order online today!', { left: 80, top: 240, fontSize: 18, fontFamily: 'Roboto', fill: '#1E293B', lineHeight: 1.5 });
+        canvas.add(header, title, details);
+      } else if (templateType === 'brochure_travel' || templateType === 'brochure_realestate') {
+        setCanvasBackground('#F1F5F9');
+        let bannerBg = new fabric.Rect({ left: 60, top: 60, width: BASE_WIDTH - 120, height: 180, fill: '#0284C7', rx: 12, ry: 12 });
+        let mainTitle = new fabric.IText('DISCOVER PARADISE', { left: 90, top: 100, fontSize: 34, fontFamily: 'Playfair Display', fill: '#FFFFFF', fontWeight: 'bold' });
+        let subText = new fabric.IText('Exclusive vacation packages & guided tours.', { left: 90, top: 160, fontSize: 16, fontFamily: 'Poppins', fill: '#E0F2FE' });
+        canvas.add(bannerBg, mainTitle, subText);
+      } else if (templateType === 'poster_concert' || templateType === 'poster_seminar') {
+        setCanvasBackground('#090D16');
+        let accentBox = new fabric.Rect({ left: 60, top: 60, width: BASE_WIDTH - 120, height: BASE_HEIGHT - 120, fill: 'transparent', stroke: '#00F5D4', strokeWidth: 4, rx: 10 });
+        let eventTitle = new fabric.IText('LIVE MUSIC NIGHT', { left: 100, top: 150, fontSize: 44, fontFamily: 'Montserrat', fill: '#FFFFFF', fontWeight: 'bold', charSpacing: 50 });
+        let eventSub = new fabric.IText('Saturday, 8:00 PM • Arena Stadium', { left: 100, top: 230, fontSize: 18, fontFamily: 'Roboto', fill: '#00F5D4' });
+        canvas.add(accentBox, eventTitle, eventSub);
+      } else if (templateType === 'banner_ecommerce' || templateType === 'banner_brand') {
+        setCanvasBackground('#0F172A');
+        let heroText = new fabric.IText('Elevate Your Digital Experience', { left: 80, top: 120, fontSize: 38, fontFamily: 'Montserrat', fill: '#FFFFFF', fontWeight: 'bold' });
+        let descText = new fabric.IText('Powerful SaaS Solutions & Modern Web Architecture.', { left: 80, top: 190, fontSize: 18, fontFamily: 'Poppins', fill: '#38BDF8' });
+        canvas.add(heroText, descText);
+      } else if (templateType === 'standee_promo' || templateType === 'standee_corporate') {
+        setCanvasBackground('#0F172A');
+        let headerBox = new fabric.Rect({ left: 60, top: 60, width: BASE_WIDTH - 120, height: 220, fill: '#FF6B00', rx: 12, ry: 12 });
+        let title = new fabric.IText('YOUR BRAND HERE', { left: 90, top: 120, fontSize: 36, fontFamily: 'Montserrat', fill: '#FFFFFF', fontWeight: 'bold' });
+        let subtitle = new fabric.IText('Special Exhibition & Launch Offer', { left: 90, top: 180, fontSize: 18, fontFamily: 'Poppins', fill: '#FFE4E6' });
+        let details = new fabric.IText('• Premium Quality Display\n• Easy Roll-Up Mechanism\n• High Durability Material', { left: 90, top: 320, fontSize: 20, fontFamily: 'Roboto', fill: '#94A3B8', lineHeight: 1.8 });
+        canvas.add(headerBox, title, subtitle, details);
+      } else if (templateType === 'menu_fine' || templateType === 'menu_cafe') {
+        setCanvasBackground('#1C1917');
+        let borderFrame = new fabric.Rect({ left: 40, top: 40, width: BASE_WIDTH - 80, height: BASE_HEIGHT - 80, fill: 'transparent', stroke: '#D97706', strokeWidth: 2 });
+        let menuTitle = new fabric.IText('GURMET MENU', { left: (BASE_WIDTH / 2) - 130, top: 80, fontSize: 32, fontFamily: 'Playfair Display', fill: '#FBBF24', fontWeight: 'bold', charSpacing: 100 });
+        let items = new fabric.IText('Artisan Espresso .................. ₹250\nSignature Truffle Pasta ......... ₹650\nLoaded Veggie Burger ........... ₹450', { left: 80, top: 180, fontSize: 18, fontFamily: 'Poppins', fill: '#E7E5E4', lineHeight: 1.8 });
+        canvas.add(borderFrame, menuTitle, items);
+      }
 
       renderPrintGuides();
       saveHistory();
