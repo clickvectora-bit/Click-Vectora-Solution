@@ -950,6 +950,7 @@
     let historyStack = { front: [], back: [] };
     let redoStack = { front: [], back: [] };
     let isApplyingHistory = false;
+    let clipboard = null; // Clipboard memory for Copy/Cut/Paste
 
     let showBleed = true;
     let showTrim = true;
@@ -986,6 +987,75 @@
       canvas.setDimensions({ width: BASE_WIDTH * zoom, height: BASE_HEIGHT * zoom });
       opt.e.preventDefault();
       opt.e.stopPropagation();
+    });
+
+    // Keyboard Shortcuts Listener for Delete, Ctrl+C, Ctrl+X, Ctrl+V
+    window.addEventListener('keydown', function(e) {
+      const activeElement = document.activeElement;
+      const isInputActive = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'SELECT' || activeElement.tagName === 'TEXTAREA');
+      
+      const activeObj = canvas.getActiveObject();
+      const isEditingText = activeObj && activeObj.isType && activeObj.isType('i-text') && activeObj.isEditing;
+
+      // Do not trigger canvas shortcuts if typing inside inputs or editing text layers
+      if (isInputActive || isEditingText) return;
+
+      // 1. Delete or Backspace Key
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        deleteSelected();
+        e.preventDefault();
+      }
+
+      // 2. Ctrl + C (Copy)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
+        if (activeObj && !Object.values(guideObjects).includes(activeObj)) {
+          activeObj.clone(function(cloned) {
+            clipboard = cloned;
+          });
+        }
+        e.preventDefault();
+      }
+
+      // 3. Ctrl + X (Cut)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'x') {
+        if (activeObj && !Object.values(guideObjects).includes(activeObj)) {
+          activeObj.clone(function(cloned) {
+            clipboard = cloned;
+            deleteSelected();
+          });
+        }
+        e.preventDefault();
+      }
+
+      // 4. Ctrl + V (Paste)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') {
+        if (clipboard) {
+          clipboard.clone(function(cloned) {
+            canvas.discardActiveObject();
+            cloned.set({
+              left: cloned.left + 20,
+              top: cloned.top + 20,
+              evented: true,
+            });
+            if (cloned.isType('active-selection')) {
+              cloned.canvas = canvas;
+              cloned.forEachObject(function(obj) {
+                canvas.add(obj);
+              });
+              cloned.setCoords();
+            } else {
+              canvas.add(cloned);
+            }
+            clipboard.top += 20;
+            clipboard.left += 20;
+            canvas.setActiveObject(cloned);
+            bringGuidesToFront();
+            canvas.requestRenderAll();
+            saveHistory();
+          });
+        }
+        e.preventDefault();
+      }
     });
 
     function selectMainCategory(catKey) {
@@ -1150,7 +1220,7 @@
       if (currentStack.length > 0 && currentStack[currentStack.length - 1] === state) return;
 
       currentStack.push(state);
-      if (currentStack.length > 10) currentStack.shift();
+      if (currentStack.length > 15) currentStack.shift();
       redoStack[currentSide] = [];
     }
 
@@ -1163,7 +1233,10 @@
       redoStack[currentSide].push(currentState);
 
       const previousState = currentStack[currentStack.length - 1];
-      canvas.clear();
+      
+      const objectsToRemove = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
+      canvas.remove(...objectsToRemove);
+
       canvas.loadFromJSON(previousState, () => {
         if (canvas.backgroundColor) {
           document.getElementById('cardBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
@@ -1182,7 +1255,9 @@
       const nextState = currentRedoStack.pop();
       historyStack[currentSide].push(nextState);
 
-      canvas.clear();
+      const objectsToRemove = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
+      canvas.remove(...objectsToRemove);
+
       canvas.loadFromJSON(nextState, () => {
         if (canvas.backgroundColor) {
           document.getElementById('cardBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
@@ -1380,27 +1455,42 @@
     function switchSide(side) {
       if (currentSide === side) return;
 
+      const currentObjects = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
+      const currentState = JSON.stringify({ objects: currentObjects, background: canvas.backgroundColor });
+      historyStack[currentSide] = [currentState];
+
       currentSide = side;
       document.getElementById('btnSideA').className = side === 'front' ? 'active-side' : 'secondary';
       document.getElementById('btnSideB').className = side === 'back' ? 'active-side' : 'secondary';
 
-      canvas.clear();
-      canvas.backgroundColor = '#ffffff';
+      const objectsToRemove = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
+      canvas.remove(...objectsToRemove);
 
-      const currentStack = historyStack[side];
-      if (currentStack.length > 0) {
+      const targetStack = historyStack[side];
+      if (targetStack && targetStack.length > 0) {
         isApplyingHistory = true;
-        canvas.loadFromJSON(currentStack[currentStack.length - 1], () => {
+        const lastStateStr = targetStack[targetStack.length - 1];
+        
+        canvas.loadFromJSON(lastStateStr, () => {
           resizeCanvasToFitContainer();
           if (canvas.backgroundColor) {
             document.getElementById('cardBgColorPicker').value = canvas.backgroundColor === 'transparent' ? '#ffffff' : canvas.backgroundColor;
+          } else {
+            canvas.setBackgroundColor('#ffffff', () => {
+              document.getElementById('cardBgColorPicker').value = '#ffffff';
+              canvas.renderAll();
+            });
           }
+          renderPrintGuides();
           isApplyingHistory = false;
         });
       } else {
-        document.getElementById('cardBgColorPicker').value = '#ffffff';
-        resizeCanvasToFitContainer();
-        saveHistory();
+        canvas.setBackgroundColor('#ffffff', () => {
+          document.getElementById('cardBgColorPicker').value = '#ffffff';
+          resizeCanvasToFitContainer();
+          renderPrintGuides();
+          saveHistory();
+        });
       }
     }
 
