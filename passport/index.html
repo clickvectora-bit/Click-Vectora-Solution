@@ -490,7 +490,7 @@
       DOM.bgStatus.classList.add('hidden');
     });
 
-    // Clear photo button functionality
+    // Clear photo button functionality (Ab poora data, canvas aur preview bhi clear kar dega)
     DOM.clearPhotoBtn.addEventListener('click', () => {
       if (state.cropper) {
         state.cropper.destroy();
@@ -501,9 +501,20 @@
       DOM.uploadInput.value = '';
       DOM.fileLabel.innerText = 'No file selected';
       DOM.bgStatus.classList.add('hidden');
+      
       state.historyStack = [];
       state.historyIndex = -1;
       updateHistoryButtons();
+
+      // Clear Canvas and Preview / Download buttons
+      DOM.canvas.width = 0;
+      DOM.canvas.height = 0;
+      const ctx = DOM.canvas.getContext('2d');
+      ctx.clearRect(0, 0, DOM.canvas.width, DOM.canvas.height);
+
+      DOM.previewModalImg.src = '';
+      DOM.viewModalBtn.disabled = true;
+      DOM.payAndDownloadBtn.disabled = true;
     });
 
     document.getElementById('zoomInBtn').addEventListener('click', () => state.cropper && state.cropper.zoom(0.1));
