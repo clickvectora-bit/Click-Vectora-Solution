@@ -78,6 +78,12 @@
       box-shadow: 0 4px 12px rgba(0, 168, 204, 0.3);
     }
 
+    /* Slider Wrapper for Mobile Arrows */
+    .slider-wrapper {
+      position: relative;
+      display: block;
+    }
+
     .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
     .service-card {
       background: var(--bg-surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
@@ -93,6 +99,31 @@
     .btn { width: 100%; padding: 0.85rem; border-radius: 8px; border: none; font-weight: 700; text-align: center; text-decoration: none; display: inline-block; cursor: pointer; }
     .btn-amazon { background: #ff9900; color: #111; box-shadow: 0 4px 12px rgba(255, 153, 0, 0.25); }
     .btn-amazon:hover { background: #e68a00; }
+
+    /* Slider Navigation Arrows (Initially Hidden on Desktop) */
+    .slider-arrow {
+      display: none;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .slider-arrow:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .slider-arrow.left-arrow { left: 10px; }
+    .slider-arrow.right-arrow { right: 10px; }
 
     footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 3rem; background: #ffffff; }
 
@@ -129,6 +160,11 @@
       .brand-logo img { height: 55px; }
       .container { padding: 1.5rem 1rem; }
       .section-title { font-size: 1.4rem; }
+
+      /* Show Slider Arrows on Mobile */
+      .slider-arrow {
+        display: flex;
+      }
 
       /* Mobile Slider CSS */
       .services-grid {
@@ -178,9 +214,14 @@
       <button class="filter-btn" data-category="Entertainment & Audio">Entertainment & Audio</button>
     </div>
 
-    <!-- Products Grid Container -->
-    <div class="services-grid" id="affiliate-grid">
-      <p style="color: var(--text-muted); grid-column: 1/-1;">Fetching live Amazon deals...</p>
+    <!-- Products Slider Wrapper with Left/Right Arrows -->
+    <div class="slider-wrapper" id="slider-wrapper">
+      <button class="slider-arrow left-arrow" id="slide-left" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
+      <!-- Products Grid Container -->
+      <div class="services-grid" id="affiliate-grid">
+        <p style="color: var(--text-muted); grid-column: 1/-1;">Fetching live Amazon deals...</p>
+      </div>
+      <button class="slider-arrow right-arrow" id="slide-right" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </div>
 
@@ -230,19 +271,20 @@
     ];
 
     let autoSlideInterval = null;
+    let isPaused = false;
 
     function startAutoSlide() {
-      // Sirf mobile screens (<= 768px) ke liye auto-slide run karega
       if (window.innerWidth <= 768) {
         if (autoSlideInterval) clearInterval(autoSlideInterval);
         
         autoSlideInterval = setInterval(() => {
+          if (isPaused) return; // Agar user ne hold kiya hua hai toh slide nahi hoga
+
           const grid = document.getElementById('affiliate-grid');
           if (!grid) return;
           const cards = grid.querySelectorAll('.service-card');
           if (cards.length === 0) return;
 
-          // Pata karein kaunsa card abhi visible hai
           let currentIndex = 0;
           cards.forEach((card, index) => {
             const rect = card.getBoundingClientRect();
@@ -251,11 +293,33 @@
             }
           });
 
-          // Agle card ka index nikal kar scroll karein, agar last hai toh wapas pehle par aa jayein
           let nextIndex = (currentIndex + 1) % cards.length;
           cards[nextIndex].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        }, 3000); // 3 seconds interval
+        }, 3000);
       }
+    }
+
+    function scrollSlider(direction) {
+      const grid = document.getElementById('affiliate-grid');
+      if (!grid) return;
+      const cards = grid.querySelectorAll('.service-card');
+      if (cards.length === 0) return;
+
+      let currentIndex = 0;
+      cards.forEach((card, index) => {
+        const rect = card.getBoundingClientRect();
+        if (rect.left >= 0 && rect.left < window.innerWidth / 2) {
+          currentIndex = index;
+        }
+      });
+
+      let targetIndex;
+      if (direction === 'next') {
+        targetIndex = (currentIndex + 1) % cards.length;
+      } else {
+        targetIndex = (currentIndex - 1 + cards.length) % cards.length;
+      }
+      cards[targetIndex].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
 
     function renderProducts(filterCategory) {
@@ -287,7 +351,6 @@
         </div>
       `).join('');
 
-      // Products render hone ke baad auto-slider start karein
       startAutoSlide();
     }
 
@@ -305,7 +368,25 @@
         });
       });
 
-      // Window resize hone par auto-slide ko manage karna
+      // Arrow Button Click Events
+      document.getElementById('slide-left').addEventListener('click', () => scrollSlider('prev'));
+      document.getElementById('slide-right').addEventListener('click', () => scrollSlider('next'));
+
+      // Hold / Press functionality to pause/stop slider
+      const sliderWrapper = document.getElementById('slider-wrapper');
+
+      const pauseSlider = () => { isPaused = true; };
+      const resumeSlider = () => { isPaused = false; };
+
+      // Mouse Events (Desktop/Laptop click and hold)
+      sliderWrapper.addEventListener('mousedown', pauseSlider);
+      window.addEventListener('mouseup', resumeSlider);
+
+      // Touch Events (Mobile touch and hold)
+      sliderWrapper.addEventListener('touchstart', pauseSlider);
+      window.addEventListener('touchend', resumeSlider);
+
+      // Window resize handler
       window.addEventListener('resize', () => {
         if (window.innerWidth > 768 && autoSlideInterval) {
           clearInterval(autoSlideInterval);
