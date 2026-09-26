@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,7 +48,6 @@
     .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.3s; }
     .nav-links a:hover { color: var(--cyan); }
 
-    /* Active / Clicked Nav Link Color changed to Cyan (#00a8cc) */
     .nav-links a.active {
       color: var(--cyan) !important;
     }
@@ -198,6 +196,99 @@
       background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: white; padding: 0.85rem; font-size: 0.95rem; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; cursor: pointer; border: none; margin-top: 1rem;
     }
 
+    /* Ultra-Modern AI Video Showcase Grid */
+    .ultra-video-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    .ultra-video-card {
+      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 15px rgba(15, 23, 42, 0.04);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .ultra-video-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 28px rgba(0, 168, 204, 0.12);
+      border-color: var(--cyan);
+    }
+    .ultra-video-thumb-wrap {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+      background: #0f172a;
+    }
+    .ultra-video-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .ultra-video-card:hover .ultra-video-thumb-wrap img {
+      transform: scale(1.08);
+    }
+    .ultra-badge-floating {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(6px);
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .ultra-video-details {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .ultra-video-details h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+    .ultra-video-details p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .btn-youtube-ultra {
+      background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+      color: white;
+      text-decoration: none;
+      padding: 0.55rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 10px rgba(255, 0, 0, 0.18);
+      width: 100%;
+    }
+    .btn-youtube-ultra:hover {
+      opacity: 0.92;
+      transform: scale(1.02);
+    }
+
     footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 3rem; background: #ffffff;}
 
     /* Mobile Responsive Media Query */
@@ -235,6 +326,7 @@
       .hero { padding: 2rem 1rem; }
       .hero h1 { font-size: 2rem; }
       .container { padding: 2rem 1rem; }
+      .ultra-video-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -251,7 +343,6 @@
       <li><a href="/#services">Design Services</a></li>
       <li><a href="/store">Online Store</a></li>
       <li><a href="/contact">Contact Us</a></li>
-      <li><a href="abc.html">.</a></li>
     </ul>
   </nav>
 
@@ -317,7 +408,11 @@
       </div>
       <div class="service-card">
         <img src="img/AIVideoAds.jfif" alt="AI Video" onerror="this.src='https://via.placeholder.com/300x220?text=AI+Video+Ads'">
-        <div class="service-info"><div><h3>AI Video Ads</h3><p>AI-Generated Video Ads.</p></div><button class="btn btn-orange" onclick="openOrderModal('Digital AI Design')">Order Now</button></div>
+        <div class="service-info">
+          <div><h3>AI Video Ads</h3><p>AI-Generated Video Ads.</p></div>
+          <button class="btn btn-green" style="margin-bottom: 8px;" onclick="openMultiVideoModal()">View AI Ads</button>
+          <button class="btn btn-orange" onclick="openOrderModal('Digital AI Design')">Order Now</button>
+        </div>
       </div>
       <div class="service-card">
         <img src="img/Static Website.png" alt="Static Website" onerror="this.src='https://via.placeholder.com/300x220?text=Static+Website'">
@@ -337,6 +432,7 @@
     <p>&copy; 2026 Click Vectora Solution. All Rights Reserved.</p>
   </footer>
 
+  <!-- Quick Order Modal -->
   <div class="modal-overlay" id="orderModal">
     <div class="modal-card">
       <div class="modal-header-hero">
@@ -359,6 +455,19 @@
     </div>
   </div>
 
+  <!-- Ultra-Modern AI Video Ads Showcase Modal -->
+  <div class="modal-overlay" id="multiVideoModal">
+    <div class="modal-card" style="max-width: 580px;">
+      <div class="modal-header-hero">
+        <button class="close-btn" onclick="closeMultiVideoModal()">&times;</button>
+        <h2><i class="fa-solid fa-video"></i> AI Video Ads Showcase</h2>
+      </div>
+      <div class="modal-body" id="videoListContainer">
+        <!-- Dynamic Ultra-Modern Content -->
+      </div>
+    </div>
+  </div>
+
   <script>
     const menuToggle = document.getElementById('menuToggle');
     const navLinks = document.getElementById('navLinks');
@@ -375,7 +484,7 @@
       }
     });
 
-    // Active State Handling for Clicks and Sections Scroll (Cyan Theme)
+    // Active State Handling for Clicks and Sections Scroll
     document.addEventListener("DOMContentLoaded", function () {
       const links = document.querySelectorAll('.nav-links a');
       
@@ -428,10 +537,66 @@
       modal.classList.remove('active');
       setTimeout(() => modal.style.display = 'none', 300);
     }
-    window.onclick = function(event) {
-      const modal = document.getElementById('orderModal');
-      if (event.target === modal) closeOrderModal();
+
+    // Open Ultra-Modern AI Video Showcase Modal
+    function openMultiVideoModal() {
+      const container = document.getElementById('videoListContainer');
+      container.innerHTML = `
+        <div class="ultra-video-grid">
+          <div class="ultra-video-card">
+            <div class="ultra-video-thumb-wrap">
+              <img src="https://img.youtube.com/vi/3_fmyNn_vRo/hqdefault.jpg" alt="AI Video Short 1">
+              <span class="ultra-badge-floating">Short #1</span>
+            </div>
+            <div class="ultra-video-details">
+              <div>
+                <h3>AI Video Ad - Sample 1</h3>
+                <p>High-engagement promotional short created for brand advertisements.</p>
+              </div>
+              <a href="https://www.youtube.com/shorts/3_fmyNn_vRo" target="_blank" class="btn-youtube-ultra">
+                <i class="fa-brands fa-youtube" style="font-size: 1rem;"></i> View on YouTube
+              </a>
+            </div>
+          </div>
+
+          <div class="ultra-video-card">
+            <div class="ultra-video-thumb-wrap">
+              <img src="https://img.youtube.com/vi/SesdGdLIQzc/hqdefault.jpg" alt="AI Video Short 2">
+              <span class="ultra-badge-floating">Short #2</span>
+            </div>
+            <div class="ultra-video-details">
+              <div>
+                <h3>AI Video Ad - Sample 2</h3>
+                <p>Dynamic product showcase reel powered by modern AI tools.</p>
+              </div>
+              <a href="https://www.youtube.com/shorts/SesdGdLIQzc" target="_blank" class="btn-youtube-ultra">
+                <i class="fa-brands fa-youtube" style="font-size: 1rem;"></i> View on YouTube
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const modal = document.getElementById('multiVideoModal');
+      modal.style.display = 'flex';
+      setTimeout(() => modal.classList.add('active'), 10);
     }
+
+    function closeMultiVideoModal() {
+      const modal = document.getElementById('multiVideoModal');
+      modal.classList.remove('active');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
+    }
+
+    window.onclick = function(event) {
+      const orderModal = document.getElementById('orderModal');
+      const multiVideoModal = document.getElementById('multiVideoModal');
+      if (event.target === orderModal) closeOrderModal();
+      if (event.target === multiVideoModal) closeMultiVideoModal();
+    }
+
     function sendToWhatsApp(event) {
       event.preventDefault();
       const product = document.getElementById('selectedProduct').value;
