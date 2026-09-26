@@ -1748,23 +1748,110 @@
 
     function downloadCard(format) {
       hideGuidesForExport();
-      const dataURL = canvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 / canvas.getZoom() });
+      const currentData = canvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 / canvas.getZoom() });
       restoreGuidesAfterExport();
 
       if (format === 'png') {
-        const link = document.createElement('a');
-        link.download = `design-${currentFormatType}-${currentSide}-hd.png`;
-        link.href = dataURL;
-        link.click();
+        let frontImg = '';
+        let backImg = '';
+
+        if (currentSide === 'front') {
+          frontImg = currentData;
+        } else {
+          backImg = currentData;
+        }
+
+        const otherSide = currentSide === 'front' ? 'back' : 'front';
+        const tempCanvas = new fabric.Canvas(null, { width: BASE_WIDTH, height: BASE_HEIGHT, backgroundColor: '#ffffff' });
+        const otherStack = historyStack[otherSide];
+
+        const triggerBothPNGs = (otherData) => {
+          if (otherSide === 'front') frontImg = otherData;
+          else backImg = otherData;
+
+          // Download Front PNG
+          const linkFront = document.createElement('a');
+          linkFront.download = `design-${currentFormatType}-front-hd.png`;
+          linkFront.href = frontImg;
+          linkFront.click();
+
+          // Download Back PNG with a short delay to prevent browser conflict
+          setTimeout(() => {
+            const linkBack = document.createElement('a');
+            linkBack.download = `design-${currentFormatType}-back-hd.png`;
+            linkBack.href = backImg;
+            linkBack.click();
+          }, 400);
+
+          tempCanvas.dispose();
+        };
+
+        if (otherStack && otherStack.length > 0) {
+          tempCanvas.loadFromJSON(otherStack[otherStack.length - 1], () => {
+            tempCanvas.getObjects().forEach(o => { if(o.excludeFromExport) o.visible = false; });
+            tempCanvas.renderAll();
+            const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 });
+            triggerBothPNGs(otherData);
+          });
+        } else {
+          tempCanvas.backgroundColor = canvas.backgroundColor;
+          tempCanvas.renderAll();
+          const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 });
+          triggerBothPNGs(otherData);
+        }
+
       } else if (format === 'pdf') {
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({
-          orientation: BASE_WIDTH >= BASE_HEIGHT ? 'landscape' : 'portrait',
-          unit: 'px',
-          format: [BASE_WIDTH, BASE_HEIGHT]
-        });
-        pdf.addImage(dataURL, 'PNG', 0, 0, BASE_WIDTH, BASE_HEIGHT);
-        pdf.save(`design-${currentFormatType}-${currentSide}-hd.pdf`);
+        
+        let frontImg = '';
+        let backImg = '';
+
+        if (currentSide === 'front') {
+          frontImg = currentData;
+        } else {
+          backImg = currentData;
+        }
+
+        const otherSide = currentSide === 'front' ? 'back' : 'front';
+        const tempCanvas = new fabric.Canvas(null, { width: BASE_WIDTH, height: BASE_HEIGHT, backgroundColor: '#ffffff' });
+        const otherStack = historyStack[otherSide];
+
+        const generateMultiPagePDF = (otherData) => {
+          if (otherSide === 'front') frontImg = otherData;
+          else backImg = otherData;
+
+          const pdf = new jsPDF({
+            orientation: BASE_WIDTH >= BASE_HEIGHT ? 'landscape' : 'portrait',
+            unit: 'px',
+            format: [BASE_WIDTH, BASE_HEIGHT]
+          });
+
+          // Page 1: Front
+          pdf.addImage(frontImg, 'PNG', 0, 0, BASE_WIDTH, BASE_HEIGHT);
+
+          // Page 2: Back
+          if (backImg) {
+            pdf.addPage([BASE_WIDTH, BASE_HEIGHT], BASE_WIDTH >= BASE_HEIGHT ? 'landscape' : 'portrait');
+            pdf.addImage(backImg, 'PNG', 0, 0, BASE_WIDTH, BASE_HEIGHT);
+          }
+
+          pdf.save(`design-${currentFormatType}-complete-hd.pdf`);
+          tempCanvas.dispose();
+        };
+
+        if (otherStack && otherStack.length > 0) {
+          tempCanvas.loadFromJSON(otherStack[otherStack.length - 1], () => {
+            tempCanvas.getObjects().forEach(o => { if(o.excludeFromExport) o.visible = false; });
+            tempCanvas.renderAll();
+            const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 });
+            generateMultiPagePDF(otherData);
+          });
+        } else {
+          tempCanvas.backgroundColor = canvas.backgroundColor;
+          tempCanvas.renderAll();
+          const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 });
+          generateMultiPagePDF(otherData);
+        }
       }
     }
   </script>
