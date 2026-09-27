@@ -485,6 +485,7 @@
       cursor: grab;
       user-select: none;
       position: relative;
+      touch-action: none;
     }
     .card-3d-viewport:active { cursor: grabbing; }
 
@@ -1548,6 +1549,7 @@
     const viewport3D = document.getElementById('card3dViewport');
     const scene3D = document.getElementById('card3dScene');
 
+    // Mouse Events for Desktop
     viewport3D.addEventListener('mousedown', (e) => { isDragging3D = true; startX = e.clientX; startY = e.clientY; });
     window.addEventListener('mousemove', (e) => {
       if (!isDragging3D) return;
@@ -1558,6 +1560,28 @@
       startX = e.clientX; startY = e.clientY;
     });
     window.addEventListener('mouseup', () => { isDragging3D = false; });
+
+    // Touch Events for Mobile / Tablets
+    viewport3D.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isDragging3D = true;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging3D || e.touches.length !== 1) return;
+      rotY += (e.touches[0].clientX - startX) * 0.6;
+      rotX -= (e.touches[0].clientY - startY) * 0.6;
+      rotX = Math.max(-60, Math.min(60, rotX));
+      scene3D.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      e.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('touchend', () => { isDragging3D = false; });
 
     function flip3DCardModel() {
       rotY += 180;
@@ -1841,7 +1865,7 @@
 
         if (otherStack && otherStack.length > 0) {
           tempCanvas.loadFromJSON(otherStack[otherStack.length - 1], () => {
-            tempCanvas.getObjects().forEach(o => { if(o.excludeFromExport) o.visible = false; });
+            tempCanvas.getObjects().forEach(o => { if(o.excludeOldGuides || o.excludeFromExport) o.visible = false; });
             tempCanvas.renderAll();
             const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 });
             generateMultiPagePDF(otherData);
