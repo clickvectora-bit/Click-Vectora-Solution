@@ -466,19 +466,21 @@
     .template-card h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--text-main); }
     .template-card p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
 
-    /* 3D Preview Modal Styling */
+    /* 3D Preview Modal Styling (Fixed for Mobile Overflow) */
     .modal-3d {
       width: 760px !important;
       max-width: 95% !important;
-      padding: 24px !important;
+      padding: 20px !important;
       background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .card-3d-viewport {
       width: 100%;
-      height: 320px;
+      height: 280px;
       perspective: 1500px;
-      margin: 15px auto;
+      margin: 10px auto;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -490,8 +492,8 @@
     .card-3d-viewport:active { cursor: grabbing; }
 
     .card-3d-scene {
-      width: 360px;
-      height: 205px;
+      width: 320px;
+      height: 185px;
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.05s ease-out;
@@ -810,12 +812,12 @@
     </div>
   </div>
 
-  <!-- 3D Preview Modal -->
+  <!-- 3D Preview Modal (Fixed Button Layout for Mobile) -->
   <div class="modal-overlay" id="preview3DModal">
     <div class="modal modal-3d">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <h3 style="font-size: 1.1rem; font-weight: 700;">✨ Interactive 3D Document Simulation</h3>
-        <span style="font-size: 0.75rem; color: var(--text-muted);">Click & Drag to Rotate</span>
+        <h3 style="font-size: 1.05rem; font-weight: 700;">✨ Interactive 3D Simulation</h3>
+        <span style="font-size: 0.7rem; color: var(--text-muted);">Drag to Rotate</span>
       </div>
 
       <div class="card-3d-viewport" id="card3dViewport">
@@ -825,10 +827,11 @@
         </div>
       </div>
       
-      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-        <button class="secondary" style="padding: 6px 16px;" onclick="flip3DCardModel()">🔄 Flip Side</button>
-        <button class="secondary" style="padding: 6px 16px;" onclick="reset3DRotation()">🎯 Reset View</button>
-        <button style="padding: 6px 16px; background: #0F172A;" onclick="close3DModal()">Close Preview</button>
+      <!-- Fixed container with flex-wrap and responsive sizing for mobile screens -->
+      <div style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px;">
+        <button class="secondary" style="padding: 6px 12px; font-size: 0.8rem; flex: 1; min-width: 90px;" onclick="flip3DCardModel()">🔄 Flip Side</button>
+        <button class="secondary" style="padding: 6px 12px; font-size: 0.8rem; flex: 1; min-width: 90px;" onclick="reset3DRotation()">🎯 Reset</button>
+        <button style="padding: 6px 12px; font-size: 0.8rem; background: #0F172A; flex: 1; min-width: 90px;" onclick="close3DModal()">Close</button>
       </div>
     </div>
   </div>
@@ -951,7 +954,7 @@
     let historyStack = { front: [], back: [] };
     let redoStack = { front: [], back: [] };
     let isApplyingHistory = false;
-    let clipboard = null; // Clipboard memory for Copy/Cut/Paste
+    let clipboard = null;
 
     let showBleed = true;
     let showTrim = true;
@@ -990,7 +993,6 @@
       opt.e.stopPropagation();
     });
 
-    // Keyboard Shortcuts Listener for Delete, Ctrl+C, Ctrl+X, Ctrl+V
     window.addEventListener('keydown', function(e) {
       const activeElement = document.activeElement;
       const isInputActive = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'SELECT' || activeElement.tagName === 'TEXTAREA');
@@ -998,26 +1000,20 @@
       const activeObj = canvas.getActiveObject();
       const isEditingText = activeObj && activeObj.isType && activeObj.isType('i-text') && activeObj.isEditing;
 
-      // Do not trigger canvas shortcuts if typing inside inputs or editing text layers
       if (isInputActive || isEditingText) return;
 
-      // 1. Delete or Backspace Key
       if (e.key === 'Delete' || e.key === 'Backspace') {
         deleteSelected();
         e.preventDefault();
       }
 
-      // 2. Ctrl + C (Copy)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
         if (activeObj && !Object.values(guideObjects).includes(activeObj)) {
-          activeObj.clone(function(cloned) {
-            clipboard = cloned;
-          });
+          activeObj.clone(function(cloned) { clipboard = cloned; });
         }
         e.preventDefault();
       }
 
-      // 3. Ctrl + X (Cut)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'x') {
         if (activeObj && !Object.values(guideObjects).includes(activeObj)) {
           activeObj.clone(function(cloned) {
@@ -1028,21 +1024,14 @@
         e.preventDefault();
       }
 
-      // 4. Ctrl + V (Paste)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') {
         if (clipboard) {
           clipboard.clone(function(cloned) {
             canvas.discardActiveObject();
-            cloned.set({
-              left: cloned.left + 20,
-              top: cloned.top + 20,
-              evented: true,
-            });
+            cloned.set({ left: cloned.left + 20, top: cloned.top + 20, evented: true });
             if (cloned.isType('active-selection')) {
               cloned.canvas = canvas;
-              cloned.forEachObject(function(obj) {
-                canvas.add(obj);
-              });
+              cloned.forEachObject(function(obj) { canvas.add(obj); });
               cloned.setCoords();
             } else {
               canvas.add(cloned);
@@ -1087,10 +1076,7 @@
       }
     }
 
-    function onMainCategoryChange() {
-      initSubCategories();
-    }
-
+    function onMainCategoryChange() { initSubCategories(); }
     function onSubCategoryChange() {
       const subSelect = document.getElementById('subCategorySelect');
       const subId = subSelect.value;
@@ -1098,9 +1084,7 @@
       const list = SUB_CATEGORIES[mainSelect] || [];
       const found = list.find(s => s.id === subId);
 
-      if (found) {
-        setDocumentType(found.id, found.width, found.height);
-      }
+      if (found) { setDocumentType(found.id, found.width, found.height); }
     }
 
     function zoomCanvas(amount) {
@@ -1114,9 +1098,7 @@
       renderPrintGuides();
     }
 
-    function resetZoom() {
-      resizeCanvasToFitContainer();
-    }
+    function resetZoom() { resizeCanvasToFitContainer(); }
 
     function closeNoticeModal() {
       document.getElementById('noticeModal').style.display = 'none';
@@ -1538,18 +1520,17 @@
 
       const scene = document.getElementById('card3dScene');
       if (BASE_WIDTH >= BASE_HEIGHT) {
-        scene.style.width = '380px';
-        scene.style.height = '270px';
+        scene.style.width = '300px';
+        scene.style.height = '190px';
       } else {
-        scene.style.width = '240px';
-        scene.style.height = '340px';
+        scene.style.width = '200px';
+        scene.style.height = '290px';
       }
     }
 
     const viewport3D = document.getElementById('card3dViewport');
     const scene3D = document.getElementById('card3dScene');
 
-    // Mouse Events for Desktop
     viewport3D.addEventListener('mousedown', (e) => { isDragging3D = true; startX = e.clientX; startY = e.clientY; });
     window.addEventListener('mousemove', (e) => {
       if (!isDragging3D) return;
@@ -1561,7 +1542,6 @@
     });
     window.addEventListener('mouseup', () => { isDragging3D = false; });
 
-    // Touch Events for Mobile / Tablets
     viewport3D.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) {
         isDragging3D = true;
@@ -1793,13 +1773,11 @@
           if (otherSide === 'front') frontImg = otherData;
           else backImg = otherData;
 
-          // Download Front PNG
           const linkFront = document.createElement('a');
           linkFront.download = `design-${currentFormatType}-front-hd.png`;
           linkFront.href = frontImg;
           linkFront.click();
 
-          // Download Back PNG with a short delay to prevent browser conflict
           setTimeout(() => {
             const linkBack = document.createElement('a');
             linkBack.download = `design-${currentFormatType}-back-hd.png`;
@@ -1850,10 +1828,8 @@
             format: [BASE_WIDTH, BASE_HEIGHT]
           });
 
-          // Page 1: Front
           pdf.addImage(frontImg, 'PNG', 0, 0, BASE_WIDTH, BASE_HEIGHT);
 
-          // Page 2: Back
           if (backImg) {
             pdf.addPage([BASE_WIDTH, BASE_HEIGHT], BASE_WIDTH >= BASE_HEIGHT ? 'landscape' : 'portrait');
             pdf.addImage(backImg, 'PNG', 0, 0, BASE_WIDTH, BASE_HEIGHT);
