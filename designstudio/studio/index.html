@@ -15,7 +15,9 @@
   
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Expanded Font Families Import -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Lato:wght@400;700&family=Oswald:wght@500;700&family=Pacifico&family=Dancing+Script:wght@600&family=Cinzel:wght@600;800&family=Bebas+Neue&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
@@ -51,12 +53,7 @@
       box-shadow: 0 1px 3px var(--shadow);
     }
 
-    .brand-logo { 
-      display: flex; 
-      align-items: center; 
-      gap: 10px; 
-      text-decoration: none; 
-    }
+    .brand-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .brand-logo img { height: 60px; width: auto; display: block; object-fit: contain; }
     
     .brand-title-center {
@@ -120,13 +117,7 @@
     input[type="color"] { height: 32px; width: 32px; cursor: pointer; padding: 2px; border-radius: 6px; }
 
     /* Layout Structure */
-    .app-layout {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      width: 100%;
-      position: relative;
-    }
+    .app-layout { display: flex; flex: 1; overflow: hidden; width: 100%; position: relative; }
 
     .mobile-toolbar-toggle {
       display: none;
@@ -158,18 +149,8 @@
       transition: transform 0.3s ease-in-out;
     }
 
-    .sidebar-section {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #E2E8F0;
-    }
-
-    .sidebar-section:last-child {
-      border-bottom: none;
-      padding-bottom: 25px; 
-    }
+    .sidebar-section { display: flex; flex-direction: column; gap: 6px; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0; }
+    .sidebar-section:last-child { border-bottom: none; padding-bottom: 25px; }
 
     .panel-section-title {
       font-size: 0.7rem;
@@ -191,15 +172,8 @@
       gap: 10px;
       transition: all 0.2s ease;
     }
-    .product-selector-card:hover {
-      border-color: var(--primary);
-      box-shadow: 0 4px 12px rgba(255, 107, 0, 0.08);
-    }
-    .product-grid-options {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-    }
+    .product-selector-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(255, 107, 0, 0.08); }
+    .product-grid-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
     .prod-pill {
       background: #ffffff;
       border: 1px solid #cbd5e1;
@@ -218,18 +192,9 @@
       text-align: center;
     }
     .prod-pill i { font-size: 1rem; color: var(--text-muted); transition: color 0.2s; }
-    .prod-pill:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      background: #fff7ed;
-    }
+    .prod-pill:hover { border-color: var(--primary); color: var(--primary); background: #fff7ed; }
     .prod-pill:hover i { color: var(--primary); }
-    .prod-pill.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #ffffff;
-      box-shadow: 0 2px 6px rgba(255, 107, 0, 0.3);
-    }
+    .prod-pill.active { background: var(--primary); border-color: var(--primary); color: #ffffff; box-shadow: 0 2px 6px rgba(255, 107, 0, 0.3); }
     .prod-pill.active i { color: #ffffff; }
 
     /* Workspace Area */
@@ -237,6 +202,7 @@
       flex: 1;
       height: 100%;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       position: relative;
@@ -247,14 +213,7 @@
       background-size: 14px 14px;
     }
 
-    .canvas-viewport-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      width: 100%;
-      max-width: 1000px;
-    }
+    .canvas-viewport-container { display: flex; flex-direction: column; align-items: center; position: relative; width: 100%; max-width: 1000px; }
 
     .floating-panel {
       background: var(--panel-bg);
@@ -269,37 +228,26 @@
       gap: 8px;
     }
 
-    .canvas-top-controls {
-      margin-bottom: 12px;
-      z-index: 20;
-      position: relative;
-      flex-wrap: wrap;
-      justify-content: center;
-      width: 100%;
-    }
+    .canvas-top-controls { margin-bottom: 12px; z-index: 20; position: relative; display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 780px; }
 
-    .object-inspector-panel {
-      display: none;
-      flex-direction: column;
-      gap: 8px;
-      background: #F8FAFC;
-      border: 1px dashed var(--primary);
-      padding: 10px;
+    .object-inspector-panel { display: none; flex-direction: column; gap: 8px; background: #F8FAFC; border: 1px dashed var(--primary); padding: 10px; border-radius: 8px; }
+
+    .canvas-container-wrapper { background: #FFFFFF; box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.3); position: relative; transition: all 0.3s ease; max-width: 100%; overflow: hidden; }
+    .canvas-container-wrapper.rounded { border-radius: 16px; }
+
+    .bleed-drawer {
+      margin-top: 12px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
       border-radius: 8px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      font-size: 0.8rem;
     }
-
-    .canvas-container-wrapper {
-      background: #FFFFFF;
-      box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.3);
-      position: relative;
-      transition: all 0.3s ease;
-      max-width: 100%;
-      overflow: hidden;
-    }
-
-    .canvas-container-wrapper.rounded {
-      border-radius: 16px;
-    }
+    .bleed-drawer span { font-weight: 700; color: var(--text-muted); text-transform: uppercase; font-size: 0.7rem; }
 
     @media (max-width: 900px) {
       nav { display: flex; justify-content: space-between; padding: 0.4rem 4%; }
@@ -308,209 +256,44 @@
       .menu-toggle { display: block; }
       
       .nav-links {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background: #ffffff;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-in-out;
-        border-bottom: 1px solid var(--border);
-        box-shadow: 0 10px 15px rgba(0,0,0,0.05);
-        z-index: 1000;
+        position: absolute; top: 100%; left: 0; width: 100%; background: #ffffff; flex-direction: column; align-items: flex-start; gap: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out; border-bottom: 1px solid var(--border); box-shadow: 0 10px 15px rgba(0,0,0,0.05); z-index: 1000;
       }
       .nav-links.active { max-height: 350px; }
       .nav-links li { width: 100%; border-bottom: 1px solid var(--border); }
       .nav-links a { display: block; padding: 1rem 1.5rem; width: 100%; }
-
       .app-layout { flex-direction: column; }
       
-      .left-sidebar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        max-height: 100%;
-        transform: translateY(100%);
-        transition: transform 0.3s ease-in-out;
-        z-index: 100;
-        background: rgba(255, 255, 255, 0.99);
-      }
-      .left-sidebar.mobile-open {
-        transform: translateY(0);
-      }
-      
-      .mobile-toolbar-toggle {
-        display: inline-flex;
-      }
-
-      .workspace { 
-        padding: 10px !important; 
-        height: 100%;
-      }
+      .left-sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100%; max-height: 100%; transform: translateY(100%); transition: transform 0.3s ease-in-out; z-index: 100; background: rgba(255, 255, 255, 0.99); }
+      .left-sidebar.mobile-open { transform: translateY(0); }
+      .mobile-toolbar-toggle { display: inline-flex; }
+      .workspace { padding: 10px !important; height: 100%; }
     }
 
     /* Modals */
-    .modal-overlay {
-      position: fixed;
-      top:0; left:0; right:0; bottom:0;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(6px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 10px;
-    }
-    
-    .modal {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      width: 340px;
-      max-width: 95%;
-      text-align: center;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-    }
+    .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 10px; }
+    .modal { background: white; padding: 20px; border-radius: 12px; width: 340px; max-width: 95%; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); }
 
-    /* Modern Redesigned Notice Modal */
     .notice-modal-box {
-      width: 420px !important;
-      background: linear-gradient(145deg, #ffffff, #f8fafc);
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      padding: 30px 24px !important;
-      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
-      text-align: center;
-      position: relative;
-      animation: modalSlideUp 0.3s ease-out;
+      width: 420px !important; background: linear-gradient(145deg, #ffffff, #f8fafc); border: 1px solid #e2e8f0; border-radius: 20px; padding: 30px 24px !important; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25); text-align: center; position: relative;
     }
-    @keyframes modalSlideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    .notice-icon-wrapper {
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, rgba(255, 107, 0, 0.15), rgba(0, 168, 204, 0.15));
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px auto;
-      font-size: 1.8rem;
-      color: var(--primary);
-      box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
-    }
-    .notice-modal-box h3 {
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 10px;
-      letter-spacing: -0.3px;
-    }
-    .notice-modal-box p {
-      font-size: 0.92rem;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-    .notice-modal-box button {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, var(--primary), #e66000);
-      box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);
-    }
-    .notice-modal-box button:hover {
-      filter: brightness(1.05);
-      box-shadow: 0 6px 16px rgba(255, 107, 0, 0.35);
-    }
+    .notice-icon-wrapper { width: 64px; height: 64px; background: linear-gradient(135deg, rgba(255, 107, 0, 0.15), rgba(0, 168, 204, 0.15)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 1.8rem; color: var(--primary); }
+    .notice-modal-box h3 { font-size: 1.35rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; }
+    .notice-modal-box p { font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; }
+    .notice-modal-box button { width: 100%; padding: 12px; border-radius: 10px; font-size: 0.95rem; font-weight: 600; background: linear-gradient(135deg, var(--primary), #e66000); }
 
-    .modal-templates {
-      width: 780px !important;
-      max-width: 95% !important;
-      text-align: left !important;
-    }
-
-    .template-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 12px;
-      max-height: 420px;
-      overflow-y: auto;
-      margin: 15px 0;
-      padding: 4px;
-    }
-
-    .template-card {
-      border: 2px solid #CBD5E1;
-      border-radius: 8px;
-      padding: 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background: #F8FAFC;
-    }
-    .template-card:hover {
-      border-color: var(--primary);
-      background: #FFF7ED;
-      transform: translateY(-2px);
-    }
+    .modal-templates { width: 780px !important; max-width: 95% !important; text-align: left !important; }
+    .template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; max-height: 420px; overflow-y: auto; margin: 15px 0; padding: 4px; }
+    .template-card { border: 2px solid #CBD5E1; border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.2s ease; background: #F8FAFC; }
+    .template-card:hover { border-color: var(--primary); background: #FFF7ED; transform: translateY(-2px); }
     .template-card h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--text-main); }
     .template-card p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
 
-    /* 3D Preview Modal Styling (Fixed for Mobile Overflow) */
-    .modal-3d {
-      width: 760px !important;
-      max-width: 95% !important;
-      padding: 20px !important;
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .card-3d-viewport {
-      width: 100%;
-      height: 280px;
-      perspective: 1500px;
-      margin: 10px auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: grab;
-      user-select: none;
-      position: relative;
-      touch-action: none;
-    }
+    /* 3D Preview Modal */
+    .modal-3d { width: 760px !important; max-width: 95% !important; padding: 20px !important; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); max-height: 90vh; overflow-y: auto; }
+    .card-3d-viewport { width: 100%; height: 280px; perspective: 1500px; margin: 10px auto; display: flex; align-items: center; justify-content: center; cursor: grab; user-select: none; position: relative; touch-action: none; }
     .card-3d-viewport:active { cursor: grabbing; }
-
-    .card-3d-scene {
-      width: 320px;
-      height: 185px;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.05s ease-out;
-    }
-
-    .card-3d-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      border-radius: 8px;
-      background-size: cover;
-      background-position: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-    }
-
+    .card-3d-scene { width: 320px; height: 185px; position: relative; transform-style: preserve-3d; transition: transform 0.05s ease-out; }
+    .card-3d-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 8px; background-size: cover; background-position: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); }
     .card-3d-face.front { z-index: 2; transform: rotateY(0deg); }
     .card-3d-face.back { transform: rotateY(180deg); }
 
@@ -519,7 +302,6 @@
 </head>
 <body>
 
-  <!-- Notice Popup Modal (Redesigned) -->
   <div class="modal-overlay" id="noticeModal" style="display: flex;">
     <div class="modal notice-modal-box">
       <div class="notice-icon-wrapper">
@@ -527,7 +309,7 @@
       </div>
       <h3>Design Studio Ready</h3>
       <p>
-        Select your products and professional format specs seamlessly. Product-specific templates automatically match your selected category! On mobile, tap <b>Edit Tools</b> to open your studio controls.
+        Enhanced with live shape addition, synchronized property selection/deselection, instant 3D simulation preview loading, and up to 10-step undo/redo features! Select your product specs below.
       </p>
       <button onclick="closeNoticeModal()">Start Designing</button>
     </div>
@@ -554,7 +336,6 @@
 
     <!-- Left Hand Side Toolbar & Features Sidebar -->
     <aside class="left-sidebar" id="leftSidebar">
-      
       <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom: 6px; border-bottom: 1px solid #CBD5E1; display:none;" id="mobileCloseHeader">
         <span style="font-weight:700; font-size:1rem; color:var(--text-main);">Studio Controls</span>
         <button class="secondary" style="padding:4px 10px;" onclick="toggleMobileSidebar()">✕ Close</button>
@@ -564,7 +345,6 @@
       <div class="sidebar-section">
         <div class="panel-section-title">Product & Format</div>
         <div class="product-selector-card">
-          <!-- Hidden select to retain underlying logic state -->
           <select id="mainCategorySelect" onchange="onMainCategoryChange()" style="display:none;">
             <option value="card">Business Card</option>
             <option value="flyer">Flyer</option>
@@ -577,54 +357,36 @@
 
           <!-- Visual Product Type Grid -->
           <div class="product-grid-options">
-            <div class="prod-pill active" id="pill-card" onclick="selectMainCategory('card')">
-              <i class="fa-solid fa-address-card"></i>
-              <span>Card</span>
-            </div>
-            <div class="prod-pill" id="pill-flyer" onclick="selectMainCategory('flyer')">
-              <i class="fa-solid fa-file-lines"></i>
-              <span>Flyer</span>
-            </div>
-            <div class="prod-pill" id="pill-brochure" onclick="selectMainCategory('brochure')">
-              <i class="fa-solid fa-book-open"></i>
-              <span>Brochure</span>
-            </div>
-            <div class="prod-pill" id="pill-poster" onclick="selectMainCategory('poster')">
-              <i class="fa-solid fa-image"></i>
-              <span>Poster</span>
-            </div>
-            <div class="prod-pill" id="pill-banner" onclick="selectMainCategory('banner')">
-              <i class="fa-solid fa-flag"></i>
-              <span>Banner</span>
-            </div>
-            <div class="prod-pill" id="pill-standee" onclick="selectMainCategory('standee')">
-              <i class="fa-solid fa-signs-post"></i>
-              <span>Standee</span>
-            </div>
-            <div class="prod-pill" id="pill-menu" onclick="selectMainCategory('menu')">
-              <i class="fa-solid fa-utensils"></i>
-              <span>Menu</span>
-            </div>
+            <div class="prod-pill active" id="pill-card" onclick="selectMainCategory('card')"><i class="fa-solid fa-address-card"></i><span>Card</span></div>
+            <div class="prod-pill" id="pill-flyer" onclick="selectMainCategory('flyer')"><i class="fa-solid fa-file-lines"></i><span>Flyer</span></div>
+            <div class="prod-pill" id="pill-brochure" onclick="selectMainCategory('brochure')"><i class="fa-solid fa-book-open"></i><span>Brochure</span></div>
+            <div class="prod-pill" id="pill-poster" onclick="selectMainCategory('poster')"><i class="fa-solid fa-image"></i><span>Poster</span></div>
+            <div class="prod-pill" id="pill-banner" onclick="selectMainCategory('banner')"><i class="fa-solid fa-flag"></i><span>Banner</span></div>
+            <div class="prod-pill" id="pill-standee" onclick="selectMainCategory('standee')"><i class="fa-solid fa-signs-post"></i><span>Standee</span></div>
+            <div class="prod-pill" id="pill-menu" onclick="selectMainCategory('menu')"><i class="fa-solid fa-utensils"></i><span>Menu</span></div>
           </div>
 
-          <!-- Format Style Dropdown -->
           <div>
             <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;">Format Style & Dimension:</label>
-            <select id="subCategorySelect" onchange="onSubCategoryChange()">
-              <!-- Dynamically populated -->
-            </select>
+            <select id="subCategorySelect" onchange="onSubCategoryChange()"></select>
           </div>
         </div>
 
         <div style="display: flex; gap: 4px; margin-top: 4px;">
           <button class="secondary" style="flex:1;" onclick="toggleRounded()" title="Toggle Rounded Corners">⭕ Radius</button>
         </div>
+
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
           <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">BG Color:</span>
           <div style="display: flex; gap: 4px; align-items: center;">
             <input type="color" id="cardBgColorPicker" onchange="setCanvasBackground(this.value)" value="#ffffff" title="Background Color">
             <button class="secondary" style="padding: 4px 8px; font-size: 0.7rem;" onclick="setCanvasBackground('transparent')">None</button>
           </div>
+        </div>
+
+        <div style="margin-top: 6px;">
+          <button class="secondary" style="width:100%; cursor:pointer;" onclick="document.getElementById('imageLoader').click()">📁 Upload Image(s)</button>
+          <input type="file" id="imageLoader" accept="image/*" multiple style="display:none;">
         </div>
       </div>
 
@@ -634,29 +396,10 @@
         <button style="background: #0EA5E9; width:100%;" onclick="openTemplatesModal()">✨ Browse Templates</button>
       </div>
 
-      <!-- Zoom Controls Section -->
-      <div class="sidebar-section">
-        <div class="panel-section-title">Zoom Controls</div>
-        <div style="display: flex; gap: 6px;">
-          <button class="secondary" style="flex:1; padding: 6px;" onclick="zoomCanvas(0.1)" title="Zoom In">🔍+ In</button>
-          <button class="secondary" style="flex:1; padding: 6px;" onclick="zoomCanvas(-0.1)" title="Zoom Out">🔍- Out</button>
-        </div>
-        <button class="secondary" style="width: 100%; margin-top: 4px; padding: 4px; font-size: 0.75rem;" onclick="resetZoom()" title="Reset to Fit View">Reset Zoom</button>
-      </div>
-
-      <!-- History (Undo / Redo) Section -->
-      <div class="sidebar-section">
-        <div class="panel-section-title">History</div>
-        <div style="display: flex; gap: 6px;">
-          <button class="secondary" style="flex:1; padding: 6px;" onclick="undo()" title="Undo">↩️ Undo</button>
-          <button class="secondary" style="flex:1; padding: 6px;" onclick="redo()" title="Redo">↪️ Redo</button>
-        </div>
-      </div>
-
       <!-- Add Elements Section -->
       <div class="sidebar-section">
         <div class="panel-section-title">Add Elements</div>
-        <button style="width:100%; margin-bottom: 4px;" onclick="addText()">+ Add Text Line</button>
+        <button style="width:100%; margin-bottom: 4px;" onclick="addTextDirectly()">+ Add Text Line</button>
         
         <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); margin-top: 4px;">Shapes:</div>
         <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
@@ -664,13 +407,6 @@
           <button class="secondary" style="padding: 6px 2px;" onclick="addShape('circle')">Circle</button>
           <button class="secondary" style="padding: 6px 2px;" onclick="addShape('triangle')">Tri</button>
           <button class="secondary" style="padding: 6px 2px;" onclick="addShape('line')">Line</button>
-        </div>
-
-        <div style="margin-top: 6px;">
-          <button class="secondary" style="width:100%; cursor:pointer;" onclick="document.getElementById('imageLoader').click()">
-            📁 Upload Image(s)
-          </button>
-          <input type="file" id="imageLoader" accept="image/*" multiple style="display:none;">
         </div>
 
         <div style="margin-top: 6px;">
@@ -682,29 +418,49 @@
         </div>
       </div>
 
-      <!-- Object Inspector Panel (Dynamic) -->
+      <!-- Object Inspector Panel -->
       <div class="sidebar-section object-inspector-panel" id="objectInspector">
         <div class="panel-section-title" style="color: var(--primary);">Selected Item Settings</div>
         
         <div id="textInspectorControls" style="display:none; flex-direction:column; gap:6px;">
           <div style="display: flex; gap: 6px; align-items: center;">
-            <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" title="Text Color">
-            <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)" style="flex:1;">
-              <option value="Poppins">Poppins</option>
-              <option value="Montserrat">Montserrat</option>
-              <option value="Roboto">Roboto</option>
-              <option value="Playfair Display">Playfair</option>
-            </select>
+            <div style="display:flex; flex-direction:column; gap:2px; flex:1;">
+              <label style="font-size:0.65rem; color:var(--text-muted); font-weight:600;">Text Color:</label>
+              <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" value="#0F172A" title="Text Color" style="width:100%;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:2px; flex:2;">
+              <label style="font-size:0.65rem; color:var(--text-muted); font-weight:600;">Font Family:</label>
+              <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)" style="flex:1; width:100%;">
+                <option value="Poppins">Poppins</option>
+                <option value="Montserrat">Montserrat</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Inter">Inter</option>
+                <option value="Lato">Lato</option>
+                <option value="Oswald">Oswald</option>
+                <option value="Playfair Display">Playfair Display</option>
+                <option value="Pacifico">Pacifico</option>
+                <option value="Dancing Script">Dancing Script</option>
+                <option value="Cinzel">Cinzel</option>
+                <option value="Bebas Neue">Bebas Neue</option>
+                <option value="Raleway">Raleway</option>
+              </select>
+            </div>
           </div>
+
           <div style="display:flex; gap:4px; align-items:center;">
             <button class="secondary" style="flex:1;" onclick="toggleStyle('bold')"><b>B</b></button>
             <button class="secondary" style="flex:1;" onclick="toggleStyle('italic')"><i>I</i></button>
             <button class="secondary" style="flex:1;" onclick="toggleStyle('underline')"><u>U</u></button>
           </div>
-          <div style="display:flex; gap:4px;">
-            <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('left')">⬅️ Left</button>
-            <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('center')">⏺️ Center</button>
-            <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('right')">➡️ Right</button>
+
+          <div style="display:flex; flex-direction:column; gap:2px;">
+            <label style="font-size:0.65rem; color:var(--text-muted); font-weight:600;">Text Alignment:</label>
+            <div style="display:flex; gap:4px;">
+              <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('left')">⬅️ Left</button>
+              <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('center')">⏺️ Center</button>
+              <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('right')">➡️ Right</button>
+              <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('justify')">🔤 Justify</button>
+            </div>
           </div>
         </div>
 
@@ -736,6 +492,18 @@
           </div>
         </div>
 
+        <div style="display:flex; flex-direction:column; gap:4px; margin-top:4px; border-top:1px solid #E2E8F0; padding-top:6px;">
+          <span style="font-size:0.65rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Alignment & Snap Menu:</span>
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
+            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('left')">⬅️ Align Left</button>
+            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('center-h')">⬌ Center H</button>
+            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('right')">➡️ Align Right</button>
+            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('top')">⬆️ Align Top</button>
+            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('center-v')">⬍ Center V</button>
+            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('bottom')">⬇️ Align Bottom</button>
+          </div>
+        </div>
+
         <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-top: 4px;">
           <button class="secondary" style="padding: 4px;" onclick="duplicateSelected()" title="Duplicate">📋</button>
           <button class="secondary" style="padding: 4px;" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
@@ -746,16 +514,6 @@
         <button class="danger" style="width: 100%; margin-top: 4px; padding: 6px;" onclick="deleteSelected()">🗑️ Delete Selected</button>
       </div>
 
-      <!-- Guides & Print Lines Section -->
-      <div class="sidebar-section">
-        <div class="panel-section-title">Print Guides</div>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
-          <button class="secondary" style="padding: 6px 2px; font-size: 0.75rem;" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed: ON</button>
-          <button class="secondary" style="padding: 6px 2px; font-size: 0.75rem;" id="trimBtn" onclick="toggleGuide('trim')">Trim: ON</button>
-          <button class="secondary" style="padding: 6px 2px; font-size: 0.75rem;" id="safetyBtn" onclick="toggleGuide('safety')">Safety: ON</button>
-        </div>
-      </div>
-
       <!-- Export & Download Section -->
       <div class="sidebar-section">
         <div class="panel-section-title">Exports & Downloads</div>
@@ -764,33 +522,49 @@
           <button style="background: #2563EB; flex:1; padding: 8px 4px;" onclick="initiatePayment('pdf')">Download PDF</button>
         </div>
       </div>
-
     </aside>
 
     <!-- Workspace Area -->
     <main class="workspace" id="workspace">
       <div class="canvas-viewport-container">
-
         <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 12px; z-index: 20; position: relative;">
           <button class="mobile-toolbar-toggle" id="mobileSidebarToggle" onclick="toggleMobileSidebar()">
             <i class="fa-solid fa-sliders"></i> Edit Tools
           </button>
 
-          <div class="floating-panel canvas-top-controls" style="margin-bottom: 0; width: auto;">
-            <button id="btnSideA" class="active-side" onclick="switchSide('front')">Page 1</button>
-            <button id="btnSideB" class="secondary" onclick="switchSide('back')">Page 2</button>
-            <button style="background: #8B5CF6;" onclick="open3DPreview()">✨ 3D Simulation</button>
+          <div class="floating-panel canvas-top-controls" style="margin-bottom: 0;">
+            <div style="display: flex; gap: 4px; align-items: center;">
+              <span style="font-size:0.7rem; font-weight:700; color:var(--text-muted);">ZOOM:</span>
+              <button class="secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="zoomCanvas(0.1)" title="Zoom In">🔍+</button>
+              <button class="secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="zoomCanvas(-0.1)" title="Zoom Out">🔍-</button>
+              <button class="secondary" style="padding: 4px 6px; font-size: 0.7rem;" onclick="resetZoom()" title="Reset Fit">Reset</button>
+            </div>
+
+            <div style="display: flex; gap: 4px;">
+              <button id="btnSideA" class="active-side" onclick="switchSide('front')">Page 1</button>
+              <button id="btnSideB" class="secondary" onclick="switchSide('back')">Page 2</button>
+            </div>
+
+            <div style="display: flex; gap: 4px; align-items: center;">
+              <button style="background: #8B5CF6; padding: 6px 10px;" onclick="open3DPreview()">✨ 3D Sim</button>
+              <button class="secondary" style="padding: 6px 8px;" onclick="undo()" title="Undo">↩️</button>
+              <button class="secondary" style="padding: 6px 8px;" onclick="redo()" title="Redo">↪️</button>
+            </div>
           </div>
         </div>
 
-        <!-- Canvas Box -->
         <div class="canvas-container-wrapper" id="canvasWrapper">
           <canvas id="cardCanvas"></canvas>
         </div>
 
+        <div class="bleed-drawer">
+          <span>Print Guides:</span>
+          <button class="secondary" style="padding: 4px 10px; font-size: 0.75rem;" id="bleedBtn" onclick="toggleGuide('bleed')">Bleed: ON</button>
+          <button class="secondary" style="padding: 4px 10px; font-size: 0.75rem;" id="trimBtn" onclick="toggleGuide('trim')">Trim: ON</button>
+          <button class="secondary" style="padding: 4px 10px; font-size: 0.75rem;" id="safetyBtn" onclick="toggleGuide('safety')">Safety: ON</button>
+        </div>
       </div>
     </main>
-
   </div>
 
   <!-- Templates Selection Modal -->
@@ -802,9 +576,7 @@
       </div>
       <p style="font-size: 0.85rem; color: var(--text-muted);" id="templateModalDesc">Select a pre-designed layout tailored for your selected product:</p>
       
-      <div class="template-grid" id="templateGridContainer">
-        <!-- Dynamically populated based on active product -->
-      </div>
+      <div class="template-grid" id="templateGridContainer"></div>
 
       <div style="text-align: right; margin-top: 10px;">
         <button class="secondary" style="padding: 6px 14px;" onclick="closeTemplatesModal()">Close</button>
@@ -812,7 +584,7 @@
     </div>
   </div>
 
-  <!-- 3D Preview Modal (Fixed Button Layout for Mobile) -->
+  <!-- 3D Preview Modal -->
   <div class="modal-overlay" id="preview3DModal">
     <div class="modal modal-3d">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
@@ -827,7 +599,6 @@
         </div>
       </div>
       
-      <!-- Fixed container with flex-wrap and responsive sizing for mobile screens -->
       <div style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px;">
         <button class="secondary" style="padding: 6px 12px; font-size: 0.8rem; flex: 1; min-width: 90px;" onclick="flip3DCardModel()">🔄 Flip Side</button>
         <button class="secondary" style="padding: 6px 12px; font-size: 0.8rem; flex: 1; min-width: 90px;" onclick="reset3DRotation()">🎯 Reset</button>
@@ -874,7 +645,6 @@
       closeHeader.style.display = sidebar.classList.contains('mobile-open') ? 'flex' : 'none';
     }
 
-    // Sub-Categories Mapping & Dimensions
     const SUB_CATEGORIES = {
       card: [
         { id: 'card_horiz', name: 'Horizontal Standard (1000x571)', width: 1000, height: 571 },
@@ -906,7 +676,6 @@
       ]
     };
 
-    // Product-Specific Templates Data
     const PRODUCT_TEMPLATES = {
       card: [
         { id: 'card_corporate', title: '🏢 Corporate Minimal', desc: 'Clean executive business card layout with structured sidebar.', type: 'corporate' },
@@ -993,6 +762,7 @@
       currentZoomScale = zoom;
       canvas.setZoom(zoom);
       canvas.setDimensions({ width: BASE_WIDTH * zoom, height: BASE_HEIGHT * zoom });
+      canvas.calcOffset();
       opt.e.preventDefault();
       opt.e.stopPropagation();
     });
@@ -1000,54 +770,25 @@
     window.addEventListener('keydown', function(e) {
       const activeElement = document.activeElement;
       const isInputActive = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'SELECT' || activeElement.tagName === 'TEXTAREA');
-      
       const activeObj = canvas.getActiveObject();
       const isEditingText = activeObj && activeObj.isType && activeObj.isType('i-text') && activeObj.isEditing;
 
       if (isInputActive || isEditingText) return;
 
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        if (e.shiftKey) { redo(); } else { undo(); }
+        e.preventDefault();
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        redo();
+        e.preventDefault();
+        return;
+      }
+
       if (e.key === 'Delete' || e.key === 'Backspace') {
         deleteSelected();
-        e.preventDefault();
-      }
-
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
-        if (activeObj && !Object.values(guideObjects).includes(activeObj)) {
-          activeObj.clone(function(cloned) { clipboard = cloned; });
-        }
-        e.preventDefault();
-      }
-
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'x') {
-        if (activeObj && !Object.values(guideObjects).includes(activeObj)) {
-          activeObj.clone(function(cloned) {
-            clipboard = cloned;
-            deleteSelected();
-          });
-        }
-        e.preventDefault();
-      }
-
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') {
-        if (clipboard) {
-          clipboard.clone(function(cloned) {
-            canvas.discardActiveObject();
-            cloned.set({ left: cloned.left + 20, top: cloned.top + 20, evented: true });
-            if (cloned.isType('active-selection')) {
-              cloned.canvas = canvas;
-              cloned.forEachObject(function(obj) { canvas.add(obj); });
-              cloned.setCoords();
-            } else {
-              canvas.add(cloned);
-            }
-            clipboard.top += 20;
-            clipboard.left += 20;
-            canvas.setActiveObject(cloned);
-            bringGuidesToFront();
-            canvas.requestRenderAll();
-            saveHistory();
-          });
-        }
         e.preventDefault();
       }
     });
@@ -1099,6 +840,7 @@
       currentZoomScale = zoom;
       canvas.setZoom(zoom);
       canvas.setDimensions({ width: BASE_WIDTH * zoom, height: BASE_HEIGHT * zoom });
+      canvas.calcOffset();
       renderPrintGuides();
     }
 
@@ -1156,48 +898,11 @@
         let title = new fabric.IText('CREATIVE STUDIO', { left: 380, top: 150, fontSize: 28, fontFamily: 'Poppins', fill: '#0F172A', fontWeight: 'bold' });
         let desc = new fabric.IText('Visual Branding & Digital Design', { left: 380, top: 200, fontSize: 15, fontFamily: 'Poppins', fill: '#64748B' });
         canvas.add(bgShape, title, desc);
-      } else if (templateType === 'modern' || templateType === 'card_modern') {
+      } else {
         setCanvasBackground('#0F172A');
         let title = new fabric.IText('ALEX SMITH', { left: 80, top: 140, fontSize: 36, fontFamily: 'Montserrat', fill: '#FFFFFF', fontWeight: 'bold' });
-        let subtitle = new fabric.IText('UI/UX PRODUCT ARCHITECT', { left: 80, top: 195, fontSize: 14, fontFamily: 'Montserrat', fill: '#0EA5E9', charSpacing: 100 });
-        let contact = new fabric.IText('alex@vectorasolution.com • www.clickvectorasolution.com', { left: 80, top: 320, fontSize: 13, fontFamily: 'Roboto', fill: '#94A3B8' });
-        canvas.add(title, subtitle, contact);
-      } else if (templateType === 'flyer_sale' || templateType === 'flyer_biz') {
-        setCanvasBackground('#FEF3C7');
-        let header = new fabric.Rect({ left: 50, top: 50, width: BASE_WIDTH - 100, height: 140, fill: '#DC2626', rx: 8, ry: 8 });
-        let title = new fabric.IText('MEGA SALE 50% OFF', { left: 80, top: 90, fontSize: 36, fontFamily: 'Poppins', fill: '#FFFFFF', fontWeight: 'bold' });
-        let details = new fabric.IText('Limited Time Offer Across All Collections.\nVisit our store or order online today!', { left: 80, top: 240, fontSize: 18, fontFamily: 'Roboto', fill: '#1E293B', lineHeight: 1.5 });
-        canvas.add(header, title, details);
-      } else if (templateType === 'brochure_travel' || templateType === 'brochure_realestate') {
-        setCanvasBackground('#F1F5F9');
-        let bannerBg = new fabric.Rect({ left: 60, top: 60, width: BASE_WIDTH - 120, height: 180, fill: '#0284C7', rx: 12, ry: 12 });
-        let mainTitle = new fabric.IText('DISCOVER PARADISE', { left: 90, top: 100, fontSize: 34, fontFamily: 'Playfair Display', fill: '#FFFFFF', fontWeight: 'bold' });
-        let subText = new fabric.IText('Exclusive vacation packages & guided tours.', { left: 90, top: 160, fontSize: 16, fontFamily: 'Poppins', fill: '#E0F2FE' });
-        canvas.add(bannerBg, mainTitle, subText);
-      } else if (templateType === 'poster_concert' || templateType === 'poster_seminar') {
-        setCanvasBackground('#090D16');
-        let accentBox = new fabric.Rect({ left: 60, top: 60, width: BASE_WIDTH - 120, height: BASE_HEIGHT - 120, fill: 'transparent', stroke: '#00F5D4', strokeWidth: 4, rx: 10 });
-        let eventTitle = new fabric.IText('LIVE MUSIC NIGHT', { left: 100, top: 150, fontSize: 44, fontFamily: 'Montserrat', fill: '#FFFFFF', fontWeight: 'bold', charSpacing: 50 });
-        let eventSub = new fabric.IText('Saturday, 8:00 PM • Arena Stadium', { left: 100, top: 230, fontSize: 18, fontFamily: 'Roboto', fill: '#00F5D4' });
-        canvas.add(accentBox, eventTitle, eventSub);
-      } else if (templateType === 'banner_ecommerce' || templateType === 'banner_brand') {
-        setCanvasBackground('#0F172A');
-        let heroText = new fabric.IText('Elevate Your Digital Experience', { left: 80, top: 120, fontSize: 38, fontFamily: 'Montserrat', fill: '#FFFFFF', fontWeight: 'bold' });
-        let descText = new fabric.IText('Powerful SaaS Solutions & Modern Web Architecture.', { left: 80, top: 190, fontSize: 18, fontFamily: 'Poppins', fill: '#38BDF8' });
-        canvas.add(heroText, descText);
-      } else if (templateType === 'standee_promo' || templateType === 'standee_corporate') {
-        setCanvasBackground('#0F172A');
-        let headerBox = new fabric.Rect({ left: 60, top: 60, width: BASE_WIDTH - 120, height: 220, fill: '#FF6B00', rx: 12, ry: 12 });
-        let title = new fabric.IText('YOUR BRAND HERE', { left: 90, top: 120, fontSize: 36, fontFamily: 'Montserrat', fill: '#FFFFFF', fontWeight: 'bold' });
-        let subtitle = new fabric.IText('Special Exhibition & Launch Offer', { left: 90, top: 180, fontSize: 18, fontFamily: 'Poppins', fill: '#FFE4E6' });
-        let details = new fabric.IText('• Premium Quality Display\n• Easy Roll-Up Mechanism\n• High Durability Material', { left: 90, top: 320, fontSize: 20, fontFamily: 'Roboto', fill: '#94A3B8', lineHeight: 1.8 });
-        canvas.add(headerBox, title, subtitle, details);
-      } else if (templateType === 'menu_fine' || templateType === 'menu_cafe') {
-        setCanvasBackground('#1C1917');
-        let borderFrame = new fabric.Rect({ left: 40, top: 40, width: BASE_WIDTH - 80, height: BASE_HEIGHT - 80, fill: 'transparent', stroke: '#D97706', strokeWidth: 2 });
-        let menuTitle = new fabric.IText('GURMET MENU', { left: (BASE_WIDTH / 2) - 130, top: 80, fontSize: 32, fontFamily: 'Playfair Display', fill: '#FBBF24', fontWeight: 'bold', charSpacing: 100 });
-        let items = new fabric.IText('Artisan Espresso .................. ₹250\nSignature Truffle Pasta ......... ₹650\nLoaded Veggie Burger ........... ₹450', { left: 80, top: 180, fontSize: 18, fontFamily: 'Poppins', fill: '#E7E5E4', lineHeight: 1.8 });
-        canvas.add(borderFrame, menuTitle, items);
+        let subtitle = new fabric.IText('UI/UX ARCHITECT', { left: 80, top: 195, fontSize: 14, fontFamily: 'Montserrat', fill: '#0EA5E9', charSpacing: 100 });
+        canvas.add(title, subtitle);
       }
 
       renderPrintGuides();
@@ -1216,7 +921,7 @@
       if (currentStack.length > 0 && currentStack[currentStack.length - 1] === state) return;
 
       currentStack.push(state);
-      if (currentStack.length > 15) currentStack.shift();
+      if (currentStack.length > 10) currentStack.shift();
       redoStack[currentSide] = [];
 
       sessionStorage.setItem(`studio_history_${currentSide}`, JSON.stringify(currentStack));
@@ -1233,12 +938,11 @@
         document.getElementById('cardBgColorPicker').value = (data.backgroundColor && data.backgroundColor !== 'transparent') ? data.backgroundColor : '#ffffff';
         
         fabric.util.enlivenObjects(data.objects, (enlivenObjects) => {
-          enlivenObjects.forEach((obj) => {
-            canvas.add(obj);
-          });
+          enlivenObjects.forEach((obj) => { canvas.add(obj); });
           resizeCanvasToFitContainer();
           renderPrintGuides();
           isApplyingHistory = false;
+          canvas.calcOffset();
           canvas.renderAll();
         });
       });
@@ -1250,6 +954,7 @@
 
       const currentState = currentStack.pop();
       redoStack[currentSide].push(currentState);
+      if (redoStack[currentSide].length > 10) redoStack[currentSide].shift();
 
       const previousState = currentStack[currentStack.length - 1];
       loadCanvasState(previousState);
@@ -1263,6 +968,7 @@
 
       const nextState = currentRedoStack.pop();
       historyStack[currentSide].push(nextState);
+      if (historyStack[currentSide].length > 10) historyStack[currentSide].shift();
 
       loadCanvasState(nextState);
       hideInspector();
@@ -1384,6 +1090,25 @@
       renderPrintGuides();
     }
 
+    function alignObject(action) {
+      const activeObj = canvas.getActiveObject();
+      if (!activeObj || Object.values(guideObjects).includes(activeObj)) return;
+
+      const objWidth = activeObj.width * activeObj.scaleX;
+      const objHeight = activeObj.height * activeObj.scaleY;
+
+      if (action === 'left') activeObj.set({ left: 0 });
+      else if (action === 'center-h') activeObj.set({ left: (BASE_WIDTH - objWidth) / 2 });
+      else if (action === 'right') activeObj.set({ left: BASE_WIDTH - objWidth });
+      else if (action === 'top') activeObj.set({ top: 0 });
+      else if (action === 'center-v') activeObj.set({ top: (BASE_HEIGHT - objHeight) / 2 });
+      else if (action === 'bottom') activeObj.set({ top: BASE_HEIGHT - objHeight });
+
+      activeObj.setCoords();
+      canvas.renderAll();
+      saveHistory();
+    }
+
     function changeLayer(action) {
       const activeObject = canvas.getActiveObject();
       if (!activeObject || Object.values(guideObjects).includes(activeObject)) return;
@@ -1413,8 +1138,10 @@
           canvas.add(cloned);
         }
         canvas.setActiveObject(cloned);
+        updateInspector();
         bringGuidesToFront();
-        canvas.requestRenderAll();
+        canvas.calcOffset();
+        canvas.renderAll();
         saveHistory();
       });
     }
@@ -1422,7 +1149,7 @@
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspace');
       const maxWidth = workspace.clientWidth - 20;
-      const maxHeight = workspace.clientHeight - 80;
+      const maxHeight = workspace.clientHeight - 120;
 
       baseFitScale = Math.min(maxWidth / BASE_WIDTH, maxHeight / BASE_HEIGHT);
       currentZoomScale = baseFitScale;
@@ -1430,6 +1157,8 @@
       canvas.setDimensions({ width: BASE_WIDTH * baseFitScale, height: BASE_HEIGHT * baseFitScale });
       canvas.setZoom(baseFitScale);
       renderPrintGuides();
+      canvas.calcOffset();
+      canvas.renderAll();
     }
 
     window.addEventListener('resize', resizeCanvasToFitContainer);
@@ -1459,7 +1188,6 @@
     function switchSide(side) {
       if (currentSide === side) return;
 
-      // 1. Save current state before switching
       const currentObjects = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
       const currentState = JSON.stringify({ 
         objects: currentObjects.map(o => o.toObject()), 
@@ -1473,12 +1201,10 @@
       }
       sessionStorage.setItem(`studio_history_${currentSide}`, JSON.stringify(historyStack[currentSide]));
 
-      // 2. Change side
       currentSide = side;
       document.getElementById('btnSideA').className = side === 'front' ? 'active-side' : 'secondary';
       document.getElementById('btnSideB').className = side === 'back' ? 'active-side' : 'secondary';
 
-      // 3. Load target side state
       const targetStack = historyStack[side];
       if (targetStack && targetStack.length > 0) {
         loadCanvasState(targetStack[targetStack.length - 1]);
@@ -1500,42 +1226,48 @@
 
     function open3DPreview() {
       hideGuidesForExport();
+      
+      const currentObjects = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
+      const currentState = JSON.stringify({ 
+        objects: currentObjects.map(o => o.toObject()), 
+        backgroundColor: canvas.backgroundColor 
+      });
+      historyStack[currentSide][historyStack[currentSide].length - 1] = currentState;
+
       let frontImg = '';
       let backImg = '';
 
-      const currentData = canvas.toDataURL({ format: 'png', quality: 1, multiplier: 1 });
-      if (currentSide === 'front') frontImg = currentData;
-      else backImg = currentData;
-
-      const otherSide = currentSide === 'front' ? 'back' : 'front';
-      const otherStack = historyStack[otherSide];
-
-      const finalize3D = (otherData) => {
-        if (currentSide === 'front') backImg = otherData;
-        else frontImg = otherData;
-        render3DTextures(frontImg, backImg);
-        restoreGuidesAfterExport();
-        document.getElementById('preview3DModal').style.display = 'flex';
-        reset3DRotation();
+      const renderSideImage = (sideName, callback) => {
+        const stack = historyStack[sideName];
+        if (stack && stack.length > 0) {
+          const data = JSON.parse(stack[stack.length - 1]);
+          const tempCanvas = new fabric.StaticCanvas(null, { width: BASE_WIDTH, height: BASE_HEIGHT, backgroundColor: data.backgroundColor || '#ffffff' });
+          fabric.util.enlivenObjects(data.objects, (enlivenObjects) => {
+            enlivenObjects.forEach(o => tempCanvas.add(o));
+            tempCanvas.renderAll();
+            const imgData = tempCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 1 });
+            tempCanvas.dispose();
+            callback(imgData);
+          });
+        } else {
+          const tempCanvas = new fabric.StaticCanvas(null, { width: BASE_WIDTH, height: BASE_HEIGHT, backgroundColor: '#ffffff' });
+          tempCanvas.renderAll();
+          const imgData = tempCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 1 });
+          tempCanvas.dispose();
+          callback(imgData);
+        }
       };
 
-      if (otherStack && otherStack.length > 0) {
-        const data = JSON.parse(otherStack[otherStack.length - 1]);
-        const tempCanvas = new fabric.StaticCanvas(null, { width: BASE_WIDTH, height: BASE_HEIGHT, backgroundColor: data.backgroundColor || '#ffffff' });
-        fabric.util.enlivenObjects(data.objects, (enlivenObjects) => {
-          enlivenObjects.forEach(o => tempCanvas.add(o));
-          tempCanvas.renderAll();
-          const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 1 });
-          tempCanvas.dispose();
-          finalize3D(otherData);
+      renderSideImage('front', (fData) => {
+        frontImg = fData;
+        renderSideImage('back', (bData) => {
+          backImg = bData;
+          render3DTextures(frontImg, backImg);
+          restoreGuidesAfterExport();
+          document.getElementById('preview3DModal').style.display = 'flex';
+          reset3DRotation();
         });
-      } else {
-        const tempCanvas = new fabric.StaticCanvas(null, { width: BASE_WIDTH, height: BASE_HEIGHT, backgroundColor: '#ffffff' });
-        tempCanvas.renderAll();
-        const otherData = tempCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 1 });
-        tempCanvas.dispose();
-        finalize3D(otherData);
-      }
+      });
     }
 
     function render3DTextures(frontImg, backImg) {
@@ -1612,18 +1344,18 @@
       rotatingPointOffset: 25
     });
 
-    function addText() {
-      const text = new fabric.IText('Your Header / Text', { 
+    function addTextDirectly() {
+      const text = new fabric.IText('Your Text Here', { 
         left: (BASE_WIDTH / 2) - 100, top: (BASE_HEIGHT / 2) - 20, 
-        fontFamily: 'Poppins', fill: '#0F172A', fontSize: 22,
+        fontFamily: 'Poppins', fill: '#0F172A', fontSize: 24,
         textAlign: 'left', editable: true, selectable: true
       });
       canvas.add(text);
       canvas.setActiveObject(text);
+      updateInspector();
       bringGuidesToFront();
-      canvas.requestRenderAll();
-      text.enterEditing();
-      text.selectAll();
+      canvas.calcOffset();
+      canvas.renderAll();
     }
 
     function updateTextProperty(prop, value) {
@@ -1639,6 +1371,7 @@
       const activeObject = canvas.getActiveObject();
       if (activeObject && activeObject.isType('i-text')) {
         activeObject.set('textAlign', alignment);
+        activeObject.setCoords();
         canvas.renderAll();
         saveHistory();
       }
@@ -1673,8 +1406,10 @@
 
       canvas.add(shape);
       canvas.setActiveObject(shape);
+      updateInspector();
       bringGuidesToFront();
-      canvas.requestRenderAll();
+      canvas.calcOffset();
+      canvas.renderAll();
     }
 
     function updateShapeProperty(prop, value) {
@@ -1699,8 +1434,10 @@
             img.set({ left: (BASE_WIDTH / 2) - 70 + (index * 20), top: (BASE_HEIGHT / 2) - 70 + (index * 20) });
             canvas.add(img);
             canvas.setActiveObject(img);
+            updateInspector();
             bringGuidesToFront();
-            canvas.requestRenderAll();
+            canvas.calcOffset();
+            canvas.renderAll();
           }, { crossOrigin: 'anonymous' });
         };
         reader.readAsDataURL(file);
@@ -1723,8 +1460,10 @@
             img.set({ left: (BASE_WIDTH / 2) - 55, top: (BASE_HEIGHT / 2) - 55 });
             canvas.add(img);
             canvas.setActiveObject(img);
+            updateInspector();
             bringGuidesToFront();
-            canvas.requestRenderAll();
+            canvas.calcOffset();
+            canvas.renderAll();
           }, { crossOrigin: 'anonymous' });
         }
       }, 100);
@@ -1874,6 +1613,9 @@
         }
       }
     }
+
+    // Initialize initial canvas sizing on page load
+    resizeCanvasToFitContainer();
   </script>
 </body>
 </html>
