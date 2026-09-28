@@ -288,11 +288,11 @@
     .template-card h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--text-main); }
     .template-card p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
 
-    /* 3D Preview Modal */
-    .modal-3d { width: 760px !important; max-width: 95% !important; padding: 20px !important; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); max-height: 90vh; overflow-y: auto; }
-    .card-3d-viewport { width: 100%; height: 280px; perspective: 1500px; margin: 10px auto; display: flex; align-items: center; justify-content: center; cursor: grab; user-select: none; position: relative; touch-action: none; }
+    /* 3D Preview Modal - Fixed for Mobile Viewport */
+    .modal-3d { width: 100% !important; max-width: 520px !important; padding: 16px !important; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); max-height: 90vh; overflow-y: auto; box-sizing: border-box; }
+    .card-3d-viewport { width: 100%; height: 250px; perspective: 1200px; margin: 10px auto; display: flex; align-items: center; justify-content: center; cursor: grab; user-select: none; position: relative; touch-action: none; overflow: hidden; }
     .card-3d-viewport:active { cursor: grabbing; }
-    .card-3d-scene { width: 320px; height: 185px; position: relative; transform-style: preserve-3d; transition: transform 0.05s ease-out; }
+    .card-3d-scene { width: 280px; height: 165px; position: relative; transform-style: preserve-3d; transition: transform 0.05s ease-out; }
     .card-3d-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 8px; background-size: cover; background-position: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); }
     .card-3d-face.front { z-index: 2; transform: rotateY(0deg); }
     .card-3d-face.back { transform: rotateY(180deg); }
@@ -455,11 +455,12 @@
 
           <div style="display:flex; flex-direction:column; gap:2px;">
             <label style="font-size:0.65rem; color:var(--text-muted); font-weight:600;">Text Alignment:</label>
-            <div style="display:flex; gap:4px;">
-              <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('left')">⬅️ Left</button>
-              <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('center')">⏺️ Center</button>
-              <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('right')">➡️ Right</button>
-              <button class="secondary" style="flex:1; padding: 4px;" onclick="setTextAlignment('justify')">🔤 Justify</button>
+            <!-- Fixed grid layout for 4 items so they stay inside bounds -->
+            <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 4px;">
+              <button class="secondary" style="padding: 4px; font-size: 0.72rem;" onclick="setTextAlignment('left')">⬅️ Left</button>
+              <button class="secondary" style="padding: 4px; font-size: 0.72rem;" onclick="setTextAlignment('center')">⏺️ Center</button>
+              <button class="secondary" style="padding: 4px; font-size: 0.72rem;" onclick="setTextAlignment('right')">➡️ Right</button>
+              <button class="secondary" style="padding: 4px; font-size: 0.72rem;" onclick="setTextAlignment('justify')">🔤 Justify</button>
             </div>
           </div>
         </div>
@@ -495,12 +496,12 @@
         <div style="display:flex; flex-direction:column; gap:4px; margin-top:4px; border-top:1px solid #E2E8F0; padding-top:6px;">
           <span style="font-size:0.65rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Alignment & Snap Menu:</span>
           <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
-            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('left')">⬅️ Align Left</button>
+            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('left')">⬅️ Left</button>
             <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('center-h')">⬌ Center H</button>
-            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('right')">➡️ Align Right</button>
-            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('top')">⬆️ Align Top</button>
+            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('right')">➡️ Right</button>
+            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('top')">⬆️ Top</button>
             <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('center-v')">⬍ Center V</button>
-            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('bottom')">⬇️ Align Bottom</button>
+            <button class="secondary" style="padding: 4px; font-size:0.7rem;" onclick="alignObject('bottom')">⬇️ Bottom</button>
           </div>
         </div>
 
@@ -1276,11 +1277,11 @@
 
       const scene = document.getElementById('card3dScene');
       if (BASE_WIDTH >= BASE_HEIGHT) {
-        scene.style.width = '300px';
-        scene.style.height = '190px';
+        scene.style.width = '260px';
+        scene.style.height = '160px';
       } else {
-        scene.style.width = '200px';
-        scene.style.height = '290px';
+        scene.style.width = '170px';
+        scene.style.height = '245px';
       }
     }
 
