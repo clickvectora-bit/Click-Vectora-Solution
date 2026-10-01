@@ -1,8 +1,0 @@
-{
-    "require": {
-        "php": ">=8.0"
-    },
-    "config": {
-        "optimize-autoloader": true
-    }
-}
