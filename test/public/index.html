@@ -57,7 +57,7 @@
       </div>
       <h3 class="text-xl font-bold text-white mb-2">Design Studio Ready</h3>
       <p class="text-sm text-slate-400 mb-6 leading-relaxed">
-        Updated with precise product-based canvas sizing, dual-side 3D preview synchronization, and comprehensive ready template library!
+        Updated with product-based canvas sizing, dual-side 3D preview synchronization, and clean Express routing!
       </p>
       <button onclick="closeNoticeModal()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition">Start Designing</button>
     </div>
@@ -189,7 +189,7 @@
         <!-- 4. Format Style & Dimension Tab -->
         <div id="panel-format" class="space-y-4 hidden">
           <div>
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Dimensions (Inches)[cite: 1, 2]</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Dimensions (Inches)</h3>
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="text-[11px] text-slate-400">Width (in)</label>
@@ -202,7 +202,7 @@
             </div>
           </div>
           <div class="pt-2 border-t border-slate-700">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Print Guides & Bleed[cite: 1, 2]</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Print Guides & Bleed</h3>
             <div class="space-y-2 text-xs">
               <label class="flex items-center space-x-2 cursor-pointer">
                 <input type="checkbox" id="showBleed" checked onchange="toggleGuide('bleed')" class="rounded bg-slate-900 border-slate-700 text-indigo-600 focus:ring-0">
@@ -287,7 +287,7 @@
         </div>
       </div>
 
-      <!-- Non-Overlapping Right-Side Page Toggle Sidebar with Live Previews -->
+      <!-- Right-Side Page Toggle Sidebar with Live Previews -->
       <div id="pageToggleSidebar" class="absolute right-6 top-6 bg-slate-900/90 backdrop-blur border border-slate-700/80 rounded-2xl p-3 shadow-2xl z-20 flex flex-col space-y-3 w-52">
         <div class="flex items-center justify-between pb-2 border-b border-slate-700/60">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Pages (<span id="totalPageCount">2</span>)</span>
@@ -347,7 +347,7 @@
   <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4" id="exportModal">
     <div class="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 class="text-lg font-bold text-white">Export Design Options[cite: 1, 2]</h3>
+        <h3 class="text-lg font-bold text-white">Export Design Options</h3>
         <button onclick="closeExportModal()" class="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white text-xs">
           <i class="fa-solid fa-xmark"></i>
         </button>
@@ -374,7 +374,7 @@
       </div>
 
       <div id="pdfPageSelectionContainer" class="space-y-2 pt-2 border-t border-slate-800">
-        <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Page Range Selection[cite: 1, 2]</label>
+        <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Page Range Selection</label>
         <div class="grid grid-cols-2 gap-2 text-xs">
           <label class="flex items-center space-x-2 p-2.5 rounded-xl border border-slate-700 bg-slate-800/40 cursor-pointer">
             <input type="radio" name="pdfScope" value="all" checked class="text-indigo-600 focus:ring-0">
