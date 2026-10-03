@@ -49,12 +49,12 @@
       line-height: 1.6;
     }
 
-    /* Navigation Bar matching posterbanner.html */
+    /* Navigation Bar made smaller */
     nav {
       display: grid;
       grid-template-columns: auto 1fr auto;
       align-items: center;
-      padding: 0.5rem 5%;
+      padding: 0.25rem 3%; /* Reduced padding */
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
@@ -64,12 +64,12 @@
       box-shadow: 0 1px 3px var(--shadow);
     }
 
-    .brand-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .brand-logo img { height: 70px; width: auto; display: block; object-fit: contain; }
+    .brand-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .brand-logo img { height: 40px; width: auto; display: block; object-fit: contain; } /* Reduced logo size from 70px to 40px */
 
     .brand-title-center {
       text-align: center;
-      font-size: 1.35rem;
+      font-size: 1.15rem; /* Slightly smaller title */
       font-weight: 800;
       letter-spacing: -0.3px;
       background: linear-gradient(135deg, var(--primary), var(--cyan));
@@ -77,15 +77,15 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; justify-self: flex-end; }
-    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: color 0.3s; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; list-style: none; justify-self: flex-end; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: color 0.3s; }
     .nav-links a:hover { color: var(--cyan); }
 
     .menu-toggle {
       display: none;
       background: transparent;
       border: none;
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       color: var(--text-main);
       cursor: pointer;
       padding: 0.2rem 0.5rem;
@@ -150,9 +150,9 @@
     }
 
     @media (max-width: 900px) {
-      nav { display: flex; justify-content: space-between; padding: 0.4rem 5%; }
+      nav { display: flex; justify-content: space-between; padding: 0.3rem 4%; }
       .brand-title-center { display: none; }
-      .brand-logo img { height: 50px; }
+      .brand-logo img { height: 35px; } /* Smaller mobile logo */
       .menu-toggle { display: block; }
       .nav-links {
         position: absolute;
@@ -178,7 +178,7 @@
       }
       .nav-links a {
         display: block;
-        padding: 1rem 1.5rem;
+        padding: 0.8rem 1.2rem;
         width: 100%;
       }
     }
@@ -210,12 +210,11 @@
     </div>
   </div>
 
-  <!-- Navigation Bar with Gradient Title matching posterbanner.html -->
+  <!-- Navigation Bar with Gradient Title -->
   <nav>
     <a href="/" class="brand-logo">
       <img src="img/logo/logo.png" alt="Click Vectora Solution Logo" onerror="this.src='https://via.placeholder.com/200x80?text=Click+Vectora'">
     </a>
-    <div class="brand-title-center">Passport Photo Studio</div>
     <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
     <ul class="nav-links" id="navLinks">
       <li><a href="/">Home</a></li>
@@ -490,7 +489,6 @@
       DOM.bgStatus.classList.add('hidden');
     });
 
-    // Clear photo button functionality (Ab poora data, canvas aur preview bhi clear kar dega)
     DOM.clearPhotoBtn.addEventListener('click', () => {
       if (state.cropper) {
         state.cropper.destroy();
@@ -506,7 +504,6 @@
       state.historyIndex = -1;
       updateHistoryButtons();
 
-      // Clear Canvas and Preview / Download buttons
       DOM.canvas.width = 0;
       DOM.canvas.height = 0;
       const ctx = DOM.canvas.getContext('2d');
@@ -675,7 +672,6 @@
       DOM.viewModalBtn.disabled = false;
     });
 
-    // Pop-Up Modal Event Handlers
     DOM.viewModalBtn.addEventListener('click', () => {
       DOM.previewModalImg.src = DOM.canvas.toDataURL('image/jpeg', 0.95);
       DOM.previewModal.classList.remove('hidden');
