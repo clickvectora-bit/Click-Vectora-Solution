@@ -57,7 +57,7 @@
       </div>
       <h3 class="text-xl font-bold text-white mb-2">Design Studio Updated</h3>
       <p class="text-sm text-slate-400 mb-6 leading-relaxed">
-        Clean 3D view, image cropping tools, precise canvas sizing, working undo/redo shortcuts, and PDF export are ready!
+        Clean 3D preview without guideline artifacts, square/circle image cropping tool, and refined canvas margins with 2px bleed lines are fully active!
       </p>
       <button onclick="closeNoticeModal()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition">Start Designing</button>
     </div>
@@ -202,11 +202,11 @@
             </div>
           </div>
           <div class="pt-2 border-t border-slate-700">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Print Guides & Bleed</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Print Guides & Bleed (2px)</h3>
             <div class="space-y-2 text-xs">
               <label class="flex items-center space-x-2 cursor-pointer">
                 <input type="checkbox" id="showBleed" checked onchange="toggleGuide('bleed')" class="rounded bg-slate-900 border-slate-700 text-indigo-600 focus:ring-0">
-                <span class="text-slate-300" id="bleedLabelTxt">Show Bleed Line: ON</span>
+                <span class="text-slate-300" id="bleedLabelTxt">Show Bleed Line (2px): ON</span>
               </label>
               <label class="flex items-center space-x-2 cursor-pointer">
                 <input type="checkbox" id="showTrim" checked onchange="toggleGuide('trim')" class="rounded bg-slate-900 border-slate-700 text-indigo-600 focus:ring-0">
@@ -238,7 +238,7 @@
           <!-- Crop Image Button Container -->
           <div id="imageInspectorControls" class="space-y-2 hidden">
             <button onclick="openCropModal()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium flex items-center justify-center gap-2 transition">
-              <i class="fa-solid fa-crop"></i> Crop Uploaded Image
+              <i class="fa-solid fa-crop"></i> Crop Image (Square / Circle)
             </button>
           </div>
 
@@ -310,7 +310,7 @@
       </div>
 
       <!-- Right-Side Page Toggle Sidebar with Live Previews -->
-      <div id="pageToggleSidebar" class="absolute right-6 top-6 bg-slate-900/90 backdrop-blur border border-slate-700/80 rounded-2xl p-3 shadow-2xl z-20 flex flex-col space-y-3 w-52">
+      <div id="pageToggleSidebar" class="absolute right-6 top-6 bg-slate-900/90 backdrop-blur border border-slate-700/85 rounded-2xl p-3 shadow-2xl z-20 flex flex-col space-y-3 w-52">
         <div class="flex items-center justify-between pb-2 border-b border-slate-700/60">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Pages (<span id="totalPageCount">2</span>)</span>
           <span class="text-[10px] bg-indigo-500/20 text-indigo-400 px-1.5 py-0.5 rounded font-mono" id="activePageBadge">Page 1</span>
@@ -352,7 +352,7 @@
         </div>
         <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-900/90 backdrop-blur border border-slate-700/80 px-4 py-2 rounded-full text-xs text-slate-300 flex items-center space-x-3 shadow-xl pointer-events-none">
           <i class="fa-solid fa-hand-pointer text-indigo-400"></i>
-          <span>Click and drag to rotate in 3D space • Bleed/Trim/Safety lines excluded</span>
+          <span>Click and drag to rotate in 3D space • Print guidelines strictly hidden</span>
         </div>
       </div>
       <div class="px-6 py-3 bg-slate-800/50 flex justify-between items-center">
@@ -365,17 +365,31 @@
     </div>
   </div>
 
-  <!-- Image Crop Modal -->
+  <!-- Image Crop Modal (Square & Circle Shapes) -->
   <div id="cropModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 class="text-lg font-bold text-white">Crop Uploaded Image</h3>
+        <h3 class="text-lg font-bold text-white">Crop Image (Square / Circle)</h3>
         <button onclick="closeCropModal()" class="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white text-xs">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-      <div class="flex flex-col items-center justify-center bg-slate-950 p-4 rounded-xl border border-slate-800 overflow-hidden">
-        <canvas id="cropCanvas" class="max-w-full max-h-[300px] border border-slate-700"></canvas>
+      
+      <!-- Crop Shape Selector Buttons -->
+      <div class="flex items-center justify-center gap-3">
+        <button onclick="setCropShape('square')" id="cropShapeSquareBtn" class="px-4 py-1.5 rounded-xl border border-indigo-500 bg-indigo-500/20 text-indigo-300 text-xs font-medium flex items-center gap-2 transition">
+          <i class="fa-regular fa-square"></i> Square Crop
+        </button>
+        <button onclick="setCropShape('circle')" id="cropShapeCircleBtn" class="px-4 py-1.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 text-xs font-medium flex items-center gap-2 transition">
+          <i class="fa-regular fa-circle"></i> Circle Crop
+        </button>
+      </div>
+
+      <div class="flex flex-col items-center justify-center bg-slate-950 p-4 rounded-xl border border-slate-800 overflow-hidden relative">
+        <div class="relative inline-block">
+          <canvas id="cropCanvas" class="max-w-full max-h-[260px] border border-slate-700"></canvas>
+        </div>
+        <p class="text-[11px] text-slate-400 mt-2 text-center">Adjust image position/scale inside the crop boundary.</p>
       </div>
       <div class="flex justify-end gap-2 pt-2">
         <button onclick="closeCropModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium">Cancel</button>
@@ -469,7 +483,6 @@
     let BASE_HEIGHT = currentProduct.hPx;
     let currentZoomScale = 1;
 
-    // Robust multi-page state management with full undo/redo stacks
     let pages = [
       { id: 1, jsonState: null, bg: '#ffffff', previewUrl: '', undoStack: [], redoStack: [] },
       { id: 2, jsonState: null, bg: '#ffffff', previewUrl: '', undoStack: [], redoStack: [] }
@@ -477,13 +490,14 @@
     let activePageIndex = 0;
     let isSwitchingPage = false;
     let isPerformingAction = false;
-    let clipboardObjects = [];
 
     let showBleed = true;
     let showTrim = true;
     let showSafety = true;
     let guideObjects = { bleed: null, trim: null, safety: null };
-    const BLEED_MARGIN = 20, TRIM_MARGIN = 40, SAFETY_MARGIN = 70;
+    
+    // Exact margins with 2px bleed stroke thickness
+    const BLEED_MARGIN = 15, TRIM_MARGIN = 35, SAFETY_MARGIN = 65;
 
     let canvas = new fabric.Canvas('cardCanvas', {
       backgroundColor: '#ffffff',
@@ -586,7 +600,6 @@
       });
     }
 
-    // --- State History & Undo / Redo System ---
     function getCleanCanvasJSON() {
       const hadGuides = {};
       ['bleed', 'trim', 'safety'].forEach(k => {
@@ -609,7 +622,7 @@
       if (currentPage.undoStack.length === 0 || currentPage.undoStack[currentPage.undoStack.length - 1] !== jsonStr) {
         currentPage.undoStack.push(jsonStr);
         if (currentPage.undoStack.length > 30) currentPage.undoStack.shift();
-        currentPage.redoStack = []; // Clear redo stack on new action
+        currentPage.redoStack = [];
       }
     }
 
@@ -664,48 +677,6 @@
         if (e.key === 'Delete' || e.key === 'Backspace') {
           e.preventDefault();
           deleteSelected();
-        }
-        if (isCtrl && e.key.toLowerCase() === 'c') {
-          e.preventDefault();
-          const activeObj = canvas.getActiveObject();
-          if (activeObj && !Object.values(guideObjects).includes(activeObj)) {
-            activeObj.clone((cloned) => { clipboardObjects = [cloned]; });
-          }
-        }
-        if (isCtrl && e.key.toLowerCase() === 'x') {
-          e.preventDefault();
-          const activeObj = canvas.getActiveObject();
-          if (activeObj && !Object.values(guideObjects).includes(activeObj)) {
-            activeObj.clone((cloned) => {
-              clipboardObjects = [cloned];
-              canvas.remove(activeObj);
-              canvas.discardActiveObject();
-              canvas.renderAll();
-              saveStateToHistory();
-              updatePagePreviewThumbnail();
-            });
-          }
-        }
-        if (isCtrl && e.key.toLowerCase() === 'v') {
-          e.preventDefault();
-          if (clipboardObjects.length > 0) {
-            clipboardObjects[0].clone((cloned) => {
-              canvas.discardActiveObject();
-              cloned.set({ left: cloned.left + 20, top: cloned.top + 20, evented: true });
-              if (cloned.type === 'activeSelection') {
-                cloned.canvas = canvas;
-                cloned.forEachObject((obj) => { canvas.add(obj); });
-                cloned.setCoords();
-              } else {
-                canvas.add(cloned);
-              }
-              clipboardObjects[0] = cloned;
-              canvas.setActiveObject(cloned);
-              canvas.renderAll();
-              saveStateToHistory();
-              updatePagePreviewThumbnail();
-            });
-          }
         }
       });
     }
@@ -830,7 +801,7 @@
     }
 
     function toggleGuide(type) {
-      if (type === 'bleed') { showBleed = !showBleed; document.getElementById('bleedLabelTxt').innerText = `Show Bleed Line: ${showBleed ? 'ON' : 'OFF'}`; }
+      if (type === 'bleed') { showBleed = !showBleed; document.getElementById('bleedLabelTxt').innerText = `Show Bleed Line (2px): ${showBleed ? 'ON' : 'OFF'}`; }
       if (type === 'trim') { showTrim = !showTrim; document.getElementById('trimLabelTxt').innerText = `Show Trim Line: ${showTrim ? 'ON' : 'OFF'}`; }
       if (type === 'safety') { showSafety = !showSafety; document.getElementById('safetyLabelTxt').innerText = `Show Safe Zone: ${showSafety ? 'ON' : 'OFF'}`; }
       renderPrintGuides();
@@ -966,8 +937,23 @@
       this.value = '';
     });
 
-    // --- Image Crop Feature Implementation ---
+    // --- Image Crop Feature Implementation (Square & Circle) ---
     let cropCanvasInstance = null;
+    let targetImageToCrop = null;
+    let currentCropShape = 'square'; // 'square' or 'circle'
+
+    function setCropShape(shape) {
+      currentCropShape = shape;
+      const sqBtn = document.getElementById('cropShapeSquareBtn');
+      const ciBtn = document.getElementById('cropShapeCircleBtn');
+      if (shape === 'square') {
+        sqBtn.className = "px-4 py-1.5 rounded-xl border border-indigo-500 bg-indigo-500/20 text-indigo-300 text-xs font-medium flex items-center gap-2 transition";
+        ciBtn.className = "px-4 py-1.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 text-xs font-medium flex items-center gap-2 transition";
+      } else {
+        ciBtn.className = "px-4 py-1.5 rounded-xl border border-indigo-500 bg-indigo-500/20 text-indigo-300 text-xs font-medium flex items-center gap-2 transition";
+        sqBtn.className = "px-4 py-1.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 text-xs font-medium flex items-center gap-2 transition";
+      }
+    }
 
     function openCropModal() {
       const activeObj = canvas.getActiveObject();
@@ -975,22 +961,31 @@
         alert('Please select an uploaded image to crop.');
         return;
       }
+      targetImageToCrop = activeObj;
+      setCropShape('square');
       document.getElementById('cropModal').classList.remove('hidden');
-      const cropCanvasEl = document.getElementById('cropCanvas');
-      
+
       activeObj.clone((clonedImg) => {
-        clonedImg.set({ clipPath: null, cropX: 0, cropY: 0, width: clonedImg.width, height: clonedImg.height });
-        const imgElement = clonedImg.getElement();
+        clonedImg.set({ clipPath: null, cropX: 0, cropY: 0, scaleX: 1, scaleY: 1, angle: 0 });
+        const imgEl = clonedImg.getElement();
         
         if (cropCanvasInstance) {
           cropCanvasInstance.dispose();
         }
+
+        const maxW = 320;
+        const maxH = 240;
+        let scale = Math.min(maxW / imgEl.width, maxH / imgEl.height, 1);
+
         cropCanvasInstance = new fabric.Canvas('cropCanvas', {
-          width: Math.min(imgElement.width, 350),
-          height: Math.min(imgElement.height, 300)
+          width: imgEl.width * scale,
+          height: imgEl.height * scale
         });
+
+        clonedImg.scale(scale);
+        clonedImg.set({ left: (imgEl.width * scale) / 2, top: (imgEl.height * scale) / 2, originX: 'center', originY: 'center' });
+        
         cropCanvasInstance.add(clonedImg);
-        clonedImg.center();
         cropCanvasInstance.setActiveObject(clonedImg);
         cropCanvasInstance.renderAll();
       });
@@ -1002,11 +997,11 @@
         cropCanvasInstance.dispose();
         cropCanvasInstance = null;
       }
+      targetImageToCrop = null;
     }
 
     function applyImageCrop() {
-      const activeObj = canvas.getActiveObject();
-      if (!activeObj || !cropCanvasInstance) return;
+      if (!targetImageToCrop || !cropCanvasInstance) return;
       const croppedObj = cropCanvasInstance.getActiveObject() || cropCanvasInstance.getObjects()[0];
       if (!croppedObj) return;
 
@@ -1015,18 +1010,31 @@
         left: croppedObj.left - (croppedObj.width * croppedObj.scaleX) / 2,
         top: croppedObj.top - (croppedObj.height * croppedObj.scaleY) / 2,
         width: croppedObj.width * croppedObj.scaleX,
-        height: croppedObj.height * croppedObj.scaleY
+        height: croppedObj.height * croppedObj.scaleY,
+        multiplier: 1 / croppedObj.scaleX
       });
 
       fabric.Image.fromURL(dataUrl, (newImg) => {
+        if (currentCropShape === 'circle') {
+          const size = Math.min(newImg.width, newImg.height);
+          const circleMask = new fabric.Circle({
+            radius: size / 2,
+            originX: 'center',
+            originY: 'center',
+            left: size / 2,
+            top: size / 2
+          });
+          newImg.clipPath = circleMask;
+        }
+
         newImg.set({
-          left: activeObj.left,
-          top: activeObj.top,
-          scaleX: activeObj.scaleX,
-          scaleY: activeObj.scaleY,
-          angle: activeObj.angle
+          left: targetImageToCrop.left,
+          top: targetImageToCrop.top,
+          scaleX: targetImageToCrop.scaleX,
+          scaleY: targetImageToCrop.scaleY,
+          angle: targetImageToCrop.angle
         });
-        canvas.remove(activeObj);
+        canvas.remove(targetImageToCrop);
         canvas.add(newImg);
         canvas.setActiveObject(newImg);
         canvas.renderAll();
@@ -1162,12 +1170,11 @@
       }
     }
 
-    // --- 3D Preview State & Mouse Rotation Handler (Excluding Guides) ---
+    // --- 3D Preview State & Mouse Rotation Handler (Strictly Excluding Guides) ---
     let rotX = 0, rotY = 0, isDragging3D = false, startX = 0, startY = 0;
 
     function open3DPreview() {
-      hideGuides(); // Bleed, trim, safety lines completely removed from 3D preview
-      
+      hideGuides(); // Ensure guidelines are entirely hidden
       const currentIdx = activePageIndex;
       
       switchPage(0, () => {
@@ -1178,7 +1185,7 @@
           const backUrl = canvas.toDataURL({ format: 'png', quality: 1.0 });
           
           switchPage(currentIdx, () => {
-            showGuides();
+            showGuides(); // Restore guides back after texture generation
             document.getElementById('card3dFront').style.backgroundImage = `url(${frontUrl})`;
             document.getElementById('card3dBack').style.backgroundImage = `url(${backUrl})`;
             document.getElementById('preview3DModal').classList.remove('hidden');
