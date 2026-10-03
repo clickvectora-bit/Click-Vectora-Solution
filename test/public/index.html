@@ -57,7 +57,7 @@
       </div>
       <h3 class="text-xl font-bold text-white mb-2">Design Studio Ready</h3>
       <p class="text-sm text-slate-400 mb-6 leading-relaxed">
-        Updated with product-based canvas sizing, dual-side 3D preview synchronization, and clean Express routing!
+        Multi-page isolation fixed! Each page now maintains its independent workspace state seamlessly.
       </p>
       <button onclick="closeNoticeModal()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition">Start Designing</button>
     </div>
@@ -448,12 +448,13 @@
     let BASE_HEIGHT = currentProduct.hPx;
     let currentZoomScale = 1;
 
+    // Robust multi-page state management
     let pages = [
-      { id: 1, history: [], redo: [], bg: '#ffffff', previewUrl: '' },
-      { id: 2, history: [], redo: [], bg: '#ffffff', previewUrl: '' }
+      { id: 1, jsonState: null, bg: '#ffffff', previewUrl: '' },
+      { id: 2, jsonState: null, bg: '#ffffff', previewUrl: '' }
     ];
     let activePageIndex = 0;
-    let isApplyingHistory = false;
+    let isSwitchingPage = false;
     let clipboardObjects = [];
     let currentExportFormat = 'png';
 
@@ -526,15 +527,16 @@
       `).join('');
 
       pages = [
-        { id: 1, history: [], redo: [], bg: '#ffffff', previewUrl: '' },
-        { id: 2, history: [], redo: [], bg: '#ffffff', previewUrl: '' }
+        { id: 1, jsonState: null, bg: '#ffffff', previewUrl: '' },
+        { id: 2, jsonState: null, bg: '#ffffff', previewUrl: '' }
       ];
       activePageIndex = 0;
+      isSwitchingPage = false;
       canvas.clear();
       canvas.setDimensions({ width: BASE_WIDTH, height: BASE_HEIGHT });
       setCanvasBackground('#ffffff');
       renderPrintGuides();
-      saveHistory();
+      saveCurrentPageState();
       resizeCanvasToFitContainer();
     }
 
@@ -542,9 +544,9 @@
       canvas.on('selection:created', updateInspector);
       canvas.on('selection:updated', updateInspector);
       canvas.on('selection:cleared', hideInspector);
-      canvas.on('object:added', () => { saveHistory(); updatePagePreviewThumbnail(); });
-      canvas.on('object:modified', () => { saveHistory(); updatePagePreviewThumbnail(); });
-      canvas.on('object:removed', () => { saveHistory(); updatePagePreviewThumbnail(); });
+      canvas.on('object:added', () => { if (!isSwitchingPage) { saveCurrentPageState(); updatePagePreviewThumbnail(); } });
+      canvas.on('object:modified', () => { if (!isSwitchingPage) { saveCurrentPageState(); updatePagePreviewThumbnail(); } });
+      canvas.on('object:removed', () => { if (!isSwitchingPage) { saveCurrentPageState(); updatePagePreviewThumbnail(); } });
     }
 
     function setupKeyboardShortcuts() {
@@ -572,7 +574,7 @@
               canvas.remove(activeObj);
               canvas.discardActiveObject();
               canvas.renderAll();
-              saveHistory();
+              saveCurrentPageState();
             });
           }
         }
@@ -592,17 +594,9 @@
               clipboardObjects[0] = cloned;
               canvas.setActiveObject(cloned);
               canvas.renderAll();
-              saveHistory();
+              saveCurrentPageState();
             });
           }
-        }
-        if (isCtrl && e.key.toLowerCase() === 'z' && !e.shiftKey) {
-          e.preventDefault();
-          undo();
-        }
-        if (isCtrl && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) {
-          e.preventDefault();
-          redo();
         }
       });
     }
@@ -641,103 +635,74 @@
 
     function resetZoom() { resizeCanvasToFitContainer(); }
 
-    function saveHistory() {
-      if (isApplyingHistory) return;
-      const p = pages[activePageIndex];
+    function saveCurrentPageState() {
+      if (isSwitchingPage) return;
       const objects = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
-      const state = JSON.stringify({
+      pages[activePageIndex].jsonState = {
         objects: objects.map(o => o.toObject()),
-        bgColor: canvas.backgroundColor
-      });
-      if (p.history.length > 0 && p.history[p.history.length - 1] === state) return;
-      p.history.push(state);
-      if (p.history.length > 15) p.history.shift();
-      p.redo = [];
-      p.bg = canvas.backgroundColor;
+        background: canvas.backgroundColor
+      };
+      pages[activePageIndex].bg = canvas.backgroundColor;
     }
 
     function updatePagePreviewThumbnail() {
+      if (isSwitchingPage) return;
+      saveCurrentPageState();
       hideGuides();
       pages[activePageIndex].previewUrl = canvas.toDataURL({ format: 'png', quality: 0.3, multiplier: 0.2 });
       showGuides();
       renderPageThumbnails();
     }
 
-    function undo() {
-      const p = pages[activePageIndex];
-      if (p.history.length <= 1) return;
-      const current = p.history.pop();
-      p.redo.push(current);
-      loadPageState(p.history[p.history.length - 1]);
-    }
-
-    function redo() {
-      const p = pages[activePageIndex];
-      if (p.redo.length === 0) return;
-      const next = p.redo.pop();
-      p.history.push(next);
-      loadPageState(next);
-    }
-
-    function loadPageState(stateStr) {
-      isApplyingHistory = true;
-      const data = JSON.parse(stateStr);
-      const toRemove = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
-      canvas.remove(...toRemove);
-      canvas.setBackgroundColor(data.bgColor || '#ffffff', () => {
-        document.getElementById('cardBgColorPicker').value = data.bgColor && data.bgColor !== 'transparent' ? data.bgColor : '#ffffff';
-        pages[activePageIndex].bg = data.bgColor || '#ffffff';
-        fabric.util.enlivenObjects(data.objects, (enliven) => {
-          enliven.forEach(o => canvas.add(o));
-          renderPrintGuides();
-          isApplyingHistory = false;
-          canvas.renderAll();
-          updatePagePreviewThumbnail();
-        });
-      });
+    function updatePagePreviewThumbnailSilently(idx) {
+      hideGuides();
+      pages[idx].previewUrl = canvas.toDataURL({ format: 'png', quality: 0.3, multiplier: 0.2 });
+      showGuides();
     }
 
     function addNewPage() {
       saveCurrentPageState();
-      pages.push({ id: pages.length + 1, history: [], redo: [], bg: '#ffffff', previewUrl: '' });
+      updatePagePreviewThumbnailSilently(activePageIndex);
+      pages.push({ id: pages.length + 1, jsonState: null, bg: '#ffffff', previewUrl: '' });
       switchPage(pages.length - 1);
     }
 
-    function saveCurrentPageState() {
-      const p = pages[activePageIndex];
-      const objects = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
-      const state = JSON.stringify({
-        objects: objects.map(o => o.toObject()),
-        bgColor: canvas.backgroundColor
-      });
-      p.bg = canvas.backgroundColor;
-      if (p.history.length === 0) {
-        p.history.push(state);
-      } else {
-        p.history[p.history.length - 1] = state;
-      }
-    }
-
     function switchPage(index) {
-      if (activePageIndex === index) return;
+      if (activePageIndex === index || isSwitchingPage) return;
+      
+      // Save current active page state before leaving
       saveCurrentPageState();
+      updatePagePreviewThumbnailSilently(activePageIndex);
+
+      isSwitchingPage = true;
       activePageIndex = index;
       document.getElementById('activePageBadge').innerText = `Page ${index + 1}`;
       document.getElementById('totalPageCount').innerText = pages.length;
 
-      const p = pages[index];
+      // Remove current canvas objects (except guides)
       const toRemove = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
       canvas.remove(...toRemove);
 
-      if (p.history.length > 0) {
-        loadPageState(p.history[p.history.length - 1]);
-      } else {
-        canvas.setBackgroundColor(p.bg || '#ffffff', () => {
-          document.getElementById('cardBgColorPicker').value = p.bg && p.bg !== 'transparent' ? p.bg : '#ffffff';
+      const targetPage = pages[index];
+      const targetBg = targetPage.bg || '#ffffff';
+
+      canvas.setBackgroundColor(targetBg, () => {
+        document.getElementById('cardBgColorPicker').value = (targetBg && targetBg !== 'transparent') ? targetBg : '#ffffff';
+        
+        if (targetPage.jsonState && targetPage.jsonState.objects) {
+          fabric.util.enlivenObjects(targetPage.jsonState.objects, (enlivened) => {
+            enlivened.forEach(obj => canvas.add(obj));
+            renderPrintGuides();
+            canvas.renderAll();
+            isSwitchingPage = false;
+          }, { crossOrigin: 'anonymous' });
+        } else {
           renderPrintGuides();
-          saveHistory();
-        });
-      }
+          canvas.renderAll();
+          isSwitchingPage = false;
+        }
+      });
+
       renderPageThumbnails();
     }
 
@@ -815,7 +780,7 @@
     function setCanvasBackground(color) {
       canvas.setBackgroundColor(color, () => {
         canvas.renderAll();
-        saveHistory();
+        saveCurrentPageState();
         updatePagePreviewThumbnail();
       });
       if (color !== 'transparent') document.getElementById('cardBgColorPicker').value = color;
@@ -845,6 +810,7 @@
       canvas.setActiveObject(shape);
       updateInspector();
       canvas.renderAll();
+      saveCurrentPageState();
     }
 
     function addTextDirectly() {
@@ -856,6 +822,7 @@
       canvas.setActiveObject(text);
       updateInspector();
       canvas.renderAll();
+      saveCurrentPageState();
     }
 
     function addQRCode() {
@@ -873,6 +840,7 @@
             canvas.add(img);
             canvas.setActiveObject(img);
             canvas.renderAll();
+            saveCurrentPageState();
           }, { crossOrigin: 'anonymous' });
         }
       }, 100);
@@ -890,6 +858,7 @@
             canvas.add(img);
             canvas.setActiveObject(img);
             canvas.renderAll();
+            saveCurrentPageState();
           }, { crossOrigin: 'anonymous' });
         };
         reader.readAsDataURL(file);
@@ -898,7 +867,9 @@
     });
 
     function loadTemplate(type) {
-      canvas.clear();
+      const toRemove = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
+      canvas.remove(...toRemove);
+
       if (type === 'corporate') {
         setCanvasBackground('#ffffff');
         let rect = new fabric.Rect({ left: 30, top: 30, width: 220, height: BASE_HEIGHT - 60, fill: '#0f172a', rx: 12, ry: 12 });
@@ -925,7 +896,8 @@
         canvas.add(title);
       }
       renderPrintGuides();
-      saveHistory();
+      saveCurrentPageState();
+      updatePagePreviewThumbnail();
     }
 
     function updateInspector() {
@@ -958,7 +930,7 @@
       if (active && active.isType('i-text')) {
         active.set(prop, val);
         canvas.renderAll();
-        saveHistory();
+        saveCurrentPageState();
       }
     }
 
@@ -967,7 +939,7 @@
       if (active && !active.isType('i-text')) {
         active.set(prop, val);
         canvas.renderAll();
-        saveHistory();
+        saveCurrentPageState();
       }
     }
 
@@ -978,7 +950,7 @@
         if (style === 'italic') active.set('fontStyle', active.fontStyle === 'italic' ? 'normal' : 'italic');
         if (style === 'underline') active.set('underline', !active.underline);
         canvas.renderAll();
-        saveHistory();
+        saveCurrentPageState();
       }
     }
 
@@ -991,7 +963,7 @@
       else if (action === 'back') canvas.sendToBack(active);
       renderPrintGuides();
       canvas.renderAll();
-      saveHistory();
+      saveCurrentPageState();
     }
 
     function deleteSelected() {
@@ -1000,7 +972,7 @@
         actives.forEach(o => { if (!Object.values(guideObjects).includes(o)) canvas.remove(o); });
         canvas.discardActiveObject();
         canvas.renderAll();
-        saveHistory();
+        saveCurrentPageState();
       }
     }
 
@@ -1017,7 +989,7 @@
       switchPage(0);
       const frontUrl = canvas.toDataURL({ format: 'png', quality: 1.0 });
       
-      // Render Page 2 (Back) or fallback to Page 1
+      // Render Page 2 (Back) if available
       if (pages.length > 1) {
         switchPage(1);
       }
