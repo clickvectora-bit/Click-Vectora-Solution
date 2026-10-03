@@ -55,9 +55,9 @@
       <div class="w-16 h-16 bg-gradient-to-tr from-indigo-500/20 to-violet-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-indigo-400 text-2xl shadow-inner">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
       </div>
-      <h3 class="text-xl font-bold text-white mb-2">Design Studio Ready</h3>
+      <h3 class="text-xl font-bold text-white mb-2">Design Studio Updated</h3>
       <p class="text-sm text-slate-400 mb-6 leading-relaxed">
-        Multi-page isolation fixed! Each page now maintains its independent workspace state seamlessly.
+        Clean 3D view, image cropping tools, precise canvas sizing, working undo/redo shortcuts, and PDF export are ready!
       </p>
       <button onclick="closeNoticeModal()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition">Start Designing</button>
     </div>
@@ -105,7 +105,7 @@
       <div class="h-6 w-px bg-slate-700"></div>
       <button onclick="openExportModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium text-xs shadow-lg shadow-indigo-600/30 flex items-center space-x-2 transition transform active:scale-95">
         <i class="fa-solid fa-download"></i>
-        <span class="hidden sm:inline">Export High-Res</span>
+        <span class="hidden sm:inline">Export PDF</span>
       </button>
     </div>
   </header>
@@ -235,6 +235,13 @@
           <button onclick="deleteSelected()" class="text-rose-400 hover:text-rose-300 text-xs px-2 py-1 rounded bg-rose-500/10 transition"><i class="fa-solid fa-trash mr-1"></i>Delete</button>
         </div>
         <div id="inspectorContent" class="space-y-3 text-xs">
+          <!-- Crop Image Button Container -->
+          <div id="imageInspectorControls" class="space-y-2 hidden">
+            <button onclick="openCropModal()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium flex items-center justify-center gap-2 transition">
+              <i class="fa-solid fa-crop"></i> Crop Uploaded Image
+            </button>
+          </div>
+
           <div id="textInspectorControls" class="space-y-2 hidden">
             <div class="flex gap-2 items-center">
               <div class="flex-1">
@@ -259,16 +266,31 @@
               <button class="flex-1 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded underline" onclick="toggleStyle('underline')">U</button>
             </div>
           </div>
-          <div id="shapeInspectorControls" class="space-y-2 hidden">
+          
+          <div id="shapeInspectorControls" class="space-y-2.5 hidden">
             <div class="flex items-center justify-between">
-              <span class="text-slate-400">Fill:</span>
-              <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" class="w-8 h-8 rounded border border-slate-700 bg-transparent cursor-pointer">
+              <span class="text-slate-400">Shape Color:</span>
+              <div class="flex items-center space-x-2">
+                <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" class="w-7 h-7 rounded border border-slate-700 bg-transparent cursor-pointer">
+                <button onclick="updateShapeProperty('fill', 'transparent')" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-[10px] text-slate-300">None</button>
+              </div>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-slate-400">Border:</span>
-              <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" class="w-8 h-8 rounded border border-slate-700 bg-transparent cursor-pointer">
+              <span class="text-slate-400">Border Color:</span>
+              <div class="flex items-center space-x-2">
+                <input type="color" id="shapeBorderColor" onchange="updateShapeProperty('stroke', this.value)" class="w-7 h-7 rounded border border-slate-700 bg-transparent cursor-pointer">
+                <button onclick="updateShapeProperty('stroke', '')" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-[10px] text-slate-300">None</button>
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-slate-400">Border Size:</span>
+              <div class="flex items-center space-x-2">
+                <input type="range" id="shapeBorderWidth" min="0" max="20" value="2" oninput="updateShapeProperty('strokeWidth', parseInt(this.value))" class="w-24 accent-indigo-500">
+                <span id="shapeBorderWidthVal" class="text-slate-300 w-5 text-right font-mono text-[10px]">2px</span>
+              </div>
             </div>
           </div>
+
           <div class="grid grid-cols-4 gap-1 pt-1 border-t border-slate-800">
             <button class="py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
             <button class="py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded" onclick="changeLayer('forward')" title="Step Up">🔼</button>
@@ -282,7 +304,7 @@
     <!-- Main Workspace Area -->
     <main class="flex-1 bg-slate-950 relative flex items-center justify-center overflow-hidden" id="workspaceContainer">
       <div id="canvasViewport" class="absolute inset-0 flex items-center justify-center overflow-auto p-4 cursor-grab active:cursor-grabbing">
-        <div id="canvasWrapper" class="relative transition-transform duration-75 origin-center shadow-2xl canvas-shadow bg-white rounded-lg overflow-hidden">
+        <div id="canvasWrapper" class="relative transition-transform duration-75 origin-center shadow-2xl canvas-shadow bg-white rounded-lg overflow-hidden" style="margin: 1.5px !important;">
           <canvas id="cardCanvas"></canvas>
         </div>
       </div>
@@ -311,7 +333,7 @@
     </main>
   </div>
 
-  <!-- 3D Preview Modal -->
+  <!-- 3D Preview Modal (Clean without guides) -->
   <div id="preview3DModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-4xl h-[85vh] flex flex-col shadow-2xl overflow-hidden relative">
       <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between bg-slate-800/50">
@@ -330,7 +352,7 @@
         </div>
         <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-900/90 backdrop-blur border border-slate-700/80 px-4 py-2 rounded-full text-xs text-slate-300 flex items-center space-x-3 shadow-xl pointer-events-none">
           <i class="fa-solid fa-hand-pointer text-indigo-400"></i>
-          <span>Click and drag to rotate in 3D space • Both sides rendered</span>
+          <span>Click and drag to rotate in 3D space • Bleed/Trim/Safety lines excluded</span>
         </div>
       </div>
       <div class="px-6 py-3 bg-slate-800/50 flex justify-between items-center">
@@ -343,37 +365,36 @@
     </div>
   </div>
 
+  <!-- Image Crop Modal -->
+  <div id="cropModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <h3 class="text-lg font-bold text-white">Crop Uploaded Image</h3>
+        <button onclick="closeCropModal()" class="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="flex flex-col items-center justify-center bg-slate-950 p-4 rounded-xl border border-slate-800 overflow-hidden">
+        <canvas id="cropCanvas" class="max-w-full max-h-[300px] border border-slate-700"></canvas>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeCropModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium">Cancel</button>
+        <button onclick="applyImageCrop()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/30">Apply Crop</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Export Modal -->
   <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4" id="exportModal">
     <div class="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 class="text-lg font-bold text-white">Export Design Options</h3>
+        <h3 class="text-lg font-bold text-white">Export PDF Document</h3>
         <button onclick="closeExportModal()" class="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white text-xs">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <div class="space-y-3">
-        <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Export Format</label>
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="setExportFormat('png')" id="fmtBtn-png" class="p-3 rounded-xl border border-indigo-500 bg-indigo-500/10 text-left transition flex items-center space-x-2">
-            <i class="fa-solid fa-file-image text-indigo-400"></i>
-            <div>
-              <div class="text-xs font-bold text-white">PNG Image</div>
-              <div class="text-[10px] text-slate-400">Current page HD</div>
-            </div>
-          </button>
-          <button onclick="setExportFormat('pdf')" id="fmtBtn-pdf" class="p-3 rounded-xl border border-slate-700 bg-slate-800/60 text-left transition flex items-center space-x-2">
-            <i class="fa-solid fa-file-pdf text-rose-400"></i>
-            <div>
-              <div class="text-xs font-bold text-white">PDF Document</div>
-              <div class="text-[10px] text-slate-400">Multi-page vector</div>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <div id="pdfPageSelectionContainer" class="space-y-2 pt-2 border-t border-slate-800">
+      <div id="pdfPageSelectionContainer" class="space-y-2 pt-2">
         <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Page Range Selection</label>
         <div class="grid grid-cols-2 gap-2 text-xs">
           <label class="flex items-center space-x-2 p-2.5 rounded-xl border border-slate-700 bg-slate-800/40 cursor-pointer">
@@ -392,7 +413,7 @@
           <div class="text-xs text-slate-400">High-Resolution Fee</div>
           <div class="text-lg font-bold text-indigo-400">₹49 <span class="text-[10px] font-normal text-slate-500">(Watermark Removed)</span></div>
         </div>
-        <button onclick="initiatePayment()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/30 transition">Proceed to Pay & Download</button>
+        <button onclick="initiatePayment()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/30 transition">Proceed to Pay & Download PDF</button>
       </div>
     </div>
   </div>
@@ -448,15 +469,15 @@
     let BASE_HEIGHT = currentProduct.hPx;
     let currentZoomScale = 1;
 
-    // Robust multi-page state management
+    // Robust multi-page state management with full undo/redo stacks
     let pages = [
-      { id: 1, jsonState: null, bg: '#ffffff', previewUrl: '' },
-      { id: 2, jsonState: null, bg: '#ffffff', previewUrl: '' }
+      { id: 1, jsonState: null, bg: '#ffffff', previewUrl: '', undoStack: [], redoStack: [] },
+      { id: 2, jsonState: null, bg: '#ffffff', previewUrl: '', undoStack: [], redoStack: [] }
     ];
     let activePageIndex = 0;
     let isSwitchingPage = false;
+    let isPerformingAction = false;
     let clipboardObjects = [];
-    let currentExportFormat = 'png';
 
     let showBleed = true;
     let showTrim = true;
@@ -527,8 +548,8 @@
       `).join('');
 
       pages = [
-        { id: 1, jsonState: null, bg: '#ffffff', previewUrl: '' },
-        { id: 2, jsonState: null, bg: '#ffffff', previewUrl: '' }
+        { id: 1, jsonState: null, bg: '#ffffff', previewUrl: '', undoStack: [], redoStack: [] },
+        { id: 2, jsonState: null, bg: '#ffffff', previewUrl: '', undoStack: [], redoStack: [] }
       ];
       activePageIndex = 0;
       isSwitchingPage = false;
@@ -536,7 +557,7 @@
       canvas.setDimensions({ width: BASE_WIDTH, height: BASE_HEIGHT });
       setCanvasBackground('#ffffff');
       renderPrintGuides();
-      saveCurrentPageState();
+      saveStateToHistory();
       resizeCanvasToFitContainer();
     }
 
@@ -544,9 +565,87 @@
       canvas.on('selection:created', updateInspector);
       canvas.on('selection:updated', updateInspector);
       canvas.on('selection:cleared', hideInspector);
-      canvas.on('object:added', () => { if (!isSwitchingPage) { saveCurrentPageState(); updatePagePreviewThumbnail(); } });
-      canvas.on('object:modified', () => { if (!isSwitchingPage) { saveCurrentPageState(); updatePagePreviewThumbnail(); } });
-      canvas.on('object:removed', () => { if (!isSwitchingPage) { saveCurrentPageState(); updatePagePreviewThumbnail(); } });
+      
+      canvas.on('object:added', (e) => { 
+        if (!isSwitchingPage && !isPerformingAction && (!e || !Object.values(guideObjects).includes(e.target))) { 
+          saveStateToHistory(); 
+          updatePagePreviewThumbnail(); 
+        } 
+      });
+      canvas.on('object:modified', (e) => { 
+        if (!isSwitchingPage && !isPerformingAction && (!e || !Object.values(guideObjects).includes(e.target))) { 
+          saveStateToHistory(); 
+          updatePagePreviewThumbnail(); 
+        } 
+      });
+      canvas.on('object:removed', (e) => { 
+        if (!isSwitchingPage && !isPerformingAction && (!e || !Object.values(guideObjects).includes(e.target))) { 
+          saveStateToHistory(); 
+          updatePagePreviewThumbnail(); 
+        } 
+      });
+    }
+
+    // --- State History & Undo / Redo System ---
+    function getCleanCanvasJSON() {
+      const hadGuides = {};
+      ['bleed', 'trim', 'safety'].forEach(k => {
+        if (guideObjects[k]) {
+          canvas.remove(guideObjects[k]);
+          hadGuides[k] = guideObjects[k];
+        }
+      });
+      const json = canvas.toJSON();
+      if (hadGuides.bleed) canvas.add(hadGuides.bleed);
+      if (hadGuides.trim) canvas.add(hadGuides.trim);
+      if (hadGuides.safety) canvas.add(hadGuides.safety);
+      return JSON.stringify(json);
+    }
+
+    function saveStateToHistory() {
+      if (isSwitchingPage || isPerformingAction) return;
+      const jsonStr = getCleanCanvasJSON();
+      const currentPage = pages[activePageIndex];
+      if (currentPage.undoStack.length === 0 || currentPage.undoStack[currentPage.undoStack.length - 1] !== jsonStr) {
+        currentPage.undoStack.push(jsonStr);
+        if (currentPage.undoStack.length > 30) currentPage.undoStack.shift();
+        currentPage.redoStack = []; // Clear redo stack on new action
+      }
+    }
+
+    function undo() {
+      const page = pages[activePageIndex];
+      if (page.undoStack.length > 1) {
+        isPerformingAction = true;
+        const currentState = page.undoStack.pop();
+        page.redoStack.push(currentState);
+        const previousState = page.undoStack[page.undoStack.length - 1];
+        
+        canvas.loadFromJSON(JSON.parse(previousState), () => {
+          renderPrintGuides();
+          canvas.renderAll();
+          isPerformingAction = false;
+          updatePagePreviewThumbnail();
+          updateInspector();
+        });
+      }
+    }
+
+    function redo() {
+      const page = pages[activePageIndex];
+      if (page.redoStack.length > 0) {
+        isPerformingAction = true;
+        const nextState = page.redoStack.pop();
+        page.undoStack.push(nextState);
+        
+        canvas.loadFromJSON(JSON.parse(nextState), () => {
+          renderPrintGuides();
+          canvas.renderAll();
+          isPerformingAction = false;
+          updatePagePreviewThumbnail();
+          updateInspector();
+        });
+      }
     }
 
     function setupKeyboardShortcuts() {
@@ -554,6 +653,14 @@
         if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
         const isCtrl = e.ctrlKey || e.metaKey;
 
+        if (isCtrl && e.key.toLowerCase() === 'z') {
+          e.preventDefault();
+          undo();
+        }
+        if (isCtrl && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
+          e.preventDefault();
+          redo();
+        }
         if (e.key === 'Delete' || e.key === 'Backspace') {
           e.preventDefault();
           deleteSelected();
@@ -574,7 +681,8 @@
               canvas.remove(activeObj);
               canvas.discardActiveObject();
               canvas.renderAll();
-              saveCurrentPageState();
+              saveStateToHistory();
+              updatePagePreviewThumbnail();
             });
           }
         }
@@ -594,7 +702,8 @@
               clipboardObjects[0] = cloned;
               canvas.setActiveObject(cloned);
               canvas.renderAll();
-              saveCurrentPageState();
+              saveStateToHistory();
+              updatePagePreviewThumbnail();
             });
           }
         }
@@ -635,19 +744,8 @@
 
     function resetZoom() { resizeCanvasToFitContainer(); }
 
-    function saveCurrentPageState() {
-      if (isSwitchingPage) return;
-      const objects = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
-      pages[activePageIndex].jsonState = {
-        objects: objects.map(o => o.toObject()),
-        background: canvas.backgroundColor
-      };
-      pages[activePageIndex].bg = canvas.backgroundColor;
-    }
-
     function updatePagePreviewThumbnail() {
-      if (isSwitchingPage) return;
-      saveCurrentPageState();
+      if (isSwitchingPage || isPerformingAction) return;
       hideGuides();
       pages[activePageIndex].previewUrl = canvas.toDataURL({ format: 'png', quality: 0.3, multiplier: 0.2 });
       showGuides();
@@ -661,17 +759,17 @@
     }
 
     function addNewPage() {
-      saveCurrentPageState();
       updatePagePreviewThumbnailSilently(activePageIndex);
-      pages.push({ id: pages.length + 1, jsonState: null, bg: '#ffffff', previewUrl: '' });
+      pages.push({ id: pages.length + 1, jsonState: null, bg: '#ffffff', previewUrl: '', undoStack: [], redoStack: [] });
       switchPage(pages.length - 1);
     }
 
-    function switchPage(index) {
-      if (activePageIndex === index || isSwitchingPage) return;
+    function switchPage(index, callback) {
+      if (activePageIndex === index && !isSwitchingPage) {
+        if (callback) callback();
+        return;
+      }
       
-      // Save current active page state before leaving
-      saveCurrentPageState();
       updatePagePreviewThumbnailSilently(activePageIndex);
 
       isSwitchingPage = true;
@@ -679,31 +777,29 @@
       document.getElementById('activePageBadge').innerText = `Page ${index + 1}`;
       document.getElementById('totalPageCount').innerText = pages.length;
 
-      // Remove current canvas objects (except guides)
-      const toRemove = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
-      canvas.remove(...toRemove);
-
       const targetPage = pages[index];
-      const targetBg = targetPage.bg || '#ffffff';
 
-      canvas.setBackgroundColor(targetBg, () => {
-        document.getElementById('cardBgColorPicker').value = (targetBg && targetBg !== 'transparent') ? targetBg : '#ffffff';
-        
-        if (targetPage.jsonState && targetPage.jsonState.objects) {
-          fabric.util.enlivenObjects(targetPage.jsonState.objects, (enlivened) => {
-            enlivened.forEach(obj => canvas.add(obj));
-            renderPrintGuides();
-            canvas.renderAll();
-            isSwitchingPage = false;
-          }, { crossOrigin: 'anonymous' });
-        } else {
+      if (targetPage.undoStack.length > 0) {
+        const lastState = targetPage.undoStack[targetPage.undoStack.length - 1];
+        canvas.loadFromJSON(JSON.parse(lastState), () => {
           renderPrintGuides();
           canvas.renderAll();
           isSwitchingPage = false;
-        }
-      });
-
-      renderPageThumbnails();
+          renderPageThumbnails();
+          if (callback) callback();
+        });
+      } else {
+        canvas.clear();
+        canvas.setBackgroundColor(targetPage.bg || '#ffffff', () => {
+          document.getElementById('cardBgColorPicker').value = '#ffffff';
+          renderPrintGuides();
+          canvas.renderAll();
+          saveStateToHistory();
+          isSwitchingPage = false;
+          renderPageThumbnails();
+          if (callback) callback();
+        });
+      }
     }
 
     function renderPageThumbnails() {
@@ -780,7 +876,7 @@
     function setCanvasBackground(color) {
       canvas.setBackgroundColor(color, () => {
         canvas.renderAll();
-        saveCurrentPageState();
+        saveStateToHistory();
         updatePagePreviewThumbnail();
       });
       if (color !== 'transparent') document.getElementById('cardBgColorPicker').value = color;
@@ -810,7 +906,8 @@
       canvas.setActiveObject(shape);
       updateInspector();
       canvas.renderAll();
-      saveCurrentPageState();
+      saveStateToHistory();
+      updatePagePreviewThumbnail();
     }
 
     function addTextDirectly() {
@@ -822,7 +919,8 @@
       canvas.setActiveObject(text);
       updateInspector();
       canvas.renderAll();
-      saveCurrentPageState();
+      saveStateToHistory();
+      updatePagePreviewThumbnail();
     }
 
     function addQRCode() {
@@ -840,7 +938,8 @@
             canvas.add(img);
             canvas.setActiveObject(img);
             canvas.renderAll();
-            saveCurrentPageState();
+            saveStateToHistory();
+            updatePagePreviewThumbnail();
           }, { crossOrigin: 'anonymous' });
         }
       }, 100);
@@ -858,13 +957,84 @@
             canvas.add(img);
             canvas.setActiveObject(img);
             canvas.renderAll();
-            saveCurrentPageState();
+            saveStateToHistory();
+            updatePagePreviewThumbnail();
           }, { crossOrigin: 'anonymous' });
         };
         reader.readAsDataURL(file);
       });
       this.value = '';
     });
+
+    // --- Image Crop Feature Implementation ---
+    let cropCanvasInstance = null;
+
+    function openCropModal() {
+      const activeObj = canvas.getActiveObject();
+      if (!activeObj || !activeObj.isType('image')) {
+        alert('Please select an uploaded image to crop.');
+        return;
+      }
+      document.getElementById('cropModal').classList.remove('hidden');
+      const cropCanvasEl = document.getElementById('cropCanvas');
+      
+      activeObj.clone((clonedImg) => {
+        clonedImg.set({ clipPath: null, cropX: 0, cropY: 0, width: clonedImg.width, height: clonedImg.height });
+        const imgElement = clonedImg.getElement();
+        
+        if (cropCanvasInstance) {
+          cropCanvasInstance.dispose();
+        }
+        cropCanvasInstance = new fabric.Canvas('cropCanvas', {
+          width: Math.min(imgElement.width, 350),
+          height: Math.min(imgElement.height, 300)
+        });
+        cropCanvasInstance.add(clonedImg);
+        clonedImg.center();
+        cropCanvasInstance.setActiveObject(clonedImg);
+        cropCanvasInstance.renderAll();
+      });
+    }
+
+    function closeCropModal() {
+      document.getElementById('cropModal').classList.add('hidden');
+      if (cropCanvasInstance) {
+        cropCanvasInstance.dispose();
+        cropCanvasInstance = null;
+      }
+    }
+
+    function applyImageCrop() {
+      const activeObj = canvas.getActiveObject();
+      if (!activeObj || !cropCanvasInstance) return;
+      const croppedObj = cropCanvasInstance.getActiveObject() || cropCanvasInstance.getObjects()[0];
+      if (!croppedObj) return;
+
+      const dataUrl = cropCanvasInstance.toDataURL({
+        format: 'png',
+        left: croppedObj.left - (croppedObj.width * croppedObj.scaleX) / 2,
+        top: croppedObj.top - (croppedObj.height * croppedObj.scaleY) / 2,
+        width: croppedObj.width * croppedObj.scaleX,
+        height: croppedObj.height * croppedObj.scaleY
+      });
+
+      fabric.Image.fromURL(dataUrl, (newImg) => {
+        newImg.set({
+          left: activeObj.left,
+          top: activeObj.top,
+          scaleX: activeObj.scaleX,
+          scaleY: activeObj.scaleY,
+          angle: activeObj.angle
+        });
+        canvas.remove(activeObj);
+        canvas.add(newImg);
+        canvas.setActiveObject(newImg);
+        canvas.renderAll();
+        saveStateToHistory();
+        updatePagePreviewThumbnail();
+        closeCropModal();
+      }, { crossOrigin: 'anonymous' });
+    }
 
     function loadTemplate(type) {
       const toRemove = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
@@ -896,7 +1066,7 @@
         canvas.add(title);
       }
       renderPrintGuides();
-      saveCurrentPageState();
+      saveStateToHistory();
       updatePagePreviewThumbnail();
     }
 
@@ -909,17 +1079,29 @@
       document.getElementById('objectInspector').classList.remove('hidden');
       const textCtrl = document.getElementById('textInspectorControls');
       const shapeCtrl = document.getElementById('shapeInspectorControls');
+      const imgCtrl = document.getElementById('imageInspectorControls');
+
+      textCtrl.classList.add('hidden');
+      shapeCtrl.classList.add('hidden');
+      imgCtrl.classList.add('hidden');
 
       if (active.isType('i-text')) {
         textCtrl.classList.remove('hidden');
-        shapeCtrl.classList.add('hidden');
         document.getElementById('textColor').value = active.fill || '#0f172a';
         document.getElementById('fontFamily').value = active.fontFamily || 'Poppins';
+      } else if (active.isType('image')) {
+        imgCtrl.classList.remove('hidden');
       } else {
-        textCtrl.classList.add('hidden');
         shapeCtrl.classList.remove('hidden');
-        if (active.fill && active.fill !== 'transparent') document.getElementById('shapeFillColor').value = active.fill;
-        if (active.stroke) document.getElementById('shapeBorderColor').value = active.stroke;
+        if (active.fill && active.fill !== 'transparent') {
+          document.getElementById('shapeFillColor').value = active.fill;
+        }
+        if (active.stroke) {
+          document.getElementById('shapeBorderColor').value = active.stroke;
+        }
+        const bWidth = active.strokeWidth !== undefined ? active.strokeWidth : 2;
+        document.getElementById('shapeBorderWidth').value = bWidth;
+        document.getElementById('shapeBorderWidthVal').innerText = `${bWidth}px`;
       }
     }
 
@@ -930,7 +1112,7 @@
       if (active && active.isType('i-text')) {
         active.set(prop, val);
         canvas.renderAll();
-        saveCurrentPageState();
+        saveStateToHistory();
       }
     }
 
@@ -938,8 +1120,11 @@
       const active = canvas.getActiveObject();
       if (active && !active.isType('i-text')) {
         active.set(prop, val);
+        if (prop === 'strokeWidth') {
+          document.getElementById('shapeBorderWidthVal').innerText = `${val}px`;
+        }
         canvas.renderAll();
-        saveCurrentPageState();
+        saveStateToHistory();
       }
     }
 
@@ -950,7 +1135,7 @@
         if (style === 'italic') active.set('fontStyle', active.fontStyle === 'italic' ? 'normal' : 'italic');
         if (style === 'underline') active.set('underline', !active.underline);
         canvas.renderAll();
-        saveCurrentPageState();
+        saveStateToHistory();
       }
     }
 
@@ -963,7 +1148,7 @@
       else if (action === 'back') canvas.sendToBack(active);
       renderPrintGuides();
       canvas.renderAll();
-      saveCurrentPageState();
+      saveStateToHistory();
     }
 
     function deleteSelected() {
@@ -972,37 +1157,35 @@
         actives.forEach(o => { if (!Object.values(guideObjects).includes(o)) canvas.remove(o); });
         canvas.discardActiveObject();
         canvas.renderAll();
-        saveCurrentPageState();
+        saveStateToHistory();
+        updatePagePreviewThumbnail();
       }
     }
 
-    // --- 3D Preview State & Mouse Rotation Handler ---
+    // --- 3D Preview State & Mouse Rotation Handler (Excluding Guides) ---
     let rotX = 0, rotY = 0, isDragging3D = false, startX = 0, startY = 0;
 
     function open3DPreview() {
-      saveCurrentPageState();
-      hideGuides();
+      hideGuides(); // Bleed, trim, safety lines completely removed from 3D preview
       
       const currentIdx = activePageIndex;
       
-      // Render Page 1 (Front)
-      switchPage(0);
-      const frontUrl = canvas.toDataURL({ format: 'png', quality: 1.0 });
-      
-      // Render Page 2 (Back) if available
-      if (pages.length > 1) {
-        switchPage(1);
-      }
-      const backUrl = canvas.toDataURL({ format: 'png', quality: 1.0 });
-      
-      // Restore previous active page
-      switchPage(currentIdx);
-      showGuides();
-
-      document.getElementById('card3dFront').style.backgroundImage = `url(${frontUrl})`;
-      document.getElementById('card3dBack').style.backgroundImage = `url(${backUrl})`;
-      document.getElementById('preview3DModal').classList.remove('hidden');
-      reset3DRotation();
+      switchPage(0, () => {
+        const frontUrl = canvas.toDataURL({ format: 'png', quality: 1.0 });
+        
+        const secondPageIdx = pages.length > 1 ? 1 : 0;
+        switchPage(secondPageIdx, () => {
+          const backUrl = canvas.toDataURL({ format: 'png', quality: 1.0 });
+          
+          switchPage(currentIdx, () => {
+            showGuides();
+            document.getElementById('card3dFront').style.backgroundImage = `url(${frontUrl})`;
+            document.getElementById('card3dBack').style.backgroundImage = `url(${backUrl})`;
+            document.getElementById('preview3DModal').classList.remove('hidden');
+            reset3DRotation();
+          });
+        });
+      });
     }
 
     function close3DModal() { document.getElementById('preview3DModal').classList.add('hidden'); }
@@ -1030,19 +1213,11 @@
 
     // --- Export & Payment Functions ---
     function openExportModal() {
-      saveCurrentPageState();
       document.getElementById('exportModal').classList.remove('hidden');
     }
 
     function closeExportModal() {
       document.getElementById('exportModal').classList.add('hidden');
-    }
-
-    function setExportFormat(fmt) {
-      currentExportFormat = fmt;
-      document.getElementById('fmtBtn-png').className = fmt === 'png' ? 'p-3 rounded-xl border border-indigo-500 bg-indigo-500/10 text-left transition flex items-center space-x-2' : 'p-3 rounded-xl border border-slate-700 bg-slate-800/65 text-left transition flex items-center space-x-2';
-      document.getElementById('fmtBtn-pdf').className = fmt === 'pdf' ? 'p-3 rounded-xl border border-indigo-500 bg-indigo-500/10 text-left transition flex items-center space-x-2' : 'p-3 rounded-xl border border-slate-700 bg-slate-800/65 text-left transition flex items-center space-x-2';
-      document.getElementById('pdfPageSelectionContainer').style.display = fmt === 'pdf' ? 'block' : 'none';
     }
 
     function initiatePayment() {
@@ -1051,7 +1226,7 @@
         amount: 4900,
         currency: "INR",
         name: "Click Vectora Solution",
-        description: "High-Resolution Design HD Export",
+        description: "High-Resolution PDF Export",
         image: "/img/logo/logo1.png",
         handler: function (response) {
           closeExportModal();
@@ -1065,39 +1240,37 @@
     }
 
     function executeExportDownload() {
-      saveCurrentPageState();
       hideGuides();
       const currentIdx = activePageIndex;
+      const scope = document.querySelector('input[name="pdfScope"]:checked').value;
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation: BASE_WIDTH > BASE_HEIGHT ? 'landscape' : 'portrait',
+        unit: 'px',
+        format: [BASE_WIDTH, BASE_HEIGHT]
+      });
 
-      if (currentExportFormat === 'png') {
-        const dataUrl = canvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 });
-        const link = document.createElement('a');
-        link.download = `Vectora_Design_Page_${activePageIndex + 1}.png`;
-        link.href = dataUrl;
-        link.click();
-      } else {
-        const scope = document.querySelector('input[name="pdfScope"]:checked').value;
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({
-          orientation: BASE_WIDTH > BASE_HEIGHT ? 'landscape' : 'portrait',
-          unit: 'px',
-          format: [BASE_WIDTH, BASE_HEIGHT]
-        });
-
-        const pagesToExport = scope === 'current' ? [activePageIndex] : pages.map((_, i) => i);
-        
-        pagesToExport.forEach((pageIdx, index) => {
-          if (index > 0) pdf.addPage([BASE_WIDTH, BASE_HEIGHT]);
-          switchPage(pageIdx);
+      const pagesToExport = scope === 'current' ? [activePageIndex] : pages.map((_, i) => i);
+      
+      let exportIndex = 0;
+      function exportNextPage() {
+        if (exportIndex >= pagesToExport.length) {
+          switchPage(currentIdx, () => {
+            pdf.save('Vectora_Studio_Multipage_Document.pdf');
+            showGuides();
+          });
+          return;
+        }
+        const pageIdx = pagesToExport[exportIndex];
+        switchPage(pageIdx, () => {
+          if (exportIndex > 0) pdf.addPage([BASE_WIDTH, BASE_HEIGHT]);
           const imgData = canvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 });
           pdf.addImage(imgData, 'PNG', 0, 0, BASE_WIDTH, BASE_HEIGHT);
+          exportIndex++;
+          exportNextPage();
         });
-
-        switchPage(currentIdx);
-        pdf.save('Vectora_Studio_Multipage_Document.pdf');
       }
-
-      showGuides();
+      exportNextPage();
     }
   </script>
 </body>
