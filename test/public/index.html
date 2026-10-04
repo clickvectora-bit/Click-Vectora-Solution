@@ -60,7 +60,7 @@
       </div>
       <h3 class="text-xl font-bold text-slate-900 mb-2">Design Studio Updated</h3>
       <p class="text-sm text-slate-600 mb-6 leading-relaxed">
-        Upload option moved to top and Image cropping functionality fully fixed[cite: 4]!
+        3D Preview and PDF Export restricted strictly up to the bleed line bounds!
       </p>
       <button onclick="closeNoticeModal()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/20 transition">Start Designing</button>
     </div>
@@ -141,7 +141,7 @@
           </div>
         </div>
 
-        <!-- 2. Elements Tab (Upload moved to top) -->
+        <!-- 2. Elements Tab -->
         <div id="panel-elements" class="space-y-4 hidden">
           <div>
             <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Upload Image</h3>
@@ -381,7 +381,7 @@
         </div>
         <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur border border-slate-200 px-4 py-2 rounded-full text-xs text-slate-700 flex items-center space-x-3 shadow-xl pointer-events-none">
           <i class="fa-solid fa-hand-pointer text-indigo-600"></i>
-          <span>Click and drag to rotate in 3D space • Print guidelines strictly hidden</span>
+          <span>Click and drag to rotate in 3D space • Preview limited to bleed line</span>
         </div>
       </div>
       <div class="px-6 py-3 bg-slate-50 flex justify-between items-center border-t border-slate-200">
@@ -721,14 +721,30 @@
     function updatePagePreviewThumbnail() {
       if (isSwitchingPage || isPerformingAction) return;
       hideGuides();
-      pages[activePageIndex].previewUrl = canvas.toDataURL({ format: 'png', quality: 0.3, multiplier: 0.2 });
+      pages[activePageIndex].previewUrl = canvas.toDataURL({ 
+        format: 'png', 
+        quality: 0.3, 
+        multiplier: 0.2,
+        left: BLEED_MARGIN,
+        top: BLEED_MARGIN,
+        width: BASE_WIDTH - (BLEED_MARGIN * 2),
+        height: BASE_HEIGHT - (BLEED_MARGIN * 2)
+      });
       showGuides();
       renderPageThumbnails();
     }
 
     function updatePagePreviewThumbnailSilently(idx) {
       hideGuides();
-      pages[idx].previewUrl = canvas.toDataURL({ format: 'png', quality: 0.3, multiplier: 0.2 });
+      pages[idx].previewUrl = canvas.toDataURL({ 
+        format: 'png', 
+        quality: 0.3, 
+        multiplier: 0.2,
+        left: BLEED_MARGIN,
+        top: BLEED_MARGIN,
+        width: BASE_WIDTH - (BLEED_MARGIN * 2),
+        height: BASE_HEIGHT - (BLEED_MARGIN * 2)
+      });
       showGuides();
     }
 
@@ -980,7 +996,6 @@
       this.value = '';
     });
 
-    // --- Fixed Image Crop Logic ---
     let cropCanvasInstance = null;
     let targetImageToCrop = null;
     let currentCropShape = 'square';
@@ -1198,16 +1213,16 @@
 
     function open3DPreview() {
       const currentIdx = activePageIndex;
-      const maxW = 400;
-      const maxH = 300;
-      const ratio = BASE_WIDTH / BASE_HEIGHT;
+      const bleedWidth = BASE_WIDTH - (BLEED_MARGIN * 2);
+      const bleedHeight = BASE_HEIGHT - (BLEED_MARGIN * 2);
+      const ratio = bleedWidth / bleedHeight;
       let sceneW, sceneH;
       if (ratio >= 1) {
-        sceneW = maxW;
-        sceneH = Math.round(maxW / ratio);
+        sceneW = 400;
+        sceneH = Math.round(400 / ratio);
       } else {
-        sceneH = maxH;
-        sceneW = Math.round(maxH * ratio);
+        sceneH = 300;
+        sceneW = Math.round(300 * ratio);
       }
 
       const sceneEl = document.getElementById('card3dScene');
@@ -1216,11 +1231,27 @@
       
       switchPage(0, () => {
         hideGuides();
-        const frontUrl = canvas.toDataURL({ format: 'png', quality: 1.0 });
+        // Capture ONLY up to the bleed line bounds
+        const frontUrl = canvas.toDataURL({ 
+          format: 'png', 
+          quality: 1.0,
+          left: BLEED_MARGIN,
+          top: BLEED_MARGIN,
+          width: bleedWidth,
+          height: bleedHeight
+        });
         const secondPageIdx = pages.length > 1 ? 1 : 0;
         switchPage(secondPageIdx, () => {
           hideGuides();
-          const backUrl = canvas.toDataURL({ format: 'png', quality: 1.0 });
+          // Capture ONLY up to the bleed line bounds
+          const backUrl = canvas.toDataURL({ 
+            format: 'png', 
+            quality: 1.0,
+            left: BLEED_MARGIN,
+            top: BLEED_MARGIN,
+            width: bleedWidth,
+            height: bleedHeight
+          });
           switchPage(currentIdx, () => {
             showGuides();
             document.getElementById('card3dFront').style.backgroundImage = `url(${frontUrl})`;
@@ -1286,11 +1317,15 @@
       hideGuides();
       const currentIdx = activePageIndex;
       const scope = document.querySelector('input[name="pdfScope"]:checked').value;
+      
+      const bleedWidth = BASE_WIDTH - (BLEED_MARGIN * 2);
+      const bleedHeight = BASE_HEIGHT - (BLEED_MARGIN * 2);
+
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF({
-        orientation: BASE_WIDTH > BASE_HEIGHT ? 'landscape' : 'portrait',
+        orientation: bleedWidth > bleedHeight ? 'landscape' : 'portrait',
         unit: 'px',
-        format: [BASE_WIDTH, BASE_HEIGHT]
+        format: [bleedWidth, bleedHeight]
       });
 
       const pagesToExport = scope === 'current' ? [activePageIndex] : pages.map((_, i) => i);
@@ -1305,9 +1340,20 @@
         }
         const pageIdx = pagesToExport[exportIndex];
         switchPage(pageIdx, () => {
-          if (exportIndex > 0) pdf.addPage([BASE_WIDTH, BASE_HEIGHT]);
-          const imgData = canvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 2 });
-          pdf.addImage(imgData, 'PNG', 0, 0, BASE_WIDTH, BASE_HEIGHT);
+          if (exportIndex > 0) pdf.addPage([bleedWidth, bleedHeight]);
+          
+          // Crop and export ONLY up to the bleed line bounds
+          const imgData = canvas.toDataURL({ 
+            format: 'png', 
+            quality: 1.0, 
+            multiplier: 2,
+            left: BLEED_MARGIN,
+            top: BLEED_MARGIN,
+            width: bleedWidth,
+            height: bleedHeight
+          });
+          
+          pdf.addImage(imgData, 'PNG', 0, 0, bleedWidth, bleedHeight);
           exportIndex++;
           exportNextPage();
         });
