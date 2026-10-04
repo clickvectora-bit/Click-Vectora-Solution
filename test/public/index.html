@@ -48,7 +48,6 @@
 
         .brand-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .brand-logo img { height: 40px; width: auto; display: block; object-fit: contain; }
-
     </style>
 </head>
 <body class="h-full bg-slate-100 text-slate-800 flex flex-col overflow-hidden">
@@ -61,7 +60,7 @@
       </div>
       <h3 class="text-xl font-bold text-slate-900 mb-2">Design Studio Updated</h3>
       <p class="text-sm text-slate-600 mb-6 leading-relaxed">
-        Clean light UI theme inspired by your logo, 3D preview without guideline artifacts, square/circle image cropping, and refined canvas margins are fully active!
+        Upload option moved to top and Image cropping functionality fully fixed[cite: 4]!
       </p>
       <button onclick="closeNoticeModal()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/20 transition">Start Designing</button>
     </div>
@@ -140,36 +139,55 @@
             <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Select Product Type</h3>
             <div class="grid grid-cols-2 gap-2" id="productGrid"></div>
           </div>
-          <div class="pt-2 border-t border-slate-200">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Ready Templates</h3>
-            <div class="space-y-2" id="templateListContainer"></div>
-          </div>
         </div>
 
-        <!-- 2. Elements Tab -->
+        <!-- 2. Elements Tab (Upload moved to top) -->
         <div id="panel-elements" class="space-y-4 hidden">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Add Shapes & Assets</h3>
-          <div class="grid grid-cols-3 gap-2">
-            <button onclick="addShape('rect')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
-              <i class="fa-regular fa-square text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Rectangle</span>
-            </button>
-            <button onclick="addShape('circle')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
-              <i class="fa-regular fa-circle text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Circle</span>
-            </button>
-            <button onclick="addShape('triangle')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
-              <i class="fa-solid fa-mountain text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Triangle</span>
-            </button>
-            <button onclick="addShape('line')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
-              <i class="fa-solid fa-minus text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Divider</span>
-            </button>
-          </div>
-          <div class="pt-3 border-t border-slate-200">
+          <div>
             <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Upload Image</h3>
             <button onclick="document.getElementById('imageLoader').click()" class="w-full py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 transition flex items-center justify-center gap-2">
               <i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i> Browse Local Image
             </button>
             <input type="file" id="imageLoader" accept="image/*" multiple class="hidden">
           </div>
+
+          <div class="pt-3 border-t border-slate-200">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Add Shapes & Assets</h3>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="addShape('rect')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
+                <i class="fa-regular fa-square text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Rectangle</span>
+              </button>
+              <button onclick="addShape('circle')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
+                <i class="fa-regular fa-circle text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Circle</span>
+              </button>
+              <button onclick="addShape('triangle')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
+                <i class="fa-solid fa-mountain text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Triangle</span>
+              </button>
+              <button onclick="addShape('line')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
+                <i class="fa-solid fa-minus text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Divider</span>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Vector Icons Section -->
+          <div class="pt-3 border-t border-slate-200">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Vector Icons & Contact Details</h3>
+            <div class="grid grid-cols-4 gap-2">
+              <button onclick="addVectorIcon('fa-phone')" title="Phone" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition text-indigo-600 text-lg"><i class="fa-solid fa-phone"></i></button>
+              <button onclick="addVectorIcon('fa-envelope')" title="Email" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition text-indigo-600 text-lg"><i class="fa-solid fa-envelope"></i></button>
+              <button onclick="addVectorIcon('fa-location-dot')" title="Location" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition text-indigo-600 text-lg"><i class="fa-solid fa-location-dot"></i></button>
+              <button onclick="addVectorIcon('fa-globe')" title="Website" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition text-indigo-600 text-lg"><i class="fa-solid fa-globe"></i></button>
+              <button onclick="addVectorIcon('fa-star')" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition text-indigo-600 text-lg"><i class="fa-solid fa-star"></i></button>
+              <button onclick="addVectorIcon('fa-heart')" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition text-indigo-600 text-lg"><i class="fa-solid fa-heart"></i></button>
+              <button onclick="addVectorIcon('fa-shield-halved')" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition text-indigo-600 text-lg"><i class="fa-solid fa-shield-halved"></i></button>
+              <button onclick="addVectorIcon('fa-bolt')" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition text-indigo-600 text-lg"><i class="fa-solid fa-bolt"></i></button>
+              <button onclick="addVectorIcon('fa-circle-check')" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition text-indigo-600 text-lg"><i class="fa-solid fa-circle-check"></i></button>
+              <button onclick="addVectorIcon('fa-fire')" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition text-indigo-600 text-lg"><i class="fa-solid fa-fire"></i></button>
+              <button onclick="addVectorIcon('fa-trophy')" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition text-indigo-600 text-lg"><i class="fa-solid fa-trophy"></i></button>
+              <button onclick="addVectorIcon('fa-gem')" class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition text-indigo-600 text-lg"><i class="fa-solid fa-gem"></i></button>
+            </div>
+          </div>
+
           <div class="pt-3 border-t border-slate-200">
             <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">QR Code Generator</h3>
             <div class="flex gap-2">
@@ -245,6 +263,14 @@
             </button>
           </div>
 
+          <!-- Icon Color Change Inspector -->
+          <div id="iconInspectorControls" class="space-y-2 hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-600">Icon Color:</span>
+              <input type="color" id="iconColorPicker" onchange="updateIconColor(this.value)" class="w-8 h-8 rounded border border-slate-200 bg-transparent cursor-pointer">
+            </div>
+          </div>
+
           <div id="textInspectorControls" class="space-y-2 hidden">
             <div class="flex gap-2 items-center">
               <div class="flex-1">
@@ -306,8 +332,8 @@
 
     <!-- Main Workspace Area -->
     <main class="flex-1 bg-slate-200/70 checkerboard relative flex items-center justify-center overflow-hidden" id="workspaceContainer">
-      <div id="canvasViewport" class="absolute inset-0 flex items-center justify-center overflow-auto p-4 cursor-grab active:cursor-grabbing">
-        <div id="canvasWrapper" class="relative transition-transform duration-75 origin-center shadow-2xl canvas-shadow bg-white rounded-lg overflow-hidden border border-slate-300" style="margin: 1.5px !important;">
+      <div id="canvasViewport" class="absolute inset-0 flex items-center justify-center overflow-auto p-1 cursor-grab active:cursor-grabbing">
+        <div id="canvasWrapper" class="relative transition-transform duration-75 origin-center shadow-2xl canvas-shadow bg-white rounded-lg overflow-hidden border border-slate-300" style="margin: 1px !important;">
           <canvas id="cardCanvas"></canvas>
         </div>
       </div>
@@ -315,7 +341,7 @@
       <!-- Right-Side Page Toggle Sidebar with Live Previews -->
       <div id="pageToggleSidebar" class="absolute right-6 top-6 bg-white/90 backdrop-blur border border-slate-200 rounded-2xl p-3 shadow-xl z-20 flex flex-col space-y-3 w-52">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Pages (<span id="totalPageCount">2</span>)</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Pages (<span id="totalPageCount">2</span>/4)</span>
           <span class="text-[10px] bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded font-mono border border-indigo-100" id="activePageBadge">Page 1</span>
         </div>
         
@@ -323,7 +349,7 @@
         <div id="pageThumbnailsList" class="space-y-2 max-h-80 overflow-y-auto no-scrollbar pr-1"></div>
 
         <button onclick="addNewPage()" class="w-full py-2 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 rounded-xl text-xs font-medium flex items-center justify-center space-x-1.5 transition">
-          <i class="fa-solid fa-plus text-[10px]"></i><span>Add New Page</span>
+          <i class="fa-solid fa-plus text-[10px]"></i><span>Add New Page (Max 4)</span>
         </button>
       </div>
 
@@ -336,7 +362,7 @@
     </main>
   </div>
 
-  <!-- 3D Preview Modal (Clean without guides) -->
+  <!-- 3D Preview Modal -->
   <div id="preview3DModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-4xl h-[85vh] flex flex-col shadow-2xl overflow-hidden relative">
       <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -349,7 +375,7 @@
         </button>
       </div>
       <div id="threeContainer" class="flex-1 relative cursor-grab active:cursor-grabbing bg-slate-950 flex items-center justify-center overflow-hidden border-b border-slate-800">
-        <div class="card-3d-scene w-[360px] h-[220px] relative transition-transform duration-75" id="card3dScene" style="transform-style: preserve-3d;">
+        <div class="card-3d-scene relative transition-transform duration-75" id="card3dScene" style="transform-style: preserve-3d; width: 360px; height: 220px;">
           <div class="absolute inset-0 rounded-xl bg-cover bg-center shadow-2xl border border-slate-700/50" id="card3dFront" style="backface-visibility: hidden;"></div>
           <div class="absolute inset-0 rounded-xl bg-cover bg-center shadow-2xl border border-slate-700/50" id="card3dBack" style="backface-visibility: hidden; transform: rotateY(180deg);"></div>
         </div>
@@ -368,7 +394,7 @@
     </div>
   </div>
 
-  <!-- Image Crop Modal (Square & Circle Shapes) -->
+  <!-- Image Crop Modal -->
   <div id="cropModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -378,7 +404,6 @@
         </button>
       </div>
       
-      <!-- Crop Shape Selector Buttons -->
       <div class="flex items-center justify-center gap-3">
         <button onclick="setCropShape('square')" id="cropShapeSquareBtn" class="px-4 py-1.5 rounded-xl border border-indigo-600 bg-indigo-50 text-indigo-700 text-xs font-medium flex items-center gap-2 transition">
           <i class="fa-regular fa-square"></i> Square Crop
@@ -436,9 +461,9 @@
   </div>
 
   <div id="qrcode-hidden" class="hidden"></div>
+  <div id="iconHelperContainer" class="hidden" style="font-family: 'Font Awesome 6 Free'; font-weight: 900;"></div>
 
   <script>
-    // --- Product & Format Catalog ---
     const PRODUCTS = [
       { id: 'card', name: 'Business Card', wPx: 1050, hPx: 600, wIn: 3.5, hIn: 2.0, icon: 'fa-address-card' },
       { id: 'flyer', name: 'Flyer (A4)', wPx: 840, hPx: 1188, wIn: 8.27, hIn: 11.69, icon: 'fa-file-lines' },
@@ -449,36 +474,19 @@
       { id: 'menu', name: 'Restaurant Menu', wPx: 850, hPx: 1400, wIn: 8.5, hIn: 14.0, icon: 'fa-utensils' }
     ];
 
-    const PRODUCT_TEMPLATES = {
-      card: [
-        { id: 'corporate', title: '🏢 Corporate Minimal', desc: 'Clean executive layout' },
-        { id: 'creative', title: '🎨 Creative Studio', desc: 'Vibrant color branding' },
-        { id: 'modern_dark', title: '🌑 Dark Executive', desc: 'Sleek luxury gold & dark' }
-      ],
-      flyer: [
-        { id: 'sale', title: '🏷️ Mega Sale Event', desc: 'High-impact discount promo' },
-        { id: 'realestate', title: '🏡 Modern Property', desc: 'Real estate listing flyer' }
-      ],
-      brochure: [
-        { id: 'travel', title: '✈️ Tourism & Travel', desc: 'Scenic multi-panel layout' },
-        { id: 'corporate_brochure', title: '📊 Business Services', desc: 'Professional tri-fold overview' }
-      ],
-      poster: [
-        { id: 'concert', title: '🎸 Music Concert', desc: 'Bold energetic visual' },
-        { id: 'fitness', title: '💪 Gym & Fitness', desc: 'Motivating athletic poster' }
-      ],
-      banner: [
-        { id: 'ecommerce', title: '🛍️ E-Commerce Promo', desc: 'Wide web store banner' },
-        { id: 'festival', title: '🎉 Festive Celebration', desc: 'Vibrant celebratory banner' }
-      ],
-      standee: [
-        { id: 'promo', title: '📢 Roll-Up Standee', desc: 'Vertical exhibition display' },
-        { id: 'hospital', title: '🏥 Health & Clinic', desc: 'Professional healthcare standee' }
-      ],
-      menu: [
-        { id: 'fine', title: '🍷 Fine Dining Menu', desc: 'Elegant classic typography' },
-        { id: 'cafe', title: '☕ Artisan Coffee & Cafe', desc: 'Warm cozy coffee shop menu' }
-      ]
+    const FA_ICON_UNICODES = {
+      'fa-phone': '\uf095',
+      'fa-envelope': '\uf0e0',
+      'fa-location-dot': '\uf3c5',
+      'fa-globe': '\uf0ac',
+      'fa-star': '\uf005',
+      'fa-heart': '\uf004',
+      'fa-shield-halved': '\uf3ed',
+      'fa-bolt': '\uf0e7',
+      'fa-circle-check': '\uf058',
+      'fa-fire': '\uf06d',
+      'fa-trophy': '\uf091',
+      'fa-gem': '\uf3a5'
     };
 
     let currentProduct = PRODUCTS[0];
@@ -499,7 +507,6 @@
     let showSafety = true;
     let guideObjects = { bleed: null, trim: null, safety: null };
     
-    // Exact margins with 2px bleed stroke thickness
     const BLEED_MARGIN = 15, TRIM_MARGIN = 35, SAFETY_MARGIN = 65;
 
     let canvas = new fabric.Canvas('cardCanvas', {
@@ -556,14 +563,6 @@
       document.getElementById('canvasDimLabel').innerText = `${BASE_WIDTH} × ${BASE_HEIGHT} px (${found.wIn}" × ${found.hIn}" - ${found.name})`;
       document.getElementById('productTypeLabel').innerText = found.name;
 
-      const tList = PRODUCT_TEMPLATES[id] || [{ id: 'default', title: '✨ Modern Minimal', desc: 'Clean layout' }];
-      document.getElementById('templateListContainer').innerHTML = tList.map(t => `
-        <button onclick="loadTemplate('${t.id}')" class="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:border-indigo-500 text-left transition">
-          <div class="text-xs font-medium text-slate-900">${t.title}</div>
-          <div class="text-[10px] text-slate-500">${t.desc}</div>
-        </button>
-      `).join('');
-
       pages = [
         { id: 1, jsonState: null, bg: '#ffffff', previewUrl: '', undoStack: [], redoStack: [] },
         { id: 2, jsonState: null, bg: '#ffffff', previewUrl: '', undoStack: [], redoStack: [] }
@@ -576,6 +575,7 @@
       renderPrintGuides();
       saveStateToHistory();
       resizeCanvasToFitContainer();
+      renderPageThumbnails();
     }
 
     function setupCanvasListeners() {
@@ -611,7 +611,7 @@
           hadGuides[k] = guideObjects[k];
         }
       });
-      const json = canvas.toJSON();
+      const json = canvas.toJSON(['isVectorIcon', 'faClass', 'src']);
       if (hadGuides.bleed) canvas.add(hadGuides.bleed);
       if (hadGuides.trim) canvas.add(hadGuides.trim);
       if (hadGuides.safety) canvas.add(hadGuides.safety);
@@ -733,6 +733,10 @@
     }
 
     function addNewPage() {
+      if (pages.length >= 4) {
+        alert('Maximum limit reached! You can add up to 4 pages only.');
+        return;
+      }
       updatePagePreviewThumbnailSilently(activePageIndex);
       pages.push({ id: pages.length + 1, jsonState: null, bg: '#ffffff', previewUrl: '', undoStack: [], redoStack: [] });
       switchPage(pages.length - 1);
@@ -797,10 +801,16 @@
     }
 
     function deletePage(idx) {
-      if (pages.length <= 1) return;
+      if (pages.length <= 1) {
+        alert('You must have at least one page.');
+        return;
+      }
       pages.splice(idx, 1);
-      if (activePageIndex >= pages.length) activePageIndex = pages.length - 1;
+      if (activePageIndex >= pages.length) {
+        activePageIndex = pages.length - 1;
+      }
       switchPage(activePageIndex);
+      renderPageThumbnails();
     }
 
     function toggleGuide(type) {
@@ -884,6 +894,35 @@
       updatePagePreviewThumbnail();
     }
 
+    function addVectorIcon(iconClass) {
+      const unicodeChar = FA_ICON_UNICODES[iconClass] || '\uf005';
+      const iconText = new fabric.Text(unicodeChar, {
+        left: BASE_WIDTH / 2 - 30,
+        top: BASE_HEIGHT / 2 - 30,
+        fontFamily: 'Font Awesome 6 Free',
+        fontWeight: '900',
+        fontSize: 60,
+        fill: '#4f46e5',
+        isVectorIcon: true,
+        faClass: iconClass
+      });
+      canvas.add(iconText);
+      canvas.setActiveObject(iconText);
+      updateInspector();
+      canvas.renderAll();
+      saveStateToHistory();
+      updatePagePreviewThumbnail();
+    }
+
+    function updateIconColor(color) {
+      const active = canvas.getActiveObject();
+      if (active && active.isVectorIcon) {
+        active.set('fill', color);
+        canvas.renderAll();
+        saveStateToHistory();
+      }
+    }
+
     function addTextDirectly() {
       const text = new fabric.IText('Click to Edit Text', {
         left: BASE_WIDTH / 2 - 100, top: BASE_HEIGHT / 2 - 20,
@@ -908,7 +947,7 @@
         if (imgTag) {
           fabric.Image.fromURL(imgTag.src, (img) => {
             img.scaleToWidth(120);
-            img.set({ left: BASE_WIDTH / 2 - 60, top: BASE_HEIGHT / 2 - 60 });
+            img.set({ left: BASE_WIDTH / 2 - 60, top: BASE_HEIGHT / 2 - 60, src: imgTag.src });
             canvas.add(img);
             canvas.setActiveObject(img);
             canvas.renderAll();
@@ -925,9 +964,10 @@
       Array.from(files).forEach((file, idx) => {
         const reader = new FileReader();
         reader.onload = function(evt) {
-          fabric.Image.fromURL(evt.target.result, (img) => {
+          const imgSrc = evt.target.result;
+          fabric.Image.fromURL(imgSrc, (img) => {
             img.scaleToWidth(150);
-            img.set({ left: BASE_WIDTH / 2 - 75 + (idx * 20), top: BASE_HEIGHT / 2 - 75 + (idx * 20) });
+            img.set({ left: BASE_WIDTH / 2 - 75 + (idx * 20), top: BASE_HEIGHT / 2 - 75 + (idx * 20), src: imgSrc });
             canvas.add(img);
             canvas.setActiveObject(img);
             canvas.renderAll();
@@ -940,10 +980,10 @@
       this.value = '';
     });
 
-    // --- Image Crop Feature Implementation (Square & Circle) ---
+    // --- Fixed Image Crop Logic ---
     let cropCanvasInstance = null;
     let targetImageToCrop = null;
-    let currentCropShape = 'square'; // 'square' or 'circle'
+    let currentCropShape = 'square';
 
     function setCropShape(shape) {
       currentCropShape = shape;
@@ -968,30 +1008,39 @@
       setCropShape('square');
       document.getElementById('cropModal').classList.remove('hidden');
 
-      activeObj.clone((clonedImg) => {
-        clonedImg.set({ clipPath: null, cropX: 0, cropY: 0, scaleX: 1, scaleY: 1, angle: 0 });
-        const imgEl = clonedImg.getElement();
-        
+      const imgSrc = activeObj.get('src') || (activeObj.getElement() ? activeObj.getElement().src : null);
+      if (!imgSrc) {
+        alert('Unable to load image for cropping.');
+        closeCropModal();
+        return;
+      }
+
+      fabric.Image.fromURL(imgSrc, (clonedImg) => {
         if (cropCanvasInstance) {
           cropCanvasInstance.dispose();
         }
 
         const maxW = 320;
         const maxH = 240;
-        let scale = Math.min(maxW / imgEl.width, maxH / imgEl.height, 1);
+        let scale = Math.min(maxW / clonedImg.width, maxH / clonedImg.height, 1);
 
         cropCanvasInstance = new fabric.Canvas('cropCanvas', {
-          width: imgEl.width * scale,
-          height: imgEl.height * scale
+          width: clonedImg.width * scale,
+          height: clonedImg.height * scale
         });
 
         clonedImg.scale(scale);
-        clonedImg.set({ left: (imgEl.width * scale) / 2, top: (imgEl.height * scale) / 2, originX: 'center', originY: 'center' });
+        clonedImg.set({ 
+          left: (clonedImg.width * scale) / 2, 
+          top: (clonedImg.height * scale) / 2, 
+          originX: 'center', 
+          originY: 'center' 
+        });
         
         cropCanvasInstance.add(clonedImg);
         cropCanvasInstance.setActiveObject(clonedImg);
         cropCanvasInstance.renderAll();
-      });
+      }, { crossOrigin: 'anonymous' });
     }
 
     function closeCropModal() {
@@ -1035,7 +1084,8 @@
           top: targetImageToCrop.top,
           scaleX: targetImageToCrop.scaleX,
           scaleY: targetImageToCrop.scaleY,
-          angle: targetImageToCrop.angle
+          angle: targetImageToCrop.angle,
+          src: dataUrl
         });
         canvas.remove(targetImageToCrop);
         canvas.add(newImg);
@@ -1045,40 +1095,6 @@
         updatePagePreviewThumbnail();
         closeCropModal();
       }, { crossOrigin: 'anonymous' });
-    }
-
-    function loadTemplate(type) {
-      const toRemove = canvas.getObjects().filter(o => !Object.values(guideObjects).includes(o));
-      canvas.remove(...toRemove);
-
-      if (type === 'corporate') {
-        setCanvasBackground('#ffffff');
-        let rect = new fabric.Rect({ left: 30, top: 30, width: 220, height: BASE_HEIGHT - 60, fill: '#0f172a', rx: 12, ry: 12 });
-        let title = new fabric.IText('JOHN DOE', { left: 280, top: 100, fontSize: 32, fontFamily: 'Poppins', fill: '#0f172a', fontWeight: 'bold' });
-        let sub = new fabric.IText('Chief Executive Officer', { left: 280, top: 150, fontSize: 16, fontFamily: 'Poppins', fill: '#64748b' });
-        canvas.add(rect, title, sub);
-      } else if (type === 'creative') {
-        setCanvasBackground('#fff7ed');
-        let rect = new fabric.Rect({ left: 0, top: 0, width: BASE_WIDTH, height: 140, fill: '#f97316' });
-        let title = new fabric.IText('CREATIVE STUDIO', { left: 50, top: 50, fontSize: 36, fontFamily: 'Poppins', fill: '#ffffff', fontWeight: 'bold' });
-        canvas.add(rect, title);
-      } else if (type === 'modern_dark') {
-        setCanvasBackground('#090d16');
-        let title = new fabric.IText('LUXURY BRAND', { left: BASE_WIDTH / 2 - 180, top: BASE_HEIGHT / 2 - 40, fontSize: 34, fontFamily: 'Cinzel', fill: '#d4af37', fontWeight: 'bold' });
-        let sub = new fabric.IText('PREMIUM SOLUTIONS', { left: BASE_WIDTH / 2 - 120, top: BASE_HEIGHT / 2 + 10, fontSize: 14, fontFamily: 'Montserrat', fill: '#94a3b8' });
-        canvas.add(title, sub);
-      } else if (type === 'sale') {
-        setCanvasBackground('#ef4444');
-        let title = new fabric.IText('MEGA SALE 50% OFF', { left: BASE_WIDTH / 2 - 250, top: BASE_HEIGHT / 2 - 50, fontSize: 42, fontFamily: 'Bebas Neue', fill: '#ffffff' });
-        canvas.add(title);
-      } else {
-        setCanvasBackground('#ffffff');
-        let title = new fabric.IText('DESIGN TEMPLATE', { left: BASE_WIDTH / 2 - 150, top: BASE_HEIGHT / 2 - 30, fontSize: 28, fontFamily: 'Poppins', fill: '#4f46e5', fontWeight: 'bold' });
-        canvas.add(title);
-      }
-      renderPrintGuides();
-      saveStateToHistory();
-      updatePagePreviewThumbnail();
     }
 
     function updateInspector() {
@@ -1091,12 +1107,17 @@
       const textCtrl = document.getElementById('textInspectorControls');
       const shapeCtrl = document.getElementById('shapeInspectorControls');
       const imgCtrl = document.getElementById('imageInspectorControls');
+      const iconCtrl = document.getElementById('iconInspectorControls');
 
       textCtrl.classList.add('hidden');
       shapeCtrl.classList.add('hidden');
       imgCtrl.classList.add('hidden');
+      iconCtrl.classList.add('hidden');
 
-      if (active.isType('i-text')) {
+      if (active.isVectorIcon) {
+        iconCtrl.classList.remove('hidden');
+        document.getElementById('iconColorPicker').value = active.fill || '#4f46e5';
+      } else if (active.isType('i-text')) {
         textCtrl.classList.remove('hidden');
         document.getElementById('textColor').value = active.fill || '#0f172a';
         document.getElementById('fontFamily').value = active.fontFamily || 'Poppins';
@@ -1173,22 +1194,35 @@
       }
     }
 
-    // --- 3D Preview State & Mouse Rotation Handler (Strictly Excluding Guides) ---
     let rotX = 0, rotY = 0, isDragging3D = false, startX = 0, startY = 0;
 
     function open3DPreview() {
-      hideGuides(); // Ensure guidelines are entirely hidden
       const currentIdx = activePageIndex;
+      const maxW = 400;
+      const maxH = 300;
+      const ratio = BASE_WIDTH / BASE_HEIGHT;
+      let sceneW, sceneH;
+      if (ratio >= 1) {
+        sceneW = maxW;
+        sceneH = Math.round(maxW / ratio);
+      } else {
+        sceneH = maxH;
+        sceneW = Math.round(maxH * ratio);
+      }
+
+      const sceneEl = document.getElementById('card3dScene');
+      sceneEl.style.width = `${sceneW}px`;
+      sceneEl.style.height = `${sceneH}px`;
       
       switchPage(0, () => {
+        hideGuides();
         const frontUrl = canvas.toDataURL({ format: 'png', quality: 1.0 });
-        
         const secondPageIdx = pages.length > 1 ? 1 : 0;
         switchPage(secondPageIdx, () => {
+          hideGuides();
           const backUrl = canvas.toDataURL({ format: 'png', quality: 1.0 });
-          
           switchPage(currentIdx, () => {
-            showGuides(); // Restore guides back after texture generation
+            showGuides();
             document.getElementById('card3dFront').style.backgroundImage = `url(${frontUrl})`;
             document.getElementById('card3dBack').style.backgroundImage = `url(${backUrl})`;
             document.getElementById('preview3DModal').classList.remove('hidden');
@@ -1221,7 +1255,6 @@
     });
     window.addEventListener('mouseup', () => { isDragging3D = false; });
 
-    // --- Export & Payment Functions ---
     function openExportModal() {
       document.getElementById('exportModal').classList.remove('hidden');
     }
@@ -1261,7 +1294,6 @@
       });
 
       const pagesToExport = scope === 'current' ? [activePageIndex] : pages.map((_, i) => i);
-      
       let exportIndex = 0;
       function exportNextPage() {
         if (exportIndex >= pagesToExport.length) {
