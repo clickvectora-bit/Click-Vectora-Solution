@@ -52,17 +52,17 @@
 </head>
 <body class="h-full bg-slate-100 text-slate-800 flex flex-col overflow-hidden">
 
-  <!-- Notice Modal -->
-  <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" id="noticeModal">
-    <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-6 text-center shadow-2xl relative">
-      <div class="w-16 h-16 bg-gradient-to-tr from-indigo-500/10 to-violet-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-indigo-600 text-2xl shadow-inner">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
+  <!-- Custom Alert / Toast Modal for Data Validation -->
+  <div id="validationAlertModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl relative">
+      <div id="validationAlertIcon" class="w-14 h-14 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-3 text-indigo-600 text-xl shadow-inner">
+        <i class="fa-solid fa-circle-exclamation"></i>
       </div>
-      <h3 class="text-xl font-bold text-slate-900 mb-2">Design Studio Updated</h3>
-      <p class="text-sm text-slate-600 mb-6 leading-relaxed">
-        Mobile view and touch controls have been successfully optimized!
+      <h3 id="validationAlertTitle" class="text-lg font-bold text-slate-900 mb-1">Notice</h3>
+      <p id="validationAlertMessage" class="text-xs text-slate-600 mb-5 leading-relaxed">
+        Validation message goes here.
       </p>
-      <button onclick="closeNoticeModal()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/20 transition">Start Designing</button>
+      <button onclick="closeValidationAlert()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-indigo-600/20 transition">OK</button>
     </div>
   </div>
 
@@ -541,8 +541,15 @@
       window.addEventListener('resize', resizeCanvasToFitContainer);
     };
 
-    function closeNoticeModal() {
-      document.getElementById('noticeModal').style.display = 'none';
+    // Custom Validation Alert Helper
+    function showValidationAlert(title, message) {
+      document.getElementById('validationAlertTitle').innerText = title;
+      document.getElementById('validationAlertMessage').innerText = message;
+      document.getElementById('validationAlertModal').classList.remove('hidden');
+    }
+
+    function closeValidationAlert() {
+      document.getElementById('validationAlertModal').classList.add('hidden');
     }
 
     function toggleMobileSidebar() {
@@ -775,7 +782,7 @@
 
     function addNewPage() {
       if (pages.length >= 4) {
-        alert('Maximum limit reached! You can add up to 4 pages only.');
+        showValidationAlert('Page Limit Reached', 'Maximum limit reached! You can add up to 4 pages only.');
         return;
       }
       updatePagePreviewThumbnailSilently(activePageIndex);
@@ -842,7 +849,7 @@
 
     function deletePage(idx) {
       if (pages.length <= 1) {
-        alert('You must have at least one page.');
+        showValidationAlert('Action Restricted', 'You must have at least one page.');
         return;
       }
       pages.splice(idx, 1);
@@ -978,7 +985,10 @@
 
     function addQRCode() {
       const val = document.getElementById('qrInput').value.trim();
-      if (!val) return alert('Please enter URL or text for QR code');
+      if (!val) {
+        showValidationAlert('Missing Input', 'Please enter URL or text for QR code');
+        return;
+      }
       const container = document.getElementById('qrcode-hidden');
       container.innerHTML = '';
       new QRCode(container, { text: val, width: 150, height: 150 });
@@ -1040,7 +1050,7 @@
     function openCropModal() {
       const activeObj = canvas.getActiveObject();
       if (!activeObj || !activeObj.isType('image')) {
-        alert('Please select an uploaded image to crop.');
+        showValidationAlert('Selection Required', 'Please select an uploaded image to crop.');
         return;
       }
       targetImageToCrop = activeObj;
@@ -1049,7 +1059,7 @@
 
       const imgSrc = activeObj.get('src') || (activeObj.getElement() ? activeObj.getElement().src : null);
       if (!imgSrc) {
-        alert('Unable to load image for cropping.');
+        showValidationAlert('Error', 'Unable to load image for cropping.');
         closeCropModal();
         return;
       }
