@@ -222,6 +222,8 @@
               <span>Add Text Line</span><i class="fa-solid fa-plus text-xs text-indigo-600"></i>
             </button>
           </div>
+          <!-- Dynamic Textboxes Container -->
+          <div id="textInputsContainer" class="space-y-3 pt-2"></div>
         </div>
 
         <!-- 4. Format Style & Dimension Tab -->
@@ -607,6 +609,7 @@
       saveStateToHistory();
       resizeCanvasToFitContainer();
       renderPageThumbnails();
+      document.getElementById('textInputsContainer').innerHTML = '';
     }
 
     function setupCanvasListeners() {
@@ -971,7 +974,8 @@
     }
 
     function addTextDirectly() {
-      const text = new fabric.IText('Click to Edit Text', {
+      const initialText = 'Click to Edit Text';
+      const text = new fabric.IText(initialText, {
         left: BASE_WIDTH / 2 - 100, top: BASE_HEIGHT / 2 - 20,
         fontFamily: 'Poppins', fill: '#0f172a', fontSize: 24, fontWeight: 'bold'
       });
@@ -981,6 +985,28 @@
       canvas.renderAll();
       saveStateToHistory();
       updatePagePreviewThumbnail();
+
+      // Add a live textbox right below Add Text Line button
+      const container = document.getElementById('textInputsContainer');
+      const inputWrapper = document.createElement('div');
+      inputWrapper.className = "flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl p-2";
+      
+      const textInput = document.createElement('input');
+      textInput.type = "text";
+      textInput.value = initialText;
+      textInput.className = "flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500";
+      
+      // Live update listener
+      textInput.addEventListener('input', (e) => {
+        text.set('text', e.target.value);
+        canvas.renderAll();
+        saveStateToHistory();
+        updatePagePreviewThumbnail();
+      });
+
+      // Remove button if desired or keep sync
+      inputWrapper.appendChild(textInput);
+      container.prepend(inputWrapper);
     }
 
     function addQRCode() {
