@@ -1,33 +1,28 @@
 const express = require('express');
 const path = require('path');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware setup
+// Middleware for parsing JSON and static assets
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve static files from the current directory
-app.use(express.static(path.join(__dirname)));
-
-// --- Your Application Routes ---
+// Routes
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'studio/index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'studio.html'));
 });
 
-app.get('/api/data', (req, res) => {
-  res.json({ message: 'Here is your data!' });
+app.get('/studio', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'studio.html'));
 });
 
-// --- Catch-all 404 Route ---
-app.all('/{ *path }', (req, res) => {
-  res.status(404).json({ 
-    error: 'Not Found', 
-    path: req.originalUrl 
-  });
+// Fallback error-handling for Express 5 routing
+app.use((req, res) => {
+    res.status(404).send("Page not found - Click Vectora Solution");
 });
 
-// Start server
 app.listen(PORT, () => {
-  console.log(`Server is running smoothly on http://localhost:${PORT}`);
-});
+    console.log(`Server is running live on port ${PORT}`);
+});3
