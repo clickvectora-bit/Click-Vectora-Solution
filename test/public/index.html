@@ -60,7 +60,7 @@
       </div>
       <h3 class="text-xl font-bold text-slate-900 mb-2">Design Studio Updated</h3>
       <p class="text-sm text-slate-600 mb-6 leading-relaxed">
-        3D Preview and PDF Export restricted strictly up to the bleed line bounds!
+        Mobile view and touch controls have been successfully optimized!
       </p>
       <button onclick="closeNoticeModal()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/20 transition">Start Designing</button>
     </div>
@@ -68,26 +68,31 @@
 
   <!-- Header Navigation -->
   <header class="h-16 bg-white border-b border-slate-200 px-4 flex items-center justify-between z-30 shrink-0 shadow-sm">
-    <div class="flex items-center space-x-6">
+    <div class="flex items-center space-x-3 sm:space-x-6">
+      <!-- Mobile Sidebar Toggle Button -->
+      <button onclick="toggleMobileSidebar()" class="md:hidden p-2 text-slate-600 hover:text-slate-900 focus:outline-none">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+
       <a href="/" class="flex items-center space-x-2">
         <div class="brand-logo">
           <img src="/img/logo/logo.png" alt="Logo" class="h-6 w-auto object-contain" onerror="this.outerHTML='<i class=\'fa-solid fa-pen-nib text-white text-sm\'></i>'">
         </div>
       </a>
       <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
-      <div class="flex items-center space-x-1 bg-slate-50 p-1 rounded-lg border border-slate-200">
+      <div class="hidden sm:flex items-center space-x-1 bg-slate-50 p-1 rounded-lg border border-slate-200">
         <button onclick="undo()" title="Undo (Ctrl+Z)" class="p-1.5 hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition text-xs flex items-center gap-1">
-          <i class="fa-solid fa-rotate-left"></i> <span class="hidden md:inline">Undo</span>
+          <i class="fa-solid fa-rotate-left"></i> <span>Undo</span>
         </button>
         <div class="w-px h-4 bg-slate-200"></div>
         <button onclick="redo()" title="Redo (Ctrl+Y)" class="p-1.5 hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition text-xs flex items-center gap-1">
-          <span class="hidden md:inline">Redo</span> <i class="fa-solid fa-rotate-right"></i>
+          <span>Redo</span> <i class="fa-solid fa-rotate-right"></i>
         </button>
       </div>
     </div>
 
     <!-- Center: Zoom controls -->
-    <div class="flex items-center space-x-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 shadow-inner">
+    <div class="hidden md:flex items-center space-x-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 shadow-inner">
       <button onclick="zoomCanvas(-0.1)" title="Zoom Out" class="w-7 h-7 flex items-center justify-center hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition">
         <i class="fa-solid fa-magnifying-glass-minus text-xs"></i>
       </button>
@@ -99,15 +104,15 @@
     </div>
 
     <!-- Right: 3D Preview, Export, and Action Controls -->
-    <div class="flex items-center space-x-3">
-      <button onclick="open3DPreview()" class="px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-medium text-xs shadow-md shadow-indigo-500/20 flex items-center space-x-2 transition transform active:scale-95">
+    <div class="flex items-center space-x-2 sm:space-x-3">
+      <button onclick="open3DPreview()" class="px-2.5 sm:px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-medium text-xs shadow-md shadow-indigo-500/20 flex items-center space-x-1.5 sm:space-x-2 transition transform active:scale-95">
         <i class="fa-solid fa-cube animate-pulse"></i>
-        <span>3D Preview</span>
+        <span class="hidden xs:inline">3D</span>
       </button>
       <div class="h-6 w-px bg-slate-200"></div>
-      <button onclick="openExportModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium text-xs shadow-md shadow-indigo-600/20 flex items-center space-x-2 transition transform active:scale-95">
+      <button onclick="openExportModal()" class="px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium text-xs shadow-md shadow-indigo-600/20 flex items-center space-x-1.5 sm:space-x-2 transition transform active:scale-95">
         <i class="fa-solid fa-download"></i>
-        <span class="hidden sm:inline">Export PDF</span>
+        <span>Export</span>
       </button>
     </div>
   </header>
@@ -115,8 +120,20 @@
   <!-- App Layout Container -->
   <div class="flex-1 flex overflow-hidden relative">
 
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="mobileBackdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/40 z-30 hidden md:hidden"></div>
+
     <!-- Left Sidebar: Tools & Properties -->
-    <aside class="w-80 bg-white border-r border-slate-200 flex flex-col z-20 shrink-0 shadow-sm">
+    <aside id="leftSidebar" class="fixed md:relative inset-y-0 left-0 w-80 bg-white border-r border-slate-200 flex flex-col z-40 shrink-0 shadow-sm transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+      
+      <!-- Mobile Close Header -->
+      <div class="flex md:hidden items-center justify-between p-4 border-b border-slate-200 bg-slate-50">
+        <span class="font-bold text-sm text-slate-800">Design Tools</span>
+        <button onclick="toggleMobileSidebar()" class="p-1 text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
       <div class="grid grid-cols-4 border-b border-slate-200 text-xs font-medium text-slate-500">
         <button onclick="switchTab('templates')" id="tab-templates" class="py-3 flex flex-col items-center justify-center border-b-2 border-indigo-600 text-indigo-600 bg-slate-50 transition">
           <i class="fa-solid fa-layer-group mb-1 text-sm"></i><span>Products</span>
@@ -339,22 +356,22 @@
       </div>
 
       <!-- Right-Side Page Toggle Sidebar with Live Previews -->
-      <div id="pageToggleSidebar" class="absolute right-6 top-6 bg-white/90 backdrop-blur border border-slate-200 rounded-2xl p-3 shadow-xl z-20 flex flex-col space-y-3 w-52">
+      <div id="pageToggleSidebar" class="absolute right-3 sm:right-6 top-3 sm:top-6 bg-white/90 backdrop-blur border border-slate-200 rounded-2xl p-2.5 sm:p-3 shadow-xl z-20 flex flex-col space-y-3 w-44 sm:w-52">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Pages (<span id="totalPageCount">2</span>/4)</span>
           <span class="text-[10px] bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded font-mono border border-indigo-100" id="activePageBadge">Page 1</span>
         </div>
         
         <!-- Live Thumbnail List Container -->
-        <div id="pageThumbnailsList" class="space-y-2 max-h-80 overflow-y-auto no-scrollbar pr-1"></div>
+        <div id="pageThumbnailsList" class="space-y-2 max-h-48 sm:max-h-80 overflow-y-auto no-scrollbar pr-1"></div>
 
         <button onclick="addNewPage()" class="w-full py-2 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 rounded-xl text-xs font-medium flex items-center justify-center space-x-1.5 transition">
-          <i class="fa-solid fa-plus text-[10px]"></i><span>Add New Page (Max 4)</span>
+          <i class="fa-solid fa-plus text-[10px]"></i><span>Add New Page</span>
         </button>
       </div>
 
       <!-- Bottom Status Bar -->
-      <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur border border-slate-200 px-3 py-1.5 rounded-xl text-[11px] text-slate-600 z-20 flex items-center space-x-3 shadow-md">
+      <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur border border-slate-200 px-3 py-1.5 rounded-xl text-[11px] text-slate-600 z-20 hidden sm:flex items-center space-x-3 shadow-md">
         <span id="canvasDimLabel">1050 × 600 px (Business Card)</span>
         <div class="w-px h-3 bg-slate-200"></div>
         <span id="productTypeLabel" class="text-indigo-600 font-medium">Business Card</span>
@@ -379,14 +396,14 @@
           <div class="absolute inset-0 rounded-xl bg-cover bg-center shadow-2xl border border-slate-700/50" id="card3dFront" style="backface-visibility: hidden;"></div>
           <div class="absolute inset-0 rounded-xl bg-cover bg-center shadow-2xl border border-slate-700/50" id="card3dBack" style="backface-visibility: hidden; transform: rotateY(180deg);"></div>
         </div>
-        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur border border-slate-200 px-4 py-2 rounded-full text-xs text-slate-700 flex items-center space-x-3 shadow-xl pointer-events-none">
+        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur border border-slate-200 px-4 py-2 rounded-full text-xs text-slate-700 flex items-center space-x-3 shadow-xl pointer-events-none text-center">
           <i class="fa-solid fa-hand-pointer text-indigo-600"></i>
-          <span>Click and drag to rotate in 3D space • Preview limited to bleed line</span>
+          <span>Click and drag to rotate in 3D space</span>
         </div>
       </div>
       <div class="px-6 py-3 bg-slate-50 flex justify-between items-center border-t border-slate-200">
-        <span class="text-xs text-slate-500">Displaying Page 1 (Front) & Page 2 (Back)</span>
-        <div class="flex gap-2">
+        <span class="text-xs text-slate-500 hidden sm:inline">Displaying Page 1 & Page 2</span>
+        <div class="flex gap-2 w-full sm:w-auto justify-end">
           <button onclick="flip3DCardModel()" class="px-4 py-2 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 shadow-sm">Flip Card</button>
           <button onclick="reset3DRotation()" class="px-4 py-2 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 shadow-sm">Reset View</button>
         </div>
@@ -406,10 +423,10 @@
       
       <div class="flex items-center justify-center gap-3">
         <button onclick="setCropShape('square')" id="cropShapeSquareBtn" class="px-4 py-1.5 rounded-xl border border-indigo-600 bg-indigo-50 text-indigo-700 text-xs font-medium flex items-center gap-2 transition">
-          <i class="fa-regular fa-square"></i> Square Crop
+          <i class="fa-regular fa-square"></i> Square
         </button>
         <button onclick="setCropShape('circle')" id="cropShapeCircleBtn" class="px-4 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 text-xs font-medium flex items-center gap-2 transition">
-          <i class="fa-regular fa-circle"></i> Circle Crop
+          <i class="fa-regular fa-circle"></i> Circle
         </button>
       </div>
 
@@ -417,11 +434,10 @@
         <div class="relative inline-block">
           <canvas id="cropCanvas" class="max-w-full max-h-[260px] border border-slate-300"></canvas>
         </div>
-        <p class="text-[11px] text-slate-500 mt-2 text-center">Adjust image position/scale inside the crop boundary.</p>
       </div>
       <div class="flex justify-end gap-2 pt-2">
         <button onclick="closeCropModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-medium">Cancel</button>
-        <button onclick="applyImageCrop()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/20">Apply Crop</button>
+        <button onclick="applyImageCrop()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md">Apply Crop</button>
       </div>
     </div>
   </div>
@@ -445,17 +461,17 @@
           </label>
           <label class="flex items-center space-x-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer">
             <input type="radio" name="pdfScope" value="current" class="text-indigo-600 focus:ring-0">
-            <span class="text-slate-700">Current Page Only</span>
+            <span class="text-slate-700">Current Page</span>
           </label>
         </div>
       </div>
 
-      <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+      <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div>
           <div class="text-xs text-slate-500">High-Resolution Fee</div>
           <div class="text-lg font-bold text-indigo-600">₹49 <span class="text-[10px] font-normal text-slate-400">(Watermark Removed)</span></div>
         </div>
-        <button onclick="initiatePayment()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/20 transition">Proceed to Pay & Download PDF</button>
+        <button onclick="initiatePayment()" class="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/20 transition">Proceed & Download</button>
       </div>
     </div>
   </div>
@@ -522,10 +538,18 @@
       setupCanvasListeners();
       setupKeyboardShortcuts();
       resizeCanvasToFitContainer();
+      window.addEventListener('resize', resizeCanvasToFitContainer);
     };
 
     function closeNoticeModal() {
       document.getElementById('noticeModal').style.display = 'none';
+    }
+
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('leftSidebar');
+      const backdrop = document.getElementById('mobileBackdrop');
+      sidebar.classList.toggle('-translate-x-full');
+      backdrop.classList.toggle('hidden');
     }
 
     function switchTab(tabId) {
@@ -540,7 +564,7 @@
     function initProductUI() {
       const grid = document.getElementById('productGrid');
       grid.innerHTML = PRODUCTS.map(p => `
-        <button onclick="selectProduct('${p.id}')" id="prod-btn-${p.id}" class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:border-indigo-500 flex flex-col items-center justify-center gap-1.5 transition text-left">
+        <button onclick="selectProduct('${p.id}'); if(window.innerWidth < 768) toggleMobileSidebar();" id="prod-btn-${p.id}" class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:border-indigo-500 flex flex-col items-center justify-center gap-1.5 transition text-left">
           <i class="fa-solid ${p.icon} text-indigo-600 text-base"></i>
           <span class="text-xs font-medium text-slate-700">${p.name}</span>
         </button>
@@ -686,7 +710,8 @@
 
     function resizeCanvasToFitContainer() {
       const workspace = document.getElementById('workspaceContainer');
-      const maxW = workspace.clientWidth - 120;
+      const padding = window.innerWidth < 768 ? 40 : 120;
+      const maxW = workspace.clientWidth - padding;
       const maxH = workspace.clientHeight - 80;
       const scale = Math.min(maxW / BASE_WIDTH, maxH / BASE_HEIGHT, 1.2);
       currentZoomScale = scale;
@@ -799,14 +824,13 @@
     function renderPageThumbnails() {
       const container = document.getElementById('pageThumbnailsList');
       container.innerHTML = pages.map((page, idx) => `
-        <div onclick="switchPage(${idx})" class="p-2.5 rounded-xl border ${idx === activePageIndex ? 'border-indigo-600 bg-indigo-50/60' : 'border-slate-200 bg-white hover:border-slate-300'} cursor-pointer flex items-center justify-between transition shadow-sm">
-          <div class="flex items-center space-x-2.5">
-            <div class="w-10 h-7 rounded border border-slate-200 bg-white overflow-hidden flex items-center justify-center relative shadow-sm">
+        <div onclick="switchPage(${idx})" class="p-2 rounded-xl border ${idx === activePageIndex ? 'border-indigo-600 bg-indigo-50/60' : 'border-slate-200 bg-white hover:border-slate-300'} cursor-pointer flex items-center justify-between transition shadow-sm">
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-6 rounded border border-slate-200 bg-white overflow-hidden flex items-center justify-center relative shadow-sm">
               ${page.previewUrl ? `<img src="${page.previewUrl}" class="w-full h-full object-cover">` : `<span class="text-[9px] font-bold text-slate-500">P${idx + 1}</span>`}
             </div>
             <div>
-              <div class="text-xs font-medium text-slate-800">Page ${idx + 1}</div>
-              <div class="text-[9px] text-slate-400">${idx === activePageIndex ? 'Active Editing' : 'Click to Switch'}</div>
+              <div class="text-[11px] font-medium text-slate-800">Page ${idx + 1}</div>
             </div>
           </div>
           ${pages.length > 1 ? `<button onclick="event.stopPropagation(); deletePage(${idx})" class="text-slate-400 hover:text-rose-600 text-xs p-1"><i class="fa-solid fa-trash"></i></button>` : ''}
@@ -1218,11 +1242,11 @@
       const ratio = bleedWidth / bleedHeight;
       let sceneW, sceneH;
       if (ratio >= 1) {
-        sceneW = 400;
-        sceneH = Math.round(400 / ratio);
+        sceneW = window.innerWidth < 640 ? 280 : 400;
+        sceneH = Math.round(sceneW / ratio);
       } else {
-        sceneH = 300;
-        sceneW = Math.round(300 * ratio);
+        sceneH = window.innerWidth < 640 ? 220 : 300;
+        sceneW = Math.round(sceneH * ratio);
       }
 
       const sceneEl = document.getElementById('card3dScene');
@@ -1231,7 +1255,6 @@
       
       switchPage(0, () => {
         hideGuides();
-        // Capture ONLY up to the bleed line bounds
         const frontUrl = canvas.toDataURL({ 
           format: 'png', 
           quality: 1.0,
@@ -1243,7 +1266,6 @@
         const secondPageIdx = pages.length > 1 ? 1 : 0;
         switchPage(secondPageIdx, () => {
           hideGuides();
-          // Capture ONLY up to the bleed line bounds
           const backUrl = canvas.toDataURL({ 
             format: 'png', 
             quality: 1.0,
@@ -1273,6 +1295,12 @@
       startX = e.clientX;
       startY = e.clientY;
     });
+    threeContainer.addEventListener('touchstart', (e) => {
+      isDragging3D = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
+
     window.addEventListener('mousemove', (e) => {
       if (!isDragging3D) return;
       const dx = e.clientX - startX;
@@ -1284,7 +1312,20 @@
       const scene = document.getElementById('card3dScene');
       if (scene) scene.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
     });
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging3D) return;
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      rotY += dx * 0.5;
+      rotX -= dy * 0.5;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      const scene = document.getElementById('card3dScene');
+      if (scene) scene.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    });
+
     window.addEventListener('mouseup', () => { isDragging3D = false; });
+    window.addEventListener('touchend', () => { isDragging3D = false; });
 
     function openExportModal() {
       document.getElementById('exportModal').classList.remove('hidden');
@@ -1342,7 +1383,6 @@
         switchPage(pageIdx, () => {
           if (exportIndex > 0) pdf.addPage([bleedWidth, bleedHeight]);
           
-          // Crop and export ONLY up to the bleed line bounds
           const imgData = canvas.toDataURL({ 
             format: 'png', 
             quality: 1.0, 
