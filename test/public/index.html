@@ -339,11 +339,12 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-4 gap-1 pt-1 border-t border-slate-200">
-            <button class="py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700" onclick="changeLayer('front')" title="Bring to Front">🔝</button>
-            <button class="py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700" onclick="changeLayer('forward')" title="Step Up">🔼</button>
-            <button class="py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700" onclick="changeLayer('backward')" title="Step Down">🔽</button>
-            <button class="py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700" onclick="changeLayer('back')" title="Send to Back">🔚</button>
+          <!-- Updated Vector Icons for Layer Movement -->
+          <div class="grid grid-cols-4 gap-1.5 pt-1 border-t border-slate-200">
+            <button class="py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700 flex items-center justify-center transition" onclick="changeLayer('front')" title="Bring to Front"><i class="fa-solid fa-layer-group"></i><i class="fa-solid fa-arrow-up text-[10px] ml-0.5"></i></button>
+            <button class="py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700 flex items-center justify-center transition" onclick="changeLayer('forward')" title="Step Up"><i class="fa-solid fa-arrow-up"></i></button>
+            <button class="py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700 flex items-center justify-center transition" onclick="changeLayer('backward')" title="Step Down"><i class="fa-solid fa-arrow-down"></i></button>
+            <button class="py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700 flex items-center justify-center transition" onclick="changeLayer('back')" title="Send to Back"><i class="fa-solid fa-layer-group"></i><i class="fa-solid fa-arrow-down text-[10px] ml-0.5"></i></button>
           </div>
         </div>
       </div>
