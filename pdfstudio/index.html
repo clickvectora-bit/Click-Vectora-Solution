@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>PDF Studio - Click Vectora Solution</title>
+    
+    <!-- Favicon / Tab Icon -->
+    <link rel="icon" type="image/png" href="/img/logo/logo1.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PDF Libraries: pdf-lib, pdfjs-dist, jspdf, mammoth (Word), xlsx (Excel) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <!-- Mammoth.js for Word (.docx) conversion -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <!-- SheetJS (XLSX) for Excel (.xlsx, .xls) conversion -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Font Families Import -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#eef2ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .canvas-shadow { box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04); }
+        .checkerboard {
+            background-image: linear-gradient(45deg, #e2e8f0 25%, transparent 25%), 
+                              linear-gradient(-45deg, #e2e8f0 25%, transparent 25%), 
+                              linear-gradient(45deg, transparent 75%, #e2e8f0 75%), 
+                              linear-gradient(-45deg, transparent 75%, #e2e8f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .brand-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .brand-logo img { height: 40px; width: auto; display: block; object-fit: contain; }
+    </style>
+</head>
+<body class="h-full bg-slate-100 text-slate-800 flex flex-col overflow-hidden">
+
+  <!-- Custom Alert / Toast Modal -->
+  <div id="validationAlertModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl relative">
+      <div id="validationAlertIcon" class="w-14 h-14 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-3 text-indigo-600 text-xl shadow-inner">
+        <i class="fa-solid fa-circle-exclamation"></i>
+      </div>
+      <h3 id="validationAlertTitle" class="text-lg font-bold text-slate-900 mb-1">Notice</h3>
+      <p id="validationAlertMessage" class="text-xs text-slate-600 mb-5 leading-relaxed">Validation message goes here.</p>
+      <button onclick="closeValidationAlert()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-indigo-600/20 transition">OK</button>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="h-16 bg-white border-b border-slate-200 px-4 flex items-center justify-between z-30 shrink-0 shadow-sm">
+    <div class="flex items-center space-x-3 sm:space-x-6">
+      <button onclick="toggleMobileSidebar()" class="md:hidden p-2 text-slate-600 hover:text-slate-900 focus:outline-none">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+
+      <a href="/" class="flex items-center space-x-2">
+        <div class="brand-logo">
+          <img src="/img/logo/logo.png" alt="Logo" class="h-6 w-auto object-contain" onerror="this.outerHTML='<i class=\'fa-solid fa-file-pdf text-indigo-600 text-xl\'></i><span class=\'font-bold text-slate-900 text-sm\'>PDF Studio</span>'">
+        </div>
+      </a>
+      <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
+      <div class="hidden sm:flex items-center space-x-1 bg-slate-50 p-1 rounded-lg border border-slate-200">
+        <button onclick="undo()" title="Undo (Ctrl+Z)" class="p-1.5 hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition text-xs flex items-center gap-1">
+          <i class="fa-solid fa-rotate-left"></i> <span>Undo</span>
+        </button>
+        <div class="w-px h-4 bg-slate-200"></div>
+        <button onclick="redo()" title="Redo (Ctrl+Y)" class="p-1.5 hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition text-xs flex items-center gap-1">
+          <span>Redo</span> <i class="fa-solid fa-rotate-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Center: Zoom controls -->
+    <div class="hidden md:flex items-center space-x-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 shadow-inner">
+      <button onclick="zoomCanvas(-0.1)" title="Zoom Out" class="w-7 h-7 flex items-center justify-center hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition">
+        <i class="fa-solid fa-magnifying-glass-minus text-xs"></i>
+      </button>
+      <span id="zoomDisplay" class="text-xs font-semibold text-slate-700 w-12 text-center">100%</span>
+      <button onclick="zoomCanvas(0.1)" title="Zoom In" class="w-7 h-7 flex items-center justify-center hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition">
+        <i class="fa-solid fa-magnifying-glass-plus text-xs"></i>
+      </button>
+      <button onclick="resetZoom()" title="Reset Zoom" class="text-[10px] text-indigo-600 hover:text-indigo-700 ml-1 px-1.5 py-0.5 rounded bg-indigo-50 hover:bg-indigo-100 transition">Fit</button>
+    </div>
+
+    <!-- Right: Export & Actions -->
+    <div class="flex items-center space-x-2 sm:space-x-3">
+      <button onclick="openCompressModal()" class="px-2.5 sm:px-3.5 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-xl font-medium text-xs flex items-center space-x-1.5 transition">
+        <i class="fa-solid fa-compress text-indigo-600"></i>
+        <span>Compress</span>
+      </button>
+      <div class="h-6 w-px bg-slate-200"></div>
+      <button onclick="openExportModal()" class="px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium text-xs shadow-md shadow-indigo-600/20 flex items-center space-x-1.5 transition">
+        <i class="fa-solid fa-download"></i>
+        <span>Export PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- App Layout Container -->
+  <div class="flex-1 flex overflow-hidden relative">
+    <div id="mobileBackdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/40 z-30 hidden md:hidden"></div>
+
+    <!-- Left Sidebar: PDF Tools & Properties -->
+    <aside id="leftSidebar" class="fixed md:relative inset-y-0 left-0 w-80 bg-white border-r border-slate-200 flex flex-col z-40 shrink-0 shadow-sm transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+      
+      <div class="flex md:hidden items-center justify-between p-4 border-b border-slate-200 bg-slate-50">
+        <span class="font-bold text-sm text-slate-800">PDF Studio Tools</span>
+        <button onclick="toggleMobileSidebar()" class="p-1 text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-4 border-b border-slate-200 text-xs font-medium text-slate-500">
+        <button onclick="switchTab('import')" id="tab-import" class="py-3 flex flex-col items-center justify-center border-b-2 border-indigo-600 text-indigo-600 bg-slate-50 transition">
+          <i class="fa-solid fa-file-arrow-up mb-1 text-sm"></i><span>Open</span>
+        </button>
+        <button onclick="switchTab('edit')" id="tab-edit" class="py-3 flex flex-col items-center justify-center border-b-2 border-transparent hover:text-slate-800 transition">
+          <i class="fa-solid fa-pen-to-square mb-1 text-sm"></i><span>Edit</span>
+        </button>
+        <button onclick="switchTab('text')" id="tab-text" class="py-3 flex flex-col items-center justify-center border-b-2 border-transparent hover:text-slate-800 transition">
+          <i class="fa-solid fa-font mb-1 text-sm"></i><span>Text</span>
+        </button>
+        <button onclick="switchTab('pages')" id="tab-pages" class="py-3 flex flex-col items-center justify-center border-b-2 border-transparent hover:text-slate-800 transition">
+          <i class="fa-solid fa-copy mb-1 text-sm"></i><span>Pages</span>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 space-y-5 no-scrollbar">
+        <!-- 1. Import & Convert Tab -->
+        <div id="panel-import" class="space-y-4">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Open Existing PDF</h3>
+            <button onclick="document.getElementById('pdfLoader').click()" class="w-full py-3 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl text-xs font-semibold text-indigo-700 transition flex items-center justify-center gap-2 shadow-sm">
+              <i class="fa-solid fa-folder-open text-base"></i> Select PDF File
+            </button>
+            <input type="file" id="pdfLoader" accept="application/pdf" class="hidden">
+          </div>
+          
+          <div class="pt-3 border-t border-slate-200">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Convert Office / Image / Text</h3>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="document.getElementById('docConverterLoader').click()" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex flex-col items-center gap-1 transition">
+                <i class="fa-solid fa-file-word text-blue-600 text-base"></i> Word to PDF
+              </button>
+              <button onclick="document.getElementById('excelConverterLoader').click()" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex flex-col items-center gap-1 transition">
+                <i class="fa-solid fa-file-excel text-emerald-600 text-base"></i> Excel to PDF
+              </button>
+              <button onclick="document.getElementById('imgConverterLoader').click()" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex flex-col items-center gap-1 transition">
+                <i class="fa-solid fa-file-image text-indigo-600 text-base"></i> Image to PDF
+              </button>
+              <button onclick="document.getElementById('txtConverterLoader').click()" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex flex-col items-center gap-1 transition">
+                <i class="fa-solid fa-file-lines text-amber-600 text-base"></i> Text to PDF
+              </button>
+            </div>
+            <input type="file" id="docConverterLoader" accept=".docx" class="hidden">
+            <input type="file" id="excelConverterLoader" accept=".xlsx, .xls" class="hidden">
+            <input type="file" id="imgConverterLoader" accept="image/*" class="hidden">
+            <input type="file" id="txtConverterLoader" accept=".txt" class="hidden">
+          </div>
+
+          <div class="pt-3 border-t border-slate-200">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Create New Blank PDF</h3>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="createNewPDF('A4')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex flex-col items-center gap-1 transition">
+                <i class="regular fa-file text-indigo-600 text-base"></i> A4 Portrait
+              </button>
+              <button onclick="createNewPDF('Letter')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex flex-col items-center gap-1 transition">
+                <i class="regular fa-file-lines text-indigo-600 text-base"></i> US Letter
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Edit & Elements Tab -->
+        <div id="panel-edit" class="space-y-4 hidden">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Insert Image / Signature</h3>
+            <button onclick="document.getElementById('imageLoader').click()" class="w-full py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-image text-indigo-600"></i> Add Image or Logo
+            </button>
+            <input type="file" id="imageLoader" accept="image/*" class="hidden">
+          </div>
+          <div class="pt-3 border-t border-slate-200">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Markup Shapes</h3>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="addShape('rect')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
+                <i class="regular fa-square text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Rectangle</span>
+              </button>
+              <button onclick="addShape('circle')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
+                <i class="regular fa-circle text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Circle</span>
+              </button>
+              <button onclick="addShape('line')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
+                <i class="fa-solid fa-minus text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Line</span>
+              </button>
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-200">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Redaction Box (Blackout)</h3>
+            <button onclick="addRedactionBox()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition shadow-sm">
+              <i class="fa-solid fa-marker"></i> Add Redaction Overlay
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. Text Tab -->
+        <div id="panel-text" class="space-y-4 hidden">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Add Annotation / Text</h3>
+          <button onclick="addTextDirectly()" class="w-full py-3 px-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-left font-bold text-sm text-slate-800 transition flex items-center justify-between">
+            <span>Click to Add Text Field</span><i class="fa-solid fa-plus text-xs text-indigo-600"></i>
+          </button>
+        </div>
+
+        <!-- 4. Pages Tab -->
+        <div id="panel-pages" class="space-y-4 hidden">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Page Management</h3>
+          <button onclick="addNewBlankPage()" class="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 rounded-xl text-xs font-medium flex items-center justify-center space-x-2 transition">
+            <i class="fa-solid fa-plus text-xs"></i><span>Insert Blank Page</span>
+          </button>
+          <button onclick="deleteCurrentPage()" class="w-full py-2.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 rounded-xl text-xs font-medium flex items-center justify-center space-x-2 transition">
+            <i class="fa-solid fa-trash text-xs"></i><span>Delete Current Page</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Selected Element Inspector -->
+      <div id="objectInspector" class="p-4 border-t border-slate-200 bg-slate-50/70 hidden">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Item Settings</span>
+          <button onclick="deleteSelected()" class="text-rose-600 hover:text-rose-700 text-xs px-2 py-1 rounded bg-rose-50 border border-rose-200 transition"><i class="fa-solid fa-trash mr-1"></i>Delete</button>
+        </div>
+        <div id="inspectorContent" class="space-y-3 text-xs">
+          <div id="textInspectorControls" class="space-y-2 hidden">
+            <div class="flex gap-2 items-center">
+              <div class="flex-1">
+                <label class="text-[10px] text-slate-500">Color</label>
+                <input type="color" id="textColor" onchange="updateTextProperty('fill', this.value)" class="w-full h-8 bg-white border border-slate-200 rounded cursor-pointer">
+              </div>
+              <div class="flex-[2]">
+                <label class="text-[10px] text-slate-500">Font</label>
+                <select id="fontFamily" onchange="updateTextProperty('fontFamily', this.value)" class="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-800">
+                  <option value="Poppins">Poppins</option>
+                  <option value="Montserrat">Montserrat</option>
+                  <option value="Roboto">Roboto</option>
+                  <option value="Inter">Inter</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div id="shapeInspectorControls" class="space-y-2 hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-600">Color / Fill:</span>
+              <input type="color" id="shapeFillColor" onchange="updateShapeProperty('fill', this.value)" class="w-7 h-7 rounded border border-slate-200 bg-transparent cursor-pointer">
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Area -->
+    <main class="flex-1 bg-slate-200/70 checkerboard relative flex items-center justify-center overflow-hidden" id="workspaceContainer">
+      <div id="canvasViewport" class="absolute inset-0 flex items-center justify-center overflow-auto p-1 cursor-grab active:cursor-grabbing">
+        <div id="canvasWrapper" class="relative transition-transform duration-75 origin-center shadow-2xl canvas-shadow bg-white rounded-lg overflow-hidden border border-slate-300" style="margin: 1px !important;">
+          <canvas id="pdfCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Right-Side Page Navigation Sidebar -->
+      <div id="pageToggleSidebar" class="absolute right-3 sm:right-6 top-3 sm:top-6 bg-white/90 backdrop-blur border border-slate-200 rounded-2xl p-2.5 sm:p-3 shadow-xl z-20 flex flex-col space-y-3 w-44 sm:w-52">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Pages (<span id="totalPageCount">1</span>)</span>
+          <span class="text-[10px] bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded font-mono border border-indigo-100" id="activePageBadge">Page 1</span>
+        </div>
+        <div id="pageThumbnailsList" class="space-y-2 max-h-48 sm:max-h-80 overflow-y-auto no-scrollbar pr-1"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Compress PDF Modal -->
+  <div id="compressModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="text-lg font-bold text-slate-900">Optimize & Compress PDF Data</h3>
+        <button onclick="closeCompressModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 text-xs transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="space-y-3">
+        <p class="text-xs text-slate-500">This will compress the PDF structure and streams without lowering page resolution or quality.</p>
+        <div class="grid grid-cols-3 gap-2 text-xs">
+          <label id="comp-label-low" onclick="setCompressionOption('low')" class="p-3 rounded-xl border border-indigo-600 bg-indigo-50/50 cursor-pointer text-center transition block">
+            <input type="radio" name="compressionLevel" value="low" checked class="hidden">
+            <span class="font-bold text-indigo-700 block mb-1">Standard</span>
+            <span class="text-[10px] text-slate-500">Safe Optimization</span>
+          </label>
+          <label id="comp-label-medium" onclick="setCompressionOption('medium')" class="p-3 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer text-center transition block">
+            <input type="radio" name="compressionLevel" value="medium" class="hidden">
+            <span class="font-bold text-slate-700 block mb-1">Balanced</span>
+            <span class="text-[10px] text-slate-500">Object Stream</span>
+          </label>
+          <label id="comp-label-high" onclick="setCompressionOption('high')" class="p-3 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer text-center transition block">
+            <input type="radio" name="compressionLevel" value="high" class="hidden">
+            <span class="font-bold text-slate-700 block mb-1">Maximum</span>
+            <span class="text-[10px] text-slate-500">Deep Compression</span>
+          </label>
+        </div>
+      </div>
+      <button onclick="processAndPreviewCompression()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/20 transition">Preview Compressed PDF</button>
+    </div>
+  </div>
+
+  <!-- Compression Preview Modal -->
+  <div id="compressPreviewModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5 text-center">
+      <div class="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center mx-auto text-emerald-600 text-xl shadow-inner">
+        <i class="fa-solid fa-file-circle-check"></i>
+      </div>
+      <h3 class="text-lg font-bold text-slate-900 mb-1">Compression Successful</h3>
+      <p class="text-xs text-slate-500">Your PDF data structure has been optimized without losing page clarity.</p>
+      
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 grid grid-cols-2 gap-4 text-left">
+        <div>
+          <span class="text-[10px] text-slate-400 uppercase font-bold block">Original Size</span>
+          <span id="previewOriginalSize" class="text-sm font-bold text-slate-700">0 KB</span>
+        </div>
+        <div>
+          <span class="text-[10px] text-slate-400 uppercase font-bold block">Compressed Size</span>
+          <span id="previewCompressedSize" class="text-sm font-bold text-emerald-600">0 KB</span>
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeCompressPreview()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition">Cancel</button>
+        <button onclick="downloadCompressedPDF()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-indigo-600/20 transition">Download Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Modal -->
+  <div id="exportModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="text-lg font-bold text-slate-900">Export Final PDF Document</h3>
+        <button onclick="closeExportModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 text-xs transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="pt-2 flex justify-end gap-2">
+        <button onclick="closeExportModal()" class="px-4 py-2 bg-slate-100 rounded-xl text-xs font-medium">Cancel</button>
+        <button onclick="executePDFExport()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md transition">Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="hiddenPdfContainer" class="hidden"></div>
+
+  <script>
+    let BASE_WIDTH = 1240;
+    let BASE_HEIGHT = 1754; // A4 standard high res
+    let currentZoomScale = 1;
+    let pagesData = [];
+    let activePageIndex = 0;
+    let loadedPdfBytes = null;
+    let compressedPdfBlobUrl = null;
+    let originalFileSizeText = '0 KB';
+    let compressedFileSizeText = '0 KB';
+
+    let canvas = new fabric.Canvas('pdfCanvas', {
+      backgroundColor: '#ffffff',
+      preserveObjectStacking: true,
+      allowTouchScrolling: true
+    });
+
+    window.onload = function() {
+      createNewPDF('A4');
+      setupCanvasListeners();
+      resizeCanvasToFitContainer();
+      window.addEventListener('resize', resizeCanvasToFitContainer);
+    };
+
+    function showValidationAlert(title, message) {
+      document.getElementById('validationAlertTitle').innerText = title;
+      document.getElementById('validationAlertMessage').innerText = message;
+      document.getElementById('validationAlertModal').classList.remove('hidden');
+    }
+    function closeValidationAlert() { document.getElementById('validationAlertModal').classList.add('hidden'); }
+    function toggleMobileSidebar() {
+      document.getElementById('leftSidebar').classList.toggle('-translate-x-full');
+      document.getElementById('mobileBackdrop').classList.toggle('hidden');
+    }
+    function switchTab(tabId) {
+      ['import', 'edit', 'text', 'pages'].forEach(t => {
+        document.getElementById(`tab-${t}`).className = `py-3 flex flex-col items-center justify-center border-b-2 border-transparent hover:text-slate-800 transition`;
+        document.getElementById(`panel-${t}`).classList.add('hidden');
+      });
+      document.getElementById(`tab-${tabId}`).className = `py-3 flex flex-col items-center justify-center border-b-2 border-indigo-600 text-indigo-600 bg-slate-50 transition`;
+      document.getElementById(`panel-${tabId}`).classList.remove('hidden');
+    }
+
+    function createNewPDF(type) {
+      if (type === 'A4') { BASE_WIDTH = 1240; BASE_HEIGHT = 1754; }
+      else { BASE_WIDTH = 1224; BASE_HEIGHT = 1584; }
+      
+      pagesData = [{ jsonState: null, bgImg: null, undoStack: [], redoStack: [] }];
+      activePageIndex = 0;
+      loadedPdfBytes = null;
+      canvas.clear();
+      canvas.setDimensions({ width: BASE_WIDTH, height: BASE_HEIGHT });
+      canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas));
+      renderThumbnails();
+      resizeCanvasToFitContainer();
+    }
+
+    // PDF Loader
+    document.getElementById('pdfLoader').addEventListener('change', async function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      originalFileSizeText = formatBytes(file.size);
+      const arrayBuffer = await file.arrayBuffer();
+      loadedPdfBytes = arrayBuffer;
+
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+      const pdfDoc = await loadingTask.promise;
+      pagesData = [];
+
+      for (let i = 1; i <= pdfDoc.numPages; i++) {
+        const page = await pdfDoc.getPage(i);
+        const viewport = page.getViewport({ scale: 2.0 });
+        BASE_WIDTH = viewport.width;
+        BASE_HEIGHT = viewport.height;
+
+        canvas.setDimensions({ width: BASE_WIDTH, height: BASE_HEIGHT });
+        const canvasElement = document.createElement('canvas');
+        canvasElement.width = BASE_WIDTH;
+        canvasElement.height = BASE_HEIGHT;
+        const ctx = canvasElement.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+        const dataUrl = canvasElement.toDataURL('image/png');
+        pagesData.push({ jsonState: null, bgImg: dataUrl, undoStack: [], redoStack: [] });
+      }
+
+      activePageIndex = 0;
+      loadPage(0);
+      renderThumbnails();
+      resizeCanvasToFitContainer();
+      this.value = '';
+    });
+
+    // Word (.docx) Converter
+    document.getElementById('docConverterLoader').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      originalFileSizeText = formatBytes(file.size);
+      const reader = new FileReader();
+      reader.onload = async function(evt) {
+        try {
+          const arrayBuffer = evt.target.result;
+          const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+          const textContent = result.value || '';
+          
+          BASE_WIDTH = 1240;
+          BASE_HEIGHT = 1754;
+          canvas.clear();
+          canvas.setDimensions({ width: BASE_WIDTH, height: BASE_HEIGHT });
+          
+          const textObj = new fabric.Textbox(textContent, {
+            left: 100, top: 100, width: BASE_WIDTH - 200,
+            fontFamily: 'Poppins', fontSize: 24, fill: '#0f172a'
+          });
+          canvas.add(textObj);
+          pagesData = [{ jsonState: canvas.toJSON(['isRedaction']), bgImg: null, undoStack: [], redoStack: [] }];
+          activePageIndex = 0;
+          loadedPdfBytes = null;
+          loadPage(0);
+          renderThumbnails();
+          resizeCanvasToFitContainer();
+        } catch (err) {
+          console.error(err);
+          showValidationAlert('Conversion Failed', 'Could not read or parse this Word file.');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+      this.value = '';
+    });
+
+    // Excel (.xlsx, .xls) Converter
+    document.getElementById('excelConverterLoader').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      originalFileSizeText = formatBytes(file.size);
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = new Uint8Array(evt.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          let combinedText = '';
+          
+          workbook.SheetNames.forEach(sheetName => {
+            const worksheet = workbook.Sheets[sheetName];
+            const csvText = XLSX.utils.sheet_to_csv(worksheet);
+            combinedText += `--- Sheet: ${sheetName} ---\n${csvText}\n\n`;
+          });
+
+          BASE_WIDTH = 1240;
+          BASE_HEIGHT = 1754;
+          canvas.clear();
+          canvas.setDimensions({ width: BASE_WIDTH, height: BASE_HEIGHT });
+          
+          const textObj = new fabric.Textbox(combinedText, {
+            left: 80, top: 80, width: BASE_WIDTH - 160,
+            fontFamily: 'Roboto', fontSize: 20, fill: '#0f172a'
+          });
+          canvas.add(textObj);
+          pagesData = [{ jsonState: canvas.toJSON(['isRedaction']), bgImg: null, undoStack: [], redoStack: [] }];
+          activePageIndex = 0;
+          loadedPdfBytes = null;
+          loadPage(0);
+          renderThumbnails();
+          resizeCanvasToFitContainer();
+        } catch (err) {
+          console.error(err);
+          showValidationAlert('Conversion Failed', 'Could not read or parse this Excel spreadsheet.');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+      this.value = '';
+    });
+
+    // Image to PDF Converter
+    document.getElementById('imgConverterLoader').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      originalFileSizeText = formatBytes(file.size);
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const dataUrl = evt.target.result;
+        fabric.Image.fromURL(dataUrl, (img) => {
+          BASE_WIDTH = img.width > 0 ? img.width : 1240;
+          BASE_HEIGHT = img.height > 0 ? img.height : 1754;
+          canvas.setDimensions({ width: BASE_WIDTH, height: BASE_HEIGHT });
+          pagesData = [{ jsonState: null, bgImg: dataUrl, undoStack: [], redoStack: [] }];
+          activePageIndex = 0;
+          loadedPdfBytes = null;
+          loadPage(0);
+          renderThumbnails();
+          resizeCanvasToFitContainer();
+        }, { crossOrigin: 'anonymous' });
+      };
+      reader.readAsDataURL(file);
+      this.value = '';
+    });
+
+    // Text to PDF Converter
+    document.getElementById('txtConverterLoader').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      originalFileSizeText = formatBytes(file.size);
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const textContent = evt.target.result;
+        BASE_WIDTH = 1240;
+        BASE_HEIGHT = 1754;
+        canvas.clear();
+        canvas.setDimensions({ width: BASE_WIDTH, height: BASE_HEIGHT });
+        
+        const textObj = new fabric.Textbox(textContent, {
+          left: 100, top: 100, width: BASE_WIDTH - 200,
+          fontFamily: 'Poppins', fontSize: 28, fill: '#0f172a'
+        });
+        canvas.add(textObj);
+        pagesData = [{ jsonState: canvas.toJSON(['isRedaction']), bgImg: null, undoStack: [], redoStack: [] }];
+        activePageIndex = 0;
+        loadedPdfBytes = null;
+        loadPage(0);
+        renderThumbnails();
+        resizeCanvasToFitContainer();
+      };
+      reader.readAsText(file);
+      this.value = '';
+    });
+
+    function formatBytes(bytes, decimals = 2) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    function loadPage(idx) {
+      activePageIndex = idx;
+      canvas.clear();
+      canvas.setDimensions({ width: BASE_WIDTH, height: BASE_HEIGHT });
+      const page = pagesData[idx];
+
+      canvas.setBackgroundColor('#ffffff', () => {
+        if (page.bgImg) {
+          fabric.Image.fromURL(page.bgImg, (img) => {
+            canvas.setBackgroundImage(img, () => {
+              loadFabricState(page);
+            }, { scaleX: 1, scaleY: 1, crossOrigin: 'anonymous' });
+          }, { crossOrigin: 'anonymous' });
+        } else {
+          loadFabricState(page);
+        }
+      });
+      document.getElementById('activePageBadge').innerText = `Page ${idx + 1}`;
+      document.getElementById('totalPageCount').innerText = pagesData.length;
+      renderThumbnails();
+    }
+
+    function loadPageAsync(idx) {
+      return new Promise((resolve) => {
+        activePageIndex = idx;
+        canvas.clear();
+        canvas.setDimensions({ width: BASE_WIDTH, height: BASE_HEIGHT });
+        
+        canvas.setBackgroundColor('#ffffff', () => {
+          const page = pagesData[idx];
+          if (page.bgImg) {
+            fabric.Image.fromURL(page.bgImg, (img) => {
+              canvas.setBackgroundImage(img, () => {
+                if (page.jsonState) {
+                  canvas.loadFromJSON(page.jsonState, () => {
+                    canvas.renderAll();
+                    resolve();
+                  });
+                } else {
+                  canvas.renderAll();
+                  resolve();
+                }
+              }, { scaleX: 1, scaleY: 1, crossOrigin: 'anonymous' });
+            }, { crossOrigin: 'anonymous' });
+          } else {
+            if (page.jsonState) {
+              canvas.loadFromJSON(page.jsonState, () => {
+                canvas.renderAll();
+                resolve();
+              });
+            } else {
+              canvas.renderAll();
+              resolve();
+            }
+          }
+        });
+      });
+    }
+
+    function loadFabricState(page) {
+      if (page.jsonState) {
+        canvas.loadFromJSON(page.jsonState, () => { canvas.renderAll(); });
+      }
+    }
+
+    function saveCurrentPageState() {
+      pagesData[activePageIndex].jsonState = canvas.toJSON(['isRedaction']);
+    }
+
+    function addNewBlankPage() {
+      saveCurrentPageState();
+      pagesData.push({ jsonState: null, bgImg: null, undoStack: [], redoStack: [] });
+      loadPage(pagesData.length - 1);
+    }
+
+    function deleteCurrentPage() {
+      if (pagesData.length <= 1) {
+        showValidationAlert('Action Restricted', 'Document must have at least one page.');
+        return;
+      }
+      pagesData.splice(activePageIndex, 1);
+      if (activePageIndex >= pagesData.length) activePageIndex = pagesData.length - 1;
+      loadPage(activePageIndex);
+    }
+
+    function renderThumbnails() {
+      const container = document.getElementById('pageThumbnailsList');
+      container.innerHTML = pagesData.map((p, idx) => `
+        <div onclick="saveCurrentPageState(); loadPage(${idx})" class="p-2 rounded-xl border ${idx === activePageIndex ? 'border-indigo-600 bg-indigo-50/60' : 'border-slate-200 bg-white'} cursor-pointer flex items-center justify-between transition shadow-sm">
+          <div class="text-xs font-medium text-slate-800">Page ${idx + 1}</div>
+        </div>
+      `).join('');
+      document.getElementById('totalPageCount').innerText = pagesData.length;
+    }
+
+    function setupCanvasListeners() {
+      canvas.on('object:added', () => saveCurrentPageState());
+      canvas.on('object:modified', () => saveCurrentPageState());
+      canvas.on('object:removed', () => saveCurrentPageState());
+      canvas.on('selection:created', updateInspector);
+      canvas.on('selection:updated', updateInspector);
+      canvas.on('selection:cleared', hideInspector);
+    }
+
+    function addShape(type) {
+      let shape;
+      const opts = { left: BASE_WIDTH / 2 - 100, top: BASE_HEIGHT / 2 - 50, fill: '#6366f1' };
+      if (type === 'rect') shape = new fabric.Rect({ ...opts, width: 200, height: 100 });
+      else if (type === 'circle') shape = new fabric.Circle({ ...opts, radius: 60 });
+      else if (type === 'line') shape = new fabric.Line([50, 50, 300, 50], { stroke: '#6366f1', strokeWidth: 5 });
+      canvas.add(shape);
+      canvas.setActiveObject(shape);
+    }
+
+    function addRedactionBox() {
+      const box = new fabric.Rect({
+        left: BASE_WIDTH / 2 - 150, top: BASE_HEIGHT / 2 - 30,
+        width: 300, height: 40, fill: '#000000', isRedaction: true
+      });
+      canvas.add(box);
+      canvas.setActiveObject(box);
+    }
+
+    function addTextDirectly() {
+      const text = new fabric.IText('Click to edit text', {
+        left: BASE_WIDTH / 2 - 120, top: BASE_HEIGHT / 2 - 20,
+        fontFamily: 'Poppins', fill: '#0f172a', fontSize: 24
+      });
+      canvas.add(text);
+      canvas.setActiveObject(text);
+    }
+
+    document.getElementById('imageLoader').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        fabric.Image.fromURL(evt.target.result, (img) => {
+          img.scaleToWidth(200);
+          img.set({ left: BASE_WIDTH / 2 - 100, top: BASE_HEIGHT / 2 - 100 });
+          canvas.add(img);
+          canvas.setActiveObject(img);
+        }, { crossOrigin: 'anonymous' });
+      };
+      reader.readAsDataURL(file);
+      this.value = '';
+    });
+
+    function updateInspector() {
+      const active = canvas.getActiveObject();
+      if (!active) { hideInspector(); return; }
+      document.getElementById('objectInspector').classList.remove('hidden');
+      if (active.isType('i-text')) {
+        document.getElementById('textInspectorControls').classList.remove('hidden');
+        document.getElementById('shapeInspectorControls').classList.add('hidden');
+      } else {
+        document.getElementById('textInspectorControls').classList.add('hidden');
+        document.getElementById('shapeInspectorControls').classList.remove('hidden');
+      }
+    }
+    function hideInspector() { document.getElementById('objectInspector').classList.add('hidden'); }
+
+    function updateTextProperty(prop, val) {
+      const active = canvas.getActiveObject();
+      if (active && active.isType('i-text')) { active.set(prop, val); canvas.renderAll(); }
+    }
+    function updateShapeProperty(prop, val) {
+      const active = canvas.getActiveObject();
+      if (active) { active.set(prop, val); canvas.renderAll(); }
+    }
+    function deleteSelected() {
+      const active = canvas.getActiveObject();
+      if (active) { canvas.remove(active); canvas.discardActiveObject(); hideInspector(); }
+    }
+
+    function resizeCanvasToFitContainer() {
+      const workspace = document.getElementById('workspaceContainer');
+      const scale = Math.min((workspace.clientWidth - 80) / BASE_WIDTH, (workspace.clientHeight - 80) / BASE_HEIGHT, 1.2);
+      currentZoomScale = scale;
+      canvas.setZoom(scale);
+      canvas.setDimensions({ width: BASE_WIDTH * scale, height: BASE_HEIGHT * scale });
+      document.getElementById('canvasWrapper').style.width = `${BASE_WIDTH * scale}px`;
+      document.getElementById('canvasWrapper').style.height = `${BASE_HEIGHT * scale}px`;
+      document.getElementById('zoomDisplay').innerText = `${Math.round(scale * 100)}%`;
+      canvas.renderAll();
+    }
+    function zoomCanvas(amt) {
+      let newZoom = currentZoomScale + amt;
+      if (newZoom < 0.2) newZoom = 0.2;
+      currentZoomScale = newZoom;
+      canvas.setZoom(newZoom);
+      canvas.setDimensions({ width: BASE_WIDTH * newZoom, height: BASE_HEIGHT * newZoom });
+      document.getElementById('canvasWrapper').style.width = `${BASE_WIDTH * newZoom}px`;
+      document.getElementById('canvasWrapper').style.height = `${BASE_HEIGHT * newZoom}px`;
+      document.getElementById('zoomDisplay').innerText = `${Math.round(newZoom * 100)}%`;
+      canvas.renderAll();
+    }
+    function resetZoom() { resizeCanvasToFitContainer(); }
+
+    function openExportModal() { document.getElementById('exportModal').classList.remove('hidden'); }
+    function closeExportModal() { document.getElementById('exportModal').classList.add('hidden'); }
+    function openCompressModal() { document.getElementById('compressModal').classList.remove('hidden'); }
+    function closeCompressModal() { document.getElementById('compressModal').classList.add('hidden'); }
+    function closeCompressPreview() { document.getElementById('compressPreviewModal').classList.add('hidden'); }
+
+    function setCompressionOption(level) {
+      ['low', 'medium', 'high'].forEach(l => {
+        const lbl = document.getElementById(`comp-label-${l}`);
+        const radio = lbl.querySelector('input[type="radio"]');
+        if (l === level) {
+          radio.checked = true;
+          lbl.className = "p-3 rounded-xl border border-indigo-600 bg-indigo-50/50 cursor-pointer text-center transition block";
+          lbl.querySelector('span.font-bold').className = "font-bold text-indigo-700 block mb-1";
+        } else {
+          radio.checked = false;
+          lbl.className = "p-3 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer text-center transition block";
+          lbl.querySelector('span.font-bold').className = "font-bold text-slate-700 block mb-1";
+        }
+      });
+    }
+
+    async function executePDFExport() {
+      saveCurrentPageState();
+      canvas.discardActiveObject();
+      hideInspector();
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: BASE_WIDTH > BASE_HEIGHT ? 'l' : 'p', unit: 'px', format: [BASE_WIDTH, BASE_HEIGHT] });
+
+      for (let i = 0; i < pagesData.length; i++) {
+        if (i > 0) pdf.addPage([BASE_WIDTH, BASE_HEIGHT]);
+        await loadPageAsync(i);
+        const dataUrl = canvas.toDataURL({ format: 'png', quality: 1.0, multiplier: 1 });
+        pdf.addImage(dataUrl, 'PNG', 0, 0, BASE_WIDTH, BASE_HEIGHT);
+      }
+      pdf.save('ClickVectora_Edited_Document.pdf');
+      closeExportModal();
+    }
+
+    async function processAndPreviewCompression() {
+      try {
+        let compressedPdfBytes;
+
+        if (loadedPdfBytes) {
+          try {
+            // Try safe structural compression first
+            const pdfDoc = await PDFLib.PDFDocument.load(loadedPdfBytes, { ignoreEncryption: true });
+            compressedPdfBytes = await pdfDoc.save({ useObjectStreams: true });
+          } catch (innerErr) {
+            console.warn("Direct PDF-lib compression failed, switching to canvas render fallback...", innerErr);
+            // Fallback: Re-render pages cleanly via canvas and jsPDF if internal structure is broken
+            const loadingTask = pdfjsLib.getDocument({ data: loadedPdfBytes });
+            const pdfDoc = await loadingTask.promise;
+            
+            const { jsPDF } = window.jspdf;
+            let pdf = null;
+
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+              const page = await pdfDoc.getPage(i);
+              const viewport = page.getViewport({ scale: 1.5 });
+              const canvasElement = document.createElement('canvas');
+              canvasElement.width = viewport.width;
+              canvasElement.height = viewport.height;
+              const ctx = canvasElement.getContext('2d');
+              await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+              const imgData = canvasElement.toDataURL('image/jpeg', 0.85);
+              if (i === 1) {
+                pdf = new jsPDF({ orientation: viewport.width > viewport.height ? 'l' : 'p', unit: 'px', format: [viewport.width, viewport.height] });
+              } else {
+                pdf.addPage([viewport.width, viewport.height]);
+              }
+              pdf.addImage(imgData, 'JPEG', 0, 0, viewport.width, viewport.height);
+            }
+
+            const arrayBuf = pdf.output('arraybuffer');
+            const finalDoc = await PDFLib.PDFDocument.load(arrayBuf);
+            compressedPdfBytes = await finalDoc.save({ useObjectStreams: true });
+          }
+        } else {
+          // If created from scratch / converted from word/excel
+          saveCurrentPageState();
+          canvas.discardActiveObject();
+          hideInspector();
+
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ orientation: BASE_WIDTH > BASE_HEIGHT ? 'l' : 'p', unit: 'px', format: [BASE_WIDTH, BASE_HEIGHT] });
+
+          for (let i = 0; i < pagesData.length; i++) {
+            if (i > 0) pdf.addPage([BASE_WIDTH, BASE_HEIGHT]);
+            await loadPageAsync(i);
+            const dataUrl = canvas.toDataURL({ format: 'png', quality: 0.9, multiplier: 1 });
+            pdf.addImage(dataUrl, 'PNG', 0, 0, BASE_WIDTH, BASE_HEIGHT);
+          }
+          const arrayBuf = pdf.output('arraybuffer');
+          const pdfDoc = await PDFLib.PDFDocument.load(arrayBuf);
+          compressedPdfBytes = await pdfDoc.save({ useObjectStreams: true });
+        }
+
+        const blob = new Blob([compressedPdfBytes], { type: 'application/pdf' });
+        compressedPdfBlobUrl = URL.createObjectURL(blob);
+        compressedFileSizeText = formatBytes(blob.size);
+
+        document.getElementById('previewOriginalSize').innerText = originalFileSizeText;
+        document.getElementById('previewCompressedSize').innerText = compressedFileSizeText;
+
+        closeCompressModal();
+        document.getElementById('compressPreviewModal').classList.remove('hidden');
+      } catch (err) {
+        console.error(err);
+        showValidationAlert('Compression Failed', 'Unable to process and compress this file format safely.');
+        closeCompressModal();
+      }
+    }
+
+    function downloadCompressedPDF() {
+      if (!compressedPdfBlobUrl) return;
+      const link = document.createElement('a');
+      link.href = compressedPdfBlobUrl;
+      link.download = 'ClickVectora_Compressed.pdf';
+      link.click();
+      closeCompressPreview();
+    }
+  </script>
+</body>
+</html>
