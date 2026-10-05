@@ -1,0 +1,12 @@
+{
+  "name": "pdf-studio-app",
+  "version": "1.0.0",
+  "description": "PDF Studio - Click Vectora Solution running on Node.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

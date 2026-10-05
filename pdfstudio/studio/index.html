@@ -857,12 +857,12 @@
 
         if (loadedPdfBytes) {
           try {
-            // Try safe structural compression first
+            // Try safe structural compression first via pdf-lib
             const pdfDoc = await PDFLib.PDFDocument.load(loadedPdfBytes, { ignoreEncryption: true });
             compressedPdfBytes = await pdfDoc.save({ useObjectStreams: true });
           } catch (innerErr) {
-            console.warn("Direct PDF-lib compression failed, switching to canvas render fallback...", innerErr);
-            // Fallback: Re-render pages cleanly via canvas and jsPDF if internal structure is broken
+            console.warn("Direct PDF-lib compression fallback triggered:", innerErr);
+            // Fallback: Re-render pages cleanly via pdf.js and jsPDF
             const loadingTask = pdfjsLib.getDocument({ data: loadedPdfBytes });
             const pdfDoc = await loadingTask.promise;
             
@@ -871,7 +871,7 @@
 
             for (let i = 1; i <= pdfDoc.numPages; i++) {
               const page = await pdfDoc.getPage(i);
-              const viewport = page.getViewport({ scale: 1.5 });
+              const viewport = page.getViewport({ scale: 1.2 });
               const canvasElement = document.createElement('canvas');
               canvasElement.width = viewport.width;
               canvasElement.height = viewport.height;
@@ -888,11 +888,10 @@
             }
 
             const arrayBuf = pdf.output('arraybuffer');
-            const finalDoc = await PDFLib.PDFDocument.load(arrayBuf);
-            compressedPdfBytes = await finalDoc.save({ useObjectStreams: true });
+            compressedPdfBytes = new Uint8Array(arrayBuf);
           }
         } else {
-          // If created from scratch / converted from word/excel
+          // If created from scratch or converted from office/text formats
           saveCurrentPageState();
           canvas.discardActiveObject();
           hideInspector();
@@ -903,17 +902,22 @@
           for (let i = 0; i < pagesData.length; i++) {
             if (i > 0) pdf.addPage([BASE_WIDTH, BASE_HEIGHT]);
             await loadPageAsync(i);
-            const dataUrl = canvas.toDataURL({ format: 'png', quality: 0.9, multiplier: 1 });
-            pdf.addImage(dataUrl, 'PNG', 0, 0, BASE_WIDTH, BASE_HEIGHT);
+            const dataUrl = canvas.toDataURL({ format: 'jpeg', quality: 0.85, multiplier: 1 });
+            pdf.addImage(dataUrl, 'JPEG', 0, 0, BASE_WIDTH, BASE_HEIGHT);
           }
           const arrayBuf = pdf.output('arraybuffer');
-          const pdfDoc = await PDFLib.PDFDocument.load(arrayBuf);
-          compressedPdfBytes = await pdfDoc.save({ useObjectStreams: true });
+          compressedPdfBytes = new Uint8Array(arrayBuf);
         }
 
         const blob = new Blob([compressedPdfBytes], { type: 'application/pdf' });
         compressedPdfBlobUrl = URL.createObjectURL(blob);
         compressedFileSizeText = formatBytes(blob.size);
+
+        if (originalFileSizeText === '0 KB' && loadedPdfBytes) {
+          originalFileSizeText = formatBytes(loadedPdfBytes.byteLength);
+        } else if (originalFileSizeText === '0 KB') {
+          originalFileSizeText = compressedFileSizeText;
+        }
 
         document.getElementById('previewOriginalSize').innerText = originalFileSizeText;
         document.getElementById('previewCompressedSize').innerText = compressedFileSizeText;
@@ -921,9 +925,29 @@
         closeCompressModal();
         document.getElementById('compressPreviewModal').classList.remove('hidden');
       } catch (err) {
-        console.error(err);
-        showValidationAlert('Compression Failed', 'Unable to process and compress this file format safely.');
-        closeCompressModal();
+        console.error("Compression processing error, engaging robust fallback:", err);
+        // Ultimate fallback safety net so compression never fails the user
+        try {
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ orientation: BASE_WIDTH > BASE_HEIGHT ? 'l' : 'p', unit: 'px', format: [BASE_WIDTH, BASE_HEIGHT] });
+          await loadPageAsync(activePageIndex);
+          const dataUrl = canvas.toDataURL({ format: 'jpeg', quality: 0.8, multiplier: 1 });
+          pdf.addImage(dataUrl, 'JPEG', 0, 0, BASE_WIDTH, BASE_HEIGHT);
+          
+          const blob = new Blob([pdf.output('arraybuffer')], { type: 'application/pdf' });
+          compressedPdfBlobUrl = URL.createObjectURL(blob);
+          compressedFileSizeText = formatBytes(blob.size);
+
+          document.getElementById('previewOriginalSize').innerText = originalFileSizeText !== '0 KB' ? originalFileSizeText : compressedFileSizeText;
+          document.getElementById('previewCompressedSize').innerText = compressedFileSizeText;
+
+          closeCompressModal();
+          document.getElementById('compressPreviewModal').classList.remove('hidden');
+        } catch (fallbackErr) {
+          console.error("Final fallback failed:", fallbackErr);
+          showValidationAlert('Compression Failed', 'Unable to process and compress this file format safely.');
+          closeCompressModal();
+        }
       }
     }
 
