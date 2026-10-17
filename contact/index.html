@@ -143,9 +143,20 @@
 
       <div class="contact-wrapper">
         <div class="contact-info-list">
-          <div class="info-item"><i class="fa-solid fa-envelope"></i><div><h4>Email Support</h4><a href="mailto:clickvectora@gmail.com">clickvectora@gmail.com</a></div></div>
-          <div class="info-item"><i class="fa-brands fa-whatsapp"></i><div><h4>WhatsApp Chat</h4><a href="https://wa.me/919427740360" target="_blank">+91 94277 40360</a></div></div>
-          <div class="info-item"><i class="fa-solid fa-clock"></i><div><h4>Working Hours</h4><p>Mon - Sat: 9:00 AM - 7:00 PM IST</p></div></div>
+          <div class="info-item">
+            <i class="fa-solid fa-envelope"></i>
+            <div>
+              <h4>Email Support</h4>
+              <a href="mailto:clickvectora@gmail.com">clickvectora@gmail.com</a>
+            </div>
+          </div>
+          <div class="info-item">
+            <i class="fa-solid fa-clock"></i>
+            <div>
+              <h4>Working Hours</h4>
+              <p>Mon - Sat: 9:00 AM - 7:00 PM IST</p>
+            </div>
+          </div>
           <div class="social-handles">
             <p>Connect With Us</p>
             <div class="social-links">
@@ -159,10 +170,44 @@
         <div class="contact-form-box">
           <h3>Send Us a Message</h3>
           <form onsubmit="sendDirectMessage(event)">
-            <div class="input-group"><label>Full Name</label><input type="text" id="directName" required minlength="2"></div>
-            <div class="input-group"><label>Email Address</label><input type="email" id="directEmail" required></div>
-            <div class="input-group"><label>Mobile Number</label><input type="tel" id="directPhone" required pattern="[0-9]{10}" maxlength="10"></div>
-            <div class="input-group"><label>Message</label><textarea id="directMsg" rows="3" required minlength="5"></textarea></div>
+            <div class="input-group">
+              <label>Full Name</label>
+              <input 
+                type="text" 
+                id="directName" 
+                required 
+                minlength="2" 
+                maxlength="50"
+                pattern="^[A-Za-z\s]+$" 
+                title="Full Name should contain only letters and spaces (min 2 characters)." 
+                oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
+            </div>
+            <div class="input-group">
+              <label>Email Address</label>
+              <input 
+                type="email" 
+                id="directEmail" 
+                required 
+                maxlength="100"
+                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                title="Please enter a valid email address (e.g., example@domain.com).">
+            </div>
+            <div class="input-group">
+              <label>Mobile Number</label>
+              <input 
+                type="tel" 
+                id="directPhone" 
+                required 
+                inputmode="numeric"
+                pattern="^[0-9]{10}$" 
+                maxlength="10" 
+                title="Please enter a valid 10-digit mobile number containing digits (0-9) only." 
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+            <div class="input-group">
+              <label>Message</label>
+              <textarea id="directMsg" rows="3" required minlength="5"></textarea>
+            </div>
             <button type="submit" class="btn btn-orange">Send Message</button>
           </form>
         </div>
@@ -224,10 +269,35 @@
 
     function sendDirectMessage(event) {
       event.preventDefault();
-      const name = document.getElementById('directName').value;
-      const email = document.getElementById('directEmail').value;
-      const phone = document.getElementById('directPhone').value;
-      const msg = document.getElementById('directMsg').value;
+      const name = document.getElementById('directName').value.trim();
+      const email = document.getElementById('directEmail').value.trim();
+      const phone = document.getElementById('directPhone').value.trim();
+      const msg = document.getElementById('directMsg').value.trim();
+
+      // 1. Full Name Validation: Alphabets and spaces only (minimum 2 characters)
+      const nameRegex = /^[A-Za-z\s]{2,50}$/;
+      if (!nameRegex.test(name)) {
+        alert('Please enter a valid name containing only letters and spaces (at least 2 characters).');
+        document.getElementById('directName').focus();
+        return;
+      }
+
+      // 2. Email Address Validation: Standard email pattern
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address (e.g., yourname@domain.com).');
+        document.getElementById('directEmail').focus();
+        return;
+      }
+
+      // 3. Mobile Number Validation: Exactly 10 digits (0-9)
+      const phoneRegex = /^[0-9]{10}$/;
+      if (!phoneRegex.test(phone)) {
+        alert('Please enter a valid 10-digit mobile number containing digits (0-9) only.');
+        document.getElementById('directPhone').focus();
+        return;
+      }
+
       const message = `*GENERAL INQUIRY*\n*Name:* ${name}\n*Email:* ${email}\n*Mobile:* ${phone}\n*Message:* ${msg}`;
       window.open(`https://wa.me/919427740360?text=${encodeURIComponent(message)}`, '_blank');
     }
