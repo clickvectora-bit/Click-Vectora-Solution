@@ -40,22 +40,14 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* 2-Second Circle Loading Overlay Styles */
+    /* Page Loader Styles */
     #loadingOverlay {
-      position: fixed;
-      inset: 0;
-      background: #0f172a;
-      z-index: 99999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.6s ease;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
     }
-    .loading-circle-spinner {
-      width: 60px;
-      height: 60px;
-      border: 5px solid rgba(255, 255, 255, 0.1);
+    .spinner-circle {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #e2e8f0;
       border-top: 5px solid #6366f1;
       border-radius: 50%;
       animation: spin 1s linear infinite;
@@ -68,11 +60,10 @@
 </head>
 <body class="h-full bg-slate-100 text-slate-800 flex flex-col overflow-hidden">
 
-  <!-- 2-Second Loading Delay Overlay with Circle Spinner -->
-  <div id="loadingOverlay">
-    <div class="loading-circle-spinner mb-4"></div>
-    <h2 class="text-white font-bold text-sm tracking-widest uppercase">Embroidery Studio</h2>
-    <p class="text-xs text-slate-400 mt-1">Initializing Embroidery & Digitizing Engine...</p>
+  <!-- Page Loading Overlay with Circle Animation -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center space-y-4">
+    <div class="spinner-circle"></div>
+    <p class="text-white font-medium text-sm tracking-wide">Loading Embroidery Studio...</p>
   </div>
 
   <!-- Toast Notification Modal -->
@@ -523,6 +514,19 @@
 
   <!-- JAVASCRIPT APPLICATION CODE -->
   <script>
+    // --- PAGE LOADER HANDLER (2 SECONDS DELAY) ---
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('loadingOverlay');
+        if (loader) {
+          loader.style.opacity = '0';
+          setTimeout(() => {
+            loader.style.display = 'none';
+          }, 500); // matches CSS transition duration
+        }
+      }, 2000); // 2-second delay
+    });
+
     // --- BROWSER ANTI-INSPECTION SECURITY SCRIPTS ---
     document.addEventListener('contextmenu', function(e) {
       e.preventDefault();
@@ -579,16 +583,7 @@
       selection: true
     });
 
-    window.onload = function() {
-      // 2-Second Circular Loading Delay Handler
-      setTimeout(() => {
-        const overlay = document.getElementById('loadingOverlay');
-        if (overlay) {
-          overlay.style.opacity = '0';
-          setTimeout(() => overlay.remove(), 600);
-        }
-      }, 2000);
-
+    window.addEventListener('DOMContentLoaded', () => {
       initGarmentUI();
       initMadeiraSwatches();
       selectGarment('polo_left_chest');
@@ -598,7 +593,7 @@
       window.addEventListener('resize', resizeCanvasToFit);
 
       createDefaultEmbroideryDesign();
-    };
+    });
 
     function showValidationAlert(title, message) {
       document.getElementById('validationAlertTitle').innerText = title;
