@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Vectora Solution - Secured Digital Business Card Studio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- QRCode Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- html2pdf.js Library for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Razorpay Checkout Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(107, 114, 128, 0.8); }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 h-full flex flex-col overflow-hidden transition-colors duration-300">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 border border-slate-700 dark:border-slate-200">
+        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+        <span id="toast-message" class="text-sm font-medium">Action completed successfully!</span>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-6 flex items-center justify-between z-20 shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-base leading-tight tracking-tight">Click Vectora<span class="text-indigo-500">.io</span></h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Secured Digital Business Card Studio</p>
+            </div>
+        </div>
+
+        <!-- Center Tabs -->
+        <div class="hidden md:flex items-center p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
+            <button onclick="switchTab('creator')" id="tab-creator" class="px-4 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-2 bg-white dark:bg-slate-700 shadow-sm text-indigo-600 dark:text-indigo-400">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Studio Creator
+            </button>
+            <button onclick="switchTab('display')" id="tab-display" class="px-4 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Live Display
+            </button>
+        </div>
+
+        <!-- Right Controls -->
+        <div class="flex items-center gap-3">
+            <button onclick="triggerRazorpayPayment('pdf')" class="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl shadow-md transition">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> Export PDF (₹99)
+            </button>
+            <button onclick="toggleDarkMode()" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Toggle Theme">
+                <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+                <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+            </button>
+            <button onclick="saveCardData()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i> Save Card
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Bar (Bottom) -->
+    <div class="md:hidden flex items-center justify-around border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 z-20 shrink-0">
+        <button onclick="switchTab('creator')" id="mob-tab-creator" class="flex flex-col items-center gap-1 text-indigo-600 dark:text-indigo-400 text-xs font-medium">
+            <i data-lucide="edit-3" class="w-5 h-5"></i> Creator
+        </button>
+        <button onclick="switchTab('display')" id="mob-tab-display" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 text-xs font-medium">
+            <i data-lucide="smartphone" class="w-5 h-5"></i> Display
+        </button>
+        <button onclick="triggerRazorpayPayment('pdf')" class="flex flex-col items-center gap-1 text-emerald-500 text-xs font-medium">
+            <i data-lucide="download" class="w-5 h-5"></i> PDF
+        </button>
+    </div>
+
+    <!-- Main Workspace Container -->
+    <main class="flex-1 overflow-hidden relative">
+
+        <!-- ================= 1. STUDIO CREATOR VIEW ================= -->
+        <div id="view-creator" class="absolute inset-0 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden">
+            <!-- Left Panel: Form Inputs & Image Upload Controls -->
+            <div class="w-full lg:w-1/2 xl:w-5/12 h-auto lg:h-full overflow-y-auto p-6 border-r border-slate-200 dark:border-slate-800 space-y-6">
+                
+                <!-- Section Tabs inside Creator -->
+                <div class="flex border-b border-slate-200 dark:border-slate-800 gap-6 text-sm font-semibold">
+                    <button onclick="switchEditorSubtab('info')" id="subtab-info-btn" class="pb-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 transition-colors flex items-center gap-2">
+                        <i data-lucide="user" class="w-4 h-4"></i> Profile & Images
+                    </button>
+                    <button onclick="switchEditorSubtab('design')" id="subtab-design-btn" class="pb-3 border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 transition-colors flex items-center gap-2">
+                        <i data-lucide="palette" class="w-4 h-4"></i> Theme & Layout
+                    </button>
+                </div>
+
+                <!-- Personal Info & Image Upload Form -->
+                <div id="subtab-info" class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400">Profile Details</h2>
+                        <div class="flex gap-2">
+                            <button onclick="loadPreset('tech')" class="text-xs px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition">Tech</button>
+                            <button onclick="loadPreset('designer')" class="text-xs px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition">Designer</button>
+                            <button onclick="loadPreset('executive')" class="text-xs px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition">Executive</button>
+                        </div>
+                    </div>
+
+                    <!-- Image Upload Section with Device FileReader Support -->
+                    <div class="p-4 rounded-2xl bg-slate-100/70 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                                <i data-lucide="image" class="w-4 h-4 text-indigo-500"></i> Profile Avatar & Logo
+                            </span>
+                            <span class="text-[10px] text-slate-400">Device Upload (JPG, PNG, WebP)</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-semibold mb-1 text-slate-600 dark:text-slate-300">Upload Avatar</label>
+                                <label class="flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer text-xs font-medium transition shadow-sm">
+                                    <i data-lucide="upload" class="w-3.5 h-3.5 text-indigo-500"></i>
+                                    <span id="avatar-filename-label" class="truncate max-w-[120px]">Choose file...</span>
+                                    <input type="file" id="inp-avatar-file" accept="image/*" onchange="handleAvatarUpload(event)" class="hidden">
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold mb-1 text-slate-600 dark:text-slate-300">Upload Company Logo</label>
+                                <label class="flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer text-xs font-medium transition shadow-sm">
+                                    <i data-lucide="upload" class="w-3.5 h-3.5 text-indigo-500"></i>
+                                    <span id="logo-filename-label" class="truncate max-w-[120px]">Choose file...</span>
+                                    <input type="file" id="inp-logo-file" accept="image/*" onchange="handleLogoUpload(event)" class="hidden">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Full Name</label>
+                            <input type="text" id="inp-name" oninput="updateCardData()" placeholder="Rohan Sharma" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Job Title</label>
+                            <input type="text" id="inp-title" oninput="updateCardData()" placeholder="Senior Full-Stack Architect" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+
+                    <!-- Company / Org placed directly below Job Title -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Company / Organization Name</label>
+                            <input type="text" id="inp-company" oninput="updateCardData()" placeholder="Click Vectora Solution" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Or Avatar Image URL</label>
+                            <input type="text" id="inp-avatar" oninput="updateCardData()" placeholder="https://images.unsplash.com/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Bio / Tagline</label>
+                        <textarea id="inp-bio" rows="2" oninput="updateCardData()" placeholder="Architecting high-performance web applications and automated AI workflows." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 pt-2">Contact Channels</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Email Address</label>
+                            <input type="email" id="inp-email" oninput="updateCardData()" placeholder="clickvectora@gmail.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Phone Number</label>
+                            <input type="text" id="inp-phone" oninput="updateCardData()" placeholder="+91 98765 43210" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Website URL</label>
+                        <input type="text" id="inp-website" oninput="updateCardData()" placeholder="https://clickvectora.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 pt-2">Social Profiles & Handles (Always Visible on Card)</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">LinkedIn Username/URL</label>
+                            <input type="text" id="inp-linkedin" oninput="updateCardData()" placeholder="in/clickvectora" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Twitter / X Handle</label>
+                            <input type="text" id="inp-twitter" oninput="updateCardData()" placeholder="@clickvectora" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">GitHub Username</label>
+                            <input type="text" id="inp-github" oninput="updateCardData()" placeholder="clickvectora" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Instagram Handle</label>
+                            <input type="text" id="inp-instagram" oninput="updateCardData()" placeholder="@clickvectora" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">YouTube Channel / Handle</label>
+                            <input type="text" id="inp-youtube" oninput="updateCardData()" placeholder="@clickvectora" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Facebook Handle / URL</label>
+                            <input type="text" id="inp-facebook" oninput="updateCardData()" placeholder="clickvectora" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theme & Design Customization -->
+                <div id="subtab-design" class="space-y-6 hidden">
+                    <div>
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">Card Theme Preset</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <button onclick="setTheme('modern-dark')" class="p-3 rounded-xl border-2 border-slate-800 bg-slate-900 text-white text-left transition hover:scale-[1.02]">
+                                <div class="font-semibold text-xs">Modern Dark</div>
+                                <div class="text-[10px] text-slate-400">Sleek obsidian</div>
+                            </button>
+                            <button onclick="setTheme('minimal-light')" class="p-3 rounded-xl border-2 border-slate-200 bg-white text-slate-900 text-left transition hover:scale-[1.02]">
+                                <div class="font-semibold text-xs">Minimal Light</div>
+                                <div class="text-[10px] text-slate-500">Clean crisp white</div>
+                            </button>
+                            <button onclick="setTheme('neon-cyber')" class="p-3 rounded-xl border-2 border-emerald-500 bg-slate-950 text-emerald-400 text-left transition hover:scale-[1.02]">
+                                <div class="font-semibold text-xs">Neon Cyber</div>
+                                <div class="text-[10px] text-emerald-600">Matrix cyberpunk</div>
+                            </button>
+                            <button onclick="setTheme('executive-gold')" class="p-3 rounded-xl border-2 border-amber-500/50 bg-stone-900 text-amber-300 text-left transition hover:scale-[1.02]">
+                                <div class="font-semibold text-xs">Executive Gold</div>
+                                <div class="text-[10px] text-amber-500/70">Luxury & prestige</div>
+                            </button>
+                            <button onclick="setTheme('gradient-sunset')" class="p-3 rounded-xl border-2 border-pink-500/50 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white text-left transition hover:scale-[1.02]">
+                                <div class="font-semibold text-xs">Sunset Gradient</div>
+                                <div class="text-[10px] text-pink-300">Vibrant warm tones</div>
+                            </button>
+                            <button onclick="setTheme('glassmorphism')" class="p-3 rounded-xl border-2 border-white/40 bg-indigo-500/25 backdrop-blur-md text-white text-left transition hover:scale-[1.02]">
+                                <div class="font-semibold text-xs">Glassmorphism</div>
+                                <div class="text-[10px] text-indigo-200">Frosted translucent</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Panel: Real-time Live Preview Workspace -->
+            <div class="w-full lg:w-1/2 xl:w-7/12 h-full bg-slate-100 dark:bg-slate-900/50 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-y-auto">
+                <div class="absolute top-4 left-6 hidden sm:flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Live Preview Studio</span>
+                </div>
+
+                <!-- Preview Card Container -->
+                <div class="w-full max-w-sm my-auto transition-all duration-300 transform shadow-2xl rounded-3xl overflow-hidden flex flex-col">
+                    <div id="card-render-box" class="p-5 sm:p-6 flex flex-col items-center text-center relative overflow-y-auto transition-all duration-300 max-h-[85vh] justify-between rounded-3xl">
+                        
+                        <!-- Top Action & Company Logo Badge -->
+                        <div class="w-full flex justify-between items-center z-10 shrink-0 mb-3">
+                            <div class="flex items-center gap-2">
+                                <img id="preview-logo" src="" alt="Logo" class="w-6 h-6 rounded-md object-cover hidden border border-white/30">
+                                <span id="card-badge" class="px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase bg-white/20 backdrop-blur-md">Digital ID</span>
+                            </div>
+                            <button onclick="openShareModal()" class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/30 transition shrink-0">
+                                <i data-lucide="share-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                        <!-- User Avatar & Core info (Name -> Job Title -> Company Name) -->
+                        <div class="flex flex-col items-center z-10 my-2 w-full shrink-0">
+                            <div class="relative mb-2 group">
+                                <img id="preview-avatar" src="" alt="Avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover ring-4 ring-white/30 shadow-xl">
+                            </div>
+                            <h2 id="preview-name" class="text-lg sm:text-xl font-bold tracking-tight truncate max-w-full px-2"></h2>
+                            <p id="preview-title" class="text-xs sm:text-sm font-medium opacity-90 mt-0.5 truncate max-w-full px-2"></p>
+                            <p id="preview-company" class="text-xs opacity-75 mt-0.5 truncate max-w-full px-2 font-semibold"></p>
+                            <p id="preview-bio" class="text-xs opacity-80 mt-2 px-3 leading-relaxed"></p>
+                        </div>
+
+                        <!-- Interactive Quick Buttons (Guaranteed Lucide Initialization) -->
+                        <div class="grid grid-cols-4 gap-2 w-full z-10 my-3 shrink-0">
+                            <a id="btn-action-call" href="#" class="flex flex-col items-center justify-center p-2 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/20 transition group">
+                                <i data-lucide="phone" class="w-4 h-4 mb-1 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[10px] font-medium">Call</span>
+                            </a>
+                            <a id="btn-action-email" href="#" class="flex flex-col items-center justify-center p-2 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/20 transition group">
+                                <i data-lucide="mail" class="w-4 h-4 mb-1 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[10px] font-medium">Email</span>
+                            </a>
+                            <a id="btn-action-web" href="#" target="_blank" class="flex flex-col items-center justify-center p-2 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/20 transition group">
+                                <i data-lucide="globe" class="w-4 h-4 mb-1 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[10px] font-medium">Website</span>
+                            </a>
+                            <button onclick="triggerRazorpayPayment('vcard')" class="flex flex-col items-center justify-center p-2 rounded-xl bg-white/20 backdrop-blur-md hover:bg-white/30 transition group shadow-md" title="Pay ₹49 to Save Contact">
+                                <i data-lucide="user-plus" class="w-4 h-4 mb-1 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[10px] font-bold">Save</span>
+                            </button>
+                        </div>
+
+                        <!-- Social Icon Row (Expanded with multiple platform icons) -->
+                        <div id="preview-socials" class="flex flex-wrap items-center justify-center gap-2.5 z-10 pt-1 shrink-0"></div>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex flex-wrap justify-center items-center gap-2 sm:gap-3">
+                    <button onclick="switchTab('display')" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center gap-2">
+                        <i data-lucide="maximize" class="w-4 h-4"></i> Display Mode
+                    </button>
+                    <button onclick="triggerRazorpayPayment('pdf')" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> PDF (₹99)
+                    </button>
+                    <button onclick="triggerRazorpayPayment('vcard')" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition flex items-center gap-2">
+                        <i data-lucide="contact" class="w-4 h-4"></i> vCard (₹49)
+                    </button>
+                    <button onclick="openShareModal()" class="px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 transition flex items-center gap-2">
+                        <i data-lucide="qr-code" class="w-4 h-4"></i> QR Code
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 2. LIVE DISPLAY MODE VIEW ================= -->
+        <div id="view-display" class="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center p-4 sm:p-6 overflow-y-auto hidden">
+            <div class="absolute top-6 left-6 flex items-center gap-3 z-20">
+                <button onclick="switchTab('creator')" class="px-4 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-white text-xs font-semibold backdrop-blur-md border border-slate-700 transition flex items-center gap-2">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Studio
+                </button>
+                <button onclick="triggerRazorpayPayment('pdf')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold backdrop-blur-md shadow-lg transition flex items-center gap-2">
+                    <i data-lucide="download" class="w-4 h-4"></i> Pay & Export PDF
+                </button>
+            </div>
+
+            <!-- Immersive Mobile Display Phone Frame -->
+            <div class="w-full max-w-sm bg-slate-950 rounded-[36px] p-3 shadow-2xl border-4 border-slate-800 my-auto relative flex flex-col">
+                <div class="absolute top-3 left-1/2 -transform -translate-x-1/2 w-24 h-3.5 bg-slate-900 rounded-full z-30 flex items-center justify-center">
+                    <div class="w-8 h-1 bg-slate-800 rounded-full"></div>
+                </div>
+
+                <div id="immersive-screen" class="w-full rounded-[28px] overflow-y-auto max-h-[75vh] flex flex-col justify-between p-5 text-center relative transition-all duration-300 pt-8">
+                    <div class="flex justify-between items-center z-10 shrink-0 mb-2">
+                        <div class="flex items-center gap-2">
+                            <img id="disp-logo" src="" alt="Logo" class="w-5 h-5 rounded-md object-cover hidden border border-white/30">
+                            <span id="disp-badge" class="text-[10px] tracking-widest uppercase font-bold opacity-70"></span>
+                        </div>
+                        <button onclick="openShareModal()" class="w-7 h-7 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white shrink-0">
+                            <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+
+                    <!-- Immersive Info (Name -> Job Title -> Company Name) -->
+                    <div class="flex flex-col items-center z-10 my-2 shrink-0">
+                        <img id="disp-avatar" src="" alt="Avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover ring-4 ring-white/30 shadow-2xl mb-2">
+                        <h2 id="disp-name" class="text-xl font-bold tracking-tight text-white truncate max-w-full px-2"></h2>
+                        <p id="disp-title" class="text-xs font-medium text-white/90 mt-0.5 truncate max-w-full px-2"></p>
+                        <p id="disp-company" class="text-xs text-white/75 mt-0.5 truncate max-w-full px-2 font-semibold"></p>
+                        <p id="disp-bio" class="text-xs text-white/80 mt-2 px-2 leading-relaxed"></p>
+                    </div>
+
+                    <div class="space-y-2 z-10 w-full my-2 shrink-0">
+                        <button onclick="triggerRazorpayPayment('vcard')" class="w-full py-2.5 px-4 rounded-xl bg-white text-slate-900 font-bold text-xs shadow-xl flex items-center justify-center gap-2 hover:bg-slate-100 transition">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i> Save Contact to Phone (.vcf) (₹49)
+                        </button>
+                        <div class="grid grid-cols-3 gap-2">
+                            <a id="disp-call-btn" href="#" class="py-2 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs backdrop-blur-md flex items-center justify-center gap-1 transition">
+                                <i data-lucide="phone" class="w-3.5 h-3.5"></i> Call
+                            </a>
+                            <a id="disp-email-btn" href="#" class="py-2 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs backdrop-blur-md flex items-center justify-center gap-1 transition">
+                                <i data-lucide="mail" class="w-3.5 h-3.5"></i> Email
+                            </a>
+                            <a id="disp-web-btn" href="#" target="_blank" class="py-2 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs backdrop-blur-md flex items-center justify-center gap-1 transition">
+                                <i data-lucide="globe" class="w-3.5 h-3.5"></i> Web
+                            </a>
+                        </div>
+                    </div>
+
+                    <div id="disp-socials" class="flex flex-wrap items-center justify-center gap-2.5 z-10 pt-1 shrink-0"></div>
+
+                    <div id="disp-footer" class="text-[10px] text-white/50 z-10 pt-1 shrink-0"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Share Modal Popup -->
+    <div id="share-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl relative space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-base">Share Business Card</h3>
+                <button onclick="closeShareModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-slate-200">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800">
+                <div id="modal-qrcode" class="p-3 bg-white rounded-xl shadow-sm mb-3"></div>
+                <p class="text-xs text-slate-500 font-medium">Scan QR code to open instantly</p>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold mb-1 text-slate-400">Card Shareable URL</label>
+                <div class="flex gap-2">
+                    <input type="text" id="share-url-input" readonly class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-mono border border-slate-200 dark:border-slate-700">
+                    <button onclick="copyShareLink()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shrink-0">Copy</button>
+                </div>
+            </div>
+            <div class="pt-2 flex gap-3">
+                <button onclick="triggerRazorpayPayment('vcard')" class="flex-1 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
+                    <i data-lucide="download" class="w-4 h-4"></i> Download .vcf (₹49)
+                </button>
+                <button onclick="triggerRazorpayPayment('pdf')" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
+                    <i data-lucide="file-text" class="w-4 h-4"></i> Export PDF (₹99)
+                </button>
+                <button onclick="closeShareModal()" class="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application JavaScript Logic with Developer Security Protection -->
+    <script>
+        // ==========================================
+        // 1. SOURCE CODE SECURITY & DEVTOOLS LOCKDOWN
+        // ==========================================
+        
+        // Disable Right-Click Context Menu
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showToast("Right-click inspection is secured & disabled.");
+        });
+
+        // Disable Developer Keyboard Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+U)
+        document.addEventListener('keydown', function(e) {
+            if (
+                e.keyCode === 123 || // F12
+                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74)) || // Ctrl+Shift+I/C/J
+                (e.ctrlKey && e.keyCode === 85) // Ctrl+U
+            ) {
+                e.preventDefault();
+                showToast("Developer tools are restricted for code security.");
+                return false;
+            }
+        });
+
+        // Anti-Debugging / DevTools Interval Detector Loop
+        setInterval(function() {
+            const startTime = performance.now();
+            debugger;
+            const endTime = performance.now();
+            if (endTime - startTime > 100) {
+                console.clear();
+            }
+        }, 1500);
+
+        // ==========================================
+        // 2. STATE & APPLICATION LOGIC (Random Sample Data)
+        // ==========================================
+        let cardData = {
+            name: "Rohan Sharma",
+            title: "Senior Full-Stack Architect",
+            company: "Click Vectora Solution",
+            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400",
+            logo: "",
+            bio: "Architecting high-performance web applications and automated AI workflows.",
+            email: "clickvectora@gmail.com",
+            phone: "+91 98765 43210",
+            website: "https://clickvectora.com",
+            linkedin: "in/clickvectora",
+            twitter: "@clickvectora",
+            github: "clickvectora",
+            instagram: "@clickvectora",
+            youtube: "@clickvectora",
+            facebook: "clickvectora",
+            theme: "modern-dark"
+        };
+
+        const presets = {
+            tech: {
+                name: "Rohan Sharma",
+                title: "Senior Full-Stack Architect",
+                company: "Click Vectora Solution",
+                avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400",
+                logo: "",
+                bio: "Architecting high-performance web applications and automated AI workflows.",
+                email: "clickvectora@gmail.com",
+                phone: "+91 98765 43210",
+                website: "https://clickvectora.com",
+                linkedin: "in/clickvectora",
+                twitter: "@clickvectora",
+                github: "clickvectora",
+                instagram: "@clickvectora",
+                youtube: "@clickvectora",
+                facebook: "clickvectora",
+                theme: "modern-dark"
+            },
+            designer: {
+                name: "Priya Verma",
+                title: "Lead Brand Designer",
+                company: "Click Vectora Creative",
+                avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400",
+                logo: "",
+                bio: "Crafting distinctive digital branding assets and immersive UI/UX experiences.",
+                email: "clickvectora@gmail.com",
+                phone: "+91 91234 56789",
+                website: "https://clickvectora.com",
+                linkedin: "in/clickvectora",
+                twitter: "@clickvectora",
+                github: "clickvectora",
+                instagram: "@clickvectora",
+                youtube: "@clickvectora",
+                facebook: "clickvectora",
+                theme: "gradient-sunset"
+            },
+            executive: {
+                name: "Vikram Malhotra",
+                title: "Managing Director & CEO",
+                company: "Click Vectora Ventures",
+                avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+                logo: "",
+                bio: "Leading strategic growth, enterprise partnerships, and global expansion.",
+                email: "clickvectora@gmail.com",
+                phone: "+91 99887 76655",
+                website: "https://clickvectora.com",
+                linkedin: "in/clickvectora",
+                twitter: "@clickvectora",
+                github: "clickvectora",
+                instagram: "@clickvectora",
+                youtube: "@clickvectora",
+                facebook: "clickvectora",
+                theme: "executive-gold"
+            }
+        };
+
+        // Initialize App on load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedCard();
+            populateForm();
+            renderAll();
+        });
+
+        // Tab Switching
+        function switchTab(tabName) {
+            const tabs = ['creator', 'display'];
+            tabs.forEach(t => {
+                const viewEl = document.getElementById(`view-${t}`);
+                const tabBtn = document.getElementById(`tab-${t}`);
+                const mobTabBtn = document.getElementById(`mob-tab-${t}`);
+                
+                if (t === tabName) {
+                    viewEl.classList.remove('hidden');
+                    if (tabBtn) {
+                        tabBtn.className = "px-4 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-2 bg-white dark:bg-slate-700 shadow-sm text-indigo-600 dark:text-indigo-400";
+                    }
+                    if (mobTabBtn) {
+                        mobTabBtn.className = "flex flex-col items-center gap-1 text-indigo-600 dark:text-indigo-400 text-xs font-medium";
+                    }
+                } else {
+                    viewEl.classList.add('hidden');
+                    if (tabBtn) {
+                        tabBtn.className = "px-4 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+                    }
+                    if (mobTabBtn) {
+                        mobTabBtn.className = "flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 text-xs font-medium";
+                    }
+                }
+            });
+            lucide.createIcons();
+        }
+
+        // Subtab switcher inside creator
+        function switchEditorSubtab(sub) {
+            const infoBtn = document.getElementById('subtab-info-btn');
+            const designBtn = document.getElementById('subtab-design-btn');
+            const infoDiv = document.getElementById('subtab-info');
+            const designDiv = document.getElementById('subtab-design');
+
+            if (sub === 'info') {
+                infoBtn.className = "pb-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 transition-colors flex items-center gap-2";
+                designBtn.className = "pb-3 border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 transition-colors flex items-center gap-2";
+                infoDiv.classList.remove('hidden');
+                designDiv.classList.add('hidden');
+            } else {
+                designBtn.className = "pb-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 transition-colors flex items-center gap-2";
+                infoBtn.className = "pb-3 border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 transition-colors flex items-center gap-2";
+                designDiv.classList.remove('hidden');
+                infoDiv.classList.add('hidden');
+            }
+        }
+
+        // Populate Form Inputs from cardData
+        function populateForm() {
+            document.getElementById('inp-name').value = cardData.name;
+            document.getElementById('inp-title').value = cardData.title;
+            document.getElementById('inp-company').value = cardData.company;
+            document.getElementById('inp-avatar').value = cardData.avatar;
+            document.getElementById('inp-bio').value = cardData.bio;
+            document.getElementById('inp-email').value = cardData.email;
+            document.getElementById('inp-phone').value = cardData.phone;
+            document.getElementById('inp-website').value = cardData.website;
+            document.getElementById('inp-linkedin').value = cardData.linkedin;
+            document.getElementById('inp-twitter').value = cardData.twitter;
+            document.getElementById('inp-github').value = cardData.github;
+            document.getElementById('inp-instagram').value = cardData.instagram;
+            document.getElementById('inp-youtube').value = cardData.youtube;
+            document.getElementById('inp-facebook').value = cardData.facebook;
+        }
+
+        // XSS Sanitization helper
+        function sanitizeInput(str) {
+            if (!str) return '';
+            return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
+        }
+
+        // Handle Avatar File Upload via Device FileReader
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            document.getElementById('avatar-filename-label').innerText = file.name;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                cardData.avatar = e.target.result;
+                document.getElementById('inp-avatar').value = e.target.result;
+                renderAll();
+                showToast("Avatar image uploaded from device successfully!");
+            };
+            reader.onerror = function() {
+                showToast("Error reading avatar file.");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Handle Company Logo File Upload via Device FileReader
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('logo-filename-label').innerText = file.name;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                cardData.logo = e.target.result;
+                renderAll();
+                showToast("Company logo uploaded from device successfully!");
+            };
+            reader.onerror = function() {
+                showToast("Error reading logo file.");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Update state when input changes
+        function updateCardData() {
+            cardData.name = sanitizeInput(document.getElementById('inp-name').value);
+            cardData.title = sanitizeInput(document.getElementById('inp-title').value);
+            cardData.company = sanitizeInput(document.getElementById('inp-company').value);
+            cardData.avatar = sanitizeInput(document.getElementById('inp-avatar').value);
+            cardData.bio = sanitizeInput(document.getElementById('inp-bio').value);
+            cardData.email = sanitizeInput(document.getElementById('inp-email').value);
+            cardData.phone = sanitizeInput(document.getElementById('inp-phone').value);
+            cardData.website = sanitizeInput(document.getElementById('inp-website').value);
+            cardData.linkedin = sanitizeInput(document.getElementById('inp-linkedin').value);
+            cardData.twitter = sanitizeInput(document.getElementById('inp-twitter').value);
+            cardData.github = sanitizeInput(document.getElementById('inp-github').value);
+            cardData.instagram = sanitizeInput(document.getElementById('inp-instagram').value);
+            cardData.youtube = sanitizeInput(document.getElementById('inp-youtube').value);
+            cardData.facebook = sanitizeInput(document.getElementById('inp-facebook').value);
+            renderAll();
+        }
+
+        function setTheme(t) {
+            cardData.theme = t;
+            renderAll();
+        }
+
+        function loadPreset(key) {
+            if (presets[key]) {
+                cardData = { ...presets[key] };
+                document.getElementById('avatar-filename-label').innerText = "Choose file...";
+                document.getElementById('logo-filename-label').innerText = "Choose file...";
+                populateForm();
+                renderAll();
+                showToast(`Loaded "${key.toUpperCase()}" preset!`);
+            }
+        }
+
+        // ==========================================
+        // 3. RAZORPAY TEST PAYMENT GATEWAY INTEGRATION
+        // ==========================================
+        function triggerRazorpayPayment(type) {
+            const isPdf = type === 'pdf';
+            const amountInPaise = isPdf ? 9900 : 4900; // ₹99 for PDF, ₹49 for vCard
+            const title = isPdf ? 'Original Size PDF Business Card Export' : 'vCard Contact (.vcf) Download';
+
+            var options = {
+                "key": "rzp_test_1234567890abcdef", // Razorpay Test Key for test transactions
+                "amount": amountInPaise, 
+                "currency": "INR",
+                "name": "Click Vectora Solution",
+                "description": title,
+                "image": cardData.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
+                "handler": function (response) {
+                    showToast(`Payment Successful! ID: ${response.razorpay_payment_id}`);
+                    setTimeout(() => {
+                        if (isPdf) {
+                            executeOriginalSizePDFExport();
+                        } else {
+                            executeVCardDownload();
+                        }
+                    }, 400);
+                },
+                "prefill": {
+                    "name": cardData.name || "Rohan Sharma",
+                    "email": cardData.email || "clickvectora@gmail.com",
+                    "contact": cardData.phone || "+91 98765 43210"
+                },
+                "theme": {
+                    "color": "#6366f1"
+                }
+            };
+
+            try {
+                var rzp = new Razorpay(options);
+                rzp.open();
+            } catch (err) {
+                console.error("Razorpay SDK error or sandbox fallback", err);
+                if (confirm(`[Razorpay Test Sandbox]\nProceed with test payment of ₹${amountInPaise/100} for ${title}?`)) {
+                    showToast("Test Payment Confirmed!");
+                    if (isPdf) {
+                        executeOriginalSizePDFExport();
+                    } else {
+                        executeVCardDownload();
+                    }
+                }
+            }
+        }
+
+        // Render card preview strictly binding to left-side text inputs in correct hierarchy
+        function renderAll() {
+            const cardBox = document.getElementById('card-render-box');
+            const immersiveBox = document.getElementById('immersive-screen');
+
+            let themeClasses = "";
+            if (cardData.theme === 'modern-dark') {
+                themeClasses = "bg-slate-900 text-slate-100 border border-slate-800 shadow-2xl";
+            } else if (cardData.theme === 'minimal-light') {
+                themeClasses = "bg-white text-slate-900 border border-slate-200 shadow-xl";
+            } else if (cardData.theme === 'neon-cyber') {
+                themeClasses = "bg-slate-950 text-emerald-400 border border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.15)]";
+            } else if (cardData.theme === 'executive-gold') {
+                themeClasses = "bg-stone-900 text-amber-100 border border-amber-500/30 shadow-2xl";
+            } else if (cardData.theme === 'gradient-sunset') {
+                themeClasses = "bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 text-white shadow-2xl";
+            } else if (cardData.theme === 'glassmorphism') {
+                themeClasses = "bg-white/10 dark:bg-slate-900/40 backdrop-blur-xl text-white border border-white/20 shadow-2xl";
+            }
+
+            cardBox.className = `p-5 sm:p-6 flex flex-col items-center text-center relative overflow-y-auto transition-all duration-300 max-h-[82vh] justify-between rounded-3xl ${themeClasses}`;
+            immersiveBox.className = `w-full rounded-[28px] overflow-y-auto max-h-[75vh] flex flex-col justify-between p-5 text-center relative transition-all duration-300 pt-8 ${themeClasses}`;
+
+            // Bind strictly to input field values
+            document.getElementById('preview-avatar').src = cardData.avatar || 'https://placehold.co/150x150/4f46e5/ffffff?text=Avatar';
+            document.getElementById('preview-name').innerText = cardData.name;
+            document.getElementById('preview-title').innerText = cardData.title;
+            document.getElementById('preview-company').innerText = cardData.company; // Displayed directly under Job Title
+            document.getElementById('preview-bio').innerText = cardData.bio;
+            document.getElementById('card-badge').innerText = cardData.company ? cardData.company : 'Digital ID';
+
+            // Populate company logo if uploaded
+            const logoPreview = document.getElementById('preview-logo');
+            const logoDisp = document.getElementById('disp-logo');
+            if (cardData.logo) {
+                logoPreview.src = cardData.logo;
+                logoPreview.classList.remove('hidden');
+                logoDisp.src = cardData.logo;
+                logoDisp.classList.remove('hidden');
+            } else {
+                logoPreview.classList.add('hidden');
+                logoDisp.classList.add('hidden');
+            }
+
+            // Populate fields in Immersive Display strictly matching inputs
+            document.getElementById('disp-avatar').src = cardData.avatar || 'https://placehold.co/150x150/4f46e5/ffffff?text=Avatar';
+            document.getElementById('disp-name').innerText = cardData.name;
+            document.getElementById('disp-title').innerText = cardData.title;
+            document.getElementById('disp-company').innerText = cardData.company; // Displayed directly under Job Title
+            document.getElementById('disp-bio').innerText = cardData.bio;
+            document.getElementById('disp-badge').innerText = cardData.company ? cardData.company : 'Digital Contact';
+            document.getElementById('disp-footer').innerText = cardData.company ? `${cardData.company} Secure Studio` : 'Secure Digital Studio';
+
+            // Quick Actions Links
+            document.getElementById('btn-action-call').href = cardData.phone ? `tel:${cardData.phone}` : '#';
+            document.getElementById('btn-action-email').href = cardData.email ? `mailto:${cardData.email}` : '#';
+            document.getElementById('btn-action-web').href = cardData.website ? (cardData.website.startsWith('http') ? cardData.website : `https://${cardData.website}`) : '#';
+
+            document.getElementById('disp-call-btn').href = cardData.phone ? `tel:${cardData.phone}` : '#';
+            document.getElementById('disp-email-btn').href = cardData.email ? `mailto:${cardData.email}` : '#';
+            document.getElementById('disp-web-btn').href = cardData.website ? (cardData.website.startsWith('http') ? cardData.website : `https://${cardData.website}`) : '#';
+
+            renderSocials();
+            updateQRCodes();
+
+            // Re-initialize Lucide icons for all newly rendered elements
+            lucide.createIcons();
+        }
+
+        // Render social icons as clean SVG chips that are guaranteed visible on any theme
+        function renderSocials() {
+            const containerPrev = document.getElementById('preview-socials');
+            const containerDisp = document.getElementById('disp-socials');
+
+            let html = '';
+            
+            // LinkedIn SVG Icon
+            if (cardData.linkedin) {
+                html += `<a href="https://linkedin.com/${cardData.linkedin}" target="_blank" class="p-2.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md transition flex items-center justify-center shadow-md text-white" title="LinkedIn"><svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>`;
+            }
+            
+            // Twitter / X SVG Icon
+            if (cardData.twitter) {
+                html += `<a href="https://twitter.com/${cardData.twitter}" target="_blank" class="p-2.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md transition flex items-center justify-center shadow-md text-white" title="Twitter / X"><svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>`;
+            }
+
+            // GitHub SVG Icon
+            if (cardData.github) {
+                html += `<a href="https://github.com/${cardData.github}" target="_blank" class="p-2.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md transition flex items-center justify-center shadow-md text-white" title="GitHub"><svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>`;
+            }
+
+            // Instagram SVG Icon
+            if (cardData.instagram) {
+                html += `<a href="https://instagram.com/${cardData.instagram.replace('@','')}" target="_blank" class="p-2.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md transition flex items-center justify-center shadow-md text-white" title="Instagram"><svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>`;
+            }
+
+            // YouTube SVG Icon
+            if (cardData.youtube) {
+                html += `<a href="https://youtube.com/${cardData.youtube}" target="_blank" class="p-2.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md transition flex items-center justify-center shadow-md text-white" title="YouTube"><svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>`;
+            }
+
+            // Facebook SVG Icon
+            if (cardData.facebook) {
+                html += `<a href="https://facebook.com/${cardData.facebook}" target="_blank" class="p-2.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md transition flex items-center justify-center shadow-md text-white" title="Facebook"><svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg></a>`;
+            }
+
+            containerPrev.innerHTML = html;
+            containerDisp.innerHTML = html;
+        }
+
+        function updateQRCodes() {
+            const qrContainer2 = document.getElementById('modal-qrcode');
+            const shareInput = document.getElementById('share-url-input');
+
+            qrContainer2.innerHTML = '';
+            const shareUrl = window.location.href.split('#')[0] + '#' + encodeURIComponent(cardData.name);
+            shareInput.value = shareUrl;
+
+            const vcardText = `BEGIN:VCARD\nVERSION:3.0\nFN:${cardData.name}\nTITLE:${cardData.title}\nORG:${cardData.company}\nEMAIL:${cardData.email}\nTEL:${cardData.phone}\nURL:${cardData.website}\nEND:VCARD`;
+
+            try {
+                new QRCode(qrContainer2, {
+                    text: vcardText,
+                    width: 120,
+                    height: 120,
+                    colorDark: "#0f172a",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            } catch (e) {
+                console.error("QR Code generation error", e);
+            }
+        }
+
+        // Execute vCard .vcf Download
+        function executeVCardDownload() {
+            const vcardData = `BEGIN:VCARD
+VERSION:3.0
+FN:${cardData.name}
+TITLE:${cardData.title}
+ORG:${cardData.company}
+EMAIL:${cardData.email}
+TEL:${cardData.phone}
+URL:${cardData.website}
+NOTE:${cardData.bio}
+END:VCARD`;
+
+            const blob = new Blob([vcardData], { type: 'text/vcard;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${(cardData.name || 'contact').replace(/\s+/g, '_')}_contact.vcf`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("vCard (.vcf) downloaded successfully!");
+        }
+
+        // Execute Original Size PDF Export (Standard 3.5" x 2" business card dimensions)
+        function executeOriginalSizePDFExport() {
+            const element = document.getElementById('card-render-box');
+            if (!element) return;
+            showToast("Generating original size PDF card...");
+
+            const opt = {
+                margin:       0,
+                filename:     `${(cardData.name || 'business_card').replace(/\s+/g, '_')}_business_card.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 3, useCORS: true, logging: false },
+                jsPDF:        { unit: 'in', format: [3.5, 2], orientation: 'landscape' }
+            };
+
+            html2pdf().from(element).set(opt).save().then(() => {
+                showToast("Original size PDF exported successfully!");
+            });
+        }
+
+        function openShareModal() {
+            document.getElementById('share-modal').classList.remove('hidden');
+            updateQRCodes();
+            lucide.createIcons();
+        }
+
+        function closeShareModal() {
+            document.getElementById('share-modal').classList.add('hidden');
+        }
+
+        function copyShareLink() {
+            const shareUrl = document.getElementById('share-url-input').value;
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = shareUrl;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            showToast("Shareable link copied to clipboard!");
+        }
+
+        function saveCardData() {
+            localStorage.setItem('clickVectora_secureCardData', JSON.stringify(cardData));
+            showToast("Card data saved locally!");
+        }
+
+        function loadSavedCard() {
+            const saved = localStorage.getItem('clickVectora_secureCardData');
+            if (saved) {
+                try {
+                    cardData = JSON.parse(saved);
+                } catch(e) {
+                    console.error("Failed to parse saved card data");
+                }
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+    </script>
+</body>
+</html>
