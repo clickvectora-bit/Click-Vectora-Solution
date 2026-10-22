@@ -48,9 +48,23 @@
 
         .brand-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .brand-logo img { height: 40px; width: auto; display: block; object-fit: contain; }
+
+        /* Loading Screen Transitions */
+        #loadingScreen {
+            transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+        }
     </style>
 </head>
 <body class="h-full bg-slate-100 text-slate-800 flex flex-col overflow-hidden">
+
+  <!-- Loading Screen with Circle Spinner & 2-Second Delay -->
+  <div id="loadingScreen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center">
+    <div class="relative flex flex-col items-center space-y-4">
+      <!-- Spinning Circle Animation -->
+      <div class="w-16 h-16 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+      <div class="text-white text-sm font-semibold tracking-wider">Loading Design Studio...</div>
+    </div>
+  </div>
 
   <!-- Custom Alert / Toast Modal for Data Validation -->
   <div id="validationAlertModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -574,6 +588,17 @@
       setupKeyboardShortcuts();
       resizeCanvasToFitContainer();
       window.addEventListener('resize', resizeCanvasToFitContainer);
+
+      // Loading screen delay timer (2 seconds)
+      setTimeout(() => {
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+          }, 500); // Matches transition duration
+        }
+      }, 2000);
     };
 
     // Custom Validation Alert Helper
