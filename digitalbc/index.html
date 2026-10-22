@@ -68,6 +68,16 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Blinking text animation */
+        @keyframes blink-animation {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        .blink-text {
+            animation: blink-animation 1.2s infinite ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 h-full flex flex-col overflow-hidden transition-colors duration-300">
@@ -142,7 +152,7 @@
 
         <!-- ================= 1. STUDIO CREATOR VIEW ================= -->
         <div id="view-creator" class="absolute inset-0 flex flex-col lg:flex-row overflow-hidden">
-            <!-- Left Panel: Form Inputs & Image Upload Controls (Slide-over drawer on mobile/tablet) -->
+            <!-- Left Panel: Form Inputs & Image Upload Controls -->
             <div id="leftSidebar" class="fixed lg:relative inset-y-0 left-0 w-full sm:w-[420px] lg:w-5/12 h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col z-40 shrink-0 shadow-2xl lg:shadow-none transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
                 
                 <!-- Mobile Close Header -->
@@ -451,7 +461,7 @@
 
     </main>
 
-    <!-- Share Modal Popup -->
+    <!-- Share Modal Popup with Blinking Notice -->
     <div id="share-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl relative space-y-4">
             <div class="flex justify-between items-center">
@@ -460,6 +470,14 @@
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
+            
+            <!-- Blinking Red Text Notice Added Here -->
+            <div class="p-2.5 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 rounded-xl text-center">
+                <p class="text-xs font-bold text-red-600 dark:text-red-400 blink-text leading-tight">
+                    QR code is only for Testing Purpose if you want to upload live with QR Code please contect us.
+                </p>
+            </div>
+
             <div class="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800">
                 <div id="modal-qrcode" class="p-3 bg-white rounded-xl shadow-sm mb-3"></div>
                 <p class="text-xs text-slate-500 font-medium">Scan QR code to open instantly</p>
@@ -495,9 +513,9 @@
                     loader.style.opacity = '0';
                     setTimeout(() => {
                         loader.style.display = 'none';
-                    }, 500); // matches CSS transition duration
+                    }, 500);
                 }
-            }, 2000); // 2-second delay
+            }, 2000);
         });
 
         // ==========================================
@@ -569,7 +587,7 @@
                 avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400",
                 logo: "",
                 bio: "Architecting high-performance web applications and automated AI workflows.",
-                email: "Abc Company@gmail.com",
+                email: "abc@gmail.com",
                 phone: "+91 98765 43210",
                 website: "https://clickvectora.com",
                 linkedin: "in/clickvectora",
@@ -587,7 +605,7 @@
                 avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400",
                 logo: "",
                 bio: "Crafting distinctive digital branding assets and immersive UI/UX experiences.",
-                email: "cAbc Company@gmail.com",
+                email: "priya@gmail.com",
                 phone: "+91 91234 56789",
                 website: "https://clickvectora.com",
                 linkedin: "in/clickvectora",
@@ -605,7 +623,7 @@
                 avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
                 logo: "",
                 bio: "Leading strategic growth, enterprise partnerships, and global expansion.",
-                email: "Abc Company@gmail.com",
+                email: "vikram@gmail.com",
                 phone: "+91 99887 76655",
                 website: "https://clickvectora.com",
                 linkedin: "in/clickvectora",
@@ -760,7 +778,7 @@
             const title = isPdf ? 'Original Size PDF Business Card Export' : 'vCard Contact (.vcf) Download';
 
             var options = {
-                "key": "rzp_test_1234567890abcdef",
+                "key": "rzp_live_TVvsN7S7XsvpRb",
                 "amount": amountInPaise, 
                 "currency": "INR",
                 "name": "Click Vectora Solution",
@@ -893,11 +911,9 @@
             const shareUrl = window.location.href.split('#')[0] + '#' + encodeURIComponent(cardData.name);
             shareInput.value = shareUrl;
 
-            const vcardText = `BEGIN:VCARD\nVERSION:3.0\nFN:${cardData.name}\nTITLE:${cardData.title}\nORG:${cardData.company}\nEMAIL:${cardData.email}\nTEL:${cardData.phone}\nURL:${cardData.website}\nEND:VCARD`;
-
             try {
                 new QRCode(qrContainer2, {
-                    text: vcardText,
+                    text: shareUrl,
                     width: 120,
                     height: 120,
                     colorDark: "#0f172a",
