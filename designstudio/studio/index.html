@@ -49,21 +49,30 @@
         .brand-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .brand-logo img { height: 40px; width: auto; display: block; object-fit: contain; }
 
-        /* Loading Screen Transitions */
+        /* Page Loader Styles */
         #loadingScreen {
-            transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .spinner-circle {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e2e8f0;
+            border-top: 5px solid #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body class="h-full bg-slate-100 text-slate-800 flex flex-col overflow-hidden">
 
-  <!-- Loading Screen with Circle Spinner & 2-Second Delay -->
-  <div id="loadingScreen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center">
-    <div class="relative flex flex-col items-center space-y-4">
-      <!-- Spinning Circle Animation -->
-      <div class="w-16 h-16 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
-      <div class="text-white text-sm font-semibold tracking-wider">Loading Design Studio...</div>
-    </div>
+  <!-- Page Loading Overlay with Circle Animation -->
+  <div id="loadingScreen" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center space-y-4">
+    <div class="spinner-circle"></div>
+    <p class="text-white font-medium text-sm tracking-wide">Loading Design Studio...</p>
   </div>
 
   <!-- Custom Alert / Toast Modal for Data Validation -->
@@ -497,26 +506,35 @@
   <div id="iconHelperContainer" class="hidden" style="font-family: 'Font Awesome 6 Free'; font-weight: 900;"></div>
 
   <script>
+    // --- PAGE LOADER HANDLER (2 SECONDS DELAY) ---
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('loadingScreen');
+        if (loader) {
+          loader.style.opacity = '0';
+          setTimeout(() => {
+            loader.style.display = 'none';
+          }, 500); // matches CSS transition duration
+        }
+      }, 2000); // 2-second delay
+    });
+
     // --- BROWSER ANTI-INSPECTION SECURITY SCRIPTS ---
-    
-    // 1. Disable Right-Click Context Menu (Prevents 'View Source' shortcut)
     document.addEventListener('contextmenu', function(e) {
       e.preventDefault();
     });
 
-    // 2. Disable Developer Tools Keyboard Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
     document.addEventListener('keydown', function(e) {
       if (
-        e.keyCode === 123 || // F12
-        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I / J
-        (e.ctrlKey && e.keyCode === 85) // Ctrl+U (View Source)
+        e.keyCode === 123 || 
+        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || 
+        (e.ctrlKey && e.keyCode === 85)
       ) {
         e.preventDefault();
         return false;
       }
     });
 
-    // 3. Developer Tools Open Detector (Debugger Loop)
     (function() {
       const threshold = 160;
       setInterval(() => {
@@ -581,27 +599,15 @@
       enableRetinaScaling: true
     });
 
-    window.onload = function() {
+    window.addEventListener('DOMContentLoaded', () => {
       initProductUI();
       selectProduct('card');
       setupCanvasListeners();
       setupKeyboardShortcuts();
       resizeCanvasToFitContainer();
       window.addEventListener('resize', resizeCanvasToFitContainer);
+    });
 
-      // Loading screen delay timer (2 seconds)
-      setTimeout(() => {
-        const loadingScreen = document.getElementById('loadingScreen');
-        if (loadingScreen) {
-          loadingScreen.style.opacity = '0';
-          setTimeout(() => {
-            loadingScreen.style.display = 'none';
-          }, 500); // Matches transition duration
-        }
-      }, 2000);
-    };
-
-    // Custom Validation Alert Helper
     function showValidationAlert(title, message) {
       document.getElementById('validationAlertTitle').innerText = title;
       document.getElementById('validationAlertMessage').innerText = message;
