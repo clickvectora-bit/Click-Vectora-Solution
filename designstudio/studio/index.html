@@ -48,41 +48,9 @@
 
         .brand-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .brand-logo img { height: 40px; width: auto; display: block; object-fit: contain; }
-
-        /* 5-Second Circular Loading Overlay Styles */
-        #loadingOverlay {
-            position: fixed;
-            inset: 0;
-            background: #0f172a;
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.6s ease;
-        }
-        .loading-circle-spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(255, 255, 255, 0.1);
-            border-top: 5px solid #6366f1;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body class="h-full bg-slate-100 text-slate-800 flex flex-col overflow-hidden">
-
-  <!-- 5-Second Circular Loading Screen Animation Overlay -->
-  <div id="loadingOverlay">
-    <div class="loading-circle-spinner mb-4"></div>
-    <h2 class="text-white font-bold text-sm tracking-widest uppercase">Click Vectora Studio</h2>
-    <p class="text-xs text-slate-400 mt-1">Loading Embroidery Studio...</p>
-  </div>
 
   <!-- Custom Alert / Toast Modal for Data Validation -->
   <div id="validationAlertModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -511,43 +479,30 @@
     </div>
   </div>
 
-  <!-- Loading Overlay Elements -->
-  <div id="loadingOverlay" style="position: fixed; inset: 0; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.6s ease;">
-    <div style="width: 60px; height: 60px; border: 5px solid rgba(255,255,255,0.1); border-top: 5px solid #6366f1; border-radius: 50%; animation: spin 1s linear infinite;" class="mb-4"></div>
-    <h2 style="color: white; font-weight: bold; font-size: 14px; letter-spacing: 2px; text-transform: uppercase;">Click Vectora Studio</h2>
-    <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Loading Design Studio...</p>
-  </div>
-  <style>
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
-
   <div id="qrcode-hidden" class="hidden"></div>
   <div id="iconHelperContainer" class="hidden" style="font-family: 'Font Awesome 6 Free'; font-weight: 900;"></div>
 
   <script>
-    // --- BROWSER ANTI-INSPECTION SECURITY SCRIPTS (FROM a.html) ---
+    // --- BROWSER ANTI-INSPECTION SECURITY SCRIPTS ---
     
-    // 1. Disable Right-Click Context Menu (Prevents 'View Source' shortcut)[cite: 3, 5]
+    // 1. Disable Right-Click Context Menu (Prevents 'View Source' shortcut)
     document.addEventListener('contextmenu', function(e) {
       e.preventDefault();
     });
 
-    // 2. Disable Developer Tools Keyboard Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)[cite: 3, 5]
+    // 2. Disable Developer Tools Keyboard Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
     document.addEventListener('keydown', function(e) {
       if (
-        e.keyCode === 123 || // F12[cite: 3, 5]
-        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I / J[cite: 3, 5]
-        (e.ctrlKey && e.keyCode === 85) // Ctrl+U (View Source)[cite: 3, 5]
+        e.keyCode === 123 || // F12
+        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I / J
+        (e.ctrlKey && e.keyCode === 85) // Ctrl+U (View Source)
       ) {
         e.preventDefault();
         return false;
       }
     });
 
-    // 3. Developer Tools Open Detector (Debugger Loop)[cite: 3, 5]
+    // 3. Developer Tools Open Detector (Debugger Loop)
     (function() {
       const threshold = 160;
       setInterval(() => {
@@ -613,15 +568,6 @@
     });
 
     window.onload = function() {
-      // 5-Second Circular Loading Screen Animation Delay
-      setTimeout(() => {
-        const overlay = document.getElementById('loadingOverlay');
-        if (overlay) {
-          overlay.style.opacity = '0';
-          setTimeout(() => overlay.remove(), 600);
-        }
-      }, 5000);
-
       initProductUI();
       selectProduct('card');
       setupCanvasListeners();
