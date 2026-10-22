@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Design Studio - Click Vectora Solution</title>
+  
+  <link rel="icon" type="image/png" href="/img/logo/logo1.png">
+
+  <!-- Tailwind CSS & Libraries -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;700&family=Bebas+Neue&family=Cinzel:wght@700&family=Pacifico&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#eef2ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .canvas-shadow { box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06); }
+    .checkerboard {
+      background-image: linear-gradient(45deg, #e2e8f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #e2e8f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #e2e8f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #e2e8f0 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="h-full bg-slate-100 text-slate-800 flex flex-col overflow-hidden">
+
+  <!-- Toast Notification Modal -->
+  <div id="validationAlertModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl relative">
+      <div id="validationAlertIcon" class="w-14 h-14 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-3 text-indigo-600 text-xl shadow-inner">
+        <i class="fa-solid fa-circle-exclamation"></i>
+      </div>
+      <h3 id="validationAlertTitle" class="text-lg font-bold text-slate-900 mb-1">Notice</h3>
+      <p id="validationAlertMessage" class="text-xs text-slate-600 mb-5 leading-relaxed">Alert message goes here.</p>
+      <button onclick="closeValidationAlert()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-indigo-600/20 transition">OK</button>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="h-16 bg-white border-b border-slate-200 px-4 flex items-center justify-between z-30 shrink-0 shadow-sm">
+    <div class="flex items-center space-x-3 sm:space-x-6">
+      <button onclick="toggleMobileSidebar()" class="md:hidden p-2 text-slate-600 hover:text-slate-900 focus:outline-none">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+
+      <a href="/" class="flex items-center space-x-2">
+        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+          <i class="fa-solid fa-pen-nib"></i>
+        </div>
+        <span class="font-bold text-sm tracking-tight text-slate-900 hidden sm:inline">Click Vectora <span class="text-indigo-600">Embroidery Studio</span></span>
+      </a>
+      <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
+      
+      <!-- Quick Undo / Redo / Cut Shortcuts in Header -->
+      <div class="hidden sm:flex items-center space-x-1 bg-slate-50 p-1 rounded-lg border border-slate-200">
+        <button onclick="undo()" title="Undo (Ctrl+Z)" class="p-1.5 hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition text-xs flex items-center gap-1">
+          <i class="fa-solid fa-rotate-left"></i> <span>Undo</span>
+        </button>
+        <div class="w-px h-4 bg-slate-200"></div>
+        <button onclick="redo()" title="Redo (Ctrl+Y)" class="p-1.5 hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition text-xs flex items-center gap-1">
+          <span>Redo</span> <i class="fa-solid fa-rotate-right"></i>
+        </button>
+        <div class="w-px h-4 bg-slate-200"></div>
+        <button onclick="cutSelected()" title="Cut (Ctrl+X)" class="p-1.5 hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition text-xs flex items-center gap-1">
+          <i class="fa-solid fa-scissors"></i> <span>Cut</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Center: Zoom controls -->
+    <div class="hidden md:flex items-center space-x-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 shadow-inner">
+      <button onclick="zoomCanvas(-0.1)" title="Zoom Out (-)" class="w-7 h-7 flex items-center justify-center hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition">
+        <i class="fa-solid fa-magnifying-glass-minus text-xs"></i>
+      </button>
+      <span id="zoomDisplay" class="text-xs font-semibold text-slate-700 w-12 text-center">100%</span>
+      <button onclick="zoomCanvas(0.1)" title="Zoom In (+)" class="w-7 h-7 flex items-center justify-center hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition">
+        <i class="fa-solid fa-magnifying-glass-plus text-xs"></i>
+      </button>
+      <button onclick="resetZoom()" title="Reset Zoom (0)" class="text-[10px] text-indigo-600 hover:text-indigo-700 ml-1 px-1.5 py-0.5 rounded bg-indigo-50 hover:bg-indigo-100 transition">Fit</button>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="flex items-center space-x-2 sm:space-x-3">
+      <!-- Transparent / Fabric Background Color -->
+      <div class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-xl border border-slate-200" title="Canvas Background Color">
+        <span class="text-[10px] font-semibold text-slate-500 hidden lg:inline">Canvas:</span>
+        <input type="color" id="headerBgPicker" value="#ffffff" onchange="setCanvasBackground(this.value)" class="w-6 h-6 rounded border border-slate-300 cursor-pointer bg-transparent">
+      </div>
+
+      <button onclick="openMockupPreview()" class="px-3 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-medium text-xs shadow-md shadow-indigo-500/20 flex items-center space-x-1.5 transition transform active:scale-95">
+        <i class="fa-solid fa-shirt"></i>
+        <span>Live Mockup</span>
+      </button>
+      <button onclick="openSimulationModal()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-medium text-xs shadow-md shadow-emerald-600/20 flex items-center space-x-1.5 transition transform active:scale-95">
+        <i class="fa-solid fa-play"></i>
+        <span>Simulate</span>
+      </button>
+      <div class="h-6 w-px bg-slate-200"></div>
+      <button onclick="openExportModal()" class="px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium text-xs shadow-md shadow-indigo-600/20 flex items-center space-x-1.5 transition transform active:scale-95">
+        <i class="fa-solid fa-download"></i>
+        <span>Export</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Workspace Container -->
+  <div class="flex-1 flex overflow-hidden relative">
+
+    <div id="mobileBackdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/40 z-30 hidden md:hidden"></div>
+
+    <!-- Left Sidebar -->
+    <aside id="leftSidebar" class="fixed md:relative inset-y-0 left-0 w-80 bg-white border-r border-slate-200 flex flex-col z-40 shrink-0 shadow-sm transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+      
+      <div class="flex md:hidden items-center justify-between p-4 border-b border-slate-200 bg-slate-50">
+        <span class="font-bold text-sm text-slate-800">Design Tools</span>
+        <button onclick="toggleMobileSidebar()" class="p-1 text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="grid grid-cols-4 border-b border-slate-200 text-xs font-medium text-slate-500">
+        <button onclick="switchTab('templates')" id="tab-templates" class="py-3 flex flex-col items-center justify-center border-b-2 border-indigo-600 text-indigo-600 bg-slate-50 transition">
+          <i class="fa-solid fa-circle-notch mb-1 text-sm"></i><span>Product</span>
+        </button>
+        <button onclick="switchTab('elements')" id="tab-elements" class="py-3 flex flex-col items-center justify-center border-b-2 border-transparent hover:text-slate-800 transition">
+          <i class="fa-solid fa-wand-magic-sparkles mb-1 text-sm"></i><span>Digitize</span>
+        </button>
+        <button onclick="switchTab('text')" id="tab-text" class="py-3 flex flex-col items-center justify-center border-b-2 border-transparent hover:text-slate-800 transition">
+          <i class="fa-solid fa-font mb-1 text-sm"></i><span>Text</span>
+        </button>
+        <button onclick="switchTab('format')" id="tab-format" class="py-3 flex flex-col items-center justify-center border-b-2 border-transparent hover:text-slate-800 transition">
+          <i class="fa-solid fa-sliders mb-1 text-sm"></i><span>Canvas/SOP</span>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 space-y-5 no-scrollbar">
+        <!-- 1. Product Selection -->
+        <div id="panel-templates" class="space-y-4">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Select Target Product</h3>
+            <div class="grid grid-cols-1 gap-2" id="garmentListContainer"></div>
+          </div>
+          <div class="p-3 bg-indigo-50/70 border border-indigo-100 rounded-xl text-xs space-y-1">
+            <div class="font-semibold text-indigo-900 flex items-center gap-1.5">
+              <i class="fa-solid fa-crop-simple text-indigo-600"></i> Pure Transparent Design Area
+            </div>
+            <p class="text-indigo-700 text-[11px] leading-relaxed">
+              Canvas background is set to transparent by default. Design area strictly equals the active hoop size.
+            </p>
+          </div>
+        </div>
+
+        <!-- 2. Auto-Digitize Artwork Tab -->
+        <div id="panel-elements" class="space-y-4 hidden">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Upload Image to Digitize</h3>
+            <p class="text-[11px] text-slate-500 mb-2">Upload logo/graphic. Converts pixels into actual Tatami fill lines and stitches.</p>
+            <button onclick="document.getElementById('imageDigitizeLoader').click()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-medium transition flex items-center justify-center gap-2 shadow-sm">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Select PNG / JPG
+            </button>
+            <input type="file" id="imageDigitizeLoader" accept="image/*" class="hidden">
+          </div>
+
+          <!-- Pre-Built Embroidery Shapes -->
+          <div class="pt-3 border-t border-slate-200">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Add Embroidery Shapes</h3>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="addEmbroideryShape('shield')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
+                <i class="fa-solid fa-shield-halved text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Shield</span>
+              </button>
+              <button onclick="addEmbroideryShape('circle')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
+                <i class="fa-regular fa-circle text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Round Patch</span>
+              </button>
+              <button onclick="addEmbroideryShape('star')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex flex-col items-center justify-center transition">
+                <i class="fa-solid fa-star text-lg mb-1 text-indigo-600"></i><span class="text-[11px] text-slate-700">Star</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Pre-Digitized Text & Lettering -->
+        <div id="panel-text" class="space-y-4 hidden">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Pre-Digitized Lettering</h3>
+          <p class="text-[11px] text-slate-500">Includes real thread density, stitch highlights, and satin borders.</p>
+          
+          <div class="space-y-2.5">
+            <div>
+              <label class="text-[10px] text-slate-500">Text Content</label>
+              <input type="text" id="embroideryTextInput" value="CLICK VECTORA" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-semibold focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <div>
+              <label class="text-[10px] text-slate-500">Embroidery Font Preset</label>
+              <select id="embroideryFontPreset" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-800">
+                <option value="Bebas Neue">Athletic Varsity (Satin Columns)</option>
+                <option value="Poppins">Block Bold (Standard 40wt)</option>
+                <option value="Cinzel">Old World Serif (Monogram Satin)</option>
+                <option value="Pacifico">Script / Cursive (Run & Satin)</option>
+              </select>
+            </div>
+
+            <button onclick="generateDigitizedText()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/20 flex items-center justify-center gap-1.5 transition">
+              <i class="fa-solid fa-plus"></i> Add Embroidery Text
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. Background Color, Shortcuts & SOP -->
+        <div id="panel-format" class="space-y-4 hidden">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Canvas Background</h3>
+            <div class="flex items-center gap-3">
+              <input type="color" id="panelBgPicker" value="#ffffff" onchange="setCanvasBackground(this.value)" class="w-10 h-10 rounded-xl border border-slate-200 bg-transparent cursor-pointer">
+              <button onclick="setCanvasBackground('transparent')" class="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-xs text-slate-700">Transparent</button>
+              <button onclick="setCanvasBackground('#ffffff')" class="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-xs text-slate-700">White</button>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-200">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Keyboard Shortcuts</h3>
+            <div class="grid grid-cols-2 gap-1.5 text-[11px] text-slate-600 font-mono">
+              <div class="p-1.5 bg-slate-50 rounded border">Ctrl+X: Cut</div>
+              <div class="p-1.5 bg-slate-50 rounded border">Ctrl+C: Copy</div>
+              <div class="p-1.5 bg-slate-50 rounded border">Ctrl+V: Paste</div>
+              <div class="p-1.5 bg-slate-50 rounded border">Ctrl+Z: Undo</div>
+              <div class="p-1.5 bg-slate-50 rounded border">Ctrl+Y: Redo</div>
+              <div class="p-1.5 bg-slate-50 rounded border">Del: Delete</div>
+              <div class="p-1.5 bg-slate-50 rounded border">+/-: Zoom</div>
+              <div class="p-1.5 bg-slate-50 rounded border">0: Fit Screen</div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-200">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Automated SOP Summary</h3>
+              <button onclick="fetchAutoSOP()" class="text-indigo-600 hover:text-indigo-800 text-[11px] font-medium"><i class="fa-solid fa-arrows-rotate mr-1"></i>Refresh</button>
+            </div>
+            <div id="sopContainer" class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2 text-xs"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Object Inspector (Color, Outline, Remove Outline) -->
+      <div id="objectInspector" class="p-4 border-t border-slate-200 bg-slate-50/70 hidden">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Object Thread & Outline</span>
+          <div class="flex gap-1">
+            <button onclick="cutSelected()" title="Cut (Ctrl+X)" class="text-slate-600 hover:text-slate-800 text-xs px-2 py-1 rounded bg-slate-100 border border-slate-200 transition">
+              <i class="fa-solid fa-scissors"></i>
+            </button>
+            <button onclick="deleteSelected()" title="Delete" class="text-rose-600 hover:text-rose-700 text-xs px-2 py-1 rounded bg-rose-50 border border-rose-200 transition">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <!-- Fill / Thread Color -->
+          <div class="flex items-center justify-between">
+            <span class="text-slate-600 font-medium">Thread / Fill Color:</span>
+            <div class="flex items-center gap-2">
+              <input type="color" id="inspectorFillColor" onchange="updateObjectFill(this.value)" class="w-8 h-8 rounded-lg border border-slate-200 bg-transparent cursor-pointer">
+              <span id="fillColorHex" class="font-mono text-[10px] text-slate-500">#4f46e5</span>
+            </div>
+          </div>
+
+          <!-- Madeira Quick Palettes -->
+          <div>
+            <span class="text-[10px] text-slate-400 uppercase font-semibold">Madeira Polyneon Palette</span>
+            <div class="flex gap-1.5 mt-1" id="madeiraSwatches"></div>
+          </div>
+
+          <!-- Outline Color & Remove Outline Option -->
+          <div class="pt-2 border-t border-slate-200">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-slate-600 font-medium">Outline / Border:</span>
+              <div class="flex items-center gap-1.5">
+                <input type="color" id="inspectorStrokeColor" onchange="updateObjectStroke(this.value)" class="w-7 h-7 rounded border border-slate-200 bg-transparent cursor-pointer">
+                <button onclick="removeOutline()" class="px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded text-[10px] font-semibold transition">
+                  Remove Outline
+                </button>
+              </div>
+            </div>
+
+            <!-- Outline Width Slider -->
+            <div class="flex items-center justify-between">
+              <span class="text-slate-500 text-[11px]">Outline Thickness:</span>
+              <div class="flex items-center gap-2">
+                <input type="range" id="inspectorStrokeWidth" min="0" max="12" step="1" value="2" oninput="updateObjectStrokeWidth(this.value)" class="w-20 accent-indigo-600">
+                <span id="strokeWidthVal" class="font-mono text-slate-700 text-[10px] w-6 text-right">2px</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layer Movement Buttons -->
+          <div class="grid grid-cols-4 gap-1.5 pt-2 border-t border-slate-200">
+            <button class="py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700 flex items-center justify-center transition" onclick="changeLayer('front')" title="Bring to Front"><i class="fa-solid fa-layer-group"></i><i class="fa-solid fa-arrow-up text-[10px] ml-0.5"></i></button>
+            <button class="py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700 flex items-center justify-center transition" onclick="changeLayer('forward')" title="Step Up"><i class="fa-solid fa-arrow-up"></i></button>
+            <button class="py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700 flex items-center justify-center transition" onclick="changeLayer('backward')" title="Step Down"><i class="fa-solid fa-arrow-down"></i></button>
+            <button class="py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-700 flex items-center justify-center transition" onclick="changeLayer('back')" title="Send to Back"><i class="fa-solid fa-layer-group"></i><i class="fa-solid fa-arrow-down text-[10px] ml-0.5"></i></button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Workspace Area (Checkerboard shows through transparent canvas) -->
+    <main class="flex-1 bg-slate-200/70 checkerboard relative flex items-center justify-center overflow-hidden" id="workspaceContainer">
+      <div id="canvasViewport" class="absolute inset-0 flex items-center justify-center overflow-auto p-4 cursor-grab active:cursor-grabbing">
+        <div id="canvasWrapper" class="relative transition-transform duration-75 origin-center shadow-2xl canvas-shadow bg-transparent rounded-lg overflow-hidden border border-slate-300">
+          <canvas id="embroideryCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Bottom Info Bar -->
+      <div class="absolute bottom-4 left-4 bg-white/95 backdrop-blur border border-slate-200 px-3 py-1.5 rounded-xl text-[11px] text-slate-600 z-20 hidden sm:flex items-center space-x-3 shadow-md">
+        <span id="canvasDimLabel">600 × 600 px (4" × 4" Hoop)</span>
+        <div class="w-px h-3 bg-slate-200"></div>
+        <span id="productTypeLabel" class="text-indigo-600 font-semibold">Pique Polo (Left Chest)</span>
+      </div>
+    </main>
+  </div>
+
+  <!-- LIVE PRODUCT MOCKUP MODAL (Preloaded Photographic Blanks) -->
+  <div id="mockupModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-4xl h-[88vh] flex flex-col shadow-2xl overflow-hidden relative">
+      <div class="px-6 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-shirt text-indigo-600 text-lg"></i>
+          <div>
+            <h2 class="font-bold text-sm text-slate-900">Actual Product Photographic Preview</h2>
+            <p class="text-[10px] text-slate-500">True 1:1 embroidery scale placement on preloaded product blanks</p>
+          </div>
+        </div>
+        <button onclick="closeMockupModal()" class="w-8 h-8 rounded-full bg-white hover:bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-900 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 bg-slate-900 relative flex items-center justify-center overflow-hidden p-4">
+        <canvas id="mockupRenderCanvas" class="max-h-full max-w-full rounded-2xl shadow-2xl border border-slate-800"></canvas>
+      </div>
+
+      <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-slate-600 font-medium">Garment Shade:</span>
+            <div class="flex gap-1.5" id="garmentColorSwatches">
+              <button onclick="setMockupGarmentColor('#1e293b')" class="w-6 h-6 rounded-full bg-slate-800 border-2 border-white shadow" title="Charcoal"></button>
+              <button onclick="setMockupGarmentColor('#f8fafc')" class="w-6 h-6 rounded-full bg-white border-2 border-slate-300 shadow" title="Heather White"></button>
+              <button onclick="setMockupGarmentColor('#b91c1c')" class="w-6 h-6 rounded-full bg-red-700 border-2 border-white shadow" title="Crimson Red"></button>
+              <button onclick="setMockupGarmentColor('#1e3a8a')" class="w-6 h-6 rounded-full bg-blue-900 border-2 border-white shadow" title="Navy Blue"></button>
+              <button onclick="setMockupGarmentColor('#14532d')" class="w-6 h-6 rounded-full bg-emerald-900 border-2 border-white shadow" title="Forest Green"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-500">
+          Placement: <span id="mockupPlacementBadge" class="font-semibold text-indigo-600">Left Chest (Actual Scale)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STITCH MACHINE SIMULATION MODAL WITH PRELOADED PRODUCT BACKGROUND -->
+  <div id="simulationModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-4xl h-[88vh] flex flex-col shadow-2xl overflow-hidden relative">
+      <div class="px-6 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-play text-emerald-600 text-lg"></i>
+          <div>
+            <h2 class="font-bold text-sm text-slate-900">Machine Stitch Simulation On Preloaded Product</h2>
+            <p class="text-[10px] text-slate-500">Real-time needle penetration stitches live on actual garment</p>
+          </div>
+        </div>
+        <button onclick="closeSimulationModal()" class="w-8 h-8 rounded-full bg-white hover:bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-900 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 bg-slate-950 relative flex items-center justify-center overflow-hidden p-2">
+        <canvas id="simCanvas" class="rounded-xl border border-slate-800 bg-slate-900 shadow-2xl"></canvas>
+      </div>
+
+      <!-- Playback & Product Controls -->
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex flex-col gap-2.5">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSimPlay()" id="simPlayBtn" class="w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition shadow-md">
+            <i class="fa-solid fa-play text-xs"></i>
+          </button>
+          <button onclick="restartSim()" class="w-9 h-9 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center transition shadow-sm">
+            <i class="fa-solid fa-rotate-left text-xs"></i>
+          </button>
+          
+          <!-- Scrub Slider -->
+          <input type="range" id="simScrub" min="0" max="100" value="0" oninput="scrubSimulation(this.value)" class="flex-1 accent-indigo-600">
+
+          <div class="text-xs font-mono text-slate-700 min-w-[110px] text-right">
+            <span id="simCurrentStitch">0</span> / <span id="simTotalStitch">0</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between text-xs text-slate-600 pt-1 border-t border-slate-200/80 gap-2">
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5">
+              <span>Speed:</span>
+              <button onclick="setSimSpeed(1)" class="px-2 py-0.5 rounded bg-white border border-slate-200 hover:bg-slate-100 text-[10px] font-bold">1x</button>
+              <button onclick="setSimSpeed(3)" class="px-2 py-0.5 rounded bg-white border border-slate-200 hover:bg-slate-100 text-[10px] font-bold">3x</button>
+              <button onclick="setSimSpeed(8)" class="px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-indigo-700 text-[10px] font-bold">8x</button>
+            </div>
+
+            <label class="flex items-center space-x-1.5 cursor-pointer ml-2">
+              <input type="checkbox" id="simShowProductBg" checked onchange="drawSimulationStep()" class="rounded text-indigo-600">
+              <span class="text-[11px] font-semibold text-slate-700">Photographic Garment: ON</span>
+            </label>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1">
+              <span class="text-[11px] text-slate-500">Garment Shade:</span>
+              <button onclick="setMockupGarmentColor('#1e293b'); drawSimulationStep();" class="w-4 h-4 rounded-full bg-slate-800 border"></button>
+              <button onclick="setMockupGarmentColor('#f8fafc'); drawSimulationStep();" class="w-4 h-4 rounded-full bg-white border"></button>
+              <button onclick="setMockupGarmentColor('#b91c1c'); drawSimulationStep();" class="w-4 h-4 rounded-full bg-red-700 border"></button>
+              <button onclick="setMockupGarmentColor('#1e3a8a'); drawSimulationStep();" class="w-4 h-4 rounded-full bg-blue-900 border"></button>
+            </div>
+            <div>Color Stop: <span id="simColorStop" class="font-bold text-slate-800">1 of 1</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORT MODAL -->
+  <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" id="exportModal">
+    <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="text-base font-bold text-slate-900">Export Embroidery Package</h3>
+        <button onclick="closeExportModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-900 text-xs transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-2.5 text-xs">
+        <button onclick="downloadDSTFile()" class="w-full p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-xl flex items-center justify-between transition text-left">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-file-code text-indigo-600 text-xl"></i>
+            <div>
+              <div class="font-bold text-slate-800">Tajima (.DST) Machine Code</div>
+              <div class="text-[10px] text-slate-500">Ready for Barudan, Tajima, Brother, Happy & Ricoma</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-arrow-down text-slate-400"></i>
+        </button>
+
+        <button onclick="exportProductionPDF()" class="w-full p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-xl flex items-center justify-between transition text-left">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-file-pdf text-rose-600 text-xl"></i>
+            <div>
+              <div class="font-bold text-slate-800">Factory Tech Pack (PDF)</div>
+              <div class="text-[10px] text-slate-500">Includes color run sequence, needle spec, and Auto-SOP</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-arrow-down text-slate-400"></i>
+        </button>
+      </div>
+
+      <div class="pt-2 text-right">
+        <button onclick="closeExportModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-medium">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APPLICATION CODE -->
+  <script>
+    // Anti-inspection protection
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
+        e.preventDefault(); return false;
+      }
+    });
+
+    const GARMENT_PRESETS = [
+      { id: 'polo_left_chest', name: 'Pique Polo (Left Chest)', hoop: '4" × 4"', wPx: 600, hPx: 600, icon: 'fa-shirt', posText: 'Left Chest (7.5" below shoulder)' },
+      { id: 'tshirt_left_chest', name: 'Cotton T-Shirt (Left Chest)', hoop: '4" × 4"', wPx: 600, hPx: 600, icon: 'fa-tshirt', posText: 'Left Chest (7.0" below shoulder)' },
+      { id: 'cap_front', name: 'Baseball Cap (Front Crown)', hoop: '2.5" × 5"', wPx: 750, hPx: 375, icon: 'fa-hat-cowboy', posText: 'Front Crown Center' },
+      { id: 'hoodie_center', name: 'Fleece Hoodie (Center)', hoop: '5" × 7"', wPx: 600, hPx: 840, icon: 'fa-vest', posText: 'Center Front Chest' },
+      { id: 'tote_bag', name: 'Canvas Tote Bag', hoop: '6" × 6"', wPx: 700, hPx: 700, icon: 'fa-bag-shopping', posText: 'Centered 3" below hem' }
+    ];
+
+    const MADEIRA_COLORS = ['#ffffff', '#000000', '#4f46e5', '#dc2626', '#16a34a', '#ca8a04', '#0284c7', '#9333ea', '#ea580c', '#e11d48'];
+
+    let currentGarment = GARMENT_PRESETS[0];
+    let BASE_WIDTH = currentGarment.wPx;
+    let BASE_HEIGHT = currentGarment.hPx;
+    let currentZoomScale = 1;
+    let canvasBgColor = 'transparent'; // Transparent by default
+    let mockupGarmentColor = '#1e293b';
+
+    let undoStack = [];
+    let redoStack = [];
+    let isHistoryLocked = false;
+    let clipboard = null;
+
+    // Initialize Fabric Canvas with Transparent Background
+    let canvas = new fabric.Canvas('embroideryCanvas', {
+      backgroundColor: 'transparent',
+      preserveObjectStacking: true,
+      selection: true
+    });
+
+    window.onload = function() {
+      initGarmentUI();
+      initMadeiraSwatches();
+      selectGarment('polo_left_chest');
+      setupCanvasEvents();
+      setupKeyboardShortcuts();
+      resizeCanvasToFit();
+      window.addEventListener('resize', resizeCanvasToFit);
+
+      createDefaultEmbroideryDesign();
+    };
+
+    function showValidationAlert(title, message) {
+      document.getElementById('validationAlertTitle').innerText = title;
+      document.getElementById('validationAlertMessage').innerText = message;
+      document.getElementById('validationAlertModal').classList.remove('hidden');
+    }
+    function closeValidationAlert() {
+      document.getElementById('validationAlertModal').classList.add('hidden');
+    }
+    function toggleMobileSidebar() {
+      document.getElementById('leftSidebar').classList.toggle('-translate-x-full');
+      document.getElementById('mobileBackdrop').classList.toggle('hidden');
+    }
+
+    function switchTab(tabId) {
+      ['templates', 'elements', 'text', 'format'].forEach(t => {
+        document.getElementById(`tab-${t}`).className = `py-3 flex flex-col items-center justify-center border-b-2 border-transparent hover:text-slate-800 transition`;
+        document.getElementById(`panel-${t}`).classList.add('hidden');
+      });
+      document.getElementById(`tab-${tabId}`).className = `py-3 flex flex-col items-center justify-center border-b-2 border-indigo-600 text-indigo-600 bg-slate-50 transition`;
+      document.getElementById(`panel-${tabId}`).classList.remove('hidden');
+      if (tabId === 'format') fetchAutoSOP();
+    }
+
+    function initGarmentUI() {
+      const container = document.getElementById('garmentListContainer');
+      container.innerHTML = GARMENT_PRESETS.map(p => `
+        <button onclick="selectGarment('${p.id}'); if(window.innerWidth < 768) toggleMobileSidebar();" id="garment-btn-${p.id}" class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:border-indigo-500 flex items-center justify-between transition text-left">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
+              <i class="fa-solid ${p.icon}"></i>
+            </div>
+            <div>
+              <div class="text-xs font-semibold text-slate-800">${p.name}</div>
+              <div class="text-[10px] text-slate-500">Design Area: ${p.hoop}</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+        </button>
+      `).join('');
+    }
+
+    function initMadeiraSwatches() {
+      const container = document.getElementById('madeiraSwatches');
+      container.innerHTML = MADEIRA_COLORS.map(c => `
+        <button onclick="updateObjectFill('${c}')" class="w-5 h-5 rounded-md border border-slate-300 shadow-sm transition transform hover:scale-110" style="background-color: ${c};" title="Madeira ${c}"></button>
+      `).join('');
+    }
+
+    function selectGarment(id) {
+      const found = GARMENT_PRESETS.find(p => p.id === id);
+      if (!found) return;
+      currentGarment = found;
+      BASE_WIDTH = found.wPx;
+      BASE_HEIGHT = found.hPx;
+
+      document.querySelectorAll('[id^="garment-btn-"]').forEach(el => el.classList.remove('border-indigo-600', 'bg-indigo-50'));
+      const activeBtn = document.getElementById(`garment-btn-${id}`);
+      if (activeBtn) activeBtn.classList.add('border-indigo-600', 'bg-indigo-50');
+
+      document.getElementById('canvasDimLabel').innerText = `${BASE_WIDTH} × ${BASE_HEIGHT} px (${found.hoop} Design Area)`;
+      document.getElementById('productTypeLabel').innerText = found.name;
+      document.getElementById('mockupPlacementBadge').innerText = found.posText;
+
+      canvas.setDimensions({ width: BASE_WIDTH, height: BASE_HEIGHT });
+      setCanvasBackground(canvasBgColor);
+      resizeCanvasToFit();
+      fetchAutoSOP();
+    }
+
+    function setCanvasBackground(color) {
+      canvasBgColor = color;
+      canvas.setBackgroundColor(color, () => {
+        canvas.renderAll();
+        saveHistory();
+      });
+      document.getElementById('headerBgPicker').value = color === 'transparent' ? '#ffffff' : color;
+      document.getElementById('panelBgPicker').value = color === 'transparent' ? '#ffffff' : color;
+    }
+
+    function setupCanvasEvents() {
+      canvas.on('selection:created', updateInspector);
+      canvas.on('selection:updated', updateInspector);
+      canvas.on('selection:cleared', hideInspector);
+
+      canvas.on('object:modified', () => { saveHistory(); fetchAutoSOP(); });
+      canvas.on('object:added', () => { saveHistory(); fetchAutoSOP(); });
+      canvas.on('object:removed', () => { saveHistory(); fetchAutoSOP(); });
+    }
+
+    function saveHistory() {
+      if (isHistoryLocked) return;
+      undoStack.push(JSON.stringify(canvas.toJSON()));
+      if (undoStack.length > 25) undoStack.shift();
+      redoStack = [];
+    }
+
+    function undo() {
+      if (undoStack.length > 1) {
+        isHistoryLocked = true;
+        redoStack.push(undoStack.pop());
+        const prevState = undoStack[undoStack.length - 1];
+        canvas.loadFromJSON(prevState, () => {
+          canvas.renderAll();
+          isHistoryLocked = false;
+          fetchAutoSOP();
+        });
+      }
+    }
+
+    function redo() {
+      if (redoStack.length > 0) {
+        isHistoryLocked = true;
+        const nextState = redoStack.pop();
+        undoStack.push(nextState);
+        canvas.loadFromJSON(nextState, () => {
+          canvas.renderAll();
+          isHistoryLocked = false;
+          fetchAutoSOP();
+        });
+      }
+    }
+
+    // --- KEYBOARD SHORTCUTS WITH CUT (Ctrl + X) ---
+    function setupKeyboardShortcuts() {
+      window.addEventListener('keydown', (e) => {
+        if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+        const ctrl = e.ctrlKey || e.metaKey;
+
+        // CUT: Ctrl + X
+        if (ctrl && e.key.toLowerCase() === 'x') {
+          e.preventDefault();
+          cutSelected();
+        }
+
+        // COPY: Ctrl + C
+        if (ctrl && e.key.toLowerCase() === 'c') {
+          canvas.getActiveObject()?.clone(cloned => { clipboard = cloned; });
+        }
+
+        // PASTE: Ctrl + V
+        if (ctrl && e.key.toLowerCase() === 'v' && clipboard) {
+          clipboard.clone(cloned => {
+            canvas.discardActiveObject();
+            cloned.set({ left: cloned.left + 15, top: cloned.top + 15, evented: true });
+            canvas.add(cloned);
+            canvas.setActiveObject(cloned);
+            canvas.renderAll();
+            saveHistory();
+          });
+        }
+
+        // UNDO: Ctrl + Z
+        if (ctrl && !e.shiftKey && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+        // REDO: Ctrl + Y or Ctrl + Shift + Z
+        if ((ctrl && e.key.toLowerCase() === 'y') || (ctrl && e.shiftKey && e.key.toLowerCase() === 'z')) { e.preventDefault(); redo(); }
+        
+        // DELETE
+        if (e.key === 'Delete' || e.key === 'Backspace') { deleteSelected(); }
+
+        // SELECT ALL: Ctrl + A
+        if (ctrl && e.key.toLowerCase() === 'a') {
+          e.preventDefault();
+          canvas.discardActiveObject();
+          const sel = new fabric.ActiveSelection(canvas.getObjects(), { canvas: canvas });
+          canvas.setActiveObject(sel);
+          canvas.renderAll();
+        }
+
+        // ZOOM IN / OUT / RESET
+        if (e.key === '+' || e.key === '=') { zoomCanvas(0.1); }
+        if (e.key === '-' || e.key === '_') { zoomCanvas(-0.1); }
+        if (e.key === '0') { resetZoom(); }
+
+        // Nudge with arrow keys
+        const active = canvas.getActiveObject();
+        if (active) {
+          const step = e.shiftKey ? 10 : 1;
+          if (e.key === 'ArrowUp') { active.top -= step; canvas.renderAll(); saveHistory(); }
+          if (e.key === 'ArrowDown') { active.top += step; canvas.renderAll(); saveHistory(); }
+          if (e.key === 'ArrowLeft') { active.left -= step; canvas.renderAll(); saveHistory(); }
+          if (e.key === 'ArrowRight') { active.left += step; canvas.renderAll(); saveHistory(); }
+        }
+      });
+    }
+
+    function cutSelected() {
+      const active = canvas.getActiveObject();
+      if (!active) return;
+      active.clone(cloned => {
+        clipboard = cloned;
+        canvas.remove(active);
+        canvas.discardActiveObject();
+        canvas.renderAll();
+        saveHistory();
+      });
+    }
+
+    function resizeCanvasToFit() {
+      const container = document.getElementById('workspaceContainer');
+      const pad = window.innerWidth < 768 ? 30 : 60;
+      const maxW = container.clientWidth - pad;
+      const maxH = container.clientHeight - pad;
+      const scale = Math.min(maxW / BASE_WIDTH, maxH / BASE_HEIGHT, 1.0);
+      currentZoomScale = scale;
+
+      canvas.setZoom(scale);
+      canvas.setDimensions({ width: BASE_WIDTH * scale, height: BASE_HEIGHT * scale });
+      document.getElementById('canvasWrapper').style.width = `${BASE_WIDTH * scale}px`;
+      document.getElementById('canvasWrapper').style.height = `${BASE_HEIGHT * scale}px`;
+      document.getElementById('zoomDisplay').innerText = `${Math.round(scale * 100)}%`;
+      canvas.calcOffset();
+      canvas.renderAll();
+    }
+
+    function zoomCanvas(amt) {
+      let newZ = Math.max(0.2, Math.min(3.0, currentZoomScale + amt));
+      currentZoomScale = newZ;
+      canvas.setZoom(newZ);
+      canvas.setDimensions({ width: BASE_WIDTH * newZ, height: BASE_HEIGHT * newZ });
+      document.getElementById('canvasWrapper').style.width = `${BASE_WIDTH * newZ}px`;
+      document.getElementById('canvasWrapper').style.height = `${BASE_HEIGHT * newZ}px`;
+      document.getElementById('zoomDisplay').innerText = `${Math.round(newZ * 100)}%`;
+      canvas.calcOffset();
+      canvas.renderAll();
+    }
+
+    function resetZoom() { resizeCanvasToFit(); }
+
+    // --- VISIBLE REAL EMBROIDERY STITCH PATTERN GENERATOR ---
+    function createStitchPattern(threadColor) {
+      const pCanvas = document.createElement('canvas');
+      pCanvas.width = 12;
+      pCanvas.height = 12;
+      const pCtx = pCanvas.getContext('2d');
+
+      pCtx.fillStyle = threadColor;
+      pCtx.fillRect(0, 0, 12, 12);
+      
+      pCtx.strokeStyle = 'rgba(255,255,255,0.35)';
+      pCtx.lineWidth = 1.2;
+      pCtx.beginPath();
+      pCtx.moveTo(0, 2); pCtx.lineTo(12, 2);
+      pCtx.moveTo(0, 8); pCtx.lineTo(12, 8);
+      pCtx.stroke();
+
+      pCtx.strokeStyle = 'rgba(0,0,0,0.3)';
+      pCtx.lineWidth = 1;
+      pCtx.beginPath();
+      pCtx.moveTo(0, 5); pCtx.lineTo(12, 5);
+      pCtx.moveTo(0, 11); pCtx.lineTo(12, 11);
+      pCtx.stroke();
+
+      return new fabric.Pattern({
+        source: pCanvas,
+        repeat: 'repeat'
+      });
+    }
+
+    function createDefaultEmbroideryDesign() {
+      const shield = new fabric.Circle({
+        left: BASE_WIDTH / 2 - 120, top: BASE_HEIGHT / 2 - 120,
+        radius: 120,
+        fill: createStitchPattern('#4f46e5'),
+        stroke: '#ffffff',
+        strokeWidth: 6,
+        strokeDashArray: [6, 2],
+        shadow: new fabric.Shadow({ color: 'rgba(0,0,0,0.4)', blur: 5, offsetX: 2, offsetY: 3 })
+      });
+      shield.realColor = '#4f46e5';
+
+      const text = new fabric.Text("CV", {
+        left: BASE_WIDTH / 2 - 60, top: BASE_HEIGHT / 2 - 70,
+        fontFamily: 'Bebas Neue', fontSize: 130,
+        fill: createStitchPattern('#ffffff'),
+        stroke: '#1e1b4b',
+        strokeWidth: 3,
+        strokeDashArray: [4, 1.5],
+        shadow: new fabric.Shadow({ color: 'rgba(0,0,0,0.35)', blur: 3, offsetX: 1, offsetY: 2 })
+      });
+      text.realColor = '#ffffff';
+
+      canvas.add(shield);
+      canvas.add(text);
+      canvas.renderAll();
+      saveHistory();
+    }
+
+    function generateDigitizedText() {
+      const val = document.getElementById('embroideryTextInput').value.trim() || 'VECTORA';
+      const font = document.getElementById('embroideryFontPreset').value;
+
+      const text = new fabric.Text(val, {
+        left: BASE_WIDTH / 2 - 120,
+        top: BASE_HEIGHT / 2 - 35,
+        fontFamily: font,
+        fontSize: 54,
+        fontWeight: 'bold',
+        fill: createStitchPattern('#4f46e5'),
+        stroke: '#ffffff',
+        strokeWidth: 3,
+        strokeDashArray: [5, 2],
+        paintFirst: 'stroke',
+        shadow: new fabric.Shadow({ color: 'rgba(0,0,0,0.35)', blur: 3, offsetX: 1, offsetY: 2 })
+      });
+      text.realColor = '#4f46e5';
+
+      canvas.add(text);
+      canvas.setActiveObject(text);
+      canvas.renderAll();
+      saveHistory();
+      fetchAutoSOP();
+    }
+
+    function addEmbroideryShape(type) {
+      let shape;
+      const opts = {
+        left: BASE_WIDTH / 2 - 75, top: BASE_HEIGHT / 2 - 75,
+        fill: createStitchPattern('#dc2626'),
+        stroke: '#ffffff', strokeWidth: 4,
+        strokeDashArray: [6, 2],
+        shadow: new fabric.Shadow({ color: 'rgba(0,0,0,0.35)', blur: 4, offsetX: 2, offsetY: 3 })
+      };
+
+      if (type === 'circle') {
+        shape = new fabric.Circle({ ...opts, radius: 75 });
+      } else if (type === 'star') {
+        const points = [
+          {x: 75, y: 0}, {x: 95, y: 55}, {x: 150, y: 55},
+          {x: 105, y: 90}, {x: 125, y: 145}, {x: 75, y: 110},
+          {x: 25, y: 145}, {x: 45, y: 90}, {x: 0, y: 55}, {x: 55, y: 55}
+        ];
+        shape = new fabric.Polygon(points, opts);
+      } else {
+        const path = "M 50 0 L 150 0 C 150 100 100 140 50 160 C 0 140 -50 100 -50 0 Z";
+        shape = new fabric.Path(path, { ...opts, left: BASE_WIDTH / 2 - 50, top: BASE_HEIGHT / 2 - 80 });
+      }
+      shape.realColor = '#dc2626';
+
+      canvas.add(shape);
+      canvas.setActiveObject(shape);
+      canvas.renderAll();
+      saveHistory();
+      fetchAutoSOP();
+    }
+
+    // Auto-digitize from uploaded image
+    document.getElementById('imageDigitizeLoader').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          const off = document.createElement('canvas');
+          const maxDim = 180;
+          const scale = Math.min(maxDim / img.width, maxDim / img.height, 1);
+          off.width = Math.round(img.width * scale);
+          off.height = Math.round(img.height * scale);
+          const ctx = off.getContext('2d');
+          ctx.drawImage(img, 0, 0, off.width, off.height);
+
+          const imgData = ctx.getImageData(0, 0, off.width, off.height);
+          const data = imgData.data;
+          const stitchLines = [];
+          const step = 4;
+
+          for (let y = 4; y < off.height - 4; y += step) {
+            let start = null;
+            for (let x = 4; x < off.width - 4; x++) {
+              const idx = (y * off.width + x) * 4;
+              if (data[idx + 3] > 90 && (data[idx] + data[idx + 1] + data[idx + 2]) / 3 < 220) {
+                if (start === null) start = x;
+              } else {
+                if (start !== null) {
+                  stitchLines.push({ x1: start, y1: y, x2: x, y2: y });
+                  start = null;
+                }
+              }
+            }
+            if (start !== null) stitchLines.push({ x1: start, y1: y, x2: off.width - 4, y2: y });
+          }
+
+          if (stitchLines.length === 0) {
+            showValidationAlert('Digitize Alert', 'No clear embroidery graphic detected. Please use a clean logo with transparent background.');
+            return;
+          }
+
+          const elements = stitchLines.map(sl => new fabric.Line([sl.x1 * 2, sl.y1 * 2, sl.x2 * 2, sl.y2 * 2], {
+            stroke: '#4f46e5',
+            strokeWidth: 2.2,
+            strokeLineCap: 'round',
+            selectable: false
+          }));
+
+          const group = new fabric.Group(elements, {
+            left: BASE_WIDTH / 2 - (off.width * 2) / 2,
+            top: BASE_HEIGHT / 2 - (off.height * 2) / 2,
+            stroke: '#ffffff',
+            strokeWidth: 2,
+            shadow: new fabric.Shadow({ color: 'rgba(0,0,0,0.3)', blur: 3, offsetX: 1, offsetY: 2 })
+          });
+          group.realColor = '#4f46e5';
+
+          canvas.add(group);
+          canvas.setActiveObject(group);
+          canvas.renderAll();
+          saveHistory();
+          fetchAutoSOP();
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+      this.value = '';
+    });
+
+    // Inspector functions
+    function updateInspector() {
+      const active = canvas.getActiveObject();
+      if (!active) { hideInspector(); return; }
+
+      document.getElementById('objectInspector').classList.remove('hidden');
+
+      const col = active.realColor || '#4f46e5';
+      document.getElementById('inspectorFillColor').value = col;
+      document.getElementById('fillColorHex').innerText = col;
+
+      if (active.stroke) {
+        document.getElementById('inspectorStrokeColor').value = active.stroke;
+      }
+      const sw = active.strokeWidth || 0;
+      document.getElementById('inspectorStrokeWidth').value = sw;
+      document.getElementById('strokeWidthVal').innerText = `${sw}px`;
+    }
+
+    function hideInspector() {
+      document.getElementById('objectInspector').classList.add('hidden');
+    }
+
+    function updateObjectFill(color) {
+      const active = canvas.getActiveObject();
+      if (!active) return;
+      active.realColor = color;
+
+      if (active.type === 'text' || active.type === 'circle' || active.type === 'polygon' || active.type === 'path') {
+        active.set('fill', createStitchPattern(color));
+      } else if (active.type === 'group' && active._objects) {
+        active._objects.forEach(o => o.set('stroke', color));
+      } else {
+        active.set('fill', color);
+      }
+      document.getElementById('fillColorHex').innerText = color;
+      canvas.renderAll();
+      saveHistory();
+    }
+
+    function updateObjectStroke(color) {
+      const active = canvas.getActiveObject();
+      if (!active) return;
+      active.set({ stroke: color, strokeWidth: Math.max(2, active.strokeWidth || 2), strokeDashArray: [5, 2] });
+      document.getElementById('inspectorStrokeWidth').value = active.strokeWidth;
+      document.getElementById('strokeWidthVal').innerText = `${active.strokeWidth}px`;
+      canvas.renderAll();
+      saveHistory();
+    }
+
+    function updateObjectStrokeWidth(width) {
+      const active = canvas.getActiveObject();
+      if (!active) return;
+      const w = parseInt(width);
+      active.set('strokeWidth', w);
+      document.getElementById('strokeWidthVal').innerText = `${w}px`;
+      canvas.renderAll();
+      saveHistory();
+    }
+
+    function removeOutline() {
+      const active = canvas.getActiveObject();
+      if (!active) return;
+      active.set({ stroke: null, strokeWidth: 0, strokeDashArray: null });
+      document.getElementById('inspectorStrokeWidth').value = 0;
+      document.getElementById('strokeWidthVal').innerText = '0px';
+      canvas.renderAll();
+      saveHistory();
+    }
+
+    function changeLayer(action) {
+      const active = canvas.getActiveObject();
+      if (!active) return;
+      if (action === 'front') canvas.bringToFront(active);
+      if (action === 'forward') canvas.bringForward(active);
+      if (action === 'backward') canvas.sendBackwards(active);
+      if (action === 'back') canvas.sendToBack(active);
+      canvas.renderAll();
+      saveHistory();
+    }
+
+    function deleteSelected() {
+      const actives = canvas.getActiveObjects();
+      if (actives.length) {
+        actives.forEach(o => canvas.remove(o));
+        canvas.discardActiveObject();
+        canvas.renderAll();
+        saveHistory();
+        fetchAutoSOP();
+      }
+    }
+
+    // --- ACCURATE STITCH EXTRACTION (Simulates EXACT Canvas Objects) ---
+    function extractActualStitches() {
+      const objects = canvas.getObjects();
+      const stitches = [];
+
+      objects.forEach((obj, objIdx) => {
+        const bounds = obj.getBoundingRect(true);
+        const col = obj.realColor || '#4f46e5';
+
+        // Jump to object start
+        stitches.push({ x: bounds.left, y: bounds.top, isJump: true, color: col, colorIdx: objIdx + 1 });
+
+        if (obj.type === 'text') {
+          const step = 3;
+          for (let y = bounds.top; y <= bounds.top + bounds.height; y += step) {
+            stitches.push({ x: bounds.left + Math.sin(y * 0.1) * 4, y: y, isJump: false, color: col, colorIdx: objIdx + 1 });
+            stitches.push({ x: bounds.left + bounds.width - Math.sin(y * 0.1) * 4, y: y + 1.2, isJump: false, color: col, colorIdx: objIdx + 1 });
+          }
+        } else if (obj.type === 'circle') {
+          const r = bounds.width / 2;
+          const cx = bounds.left + r;
+          const cy = bounds.top + r;
+          for (let dy = -r + 3; dy <= r - 3; dy += 3) {
+            const dx = Math.sqrt(Math.max(0, r * r - dy * dy));
+            stitches.push({ x: cx - dx, y: cy + dy, isJump: false, color: col, colorIdx: objIdx + 1 });
+            stitches.push({ x: cx + dx, y: cy + dy, isJump: false, color: col, colorIdx: objIdx + 1 });
+          }
+        } else if (obj.type === 'group' && obj._objects) {
+          obj._objects.forEach(line => {
+            stitches.push({ x: obj.left + line.x1, y: obj.top + line.y1, isJump: false, color: col, colorIdx: objIdx + 1 });
+            stitches.push({ x: obj.left + line.x2, y: obj.top + line.y2, isJump: false, color: col, colorIdx: objIdx + 1 });
+          });
+        } else {
+          for (let y = bounds.top; y <= bounds.top + bounds.height; y += 4) {
+            stitches.push({ x: bounds.left, y: y, isJump: false, color: col, colorIdx: objIdx + 1 });
+            stitches.push({ x: bounds.left + bounds.width, y: y, isJump: false, color: col, colorIdx: objIdx + 1 });
+          }
+        }
+
+        if (obj.stroke && obj.strokeWidth > 0) {
+          const sCol = obj.stroke;
+          stitches.push({ x: bounds.left, y: bounds.top, isJump: true, color: sCol, colorIdx: objIdx + 2 });
+          stitches.push({ x: bounds.left + bounds.width, y: bounds.top, isJump: false, color: sCol, colorIdx: objIdx + 2 });
+          stitches.push({ x: bounds.left + bounds.width, y: bounds.top + bounds.height, isJump: false, color: sCol, colorIdx: objIdx + 2 });
+          stitches.push({ x: bounds.left, y: bounds.top + bounds.height, isJump: false, color: sCol, colorIdx: objIdx + 2 });
+          stitches.push({ x: bounds.left, y: bounds.top, isJump: false, color: sCol, colorIdx: objIdx + 2 });
+        }
+      });
+
+      return stitches;
+    }
+
+    // --- PROCEDURAL HIGH-RESOLUTION PHOTOGRAPHIC PRODUCT BUILDER ---
+    const garmentPhotoCache = {};
+
+    function getPhotographicGarmentImage(productId, colorHex, callback) {
+      const cacheKey = `${productId}_${colorHex}`;
+      if (garmentPhotoCache[cacheKey]) {
+        callback(garmentPhotoCache[cacheKey]);
+        return;
+      }
+
+      const pCanvas = document.createElement('canvas');
+      pCanvas.width = 900;
+      pCanvas.height = 800;
+      const ctx = pCanvas.getContext('2d');
+
+      const bgGrad = ctx.createRadialGradient(450, 400, 50, 450, 400, 500);
+      bgGrad.addColorStop(0, '#1e293b');
+      bgGrad.addColorStop(1, '#090d16');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, pCanvas.width, pCanvas.height);
+
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.65)';
+      ctx.shadowBlur = 40;
+      ctx.shadowOffsetY = 25;
+
+      if (productId === 'cap_front') {
+        const visorGrad = ctx.createLinearGradient(180, 500, 720, 680);
+        visorGrad.addColorStop(0, adjustBrightness(colorHex, -25));
+        visorGrad.addColorStop(0.5, adjustBrightness(colorHex, -15));
+        visorGrad.addColorStop(1, adjustBrightness(colorHex, -35));
+        ctx.fillStyle = visorGrad;
+        ctx.beginPath();
+        ctx.ellipse(450, 570, 260, 110, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.ellipse(450, 570, 240, 95, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.ellipse(450, 570, 248, 100, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const crownGrad = ctx.createRadialGradient(450, 360, 40, 450, 360, 260);
+        crownGrad.addColorStop(0, adjustBrightness(colorHex, 15));
+        crownGrad.addColorStop(0.6, colorHex);
+        crownGrad.addColorStop(1, adjustBrightness(colorHex, -30));
+        ctx.fillStyle = crownGrad;
+        ctx.beginPath();
+        ctx.moveTo(220, 540);
+        ctx.bezierCurveTo(200, 250, 700, 250, 680, 540);
+        ctx.bezierCurveTo(580, 570, 320, 570, 220, 540);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = 'rgba(0,0,0,0.45)';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(450, 260);
+        ctx.lineTo(450, 555);
+        ctx.moveTo(450, 260);
+        ctx.quadraticCurveTo(320, 380, 235, 530);
+        ctx.moveTo(450, 260);
+        ctx.quadraticCurveTo(580, 380, 665, 530);
+        ctx.stroke();
+
+        applyFabricTexture(ctx, 210, 250, 480, 310, 'twill');
+
+        ctx.fillStyle = adjustBrightness(colorHex, -10);
+        ctx.beginPath();
+        ctx.arc(450, 260, 12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+        ctx.stroke();
+
+      } else {
+        const bodyGrad = ctx.createRadialGradient(450, 360, 60, 450, 420, 450);
+        bodyGrad.addColorStop(0, adjustBrightness(colorHex, 12));
+        bodyGrad.addColorStop(0.7, colorHex);
+        bodyGrad.addColorStop(1, adjustBrightness(colorHex, -28));
+        ctx.fillStyle = bodyGrad;
+
+        ctx.beginPath();
+        ctx.moveTo(310, 130);
+        ctx.lineTo(390, 155);
+        ctx.bezierCurveTo(420, 180, 480, 180, 510, 155);
+        ctx.lineTo(590, 130);
+        ctx.lineTo(760, 240);
+        ctx.lineTo(680, 330);
+        ctx.lineTo(630, 280);
+        ctx.lineTo(630, 720);
+        ctx.lineTo(270, 720);
+        ctx.lineTo(270, 280);
+        ctx.lineTo(220, 330);
+        ctx.lineTo(140, 240);
+        ctx.closePath();
+        ctx.fill();
+
+        applyFabricTexture(ctx, 260, 140, 380, 580, productId === 'polo_left_chest' ? 'pique' : 'jersey');
+
+        ctx.fillStyle = 'rgba(0,0,0,0.18)';
+        ctx.beginPath();
+        ctx.moveTo(270, 280);
+        ctx.quadraticCurveTo(340, 340, 310, 460);
+        ctx.quadraticCurveTo(280, 340, 270, 280);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(630, 280);
+        ctx.quadraticCurveTo(560, 340, 590, 460);
+        ctx.quadraticCurveTo(620, 340, 630, 280);
+        ctx.fill();
+
+        if (productId === 'polo_left_chest') {
+          ctx.fillStyle = adjustBrightness(colorHex, -15);
+          ctx.beginPath();
+          ctx.moveTo(380, 150);
+          ctx.lineTo(450, 230);
+          ctx.lineTo(425, 230);
+          ctx.lineTo(350, 155);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.moveTo(520, 150);
+          ctx.lineTo(450, 230);
+          ctx.lineTo(475, 230);
+          ctx.lineTo(550, 155);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.fillStyle = adjustBrightness(colorHex, -10);
+          ctx.fillRect(435, 175, 30, 130);
+          ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+          ctx.strokeRect(435, 175, 30, 130);
+
+          [205, 240, 275].forEach(btnY => {
+            ctx.fillStyle = '#f1f5f9';
+            ctx.beginPath();
+            ctx.arc(450, btnY, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.fillStyle = '#64748b';
+            ctx.fillRect(448.5, btnY - 1, 1, 1);
+            ctx.fillRect(450.5, btnY - 1, 1, 1);
+            ctx.fillRect(448.5, btnY + 1, 1, 1);
+            ctx.fillRect(450.5, btnY + 1, 1, 1);
+          });
+        } else {
+          ctx.fillStyle = adjustBrightness(colorHex, -12);
+          ctx.beginPath();
+          ctx.moveTo(390, 155);
+          ctx.bezierCurveTo(420, 190, 480, 190, 510, 155);
+          ctx.lineTo(500, 140);
+          ctx.bezierCurveTo(475, 175, 425, 175, 400, 140);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+
+      const renderedImg = new Image();
+      renderedImg.onload = () => {
+        garmentPhotoCache[cacheKey] = renderedImg;
+        callback(renderedImg);
+      };
+      renderedImg.src = pCanvas.toDataURL('image/png');
+    }
+
+    function applyFabricTexture(ctx, x, y, w, h, type) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(x, y, w, h);
+      ctx.clip();
+      ctx.fillStyle = type === 'pique' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)';
+      const step = type === 'pique' ? 3 : 2;
+      for (let px = x; px < x + w; px += step) {
+        for (let py = y; py < y + h; py += step) {
+          if ((px + py) % (step * 2) === 0) {
+            ctx.fillRect(px, py, 1.2, 1.2);
+          }
+        }
+      }
+      ctx.restore();
+    }
+
+    // --- ACCURATE REAL-SCALE PLACEMENT COORDINATES ---
+    function getPhotographicPlacement() {
+      const pId = currentGarment.id;
+      if (pId === 'cap_front') {
+        return { x: 345, y: 350, w: 210, h: 105 };
+      } else if (pId === 'hoodie_center') {
+        return { x: 340, y: 280, w: 220, h: 220 };
+      } else if (pId === 'tote_bag') {
+        return { x: 330, y: 260, w: 240, h: 240 };
+      }
+      // Actual Scale Left Chest (3.5" to 4.0")
+      return { x: 295, y: 245, w: 145, h: 145 };
+    }
+
+    // --- RENDER LIVE MOCKUP PREVIEW ---
+    function openMockupPreview() {
+      document.getElementById('mockupModal').classList.remove('hidden');
+      renderGarmentMockup();
+    }
+    function closeMockupModal() {
+      document.getElementById('mockupModal').classList.add('hidden');
+    }
+    function setMockupGarmentColor(color) {
+      mockupGarmentColor = color;
+      renderGarmentMockup();
+    }
+
+    function renderGarmentMockup() {
+      const mCanvas = document.getElementById('mockupRenderCanvas');
+      mCanvas.width = 900;
+      mCanvas.height = 800;
+      const ctx = mCanvas.getContext('2d');
+
+      const drawDesign = (coords) => {
+        const dataUrl = canvas.toDataURL({ format: 'png', quality: 1.0 });
+        const img = new Image();
+        img.onload = function() {
+          ctx.save();
+          ctx.shadowColor = 'rgba(0,0,0,0.55)';
+          ctx.shadowBlur = 4;
+          ctx.shadowOffsetY = 2.5;
+          ctx.drawImage(img, coords.x, coords.y, coords.w, coords.h);
+          ctx.restore();
+        };
+        img.src = dataUrl;
+      };
+
+      const coords = getPhotographicPlacement();
+      getPhotographicGarmentImage(currentGarment.id, mockupGarmentColor, (productImg) => {
+        ctx.drawImage(productImg, 0, 0, mCanvas.width, mCanvas.height);
+        drawDesign(coords);
+      });
+    }
+
+    function adjustBrightness(col, amt) {
+      let usePound = false;
+      if (col[0] == "#") { col = col.slice(1); usePound = true; }
+      let num = parseInt(col, 16);
+      let r = (num >> 16) + amt;
+      let b = ((num >> 8) & 0x00FF) + amt;
+      let g = (num & 0x0000FF) + amt;
+      return (usePound ? "#" : "") + (0x1000000 + (r < 255 ? (r < 1 ? 0 : r) : 255) * 0x10000 + (b < 255 ? (b < 1 ? 0 : b) : 255) * 0x100 + (g < 255 ? (g < 1 ? 0 : g) : 255)).toString(16).slice(1);
+    }
+
+    // --- MACHINE STITCH SIMULATOR ---
+    let simStitches = [];
+    let simIdx = 0;
+    let simTimer = null;
+    let simSpeed = 8;
+    let simCanvas = document.getElementById('simCanvas');
+    let simCtx = simCanvas.getContext('2d');
+
+    function openSimulationModal() {
+      simStitches = extractActualStitches();
+      if (simStitches.length === 0) {
+        showValidationAlert('Empty Canvas', 'Add text or shapes to the canvas first to simulate.');
+        return;
+      }
+      document.getElementById('simulationModal').classList.remove('hidden');
+
+      simCanvas.width = 900;
+      simCanvas.height = 800;
+      document.getElementById('simTotalStitch').innerText = simStitches.length;
+      document.getElementById('simScrub').max = simStitches.length;
+
+      restartSim();
+    }
+
+    function closeSimulationModal() {
+      clearInterval(simTimer);
+      simTimer = null;
+      document.getElementById('simulationModal').classList.add('hidden');
+    }
+
+    function restartSim() {
+      clearInterval(simTimer);
+      simTimer = null;
+      simIdx = 0;
+      document.getElementById('simPlayBtn').innerHTML = '<i class="fa-solid fa-play text-xs"></i>';
+      document.getElementById('simScrub').value = 0;
+      document.getElementById('simCurrentStitch').innerText = '0';
+      drawSimulationStep();
+      toggleSimPlay();
+    }
+
+    function toggleSimPlay() {
+      const btn = document.getElementById('simPlayBtn');
+      if (simTimer) {
+        clearInterval(simTimer);
+        simTimer = null;
+        btn.innerHTML = '<i class="fa-solid fa-play text-xs"></i>';
+      } else {
+        btn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
+        simTimer = setInterval(() => {
+          simIdx += simSpeed;
+          if (simIdx >= simStitches.length) {
+            simIdx = simStitches.length;
+            clearInterval(simTimer);
+            simTimer = null;
+            btn.innerHTML = '<i class="fa-solid fa-rotate-left text-xs"></i>';
+          }
+          drawSimulationStep();
+        }, 16);
+      }
+    }
+
+    function scrubSimulation(val) {
+      simIdx = parseInt(val);
+      drawSimulationStep();
+    }
+
+    function setSimSpeed(speed) {
+      simSpeed = speed * 4;
+    }
+
+    function drawSimulationStep() {
+      const showBg = document.getElementById('simShowProductBg').checked;
+
+      const performStitches = (targetX, targetY, targetW, targetH) => {
+        const scaleX = targetW / BASE_WIDTH;
+        const scaleY = targetH / BASE_HEIGHT;
+
+        let lastX = null, lastY = null;
+        let currentColor = '#4f46e5';
+
+        for (let i = 0; i < Math.min(simIdx, simStitches.length); i++) {
+          const p = simStitches[i];
+          const sx = targetX + (p.x * scaleX);
+          const sy = targetY + (p.y * scaleY);
+
+          if (p.isJump) {
+            simCtx.strokeStyle = 'rgba(239, 68, 68, 0.45)';
+            simCtx.lineWidth = 1;
+            simCtx.setLineDash([2, 2]);
+            if (lastX !== null) {
+              simCtx.beginPath();
+              simCtx.moveTo(lastX, lastY);
+              simCtx.lineTo(sx, sy);
+              simCtx.stroke();
+            }
+            simCtx.setLineDash([]);
+          } else {
+            simCtx.strokeStyle = p.color || currentColor;
+            simCtx.lineWidth = showBg ? 1.8 : 2.4;
+            simCtx.lineCap = 'round';
+            if (lastX !== null) {
+              simCtx.beginPath();
+              simCtx.moveTo(lastX, lastY);
+              simCtx.lineTo(sx, sy);
+              simCtx.stroke();
+            }
+          }
+
+          lastX = sx;
+          lastY = sy;
+          currentColor = p.color || currentColor;
+        }
+
+        if (lastX !== null) {
+          simCtx.fillStyle = '#10b981';
+          simCtx.beginPath();
+          simCtx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+          simCtx.fill();
+          simCtx.strokeStyle = '#ffffff';
+          simCtx.lineWidth = 1.5;
+          simCtx.stroke();
+        }
+
+        document.getElementById('simCurrentStitch').innerText = Math.min(simIdx, simStitches.length);
+        document.getElementById('simScrub').value = simIdx;
+        document.getElementById('simColorStop').innerText = `${simStitches[Math.min(simIdx, simStitches.length - 1)]?.colorIdx || 1} of 2`;
+      };
+
+      const coords = getPhotographicPlacement();
+
+      if (showBg) {
+        getPhotographicGarmentImage(currentGarment.id, mockupGarmentColor, (productImg) => {
+          simCtx.drawImage(productImg, 0, 0, simCanvas.width, simCanvas.height);
+          simCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+          simCtx.lineWidth = 1;
+          simCtx.setLineDash([4, 4]);
+          simCtx.strokeRect(coords.x, coords.y, coords.w, coords.h);
+          simCtx.setLineDash([]);
+          performStitches(coords.x, coords.y, coords.w, coords.h);
+        });
+      } else {
+        simCtx.fillStyle = '#090d16';
+        simCtx.fillRect(0, 0, simCanvas.width, simCanvas.height);
+
+        const scale = Math.min((simCanvas.width - 80) / BASE_WIDTH, (simCanvas.height - 80) / BASE_HEIGHT);
+        const targetW = BASE_WIDTH * scale;
+        const targetH = BASE_HEIGHT * scale;
+        const targetX = (simCanvas.width - targetW) / 2;
+        const targetY = (simCanvas.height - targetH) / 2;
+
+        simCtx.strokeStyle = '#334155';
+        simCtx.lineWidth = 1.5;
+        simCtx.strokeRect(targetX, targetY, targetW, targetH);
+        performStitches(targetX, targetY, targetW, targetH);
+      }
+    }
+
+    // --- AUTO-SOP FETCH ---
+    async function fetchAutoSOP() {
+      const container = document.getElementById('sopContainer');
+      const stitches = extractActualStitches();
+      const count = stitches.length || 3200;
+
+      try {
+        const res = await fetch('/api/sop', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId: currentGarment.id,
+            stitchCount: count,
+            colorCount: 2
+          })
+        });
+        const data = await res.json();
+        const s = data.sop;
+
+        container.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex justify-between items-center pb-1.5 border-b border-slate-200">
+              <span class="font-bold text-slate-800 text-xs">${s.productName}</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-mono text-[10px] font-bold">~${s.runTimeMinutes} Mins</span>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 font-semibold uppercase">Stabilizer:</div>
+              <div class="text-slate-700 font-medium">${s.stabilizer}</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 font-semibold uppercase">Needle:</div>
+              <div class="text-slate-700 font-medium">${s.needle}</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 font-semibold uppercase">Solvy Topping:</div>
+              <div class="text-slate-700 font-medium">${s.topping}</div>
+            </div>
+            <div class="pt-1.5 border-t border-slate-200 flex justify-between text-[11px]">
+              <span class="text-slate-500">Stitch Count:</span>
+              <span class="font-bold font-mono text-indigo-600">${s.stitchCount.toLocaleString()}</span>
+            </div>
+            <div class="flex justify-between text-[11px]">
+              <span class="text-slate-500">Placement:</span>
+              <span class="text-slate-700 font-medium text-right text-[10px] max-w-[170px]">${s.placement}</span>
+            </div>
+          </div>
+        `;
+      } catch (err) {
+        container.innerHTML = `<div class="text-slate-600 text-xs">Dynamic SOP: ${currentGarment.name} (75/11 Ballpoint + Cut-Away)</div>`;
+      }
+    }
+
+    // --- EXPORT FUNCTIONS ---
+    function openExportModal() { document.getElementById('exportModal').classList.remove('hidden'); }
+    function closeExportModal() { document.getElementById('exportModal').classList.add('hidden'); }
+
+    async function downloadDSTFile() {
+      const stitches = extractActualStitches();
+      if (stitches.length === 0) {
+        showValidationAlert('Export Alert', 'No embroidery objects on canvas.');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/export-dst', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            stitchPoints: stitches,
+            designName: 'CLICK_VECT'
+          })
+        });
+
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `ClickVectora_${currentGarment.id}.dst`;
+        link.click();
+        closeExportModal();
+      } catch (err) {
+        showValidationAlert('Download Error', err.message);
+      }
+    }
+
+    function exportProductionPDF() {
+      const imgData = canvas.toDataURL({ format: 'png', quality: 1.0 });
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      doc.setFillColor(79, 70, 229);
+      doc.rect(0, 0, 210, 22, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text("EMBROIDERY PRODUCTION TECH PACK", 15, 15);
+
+      doc.setTextColor(30, 41, 59);
+      doc.setFontSize(12);
+      doc.text(`Product: ${currentGarment.name}`, 15, 32);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Design Area: ${currentGarment.hoop} | ${currentGarment.posText}`, 15, 38);
+
+      doc.addImage(imgData, 'PNG', 15, 45, 90, 90);
+
+      doc.setFillColor(248, 250, 252);
+      doc.roundedRect(115, 45, 80, 90, 3, 3, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.text("AUTO-SOP SPECIFICATIONS", 120, 53);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.text("• Stabilizer: Cut-Away + Solvy", 120, 62);
+      doc.text("• Needle: Organ DBxK5 #75/11", 120, 71);
+      doc.text("• Thread: Madeira Polyneon 40wt", 120, 80);
+      doc.text("• Max Speed: 750 SPM", 120, 89);
+      doc.text(`• Total Stitches: ${extractActualStitches().length}`, 120, 98);
+      doc.text("• Operator Sign-Off: _________", 120, 115);
+
+      doc.save(`TechPack_${currentGarment.id}.pdf`);
+      closeExportModal();
+    }
+  </script>
+</body>
+</html>
