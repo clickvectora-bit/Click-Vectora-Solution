@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Click Vectora Solution - Secured Digital Business Card Studio</title>
+    <!-- Favicon / Tab Icon -->
+    <link rel="icon" type="image/png" href="/img/logo/logo1.png">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -46,9 +48,35 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 9999px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(107, 114, 128, 0.8); }
+
+        .brand-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .brand-logo img { height: 40px; width: auto; display: block; object-fit: contain; }
+
+        /* Page Loader Styles */
+        #loadingScreen {
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .spinner-circle {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e2e8f0;
+            border-top: 5px solid #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 h-full flex flex-col overflow-hidden transition-colors duration-300">
+
+    <!-- Page Loading Overlay with Circle Animation -->
+    <div id="loadingScreen" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center space-y-4">
+        <div class="spinner-circle"></div>
+        <p class="text-white font-medium text-sm tracking-wide">Loading Digital Business Card Studio...</p>
+    </div>
 
     <!-- Notification Toast -->
     <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 border border-slate-700 dark:border-slate-200">
@@ -59,9 +87,9 @@
     <!-- Top Navigation Bar -->
     <header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-6 flex items-center justify-between z-20 shrink-0">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
-                <i data-lucide="shield-check" class="w-5 h-5"></i>
-            </div>
+            <a href="/" class="flex items-center space-x-2 brand-logo">
+                <img src="/img/logo/logo.png" alt="Logo" class="h-8 w-auto object-contain" onerror="this.outerHTML='<div class=\'w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30\'><i data-lucide=\'shield-check\' class=\'w-5 h-5\'></i></div>'">
+            </a>
             <div>
                 <h1 class="font-bold text-base leading-tight tracking-tight">Click Vectora<span class="text-indigo-500">.io</span></h1>
                 <p class="text-xs text-slate-500 dark:text-slate-400">Secured Digital Business Card Studio</p>
@@ -446,6 +474,19 @@
 
     <!-- Application JavaScript Logic with Developer Security Protection -->
     <script>
+        // --- PAGE LOADER HANDLER (2 SECONDS DELAY) ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loadingScreen');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                    }, 500); // matches CSS transition duration
+                }
+            }, 2000); // 2-second delay
+        });
+
         // ==========================================
         // 1. SOURCE CODE SECURITY & DEVTOOLS LOCKDOWN
         // ==========================================
