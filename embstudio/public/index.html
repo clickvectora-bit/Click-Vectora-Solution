@@ -40,7 +40,7 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* 5-Second Circle Loading Overlay Styles */
+    /* 2-Second Circle Loading Overlay Styles */
     #loadingOverlay {
       position: fixed;
       inset: 0;
@@ -68,7 +68,7 @@
 </head>
 <body class="h-full bg-slate-100 text-slate-800 flex flex-col overflow-hidden">
 
-  <!-- 5-Second Loading Delay Overlay with Circle Spinner -->
+  <!-- 2-Second Loading Delay Overlay with Circle Spinner -->
   <div id="loadingOverlay">
     <div class="loading-circle-spinner mb-4"></div>
     <h2 class="text-white font-bold text-sm tracking-widest uppercase">Embroidery Studio</h2>
@@ -93,10 +93,12 @@
       <button onclick="toggleMobileSidebar()" class="md:hidden p-2 text-slate-600 hover:text-slate-900 focus:outline-none">
         <i class="fa-solid fa-bars text-lg"></i>
       </button>
+
       <a href="/" class="flex items-center space-x-2">
-        <div class="brand-logo">
-          <img src="/img/logo/logo.png" alt="Logo" class="h-6 w-auto object-contain" onerror="this.outerHTML='<i class=\'fa-solid fa-file-pdf text-indigo-600 text-xl\'></i><span class=\'font-bold text-slate-900 text-sm\'>Embroidery Studio</span>'">
+        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+          <i class="fa-solid fa-pen-nib"></i>
         </div>
+        <span class="font-bold text-sm tracking-tight text-slate-900 hidden sm:inline">Click Vectora <span class="text-indigo-600">Embroidery Studio</span></span>
       </a>
       <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
       
@@ -521,6 +523,33 @@
 
   <!-- JAVASCRIPT APPLICATION CODE -->
   <script>
+    // --- BROWSER ANTI-INSPECTION SECURITY SCRIPTS ---
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (
+        e.keyCode === 123 || // F12
+        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I / J
+        (e.ctrlKey && e.keyCode === 85) // Ctrl+U (View Source)
+      ) {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    (function() {
+      const threshold = 160;
+      setInterval(() => {
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+        if (widthThreshold || heightThreshold) {
+          document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f172a;color:#fff;font-family:sans-serif;text-align:center;"><h2>Developer Tools Detected. Access Blocked for Security Reasons.</h2></div>';
+        }
+      }, 1000);
+    })();
+
     const GARMENT_PRESETS = [
       { id: 'polo_left_chest', name: 'Pique Polo (Left Chest)', hoop: '4" × 4"', wPx: 600, hPx: 600, icon: 'fa-shirt', posText: 'Left Chest (7.5" below shoulder)' },
       { id: 'tshirt_left_chest', name: 'Cotton T-Shirt (Left Chest)', hoop: '4" × 4"', wPx: 600, hPx: 600, icon: 'fa-tshirt', posText: 'Left Chest (7.0" below shoulder)' },
@@ -535,7 +564,7 @@
     let BASE_WIDTH = currentGarment.wPx;
     let BASE_HEIGHT = currentGarment.hPx;
     let currentZoomScale = 1;
-    let canvasBgColor = 'transparent';
+    let canvasBgColor = 'transparent'; // Transparent by default
     let mockupGarmentColor = '#1e293b';
 
     let undoStack = [];
@@ -551,7 +580,7 @@
     });
 
     window.onload = function() {
-      // 5-Second Circular Loading Delay Handler
+      // 2-Second Circular Loading Delay Handler
       setTimeout(() => {
         const overlay = document.getElementById('loadingOverlay');
         if (overlay) {

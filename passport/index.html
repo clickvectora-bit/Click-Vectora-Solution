@@ -51,9 +51,32 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .brand-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .brand-logo img { height: 40px; width: auto; display: block; object-fit: contain; }
+
+        /* Page Loader Styles */
+        #pageLoader {
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .spinner-circle {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e2e8f0;
+            border-top: 5px solid #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="h-full bg-slate-100 text-slate-800 flex flex-col overflow-hidden">
+
+  <!-- Page Loading Overlay with Circle Animation -->
+  <div id="pageLoader" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center space-y-4">
+    <div class="spinner-circle"></div>
+    <p class="text-white font-medium text-sm tracking-wide">Loading Studio...</p>
+  </div>
 
   <!-- Custom Alert / Toast Modal for Data Validation -->
   <div id="validationAlertModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -236,6 +259,19 @@
   </div>
 
   <script>
+    // --- PAGE LOADER HANDLER (2 SECONDS DELAY) ---
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('pageLoader');
+        if (loader) {
+          loader.style.opacity = '0';
+          setTimeout(() => {
+            loader.style.display = 'none';
+          }, 500); // matches CSS transition duration
+        }
+      }, 2000); // 2-second delay
+    });
+
     // --- BROWSER ANTI-INSPECTION SECURITY SCRIPTS ---
     document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
     document.addEventListener('keydown', function(e) {
