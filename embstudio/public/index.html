@@ -87,12 +87,12 @@
 
       <a href="/" class="flex items-center space-x-2">
         <div class="brand-logo">
-          <img src="/img/logo/logo.png" alt="Logo" class="h-6 w-auto object-contain" onerror="this.outerHTML='<i class=\'fa-solid fa-pen-nib text-white text-sm\'></i>'">
+          <img src="/img/logo/logo.png" alt="Logo" class="h-10 w-auto object-contain" onerror="this.outerHTML='<i class=\'fa-solid fa-pen-nib text-white text-sm\'></i>'">
         </div>
       </a>
       <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
       
-      <!-- Quick Undo / Redo / Cut Shortcuts in Header -->
+      <!-- Quick Undo / Redo Shortcuts in Header (Cut icon removed) -->
       <div class="hidden sm:flex items-center space-x-1 bg-slate-50 p-1 rounded-lg border border-slate-200">
         <button onclick="undo()" title="Undo (Ctrl+Z)" class="p-1.5 hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition text-xs flex items-center gap-1">
           <i class="fa-solid fa-rotate-left"></i> <span>Undo</span>
@@ -100,10 +100,6 @@
         <div class="w-px h-4 bg-slate-200"></div>
         <button onclick="redo()" title="Redo (Ctrl+Y)" class="p-1.5 hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition text-xs flex items-center gap-1">
           <span>Redo</span> <i class="fa-solid fa-rotate-right"></i>
-        </button>
-        <div class="w-px h-4 bg-slate-200"></div>
-        <button onclick="cutSelected()" title="Cut (Ctrl+X)" class="p-1.5 hover:bg-slate-200/60 rounded text-slate-600 hover:text-slate-900 transition text-xs flex items-center gap-1">
-          <i class="fa-solid fa-scissors"></i> <span>Cut</span>
         </button>
       </div>
     </div>
